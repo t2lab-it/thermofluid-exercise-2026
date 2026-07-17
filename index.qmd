@@ -27,7 +27,7 @@ active_project = normpath(Base.active_project())
 expected_project = normpath(joinpath(pwd(), "Project.toml"))
 @assert active_project == expected_project
 julia_engine = "Julia $(VERSION.major).$(VERSION.minor).$(VERSION.patch)"
-println(julia_engine, " | project = ", active_project)
+println(julia_engine, " | project = Project.toml")
 ```
 
 ## 利用条件
