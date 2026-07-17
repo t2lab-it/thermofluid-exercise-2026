@@ -1,0 +1,42 @@
+---
+title: "コマンド一覧"
+---
+
+このページは、セットアップと現在公開済みの課題ですでに扱ったコマンドだけをまとめています。リポジトリのルートで実行してください。
+
+## 環境と復元
+
+```bash
+julia --version
+git --version
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+```
+
+## 課題の状態
+
+```bash
+julia --project=. scripts/course.jl preflight
+julia --project=. scripts/course.jl status
+julia --project=. scripts/course.jl start F02
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+`F02`は、実際に開始する課題IDへ置き換えます。順序を飛ばしません。
+
+## Gitで変更を確認する
+
+```bash
+git status --short
+git branch --show-current
+git diff
+git diff --cached
+git log --oneline -5
+```
+
+F01でだけ、指定された課題branchを手動で作ります。
+
+```bash
+git switch -c exercise/F01-first-pull-request
+```
+
+commit、push、mergeの前後を含む手順は[課題ワークフロー](workflow.qmd)を参照してください。

@@ -15,6 +15,7 @@ engines: ['julia']
 website:
   title: "熱流体力学演習 2026"
   site-url: "https://t2lab-it.github.io/thermofluid-exercise-2026/"
+  page-navigation: true
   navbar:
     left:
       - href: index.qmd
@@ -22,7 +23,7 @@ website:
       - text: セットアップ
         menu:
           - href: setup/index.qmd
-            text: 受講環境
+            text: セットアップ概要
           - href: setup/julia.qmd
             text: Julia
           - href: setup/git-github.qmd
@@ -31,6 +32,8 @@ website:
             text: Coding Agent
       - text: 授業
         menu:
+          - href: lessons/index.qmd
+            text: 授業一覧
           - href: lessons/F00.qmd
             text: F00
           - href: lessons/F01.qmd
@@ -43,6 +46,8 @@ website:
             text: N01
       - text: 課題
         menu:
+          - href: assignments/index.qmd
+            text: 課題一覧
           - href: assignments/F00.qmd
             text: F00
           - href: assignments/F01.qmd
@@ -55,12 +60,96 @@ website:
             text: N01
       - text: ガイド
         menu:
+          - href: guides/index.qmd
+            text: ガイド一覧
           - href: guides/workflow.qmd
             text: 課題ワークフロー
           - href: guides/testing.qmd
             text: テスト
+          - href: guides/commands.qmd
+            text: コマンド
+          - href: guides/troubleshooting.qmd
+            text: トラブル対応
+          - href: guides/glossary.qmd
+            text: 用語集
+      - text: 発展
+        menu:
+          - href: advanced/index.qmd
+            text: 発展資料一覧
           - href: advanced/cairomakie.qmd
-            text: 発展的な可視化
+            text: CairoMakieによる可視化
+  sidebar:
+    - id: course
+      title: "授業と課題"
+      style: docked
+      collapse-level: 1
+      contents:
+        - href: setup/index.qmd
+          text: "受講環境の準備"
+        - href: setup/julia.qmd
+          text: "Julia・VS Code"
+        - href: setup/git-github.qmd
+          text: "Git・GitHub"
+        - href: setup/agents.qmd
+          text: "Coding Agent"
+        - href: guides/workflow.qmd
+          text: "課題ワークフロー"
+        - section: "第1回 受講環境の準備"
+          contents:
+            - text: "1/2 授業"
+              href: lessons/F00.qmd
+            - text: "2/2 課題"
+              href: assignments/F00.qmd
+        - section: "第2回 GitHubを使った課題提出"
+          contents:
+            - text: "1/2 授業"
+              href: lessons/F01.qmd
+            - text: "2/2 課題"
+              href: assignments/F01.qmd
+        - href: guides/testing.qmd
+          text: "テストと数値検証"
+        - section: "第3回 Juliaチュートリアル"
+          contents:
+            - text: "1/2 授業"
+              href: lessons/F02.qmd
+            - text: "2/2 課題"
+              href: assignments/F02.qmd
+        - section: "第4回 速習差分法"
+          contents:
+            - text: "1/2 授業"
+              href: lessons/F03.qmd
+            - text: "2/2 課題"
+              href: assignments/F03.qmd
+        - section: "第5回 1次元線形移流方程式"
+          contents:
+            - text: "1/2 授業"
+              href: lessons/N01.qmd
+            - text: "2/2 課題"
+              href: assignments/N01.qmd
+    - id: guides
+      title: "ガイド"
+      style: docked
+      contents:
+        - href: guides/index.qmd
+          text: "ガイド一覧"
+        - href: guides/workflow.qmd
+          text: "課題ワークフロー"
+        - href: guides/testing.qmd
+          text: "テストと数値検証"
+        - href: guides/commands.qmd
+          text: "コマンド一覧"
+        - href: guides/troubleshooting.qmd
+          text: "トラブル対応"
+        - href: guides/glossary.qmd
+          text: "用語集"
+    - id: advanced
+      title: "任意の発展資料"
+      style: docked
+      contents:
+        - href: advanced/index.qmd
+          text: "発展資料一覧"
+        - href: advanced/cairomakie.qmd
+          text: "任意: CairoMakieによる可視化"
   page-footer:
     left: "Copyright © 2026 荒木 亮（ARAKI, Ryo）"
     right: "教材・図: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) / コード: [MIT](LICENSE-MIT.txt)"
@@ -70,3 +159,5 @@ format:
     theme: cosmo
     css: assets/styles.css
     toc: true
+    include-after-body:
+      - assets/navigation-loader.html

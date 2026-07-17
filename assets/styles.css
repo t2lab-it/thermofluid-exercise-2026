@@ -1,6 +1,19 @@
 :root {
   --tf-accent: #005b73;
+  --tf-accent-dark: #003f50;
   --tf-soft: #e9f5f7;
+  --tf-border: #bfd8de;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+.navbar,
+.sidebar-navigation {
+  font-family: "Noto Sans JP", "Noto Sans CJK JP", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic", "Meiryo", sans-serif;
 }
 
 h1,
@@ -22,4 +35,96 @@ code {
 
 .navbar {
   border-bottom: 3px solid var(--tf-soft);
+}
+
+.eyebrow {
+  margin-bottom: 0.35rem;
+  color: var(--tf-accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.start-button {
+  display: inline-block;
+  margin: 0.75rem 0 1.5rem;
+  padding: 0.72rem 1.1rem;
+  border: 2px solid var(--tf-accent);
+  border-radius: 0.35rem;
+  background: var(--tf-accent);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.start-button:hover {
+  background: var(--tf-accent-dark);
+  color: #fff;
+}
+
+.course-map {
+  overflow-x: auto;
+  margin-block: 1rem 1.5rem;
+}
+
+.course-map table {
+  min-width: 42rem;
+}
+
+.navbar .nav-item.dropdown {
+  display: flex;
+  align-items: stretch;
+}
+
+.navbar .split-nav-anchor {
+  padding-right: 0.25rem;
+}
+
+.split-nav-trigger {
+  width: 2rem;
+  padding-inline: 0.35rem;
+  border: 0;
+  background: transparent;
+}
+
+.split-nav-trigger::after {
+  display: inline-block;
+  content: "";
+  border-top: 0.32em solid currentColor;
+  border-right: 0.32em solid transparent;
+  border-left: 0.32em solid transparent;
+  vertical-align: 0.18em;
+}
+
+.start-button:focus-visible,
+.split-nav-trigger:focus-visible,
+.split-nav-anchor:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid #f4a261;
+  outline-offset: 3px;
+}
+
+.sidebar-item a.active,
+.sidebar-item .active {
+  border-left: 3px solid var(--tf-accent);
+  color: var(--tf-accent-dark);
+  font-weight: 700;
+}
+
+.page-navigation .nav-page {
+  border: 1px solid var(--tf-border);
+  border-radius: 0.35rem;
+  background: var(--tf-soft);
+}
+
+@media (max-width: 991.98px) {
+  .navbar .nav-item.dropdown {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+
+  .navbar .dropdown-menu {
+    grid-column: 1 / -1;
+  }
 }

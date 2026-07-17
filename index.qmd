@@ -2,38 +2,65 @@
 title: "熱流体力学演習 2026"
 ---
 
-このサイトは、F00〜F03でローカル開発と数値計算の基礎を整え、N01で最初の偏微分方程式を一つのJuliaファイルとして読み解く公開教材です。Windows、macOS、Linuxのローカル環境を正式に扱います。
+::: {.eyebrow}
+Juliaで理解・実装・検証・調査をつなぐ
+:::
 
-## 最初の垂直スライス
+この公開教材は、熱流体力学の式を読み、Juliaで実装し、テストと数値結果から確かめるための演習サイトです。授業と課題を一組ずつ進めます。
 
-1. [F00: 環境診断](assignments/F00.qmd)
-2. [F01: 最初のbranchとpull request](assignments/F01.qmd)
-3. [F02: Juliaの配列・関数・テスト](assignments/F02.qmd)
-4. [F03: 座標・添字・差分](assignments/F03.qmd)
-5. [N01: 1次元線形移流方程式](assignments/N01.qmd)
+[受講環境の準備から始める](setup/index.qmd){.start-button}
 
-課題は1課題につき1 branch、1 pull requestです。F01だけbranchを手動作成し、F02以降は`julia --project=. scripts/course.jl start ID`を使います。
+## この演習で身につけること
 
-## Julia engine smoke test
+数式、配列、コード、可視化を対応づけ、結果がもっともらしいだけでなく、何を根拠に正しいと判断したかを説明します。GitとGitHubは提出のためだけでなく、変更を小さく記録し、diffとテストで検証するために使います。
 
-次のセルはQuartoのJulia engineでrender時に実行されます。
+## 全15回のコースマップ
 
-```{julia}
-#| echo: true
-#| output: true
-using Plots
+::: {.course-map}
+| 回 | 内容 | 教材・課題 |
+|---:|---|---|
+| 1 | ガイダンス、アカウント、環境診断 | [F00 授業](lessons/F00.qmd)・[課題](assignments/F00.qmd) |
+| 2 | Julia・Git・GitHubの最小操作 | [F01 授業](lessons/F01.qmd)・[課題](assignments/F01.qmd) |
+| 3 | 配列・関数・ループ、テスト | [F02 授業](lessons/F02.qmd)・[課題](assignments/F02.qmd) |
+| 4 | ベクトル解析、伝熱、差分と添字 | [F03 授業](lessons/F03.qmd)・[課題](assignments/F03.qmd) |
+| 5 | 一次元線形・非線形移流 | [N01 授業](lessons/N01.qmd)・[課題](assignments/N01.qmd)、N02（予定） |
+| 6 | 一次元拡散・移流拡散 | N03・N04（予定） |
+| 7 | Git、テスト、Agentic coding、共通化 | N05（予定） |
+| 8 | 二次元移流、配列軸、可視化、メモリ | N06（予定） |
+| 9 | 二次元拡散 | N07（予定） |
+| 10 | 二次元移流拡散 | N08（予定） |
+| 11 | PDE分類、Laplace方程式 | N09（予定） |
+| 12 | Poisson方程式 | N10（予定） |
+| 13 | 最終プレゼンテーション 1 | チーム成果 |
+| 14 | 最終プレゼンテーション 2・試験案内 | チーム成果 |
+| 15 | 到達度確認試験 | 紙試験 |
+:::
 
-active_project = normpath(Base.active_project())
-expected_project = normpath(joinpath(pwd(), "Project.toml"))
-@assert active_project == expected_project
-julia_engine = "Julia $(VERSION.major).$(VERSION.minor).$(VERSION.patch)"
-println(julia_engine, " | project = Project.toml")
-```
+標準課題は授業回への強制同期ではありません。全体説明を聞きながら、自分が現在取り組む課題の完了条件を確認して進めます。
 
-## 利用条件
+## 課題の進め方
 
-教材本文と図は[CC BY 4.0](LICENSE-CC-BY-4.0.txt)、コードは[MIT License](LICENSE-MIT.txt)です。詳細は[ライセンス方針](LICENSE.md)を参照してください。
+F00で環境を診断した後は、原則として1課題につき1 branch、1 pull request、1学習ログを作ります。
 
-## 環境方針
+1. 課題ページで前提と完了条件を読む。
+2. 専用branchで実装し、ローカルテストと公式出力を確認する。
+3. diffと秘密情報の有無を確認してcommit・pushする。
+4. pull request、Actions、セルフレビューを確認してmergeする。
 
-授業ではローカルのJulia 1.12.6、Git、VS Codeを使います。Codespaces、devcontainer、Jupyterは採用しません。テストとrenderの手順は[テストガイド](guides/testing.qmd)にまとめています。
+詳しい操作は[課題ワークフロー](guides/workflow.qmd)、検証の考え方は[テストと数値検証](guides/testing.qmd)を参照してください。
+
+## 対象と前提
+
+大学初年次の微積分・線形代数と、熱力学・流体力学の基礎を学んでいる受講者を想定します。プログラミング経験は問いませんが、コマンドを実行し、その出力とファイル差分を自分で読むことが必要です。
+
+## 必要な環境
+
+Windows、macOS、Linuxのローカル環境を正式に扱います。Julia 1.12.6、Git、VS CodeとJulia拡張、授業で認められたCoding Agentのうち一つを準備してください。Codespaces、devcontainer、Jupyterは使用しません。
+
+準備で止まった場合は、[トラブル対応](guides/troubleshooting.qmd)に沿って最初の証拠を残し、秘密情報を除いて教員・TAへ相談してください。
+
+## 公開利用とライセンス
+
+このサイトは受講者以外も閲覧・再利用できます。教材本文と独自作成図は[CC BY 4.0](LICENSE-CC-BY-4.0.txt)、コードファイルとコード例は[MIT License](LICENSE-MIT.txt)です。第三者素材には個別の出典と権利条件を表示します。詳細は[ライセンス方針](LICENSE.md)を参照してください。
+
+Copyright © 2026 荒木 亮（ARAKI, Ryo）
