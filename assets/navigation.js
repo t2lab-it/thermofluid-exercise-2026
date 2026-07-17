@@ -4,7 +4,7 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
 
   trigger.className = "nav-link split-nav-trigger";
   trigger.setAttribute("type", "button");
-  trigger.setAttribute("aria-label", `${label}のメニューを開く`);
+  trigger.setAttribute("aria-label", `${label}のメニュー`);
   trigger.setAttribute("aria-controls", menu.id);
   trigger.setAttribute("aria-haspopup", "true");
 
@@ -33,7 +33,10 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
     trigger.addEventListener("pointerenter", () => setOpen(true));
   }
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") setOpen(false);
+    if (event.key === "Escape" && (trigger.contains(event.target) || menu.contains(event.target))) {
+      setOpen(false);
+      trigger.focus();
+    }
   });
   document.addEventListener("click", (event) => {
     if (!trigger.contains(event.target) && !menu.contains(event.target)) setOpen(false);
@@ -43,8 +46,11 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
 }
 
 function enhanceRenderedNavbar(document) {
-  for (const item of document.querySelectorAll(".navbar .nav-item.dropdown")) {
-    const anchor = item.querySelector(":scope > a.nav-link");
+  const sectionLinks = document.querySelectorAll(
+    '.navbar .nav-item.dropdown > a[rel~="split-navigation"]',
+  );
+  for (const anchor of sectionLinks) {
+    const item = anchor.parentNode;
     const menu = item.querySelector(":scope > .dropdown-menu");
     if (!anchor || !menu || item.querySelector(".split-nav-trigger")) continue;
 

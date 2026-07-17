@@ -7,6 +7,13 @@ const VISIBLE_NAMES = Dict(
 )
 
 const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "N01")
+const REQUIRED_SECTION_LABELS = (
+    "セットアップ",
+    "授業",
+    "課題",
+    "ガイド",
+    "発展資料",
+)
 
 function yaml_source_lines(source::AbstractString)
     lines = NamedTuple{(:indent, :text),Tuple{Int,String}}[]
@@ -281,6 +288,28 @@ end
     assignment_ids = Set(keys(contracts["assignments"]))
 
     @test assignment_ids == Set(keys(VISIBLE_NAMES))
+
+    language = yaml_node(yaml, ("lang",))
+    @test !isnothing(language)
+    !isnothing(language) && @test yaml_scalar(yaml, language) == "ja"
+
+    navbar_left = yaml_node(yaml, ("website", "navbar", "left"))
+    @test !isnothing(navbar_left)
+    if !isnothing(navbar_left)
+        navbar_items = yaml_sequence_items(yaml, navbar_left)
+        marked_labels = [
+            something(yaml_item_field(yaml, item, "text"), (value="",)).value
+            for item in navbar_items
+            if something(yaml_item_field(yaml, item, "rel"), (value="",)).value == "split-navigation"
+        ]
+        @test marked_labels == collect(REQUIRED_SECTION_LABELS)
+        home_items = [
+            item for item in navbar_items
+            if something(yaml_item_field(yaml, item, "text"), (value="",)).value == "ホーム"
+        ]
+        @test length(home_items) == 1
+        length(home_items) == 1 && @test isnothing(yaml_item_field(yaml, only(home_items), "rel"))
+    end
 
     page_navigation = yaml_node(yaml, ("website", "page-navigation"))
     @test !isnothing(page_navigation)

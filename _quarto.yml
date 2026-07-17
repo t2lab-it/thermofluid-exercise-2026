@@ -11,6 +11,7 @@ project:
     - advanced/*.qmd
 
 engines: ['julia']
+lang: ja
 
 website:
   title: "熱流体力学演習 2026"
@@ -21,6 +22,7 @@ website:
       - href: index.qmd
         text: ホーム
       - text: セットアップ
+        rel: split-navigation
         menu:
           - href: setup/index.qmd
             text: セットアップ概要
@@ -31,6 +33,7 @@ website:
           - href: setup/agents.qmd
             text: Coding Agent
       - text: 授業
+        rel: split-navigation
         menu:
           - href: lessons/index.qmd
             text: 授業一覧
@@ -45,6 +48,7 @@ website:
           - href: lessons/N01.qmd
             text: N01
       - text: 課題
+        rel: split-navigation
         menu:
           - href: assignments/index.qmd
             text: 課題一覧
@@ -59,6 +63,7 @@ website:
           - href: assignments/N01.qmd
             text: N01
       - text: ガイド
+        rel: split-navigation
         menu:
           - href: guides/index.qmd
             text: ガイド一覧
@@ -72,7 +77,8 @@ website:
             text: トラブル対応
           - href: guides/glossary.qmd
             text: 用語集
-      - text: 発展
+      - text: 発展資料
+        rel: split-navigation
         menu:
           - href: advanced/index.qmd
             text: 発展資料一覧

@@ -73,6 +73,11 @@ class FakeElement extends FakeEventTarget {
     this.href = "";
     this.textContent = "";
     this.className = "";
+    this.focused = false;
+  }
+
+  focus() {
+    this.focused = true;
   }
 
   setAttribute(name, value) {
@@ -151,6 +156,7 @@ class FakeElement extends FakeEventTarget {
 class FakeDocument extends FakeEventTarget {
   constructor({ hover = true } = {}) {
     super();
+    this.queries = [];
     this.defaultView = {
       matchMedia: (query) => ({ matches: hover && query.includes("hover") }),
     };
@@ -160,7 +166,8 @@ class FakeDocument extends FakeEventTarget {
     return new FakeElement(tagName);
   }
 
-  querySelectorAll() {
+  querySelectorAll(selector) {
+    this.queries.push(selector);
     return [];
   }
 }
@@ -206,7 +213,10 @@ function referenceEnhanceSplitNavigationUsing({ anchor, menu, document }, insert
     trigger.addEventListener("pointerenter", () => setOpen(true));
   }
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") setOpen(false);
+    if (event.key === "Escape" && (trigger.contains(event.target) || menu.contains(event.target))) {
+      setOpen(false);
+      trigger.focus();
+    }
   });
   document.addEventListener("click", (event) => {
     if (!trigger.contains(event.target) && !menu.contains(event.target)) setOpen(false);
@@ -244,6 +254,10 @@ if (modulePath === "--self-test") {
   const source = await Deno.readTextFile(modulePath);
   const moduleUrl = `data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`;
   navigation = await import(moduleUrl);
+  assert(
+    document.queries.some((selector) => selector.includes("split-navigation")),
+    "automatic enhancement must select only explicitly marked section links",
+  );
 }
 assertEqual(
   typeof navigation.enhanceSplitNavigation,
@@ -297,6 +311,15 @@ assertOpen(trigger, menu);
 
 fire(document, "keydown", { key: "Escape", target: trigger });
 assertClosed(trigger, menu);
+assertEqual(trigger.focused, true, "Escape from the trigger must restore trigger focus");
+
+trigger.focused = false;
+fire(trigger, "click");
+const menuItem = new FakeElement("a");
+menu.append(menuItem);
+fire(document, "keydown", { key: "Escape", target: menuItem });
+assertClosed(trigger, menu);
+assertEqual(trigger.focused, true, "Escape from within the menu must restore trigger focus");
 
 fire(trigger, "click");
 assertOpen(trigger, menu);
