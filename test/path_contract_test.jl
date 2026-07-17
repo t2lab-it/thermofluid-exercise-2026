@@ -43,8 +43,11 @@ end
         write(outside_file, "outside\n")
 
         @test path_inside(root, "missing.txt") === nothing
+        nul_path = string("missing", Char(0))
+        @test canonical_existing_path(nul_path) === nothing
+        @test path_inside(root, nul_path) === nothing
 
-        symlinks_supported = try
+        file_symlinks_supported = try
             symlink(inside_file, joinpath(root, "inside-link.txt"))
             true
         catch error
@@ -52,20 +55,35 @@ end
             false
         end
 
-        if symlinks_supported
+        if file_symlinks_supported
             @test path_inside(root, "inside-link.txt") == realpath(inside_file)
 
             symlink(outside_file, joinpath(root, "outside-link.txt"))
             @test path_inside(root, "outside-link.txt") === nothing
 
-            symlink(outside, joinpath(root, "outside-directory"))
-            @test path_inside(root, joinpath("outside-directory", "outside.txt")) === nothing
-
             broken = joinpath(root, "broken-link.txt")
             symlink(joinpath(parent, "absent.txt"), broken)
             @test path_inside(root, "broken-link.txt") === nothing
         else
-            @test_skip "symlink creation is unavailable on this host"
+            @test_skip "file symlink creation is unavailable on this host"
+        end
+
+        directory_symlinks_supported = try
+            symlink(
+                outside, joinpath(root, "outside-directory"); dir_target=true,
+            )
+            true
+        catch error
+            error isa Base.IOError || error isa SystemError || rethrow()
+            false
+        end
+
+        if directory_symlinks_supported
+            @test path_inside(
+                root, joinpath("outside-directory", "outside.txt"),
+            ) === nothing
+        else
+            @test_skip "directory symlink creation is unavailable on this host"
         end
     end
 end

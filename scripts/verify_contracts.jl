@@ -12,7 +12,7 @@ function canonical_existing_path(path::AbstractString)
     try
         return realpath(path)
     catch error
-        error isa Base.IOError || error isa SystemError || rethrow()
+        error isa Base.IOError || error isa SystemError || error isa ArgumentError || rethrow()
         return nothing
     end
 end
