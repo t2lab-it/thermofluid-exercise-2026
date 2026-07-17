@@ -5,6 +5,7 @@ const SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
 const VERIFY = joinpath(SITE_ROOT, "scripts", "verify_contracts.jl")
 
 include(joinpath(@__DIR__, "f01_workflow_contract_test.jl"))
+include(joinpath(@__DIR__, "navigation_contract_test.jl"))
 
 function write_fixture(root::AbstractString; student_path::Bool, canonical::AbstractString)
     public = joinpath(root, "public")
