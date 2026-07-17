@@ -1,6 +1,9 @@
 ---
-title: "発展: CairoMakieによる可視化"
+title: "CairoMakieによる可視化"
 ---
+::: {.course-position}
+任意・発展資料
+:::
 
 このページは意欲的な学生向けの任意資料です。必修のpublic環境と学生環境には`CairoMakie.jl`を追加しません。N01の合否にも影響しません。
 

@@ -1,6 +1,9 @@
 ---
 title: "Git・GitHub・Classroom リポジトリ"
 ---
+::: {.course-position}
+準備 3/5
+:::
 
 ## Git を導入する
 

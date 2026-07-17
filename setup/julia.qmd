@@ -1,6 +1,9 @@
 ---
 title: "Julia 1.12.6 と VS Code"
 ---
+::: {.course-position}
+準備 2/5
+:::
 
 ## Juliaup で Julia を導入する
 

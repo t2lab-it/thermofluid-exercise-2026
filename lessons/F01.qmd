@@ -1,10 +1,16 @@
 ---
-title: "第2回: Julia・Git・GitHubの最小操作"
+title: "Julia・Git・GitHubの最小操作"
 ---
+::: {.course-position}
+第2回・授業 1/2 · 課題ID: F01
+:::
 
 ## この回の到達点
 
-変更を「作業中のファイル」「commit」「branch」「pull request」「main」の各段階へ分けて説明し、F01を一つのbranchとPRで完了できることを目標にします。
+- 作業中の変更、commit、branch、pull request、mainの違いを説明できる。
+- F01用branchを作り、変更前後の`git diff`を確認できる。
+- ローカルテスト、push、Actions、セルフレビューを正しい順で実行できる。
+- 一つのbranchと一つのPRでF01を完了できる。
 
 
 ## 一つの変更が進む経路

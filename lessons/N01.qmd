@@ -1,8 +1,44 @@
 ---
-title: "N01: 移流方程式と安定性"
+title: "移流方程式と安定性"
 ---
+::: {.course-position}
+第5回・授業 1/2 · 課題ID: N01
+:::
 
-## 支配方程式
+## この回の到達点
+
+- 移流方程式の各項を「分布が速度`c`で運ばれる」という現象に対応づけられる。
+- 格子・添字・境界条件をJulia配列の要素に対応づけられる。
+- 3つのTODOを小さな実行例で確かめ、upwindとcenteredの更新式をコードへ写せる。
+- 時間loopとbuffer交換を追い、実効CFLと最終時刻を確認できる。
+- 二つの計算結果を数値・図・テストで比較し、安定例と不安定例を説明できる。
+
+この回は、Julia以外のプログラミング経験はあるものの、構文を忘れている学習者を想定します。Julia固有の書き方を短く復習してから、偏微分方程式の計算へ進みます。
+
+## Julia構文の復習
+
+Juliaの配列は1番から始まります。`u[i]`は現在の点、`u[i - 1]`は左隣、`u[i + 1]`は右隣です。`end`は最後の添字を表します。
+
+```julia
+u = [1.0, 2.0, 1.0]
+u[1]       # 1.0
+u[end]     # 1.0
+copy(u)    # 同じ値を持つ別の配列
+```
+
+関数名の末尾の`!`は、引数の配列を変更する関数であることを知らせる慣習です。keyword引数は`;`の後に書きます。
+
+```julia
+function set_left!(u; value=1.0)
+    u[1] = value
+    return u
+end
+
+u = [0.0, 0.0, 0.0]
+set_left!(u; value=1.0)
+```
+
+## 偏微分方程式が表すこと
 
 正の一定速度$c>0$で形を右へ運ぶ1次元線形移流方程式は
 
@@ -10,91 +46,129 @@ $$
 \frac{\partial u}{\partial t}+c\frac{\partial u}{\partial x}=0
 $$
 
-です。厳密解は初期分布を変形せずに右へ平行移動します。数値解では空間差分と時間積分の組合せにより、拡散や振動が生じます。
+です。$u(x,t)$は位置$x$と時刻$t$で決まる量です。時間変化$\partial u/\partial t$と空間変化$c\,\partial u/\partial x$が釣り合うため、厳密解では初期分布が形を変えず右へ移動します。数値計算では、微分を格子点の値の差へ置き換える方法によって、なまりや振動が生じます。
 
-## 格子と境界条件
+## 格子と添字
 
-領域$0\le x\le2$を`nx`点へ等分し、背景1、$0.5\le x\le1.0$で2の矩形波を置きます。
+領域$0\le x\le2$に`nx`個の格子点を置きます。Juliaの添字`i`と座標$x_i$は別のものです。
 
 ```text
-left Dirichlet                                         right Neumann
-u[1] = 1         rectangular pulse                     u[end] = u[end-1]
-    |------ 2 2 2 2 2 -------------------------------|
-    |-- 1 1         1 1 1 1 1 1 1 1 1 1 1 1 1 1 ---|
-x = 0                    -> c > 0                    x = 2
+index:       1        2        3              nx
+coordinate:  0       dx       2dx      ...    2
+              o--------o--------o------- ... ---o
 ```
 
-左端はDirichlet条件$u=1$、右端はNeumann条件$\partial u/\partial x=0$を隣接値のコピーで表します。1step更新の後に境界条件を適用します。
+内部点のloopは`2:(length(u_old) - 1)`です。両端を除くのは、左端と右端を境界条件として別に扱うためです。
+
+## 初期条件
+
+最初のTODOは`rectangular_initial_condition`です。背景を1、`0.5 <= x <= 1.0`を2にします。まず小さな配列で、条件式が端点を含むことを確かめます。
+
+```julia
+x = [0.0, 0.5, 1.0, 1.5]
+u0 = [0.5 <= xi <= 1.0 ? 2.0 : 1.0 for xi in x]
+# [1.0, 2.0, 2.0, 1.0]
+```
+
+`run.jl`では`base`、`plateau`、`plateau_start`、`plateau_end`という引数名を保ち、この条件を各`x`へ適用します。
+
+## 境界条件
+
+正の速度では情報が左から領域へ入り、右へ出ます。N01では左端を1に固定し、右端は左隣の値をコピーしてゼロ勾配を表します。
+
+```julia
+u[1] = 1.0
+u[end] = u[end - 1]
+```
+
+提供済みの`apply_boundary!`が1step更新の後にこの処理を行います。境界条件そのものは学生TODOではありませんが、時間発展を説明するために意味を読める必要があります。
 
 ## upwind + Euler
 
-正の$c$に対する風上側は左です。後退差分と陽Eulerを組み合わせると
+正の$c$では風上側が左なので、空間微分に後退差分を使います。陽Euler法と組み合わせると
 
 $$
 u_i^{n+1}=u_i^n-\nu\left(u_i^n-u_{i-1}^n\right),
 \qquad \nu=\frac{c\Delta t}{\Delta x}
 $$
 
-となります。$0\le\nu\le1$なら、新しい値は現在値と左隣の凸結合になり、初期値の範囲を越えません。一方で段差は数値拡散によりなだらかになります。
+です。二つ目のTODO `upwind_step!`に対応します。loopへ入れる前に、1点だけを手で実行できます。
+
+```julia
+u_old = [1.0, 2.0, 4.0]
+courant = 0.5
+i = 2
+u_new_i = u_old[i] - courant * (u_old[i] - u_old[i - 1])
+# 1.5
+```
+
+$0\le\nu\le1$なら更新値は現在値と左隣の間に収まり、初期範囲を越えません。ただし段差は数値拡散でなだらかになります。
 
 ## centered + Euler
 
-中心差分と陽Eulerの組合せは
+中心差分は左右の値を対称に使います。
 
 $$
 u_i^{n+1}=u_i^n-\frac{\nu}{2}\left(u_{i+1}^n-u_{i-1}^n\right)
 $$
 
-です。この組合せは線形移流方程式に対して不安定です。N01では修正や人工粘性を加えず、同じCFLでovershoot、undershoot、振動が成長する様子を意図的に比較します。
+三つ目のTODO `centered_step!`も、まず1点だけ計算します。
+
+```julia
+u_old = [1.0, 2.0, 4.0]
+courant = 0.5
+i = 2
+u_new_i = u_old[i] - courant / 2 * (u_old[i + 1] - u_old[i - 1])
+# 1.25
+```
+
+centered + Eulerはこの方程式に対して不安定です。N01では人工粘性などを加えず、overshoot、undershoot、振動が現れる失敗例として比較します。
+
+## 時間loop
+
+局所的な1step更新を理解してから、提供済みの時間loopを読みます。
+
+```julia
+for _ in 1:steps
+    step!(u_new, u_old, c, dt, dx)
+    apply_boundary!(u_new)
+    u_old, u_new = u_new, u_old
+end
+```
+
+各stepでは、古い配列だけを参照して新しい配列の内部点を計算し、境界条件を適用してから次のstepへ進みます。このloopは編集対象ではありません。
+
+## buffer交換
+
+`u_old, u_new = u_new, u_old`は、二つの配列が指す役割を交換します。配列全体を毎回コピーせず、計算済みの`u_new`を次のstepの`u_old`として使えます。新旧を同じ配列にすると、同じstepで更新した値が隣の点の計算へ混ざるため、別bufferが必要です。
 
 ## CFLと最終時刻
 
-CFL数$\nu=c\Delta t/\Delta x$は、1stepで情報が格子間隔の何倍進むかを表します。最初に指定値から候補$\Delta t$を作り、必要step数を切り上げ、
+CFL数$\nu=c\Delta t/\Delta x$は、1stepで情報が格子間隔の何倍進むかを表します。指定CFLから候補`dt`を作り、必要なstep数を切り上げた後、
 
 $$
 \Delta t=\frac{t_{\mathrm{final}}}{N_{\mathrm{steps}}}
 $$
 
-と調整します。したがってsummaryへ記録するのは指定CFLではなく、調整後の実効CFLです。
+と調整します。したがって確認するのは、`steps * dt == t_final`と、調整後の実効CFL `c * dt / dx`です。
 
-## 数学・配列・コード・テストの対応
+## 二つの方法を比較する
 
-| 数学 | Julia配列 | `run.jl`の処理 | テストで確認すること |
-|---|---|---|---|
-| $u(x,0)$ | `u0[i]` | `rectangular_initial_condition` | 背景とplateauの端点を含む値 |
-| $u(0,t)=1$, $u_x(2,t)=0$ | `u[1]`, `u[end]` | `apply_boundary!` | 左値固定、右値が左隣と一致 |
-| $u_i^{n+1}=u_i^n-\nu(u_i^n-u_{i-1}^n)$ | `u_new[i]`, `u_old[i-1:i]` | `upwind_step!` | 手計算値、入力不変、定数保存 |
-| $u_i^{n+1}=u_i^n-\nu(u_{i+1}^n-u_{i-1}^n)/2$ | `u_new[i]`, `u_old[i-1:i+1]` | `centered_step!` | 手計算値、定数保存、振動 |
-| $N\Delta t=t_{final}$ | `steps`, `dt` | `simulate` | 最終時刻と$c\Delta t/\Delta x$ |
-| 初期範囲 | `minimum`, `maximum` | summary diagnostics | upwindは有界、centeredは範囲外 |
+既定値は`nx=81`、`c=1`、指定CFL 0.5、`t_final=0.5`です。
 
-二つのbufferを使うのは、同じstep内で更新済みの値を次の格子点へ混ぜないためです。更新後に参照を交換し、全時刻履歴は保持しません。
-
-## 安定例と意図的な不安定比較
-
-既定値は`nx=81`, `c=1`, 指定CFL 0.5, `t_final=0.5`です。
-
-| 方法 | 期待する観察 | 判定 |
+| 方法 | 数値と図で観察すること | 解釈 |
 |---|---|---|
-| upwind + Euler | 段差は滑らかになるが初期範囲内 | stable comparison |
-| centered + Euler | 段差付近に負値側・正値側の振動 | intentionally unstable comparison |
+| upwind + Euler | 最小・最大が初期範囲内で、段差がなだらかになる | 安定だが数値拡散がある |
+| centered + Euler | overshootまたはundershootと振動が現れる | 意図的な不安定比較 |
 
-公式図は[N01課題ページ](../assignments/N01.qmd)から参照します。`summary.toml`では最小・最大、overshoot・undershootの大きさと、浮動小数点許容誤差を越えたかを確認します。
+`summary.toml`の最小・最大と公式図を同じ実行結果として見比べます。centered + Eulerを実用的な解法として推奨しているのではありません。
 
-## テストが保証すること
+## テストで確かめる
 
-提供テストは次を直接確認します。
+提供テストは、矩形初期条件の端点、局所更新の手計算値、入力bufferの不変性、定数場、境界条件、実効CFL、最終時刻、二方法の比較、公式出力を確認します。自分の`test/student/N01.jl`には、教材例の写しではない代表例を一つ書きます。
 
-- 局所更新式の手計算値と入力bufferが不変であること
-- 定数場保存、境界条件、入力拒否
-- 時刻調整後の実効CFL（$c\ne1$の例を含む）
-- upwindの有界性とcentered + Eulerの不安定比較
-- TOML summaryと戻り値の一致、PNGシグネチャとサイズ上限
+N01の完成要件は3つのTODOを実装し、時間loopと結果を説明することです。`TOML`、`Plots`、`module`、`export`、詳細な入力検証、TOML出力、作図処理の実装は提供済みであり、これらを自力で書けることは完成要件ではありません。関数名、引数、scheme、出力ファイル名、summaryのキーは変更しません。
 
-自分のテストには、式を手計算できる別の例、または安定・不安定比較の代表的な性質を一つ選びます。
+## 課題へ進む
 
-## 限界
-
-N01は$c>0$、一様格子、固定された境界条件、一次精度upwind、陽Eulerだけを対象にします。負の速度、周期境界、高次精度、保存量の厳密評価、格子収束、性能最適化は扱いません。centered + Eulerは失敗例であり、実用の推奨法ではありません。
-
-実装手順は[N01課題](../assignments/N01.qmd)、テストの読み方は[テストガイド](../guides/testing.qmd)を参照してください。
+実装対象、実行コマンド、公式出力、完了条件は[N01課題](../assignments/N01.qmd)で確認してください。テストの読み方は[テストと数値検証](../guides/testing.qmd)を参照します。

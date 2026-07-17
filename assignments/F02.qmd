@@ -1,6 +1,9 @@
 ---
-title: "F02: Juliaの配列・関数・テスト"
+title: "Juliaの配列・関数・テスト"
 ---
+::: {.course-position}
+第3回・課題 2/2 · 課題ID: F02
+:::
 
 ## 目的
 

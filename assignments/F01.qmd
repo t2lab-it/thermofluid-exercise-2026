@@ -1,6 +1,9 @@
 ---
-title: "F01: 最初のbranchとpull request"
+title: "最初のbranchとpull request"
 ---
+::: {.course-position}
+第2回・課題 2/2 · 課題ID: F01
+:::
 
 ## 目的
 

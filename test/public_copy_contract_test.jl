@@ -1,0 +1,99 @@
+using Test
+
+const COPY_ROOT = normpath(joinpath(@__DIR__, ".."))
+copy_source(path) = read(joinpath(COPY_ROOT, path), String)
+
+const POSITION_LABELS = Dict(
+    "setup/index.qmd" => "準備 1/5",
+    "setup/julia.qmd" => "準備 2/5",
+    "setup/git-github.qmd" => "準備 3/5",
+    "setup/agents.qmd" => "準備 4/5",
+    "guides/workflow.qmd" => "準備 5/5",
+    "lessons/F00.qmd" => "第1回・授業 1/2 · 課題ID: F00",
+    "assignments/F00.qmd" => "第1回・課題 2/2 · 課題ID: F00",
+    "lessons/F01.qmd" => "第2回・授業 1/2 · 課題ID: F01",
+    "assignments/F01.qmd" => "第2回・課題 2/2 · 課題ID: F01",
+    "guides/testing.qmd" => "第2回後・必読",
+    "lessons/F02.qmd" => "第3回・授業 1/2 · 課題ID: F02",
+    "assignments/F02.qmd" => "第3回・課題 2/2 · 課題ID: F02",
+    "lessons/F03.qmd" => "第4回・授業 1/2 · 課題ID: F03",
+    "assignments/F03.qmd" => "第4回・課題 2/2 · 課題ID: F03",
+    "lessons/N01.qmd" => "第5回・授業 1/2 · 課題ID: N01",
+    "assignments/N01.qmd" => "第5回・課題 2/2 · 課題ID: N01",
+    "guides/commands.qmd" => "参照・コマンド一覧",
+    "guides/troubleshooting.qmd" => "参照・トラブル対応",
+    "guides/glossary.qmd" => "参照・用語集",
+    "advanced/cairomakie.qmd" => "任意・発展資料",
+)
+
+const NO_ID_TITLE = Dict(
+    "lessons/F00.qmd" => "ガイダンスと環境診断",
+    "assignments/F00.qmd" => "環境診断",
+    "lessons/F01.qmd" => "Julia・Git・GitHubの最小操作",
+    "assignments/F01.qmd" => "最初のbranchとpull request",
+    "lessons/F02.qmd" => "配列・関数・loop・テスト",
+    "assignments/F02.qmd" => "Juliaの配列・関数・テスト",
+    "lessons/F03.qmd" => "ベクトル解析・熱伝導・差分と添字",
+    "assignments/F03.qmd" => "座標・添字・差分の数値計算入門",
+    "lessons/N01.qmd" => "移流方程式と安定性",
+    "assignments/N01.qmd" => "1次元線形移流方程式",
+    "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
+)
+
+function section_body(source, heading)
+    matched = match(Regex("(?ms)^## " * heading * "\\n(.*?)(?=^## |\\z)"), source)
+    return isnothing(matched) ? nothing : matched.captures[1]
+end
+
+@testset "public learning-copy contract" begin
+@testset "public copy positions and visible titles" begin
+    for (path, label) in POSITION_LABELS
+        source = copy_source(path)
+        @test occursin("::: {.course-position}\n$label\n:::", source)
+    end
+    for (path, title) in NO_ID_TITLE
+        @test occursin("title: \"$title\"", copy_source(path))
+    end
+end
+
+
+@testset "public lesson outcomes are observable" begin
+    for id in ("F00", "F01", "F02", "F03", "N01")
+        source = copy_source("lessons/$id.qmd")
+        outcomes = section_body(source, "この回の到達点")
+        @test !isnothing(outcomes)
+        if !isnothing(outcomes)
+            bullets = [line for line in split(outcomes, '\n') if startswith(line, "- ")]
+            @test 3 <= length(bullets) <= 5
+        end
+        @test !occursin("90分の流れ", source)
+        @test isnothing(match(r"\b[0-9]+\s*分\b", source))
+    end
+end
+
+@testset "N01 follows the novice-facing learning boundary" begin
+    lesson = copy_source("lessons/N01.qmd")
+    required_headings = [
+        "## この回の到達点", "## Julia構文の復習", "## 偏微分方程式が表すこと",
+        "## 格子と添字", "## 初期条件", "## 境界条件", "## upwind + Euler",
+        "## centered + Euler", "## 時間loop", "## buffer交換",
+        "## CFLと最終時刻", "## 二つの方法を比較する",
+        "## テストで確かめる", "## 課題へ進む",
+    ]
+    positions = [findfirst(heading, lesson) for heading in required_headings]
+    @test all(!isnothing, positions)
+    all(!isnothing, positions) && @test issorted(first.(positions))
+    for todo in ("rectangular_initial_condition", "upwind_step!", "centered_step!")
+        @test occursin(todo, lesson)
+    end
+    for supplied in ("TOML", "Plots", "module", "export", "詳細な入力検証")
+        @test occursin(supplied, lesson)
+    end
+    @test occursin("完成要件ではありません", lesson)
+    @test occursin("Julia以外のプログラミング経験", lesson)
+
+    assignment = copy_source("assignments/N01.qmd")
+    @test occursin("3つのTODOだけ", assignment)
+    @test occursin("学習対象ではありません", assignment)
+end
+end
