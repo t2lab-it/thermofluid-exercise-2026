@@ -125,7 +125,7 @@ function yaml_effective_values(lines, node)
 end
 
 const NAVIGATION_LOADER = "assets/navigation-loader.html"
-const NAVIGATION_BEHAVIOR_TEST = joinpath(@__DIR__, "navigation_behavior_test.mjs")
+const NAVIGATION_BEHAVIOR_TEST = joinpath(@__DIR__, "navigation_behavior_test.js")
 
 function navigation_loader_path(lines)
     include_node = yaml_node(lines, ("format", "html", "include-after-body"))
@@ -139,22 +139,43 @@ end
 function is_module_navigation_loader(source::AbstractString)
     script_pattern = r"(?is)<script\b([^>]*)>(.*?)</script\s*>"
     scripts = collect(eachmatch(script_pattern, source))
-    length(scripts) == 1 || return false
 
-    attributes = only(scripts).captures[1]
-    body = only(scripts).captures[2]
-    module_type = occursin(r"(?i)\btype\s*=\s*[\"']module[\"']", attributes)
-    navigation_source = occursin(
-        r"(?i)\bsrc\s*=\s*[\"'][^\"']*assets/navigation\.js(?:\?[^\"']*)?[\"']",
-        attributes,
+    is_navigation_module(script) = begin
+        attributes = script.captures[1]
+        body = script.captures[2]
+        module_type = occursin(r"(?i)\btype\s*=\s*[\"']module[\"']", attributes)
+        navigation_source = occursin(
+            r"(?i)\bsrc\s*=\s*[\"'][^\"']*assets/navigation\.js(?:\?[^\"']*)?[\"']",
+            attributes,
+        )
+        module_type && navigation_source && isempty(strip(body))
+    end
+
+    navigation_modules = filter(is_navigation_module, scripts)
+    length(navigation_modules) == 1 || return false
+
+    for script in scripts
+        attributes = script.captures[1]
+        body = script.captures[2]
+        references_navigation = occursin(r"(?i)navigation\.js", attributes) ||
+                                occursin(r"(?i)navigation\.js", body)
+        references_navigation && !is_navigation_module(script) && return false
+        !isempty(strip(body)) && return false
+    end
+
+    outside_scripts = replace(source, script_pattern => "")
+    outside_comments = replace(outside_scripts, r"(?is)<!--.*?-->" => "")
+    outside_text = replace(outside_comments, r"(?is)<[^>]+>" => "")
+    raw_javascript = occursin(
+        r"(?is)(?:\b(?:import|export|const|let|var|function)\b|=>|addEventListener\s*\(|\b(?:document|window)\s*\.)",
+        outside_text,
     )
-    remainder = strip(replace(source, script_pattern => ""))
-    return module_type && navigation_source && isempty(strip(body)) && isempty(remainder)
+    return !raw_javascript
 end
 
-function run_navigation_behavior(node, module_path)
+function run_navigation_behavior(quarto, module_path)
     output = PipeBuffer()
-    command = `$node $NAVIGATION_BEHAVIOR_TEST $module_path`
+    command = `$quarto run $NAVIGATION_BEHAVIOR_TEST $module_path`
     process = run(pipeline(ignorestatus(command); stdout=output, stderr=output))
     return success(process), String(take!(output))
 end
@@ -197,6 +218,19 @@ end
     @test is_module_navigation_loader(
         "<script type=\"module\" src=\"/thermofluid-exercise-2026/assets/navigation.js\"></script>",
     )
+    @test is_module_navigation_loader("""
+    <!-- loader metadata is harmless -->
+    <div data-navigation-loader="enabled"></div>
+    <script type="module" src="/thermofluid-exercise-2026/assets/navigation.js"></script>
+    """)
+    @test !is_module_navigation_loader("""
+    <script type="module" src="assets/navigation.js"></script>
+    <script type="module" src="assets/navigation.js?duplicate=1"></script>
+    """)
+    @test !is_module_navigation_loader("""
+    <script type="module" src="assets/navigation.js"></script>
+    const rawNavigation = true;
+    """)
 
     valid_sidebar = yaml_source_lines("""
     website:
@@ -226,13 +260,15 @@ end
 @testset "navigation behavior harness fixture" begin
     behavior_test_exists = isfile(NAVIGATION_BEHAVIOR_TEST)
     @test behavior_test_exists
-    node = Sys.which("node")
-    @test !isnothing(node)
-    if behavior_test_exists && !isnothing(node)
-        passed, details = run_navigation_behavior(node, "--self-test")
-        @test passed
-        if !passed
-            @info "navigation behavior harness self-test failed" details
+    quarto = Sys.which("quarto")
+    @test !isnothing(quarto)
+    if behavior_test_exists && !isnothing(quarto)
+        for fixture in ("--self-test", "--insert-before-self-test")
+            passed, details = run_navigation_behavior(quarto, fixture)
+            @test passed
+            if !passed
+                @info "navigation behavior harness self-test failed" fixture details
+            end
         end
     end
 end
@@ -358,10 +394,10 @@ end
 
     behavior_test_exists = isfile(NAVIGATION_BEHAVIOR_TEST)
     @test behavior_test_exists
-    node = Sys.which("node")
-    @test !isnothing(node)
-    if behavior_test_exists && !isnothing(node)
-        passed, details = run_navigation_behavior(node, navigation_path)
+    quarto = Sys.which("quarto")
+    @test !isnothing(quarto)
+    if behavior_test_exists && !isnothing(quarto)
+        passed, details = run_navigation_behavior(quarto, navigation_path)
         @test passed
         if !passed
             @info "navigation behavior contract failed" details

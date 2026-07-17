@@ -1,5 +1,25 @@
-import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+function assert(condition, message = "assertion failed") {
+  if (!condition) throw new Error(message);
+}
+
+function assertEqual(actual, expected, message = undefined) {
+  if (!Object.is(actual, expected)) {
+    throw new Error(message ?? `expected ${String(expected)}, got ${String(actual)}`);
+  }
+}
+
+function assertNotEqual(actual, expected, message = undefined) {
+  if (Object.is(actual, expected)) {
+    throw new Error(message ?? `expected values to differ, both were ${String(actual)}`);
+  }
+}
+
+function assertChildren(actual, expected) {
+  assertEqual(actual.length, expected.length, "unexpected child count");
+  expected.forEach((child, index) => {
+    assertEqual(actual[index], child, `unexpected child at index ${index}`);
+  });
+}
 
 // Production API contract:
 //   enhanceSplitNavigation({ anchor, menu, document }) -> trigger button
@@ -87,8 +107,7 @@ class FakeElement extends FakeEventTarget {
 
   append(...elements) {
     for (const element of elements) {
-      element.parentNode = this;
-      this.children.push(element);
+      this.insertBefore(element, null);
     }
   }
 
@@ -97,11 +116,30 @@ class FakeElement extends FakeEventTarget {
     return element;
   }
 
-  after(element) {
-    assert.ok(this.parentNode, "anchor must have a parent before enhancement");
-    const index = this.parentNode.children.indexOf(this);
-    element.parentNode = this.parentNode;
-    this.parentNode.children.splice(index + 1, 0, element);
+  insertBefore(element, reference) {
+    if (reference !== null && reference.parentNode !== this) {
+      throw new Error("reference node is not a child of this parent");
+    }
+    if (element.parentNode) {
+      const previousIndex = element.parentNode.children.indexOf(element);
+      if (previousIndex >= 0) element.parentNode.children.splice(previousIndex, 1);
+    }
+    const index = reference === null ? this.children.length : this.children.indexOf(reference);
+    element.parentNode = this;
+    this.children.splice(index, 0, element);
+    return element;
+  }
+
+  before(...elements) {
+    assert(this.parentNode, "element must have a parent before insertion");
+    for (const element of elements) this.parentNode.insertBefore(element, this);
+  }
+
+  after(...elements) {
+    assert(this.parentNode, "element must have a parent before insertion");
+    const parent = this.parentNode;
+    const reference = parent.children[parent.children.indexOf(this) + 1] ?? null;
+    for (const element of elements) parent.insertBefore(element, reference);
   }
 
   contains(candidate) {
@@ -134,21 +172,21 @@ function fire(target, type, options = {}) {
 }
 
 function assertClosed(trigger, menu) {
-  assert.equal(trigger.getAttribute("aria-expanded"), "false");
-  assert.equal(menu.hidden, true);
+  assertEqual(trigger.getAttribute("aria-expanded"), "false");
+  assertEqual(menu.hidden, true);
 }
 
 function assertOpen(trigger, menu) {
-  assert.equal(trigger.getAttribute("aria-expanded"), "true");
-  assert.equal(menu.hidden, false);
+  assertEqual(trigger.getAttribute("aria-expanded"), "true");
+  assertEqual(menu.hidden, false);
 }
 
-function referenceEnhanceSplitNavigation({ anchor, menu, document }) {
+function referenceEnhanceSplitNavigationUsing({ anchor, menu, document }, insertTrigger) {
   const trigger = document.createElement("button");
   trigger.setAttribute("type", "button");
   trigger.setAttribute("aria-label", `${anchor.textContent || "section"} menu`);
   trigger.setAttribute("aria-controls", menu.id);
-  anchor.after(trigger);
+  insertTrigger(anchor, menu, trigger);
 
   const setOpen = (open) => {
     menu.hidden = !open;
@@ -176,8 +214,22 @@ function referenceEnhanceSplitNavigation({ anchor, menu, document }) {
   return trigger;
 }
 
-const modulePath = process.argv[2];
-assert.ok(modulePath, "usage: node navigation_behavior_test.mjs assets/navigation.js");
+function referenceEnhanceSplitNavigation(options) {
+  return referenceEnhanceSplitNavigationUsing(
+    options,
+    (anchor, _menu, trigger) => anchor.after(trigger),
+  );
+}
+
+function referenceEnhanceSplitNavigationWithInsertBefore(options) {
+  return referenceEnhanceSplitNavigationUsing(
+    options,
+    (anchor, menu, trigger) => anchor.parentNode.insertBefore(trigger, menu),
+  );
+}
+
+const modulePath = Deno.args[0];
+assert(modulePath, "usage: quarto run test/navigation_behavior_test.js assets/navigation.js");
 
 const document = new FakeDocument();
 globalThis.document = document;
@@ -186,12 +238,14 @@ globalThis.window = document.defaultView;
 let navigation;
 if (modulePath === "--self-test") {
   navigation = { enhanceSplitNavigation: referenceEnhanceSplitNavigation };
+} else if (modulePath === "--insert-before-self-test") {
+  navigation = { enhanceSplitNavigation: referenceEnhanceSplitNavigationWithInsertBefore };
 } else {
-  const source = await readFile(modulePath, "utf8");
-  const moduleUrl = `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`;
+  const source = await Deno.readTextFile(modulePath);
+  const moduleUrl = `data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`;
   navigation = await import(moduleUrl);
 }
-assert.equal(
+assertEqual(
   typeof navigation.enhanceSplitNavigation,
   "function",
   "assets/navigation.js must export enhanceSplitNavigation({ anchor, menu, document })",
@@ -206,17 +260,17 @@ menu.id = "course-menu";
 item.append(anchor, menu);
 
 const trigger = navigation.enhanceSplitNavigation({ anchor, menu, document });
-assert.notEqual(trigger, anchor, "the section anchor and dropdown trigger must remain separate");
-assert.equal(trigger.tagName, "BUTTON");
-assert.deepEqual(item.children, [anchor, trigger, menu]);
-assert.equal(trigger.getAttribute("aria-controls"), menu.id);
+assertNotEqual(trigger, anchor, "the section anchor and dropdown trigger must remain separate");
+assertEqual(trigger.tagName, "BUTTON");
+assertChildren(item.children, [anchor, trigger, menu]);
+assertEqual(trigger.getAttribute("aria-controls"), menu.id);
 assertClosed(trigger, menu);
-assert.equal(trigger.getAttribute("type"), "button");
-assert.ok(trigger.getAttribute("aria-label")?.trim());
+assertEqual(trigger.getAttribute("type"), "button");
+assert(trigger.getAttribute("aria-label")?.trim());
 
 const anchorClick = fire(anchor, "click");
-assert.equal(anchorClick.defaultPrevented, false, "the section anchor must remain navigable");
-assert.equal(anchor.href, "lessons/index.html");
+assertEqual(anchorClick.defaultPrevented, false, "the section anchor must remain navigable");
+assertEqual(anchor.href, "lessons/index.html");
 assertClosed(trigger, menu);
 
 fire(trigger, "pointerenter");
@@ -227,14 +281,18 @@ assertClosed(trigger, menu);
 fire(trigger, "click");
 assertOpen(trigger, menu);
 
-fire(trigger, "keydown", { key: "Enter" });
+const enterClose = fire(trigger, "keydown", { key: "Enter" });
+assertEqual(enterClose.defaultPrevented, true, "Enter must prevent its native button action");
 assertClosed(trigger, menu);
-fire(trigger, "keydown", { key: "Enter" });
+const enterOpen = fire(trigger, "keydown", { key: "Enter" });
+assertEqual(enterOpen.defaultPrevented, true, "Enter must prevent its native button action");
 assertOpen(trigger, menu);
 
-fire(trigger, "keydown", { key: " " });
+const spaceClose = fire(trigger, "keydown", { key: " " });
+assertEqual(spaceClose.defaultPrevented, true, "Space must prevent its native button action");
 assertClosed(trigger, menu);
-fire(trigger, "keydown", { key: " " });
+const spaceOpen = fire(trigger, "keydown", { key: " " });
+assertEqual(spaceOpen.defaultPrevented, true, "Space must prevent its native button action");
 assertOpen(trigger, menu);
 
 fire(document, "keydown", { key: "Escape", target: trigger });
