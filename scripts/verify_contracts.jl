@@ -11,7 +11,9 @@ end
 function path_inside(root::AbstractString, relative::AbstractString)
     isabspath(relative) && return nothing
     candidate = normpath(joinpath(root, relative))
-    root_prefix = normpath(root) * string(Base.Filesystem.path_separator)
+    separator = string(Base.Filesystem.path_separator)
+    normalized_root = normpath(root)
+    root_prefix = endswith(normalized_root, separator) ? normalized_root : normalized_root * separator
     startswith(candidate, root_prefix) || return nothing
     return candidate
 end
