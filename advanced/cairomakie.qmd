@@ -1,0 +1,43 @@
+---
+title: "発展: CairoMakieによる可視化"
+---
+
+このページは意欲的な学生向けの任意資料です。必修のpublic環境と学生環境には`CairoMakie.jl`を追加しません。N01の合否にも影響しません。
+
+## 分離した環境を作る
+
+授業リポジトリの`Project.toml`を変更しないよう、一時的な別環境を作ります。次のJuliaコードはWindows、macOS、Linuxで同じように動作し、OSの一時ディレクトリ内に専用環境を作ります。
+
+```bash
+julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(env); Pkg.add("CairoMakie"); println(env)'
+```
+
+`Pkg.add`はネットワークから大きな依存を取得するため、通信量と初回compile時間を見込んでください。
+
+## N01データを描く
+
+学生リポジトリでN01を実行し、`results/N01/summary.toml`と二つの公式PNGを保存してから、別環境のスクリプトで実験します。元の`run.jl`を変更せず、同じ座標・初期値・最終値をTSVなどの明示的な交換ファイルへ書き出したコピーを用意すると、環境間の境界が明確になります。
+
+```julia
+using CairoMakie
+using DelimitedFiles
+
+data = readdlm("n01-output.tsv", '\t'; header=true)
+table = data[1]
+x = table[:, 1]
+u0 = table[:, 2]
+u = table[:, 3]
+
+figure = Figure(size=(800, 480))
+axis = Axis(figure[1, 1], xlabel="x", ylabel="u", title="N01 comparison")
+lines!(axis, x, u0, label="initial")
+lines!(axis, x, u, label="final")
+axislegend(axis)
+save("n01-cairomakie.png", figure)
+```
+
+`readdlm`には標準ライブラリ`DelimitedFiles`が必要です。交換ファイルの列名、単位、生成条件も一緒に記録します。
+
+## 後片付け
+
+必要がなくなったら一時環境を削除できます。学生リポジトリのrootで`Pkg.add("CairoMakie")`を実行してはいけません。誤って実行した場合は自己判断で履歴を書き換えず、`git diff Project.toml Manifest.toml`を教員・TAと確認してください。

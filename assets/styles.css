@@ -1,0 +1,25 @@
+:root {
+  --tf-accent: #005b73;
+  --tf-soft: #e9f5f7;
+}
+
+h1,
+h2 {
+  color: var(--tf-accent);
+}
+
+table {
+  font-size: 0.94rem;
+}
+
+code {
+  overflow-wrap: anywhere;
+}
+
+.callout-note {
+  border-left-color: var(--tf-accent);
+}
+
+.navbar {
+  border-bottom: 3px solid var(--tf-soft);
+}

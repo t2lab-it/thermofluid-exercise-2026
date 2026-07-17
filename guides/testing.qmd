@@ -1,0 +1,59 @@
+---
+title: "テストと数値検証"
+---
+
+## 実行するコマンド
+
+学生リポジトリのrootで、配布環境を復元してから全テストを実行します。
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+`Pkg.test()`は現在課題と前提課題だけを選びます。まだ開始していない将来課題の学生TODOを原因に、現在課題が失敗することはありません。
+
+## 三種類の確認
+
+1. **具体例**: 手計算できる少数の入力で式と添字を確認する。
+2. **性質**: 定数保存、有界性、入力不変、最終時刻など複数入力に共通する意味を確認する。
+3. **失敗条件**: `NaN`、空配列、不正なCFLなど、契約外の入力が明示的に拒否されることを確認する。
+
+テストがpassしただけで物理的に正しいとは限りません。図、単位、符号、最小・最大、CFLと併せて判断します。
+
+## 学生テスト
+
+各`test/student/ID.jl`にはsmoke TODOがあります。課題を開始したら、教材例の単純な写しではない代表例へ置き換えます。学習ログには入力、期待値の根拠、そのテストが保証することと保証しないことを書きます。
+
+## N01の公式出力
+
+N01の`main`はPNG二つとTOML summaryを生成します。ファイル名だけでなく、次を確認します。
+
+- upwindの最小・最大が初期範囲内か
+- centered + Eulerにovershootまたはundershootがあるか
+- `steps * dt == t_final`か
+- 実効CFLが`c * dt / dx`か
+- PNGが開け、summaryの値が実行結果と一致するか
+
+## 失敗時の切り分け
+
+最初のfailureまたはerrorから読みます。次を秘密情報を除いて記録してください。
+
+- 実行した完全なコマンド
+- JuliaとOS
+- 最初の失敗したtestset、期待値、実際値
+- 直前に変更したファイルの`git diff`
+
+AIをデバッグ補助に使う場合も、解釈と採否は自分で決め、学習ログへ残します。
+
+## 公開サイト側の検証
+
+教材開発者はpublicリポジトリで次を実行します。
+
+```bash
+julia --project=. test/runtests.jl
+julia --project=. scripts/verify_contracts.jl assignments/contracts.toml PUBLIC_ROOT STUDENT_ROOT
+QUARTO_JULIA_PROJECT=. quarto render
+```
+
+`PUBLIC_ROOT`と`STUDENT_ROOT`には対象checkoutの絶対パスを渡します。検証器は5つの課題ID、パス、開始コマンド、canonical backlink、navigationを照合します。

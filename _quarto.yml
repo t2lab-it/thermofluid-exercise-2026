@@ -1,0 +1,72 @@
+project:
+  type: website
+  output-dir: _site
+  execute-dir: project
+  render:
+    - index.qmd
+    - setup/*.qmd
+    - lessons/*.qmd
+    - assignments/*.qmd
+    - guides/*.qmd
+    - advanced/*.qmd
+
+engines: ['julia']
+
+website:
+  title: "熱流体力学演習 2026"
+  site-url: "https://t2lab-it.github.io/thermofluid-exercise-2026/"
+  navbar:
+    left:
+      - href: index.qmd
+        text: ホーム
+      - text: セットアップ
+        menu:
+          - href: setup/index.qmd
+            text: 受講環境
+          - href: setup/julia.qmd
+            text: Julia
+          - href: setup/git-github.qmd
+            text: Git・GitHub
+          - href: setup/agents.qmd
+            text: Coding Agent
+      - text: 授業
+        menu:
+          - href: lessons/F00.qmd
+            text: F00
+          - href: lessons/F01.qmd
+            text: F01
+          - href: lessons/F02.qmd
+            text: F02
+          - href: lessons/F03.qmd
+            text: F03
+          - href: lessons/N01.qmd
+            text: N01
+      - text: 課題
+        menu:
+          - href: assignments/F00.qmd
+            text: F00
+          - href: assignments/F01.qmd
+            text: F01
+          - href: assignments/F02.qmd
+            text: F02
+          - href: assignments/F03.qmd
+            text: F03
+          - href: assignments/N01.qmd
+            text: N01
+      - text: ガイド
+        menu:
+          - href: guides/workflow.qmd
+            text: 課題ワークフロー
+          - href: guides/testing.qmd
+            text: テスト
+          - href: advanced/cairomakie.qmd
+            text: 発展的な可視化
+  page-footer:
+    left: "Copyright © 2026 荒木 亮（ARAKI, Ryo）"
+    right: "教材・図: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) / コード: [MIT](LICENSE-MIT.txt)"
+
+format:
+  html:
+    theme: cosmo
+    css: assets/styles.css
+    toc: true

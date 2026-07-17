@@ -1,0 +1,58 @@
+---
+title: "N01: 1次元線形移流方程式"
+---
+
+## 目的
+
+最初の偏微分方程式コード全体を自己完結した一つのファイルで追い、安定なupwind + Eulerと意図的に不安定なcentered + Eulerを同じ条件で比較します。理論と4列対応表は[授業ページ](../lessons/N01.qmd)で確認します。
+
+## 課題リポジトリ内の場所
+
+- 課題契約: `exercises/N01_linear_advection/TASK.md`
+- 実装・実行: `exercises/N01_linear_advection/run.jl`
+- 提供テスト: `test/provided/N01.jl`
+- 自分のテスト: `test/student/N01.jl`
+- 学習ログ: `learning_logs/N01.md`
+
+## 開始
+
+F03をmergeし、更新済みでcleanな`main`から始めます。
+
+```bash
+julia --project=. scripts/course.jl start N01
+```
+
+## 実装範囲
+
+`run.jl`には初期条件、境界条件、二つの1step更新、時間積分、summary、図の作成までが並んでいます。学生TODOは次の式に対応する3箇所です。
+
+1. 背景1、`0.5 <= x <= 1.0`で2となる矩形初期条件
+2. 正の速度に対する後退差分のupwind + Euler更新
+3. 中心差分のcentered + Euler更新
+
+後続課題で再利用する処理は段階的に`src/`へ切り出しますが、N01は`src/`をimportしません。
+
+## 実行とテスト
+
+```bash
+julia --project=. exercises/N01_linear_advection/run.jl
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+公式出力は次の3ファイルです。
+
+- `results/N01/upwind.png`
+- `results/N01/centered-euler.png`
+- `results/N01/summary.toml`
+
+![安定なupwind + Eulerの公式出力](../assets/figures/N01-upwind.png){fig-alt="upwind + Eulerで移流した矩形波"}
+
+![意図的に不安定なcentered + Eulerの公式出力](../assets/figures/N01-centered-euler.png){fig-alt="centered + Eulerで発生する数値振動"}
+
+## 完了条件
+
+- 3つのTODOを式・添字・コードで説明できる。
+- 実効CFLと最終時刻を確認した。
+- upwindの有界性とcentered + Eulerのovershootまたはundershootを確認した。
+- 公式出力、提供テスト、自分の代表テスト、学習ログを確認した。
+- diff、commit、push、PR、Actions、セルフレビュー、mergeを確認した。
