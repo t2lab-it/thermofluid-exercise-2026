@@ -1,0 +1,146 @@
+---
+title: "F01: 最初のbranchとpull request"
+---
+
+## 目的
+
+小さなJuliaコードを変更し、ローカルテストで確かめ、その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します。F01では仕組みを見える形で学ぶため、課題branchを手動で作ります。
+
+F02以降は、同じ事前確認とbranch作成を次の補助コマンドで行います。
+
+```bash
+julia --project=. scripts/course.jl start F02
+```
+
+この補助コマンドもpush、PR作成、mergeなどのネットワーク操作は実行しません。
+
+## 課題リポジトリ内の場所
+
+- 課題契約: `exercises/F01_first_pull_request/TASK.md`
+- 編集するコード: `exercises/F01_first_pull_request/run.jl`
+- 提供テスト: `test/provided/F01.jl`
+- 自分で追加するテスト: `test/student/F01.jl`
+- 学習ログの雛形: `learning_logs/templates/F01.md`
+- 提出する学習ログ: `learning_logs/F01.md`
+
+長い手順と判断基準の正本は、このページと[共通課題ワークフロー](../guides/workflow.qmd)です。
+
+## 開始前の確認
+
+F00が完了し、現在課題がF01であることを確認します。
+
+```bash
+julia --project=. scripts/course.jl status
+git status --short
+git branch --show-current
+```
+
+`Current: F01`、変更なし、現在branchが`main`であることを確認してください。意図しない変更が表示された場合は削除せず、教員・TAへ相談します。
+
+## 1. branchを手動で作る
+
+```bash
+git switch -c exercise/F01-first-pull-request
+git branch --show-current
+```
+
+二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認します。F01だけはこの操作を手動で行います。1課題につきbranchは一つです。
+
+## 2. 実装する
+
+`exercises/F01_first_pull_request/TASK.md`の契約を読み、`run.jl`の指定箇所を編集します。実行入口は次です。
+
+```bash
+julia --project=. exercises/F01_first_pull_request/run.jl
+```
+
+変更前後に`git diff`を読み、自分が意図したファイルだけが変わっていることを確認します。
+
+## 3. テストする
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+提供テストを弱めたり削除したりしません。`test/student/F01.jl`には、自分の理解を確認する代表的なケースを追加します。テストが何を保証し、何を保証しないかを学習ログに一文ずつ書きます。
+
+## 4. 公式出力を確認する
+
+F01に公式生成物はありません。`results/F01/`へファイルを作る必要はありません。ターミナルの実行結果とテスト成功が、この課題の実行確認です。
+
+## 5. 学習ログを書く
+
+雛形をコピーし、`learning_logs/F01.md`を作ります。少なくとも次を記録します。
+
+- 実装した変更
+- 実行したテストと保証範囲
+- diffで確認したこと
+- つまずきと解決方法
+- AIを利用した場合は依頼内容、重要な提案、採用・修正・却下とその理由
+
+F01でのAI利用は、説明、エラー解説、練習問題に限ります。課題の完成コードを生成させないでください。
+
+## 6. commitする
+
+```bash
+git status --short
+git diff
+git add exercises/F01_first_pull_request/run.jl test/student/F01.jl learning_logs/F01.md
+git diff --cached
+git commit -m "feat: complete F01 first pull request"
+```
+
+`git add`には、実際に変更した課題ファイルだけを指定します。アクセストークン、API key、パスワード、秘密鍵、個人情報、私的な会話がdiffへ入っていないことをcommit前に確認してください。
+
+## 7. pushしてPRを作る
+
+ここからは自分が明示的に行うネットワーク操作です。
+
+```bash
+git push -u origin exercise/F01-first-pull-request
+```
+
+GitHubで`exercise/F01-first-pull-request`から`main`へのPRを一つ作ります。PR本文に課題ID、テスト結果、学習ログ、diffで確認した内容を記載します。
+
+## 8. Actionsとdiffを確認する
+
+PRのChecksで軽量CIが成功したことを確認します。次にFiles changedを上から下まで読み、ローカルでも比較します。
+
+```bash
+git diff main...HEAD
+```
+
+Actions成功だけで完了ではありません。次をセルフレビューします。
+
+- 課題と無関係なファイルがない。
+- 提供テストを削除・弱体化していない。
+- コード、テスト、学習ログの説明が一致する。
+- 秘密情報や不要な個人情報がない。
+- AI提案を使った場合、採否と理由を説明している。
+
+修正が必要なら同じbranchで修正、テスト、commit、pushを行い、同じPRを更新します。
+
+## 9. mergeしてmainへ戻る
+
+セルフレビューが終わったら、GitHub上でPRをmergeします。その後、ローカルをmainへ戻して更新します。
+
+```bash
+git switch main
+git pull --ff-only origin main
+git status --short
+```
+
+F01のbranch、PR、学習ログがそれぞれ一つあり、テスト、Actions、diff確認が完了していればF01完了です。cleanなmainからF02を開始します。
+
+```bash
+julia --project=. scripts/course.jl start F02
+```
+
+## mainへ直接pushしてしまった場合
+
+慌ててforce pushや履歴削除をしないでください。commit hash、実行したコマンド、GitHub上の状態を記録し、教員・TAへ連絡します。
+
+- まだpushしていない場合は、現在のcommitを失わないよう課題branchを作ってから、mainを`origin/main`へ戻す手順を教員・TAと行います。
+- すでにmainへpushした場合は、自分だけで履歴を書き換えません。教員・TAと安全な復旧方法を決め、課題branchとPRを作り直して正しい流れを再実行します。
+
+privateリポジトリを使うGitHub Freeの授業運用では、branch protectionだけに依存して直接pushを防ぎません。操作ミスはGit履歴、PR、学習ログから確認し、手順を作り直すことで修正します。

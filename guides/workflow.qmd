@@ -1,0 +1,128 @@
+---
+title: "課題のbranch・PRワークフロー"
+---
+
+## 共通契約
+
+F01以降は、**1課題につき1 branch、1 pull request、1学習ログ**を作ります。通常課題はセルフレビュー後に学生がmergeし、主要チェックポイントでは教員・TAの確認後に学生がmergeします。
+
+共通の順序は次です。
+
+1. 課題branchを作る。
+2. 実装する。
+3. ローカルテストを実行する。
+4. 公式出力を再生成・確認する。課題に公式出力がなければ、そのことを確認する。
+5. 学習ログを書く。
+6. commitする。
+7. 自分でpushする。
+8. PRを作る。
+9. Actionsを確認する。
+10. diffを読む。
+11. セルフレビューする。
+12. mergeする。
+
+補助スクリプトが自動化するのはローカルの事前確認とbranch作成までです。pull、push、PR、mergeなどのネットワーク操作は自動実行しません。
+
+## 課題を開始する
+
+F01だけはbranch作成を手動で学びます。
+
+```bash
+git switch -c exercise/F01-first-pull-request
+```
+
+F02以降はcleanなmainから開始します。
+
+```bash
+git status --short
+git branch --show-current
+julia --project=. scripts/course.jl start F02
+```
+
+`F02`は開始する課題IDへ置き換えます。課題順序を飛ばしたり、作業中の変更を隠したまま開始したりしません。
+
+## 実装・テスト・公式出力
+
+各`exercises/<課題>/TASK.md`で、編集対象、実行コマンド、テスト、公式出力、完了条件を確認します。共通テストは次です。
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+Actionsだけを先に頼らず、ローカルで実行します。公式`run.jl`が`results/<課題ID>/`へ生成するファイルは再生成してcommitし、自由試行は`scratch/`へ置きます。公式出力がない課題では、不要な結果ファイルを作りません。
+
+## 学習ログ
+
+学習ログには、実装、テストの意味、結果、diff確認、つまずき、判断を簡潔に残します。AI利用時は、実行前予想、依頼内容、重要な提案、採用・修正・却下、diff、テスト、結果、理由を要約します。
+
+秘密情報、不要な個人情報、私的な会話を含めません。F01のAI利用は説明、エラー解説、練習問題に限られます。課題ごとの許可範囲を超えて利用しません。
+
+## commit前の確認
+
+```bash
+git status --short
+git diff
+git add PATHS_YOU_INTEND_TO_SUBMIT
+git diff --cached
+git commit -m "feat: complete TASK_ID"
+```
+
+`PATHS_YOU_INTEND_TO_SUBMIT`と`TASK_ID`は課題に合わせて置き換えます。`git add .`で無関係なファイルまでまとめず、提出するパスを指定します。
+
+## push・PR・Actions
+
+branch名を確認してから、自分でpushします。
+
+```bash
+git branch --show-current
+git push -u origin YOUR_EXERCISE_BRANCH
+```
+
+GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを一つ作り、PRテンプレートを埋めます。Actionsが失敗した場合はログから最初の原因を探し、ローカルで再現して修正し、同じPRへpushします。
+
+Actions枠切れやGitHub障害時は学生の減点理由にしません。ローカルの`Pkg.test()`結果を学習ログへ記録して暫定確認を受け、復旧後の主要チェックポイントで再実行します。
+
+## diffとセルフレビュー
+
+```bash
+git diff main...HEAD
+```
+
+GitHubのFiles changedとローカルdiffの両方で確認します。
+
+- 課題の必須ファイルだけが含まれる。
+- 提供テストを削除・弱体化していない。
+- 実装、テスト、公式出力、学習ログが一致する。
+- 生成物がサイズ制限内である。
+- 秘密情報や不要な個人情報がない。
+- AI提案の採否を自分の言葉で説明できる。
+
+不足があれば同じbranch、同じPRへ追加commitします。
+
+## merge後
+
+通常課題はセルフレビュー後、主要チェックポイントは教員・TA確認後にGitHubでmergeします。ローカルをmainへ戻します。
+
+```bash
+git switch main
+git pull --ff-only origin main
+git status --short
+```
+
+次の課題は、変更のないmainから開始します。
+
+## mainへ直接pushしたとき
+
+private GitHub Freeではbranch protectionに依存しないため、操作ミスを完全には遮断しません。直接pushに気づいたら、force push、reset、履歴削除を自己判断で行わないでください。
+
+1. `git status --short`、`git log --oneline -5`、GitHubのmain画面を保存する。
+2. どのcommitをどのコマンドでpushしたか記録する。
+3. 教員・TAへ連絡する。
+4. 指示のもとでmainを安全な状態へ戻し、課題branchとPRを作り直す。
+5. Actions、diff、セルフレビュー、mergeを正しい順で再実行する。
+
+初学者の操作ミスと意図的な手順違反は区別します。大切なのは変更を隠すことではなく、履歴を保ったまま原因と復旧手順を説明できることです。
+
+## OSごとの扱い
+
+ここに示したJuliaとGitのコマンドは、WindowsのPowerShell、macOS、Linuxで共通です。パスはリポジトリのルートからの相対パスを使います。複数行を一度に貼り付けず、一行ずつ出力を確認すると問題を切り分けやすくなります。

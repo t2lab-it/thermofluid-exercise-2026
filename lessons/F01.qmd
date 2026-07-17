@@ -1,0 +1,78 @@
+---
+title: "第2回: Julia・Git・GitHubの最小操作"
+---
+
+## この回の到達点
+
+変更を「作業中のファイル」「commit」「branch」「pull request」「main」の各段階へ分けて説明し、F01を一つのbranchとPRで完了できることを目標にします。
+
+## 90分の流れ
+
+| 目安 | 内容 | 確認すること |
+|---:|---|---|
+| 0〜15分 | F00確認とGitの状態 | cleanなmain、現在課題F01 |
+| 15〜30分 | branchとcommit | branchは変更系列、commitは確認点 |
+| 30〜50分 | 小さな実装とテスト | 実装とテストを対応づける |
+| 50〜65分 | 学習ログ、commit、push | ローカル操作とネットワーク操作を区別する |
+| 65〜80分 | PR、Actions、diff | CI成功とセルフレビューは別の証拠 |
+| 80〜90分 | mergeと復旧 | mainへ戻る方法、誤操作時の相談先 |
+
+## 一つの変更が進む経路
+
+```text
+clean main
+  → exercise/F01-first-pull-request
+  → 実装
+  → ローカルテスト
+  → 公式出力の確認（F01はなし）
+  → 学習ログ
+  → commit
+  → push
+  → pull request
+  → Actions
+  → diff確認
+  → セルフレビュー
+  → merge
+  → 更新されたclean main
+```
+
+順番には意味があります。ローカルテストを先に通すことで、push後に初めて単純な失敗へ気づく時間を減らせます。diffを読んでからmergeすることで、テスト対象外の意図しない変更も検出できます。
+
+## F01だけ手動でbranchを作る理由
+
+F01では、現在branchと新しいbranchの関係を自分の操作で確かめます。
+
+```bash
+git switch -c exercise/F01-first-pull-request
+```
+
+F02以降は`julia --project=. scripts/course.jl start <ID>`が、cleanなmain、課題順序、ローカルテスト、結果サイズを確認してからbranchを作ります。このコマンドはpull、push、PR、mergeを自動化しません。ネットワークへ送る内容は、学生自身がdiffを確認して決めます。
+
+## 状態を確認する基本コマンド
+
+次のコマンドはWindowsのPowerShell、macOSとLinuxのターミナルで共通して使えます。リポジトリのルートで実行します。
+
+```bash
+git status --short
+git branch --show-current
+git diff
+git log --oneline -5
+```
+
+画面表示やパス区切りが違っても、課題branch名とGitの状態契約は同じです。
+
+## PRで見る三つの証拠
+
+1. **Actions**: 公開テストが新しいcheckout相当の環境でも成功する。
+2. **diff**: 何を追加・削除したかを人間が確認する。
+3. **学習ログ**: なぜ変更し、テストをどう解釈したかを説明する。
+
+GitHub Freeのprivateリポジトリではbranch protectionに依存しません。そのため、仕組みだけに任せず、PRテンプレート、Git履歴、学習ログ、セルフレビューで手順を確認します。
+
+## AI利用の境界
+
+F01では、概念の説明、エラーメッセージの解説、課題とは別の小さな練習問題に利用できます。課題の完成コード作成は依頼しません。提案を利用した場合も、実行前に対象を予想し、実行後にdiffとテストを自分で確認します。
+
+token、API key、パスワード、秘密鍵、個人情報をAgentやPRへ貼り付けません。誤って表示した場合はcommitやpushをせず、教員・TAへ相談してください。
+
+実作業は[`F01`課題](../assignments/F01.qmd)、以後の共通手順は[課題ワークフロー](../guides/workflow.qmd)を参照してください。
