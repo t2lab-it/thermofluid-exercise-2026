@@ -14,6 +14,7 @@ function path_inside(root::AbstractString, relative::AbstractString)
     separator = string(Base.Filesystem.path_separator)
     normalized_root = normpath(root)
     root_prefix = endswith(normalized_root, separator) ? normalized_root : normalized_root * separator
+    candidate == root_prefix && return nothing
     startswith(candidate, root_prefix) || return nothing
     return candidate
 end

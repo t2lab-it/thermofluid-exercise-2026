@@ -9,17 +9,7 @@ include(VERIFY)
 include(joinpath(@__DIR__, "f01_workflow_contract_test.jl"))
 include(joinpath(@__DIR__, "public_copy_contract_test.jl"))
 include(joinpath(@__DIR__, "navigation_contract_test.jl"))
-
-@testset "contract paths accept a root with a trailing separator" begin
-    mktempdir() do root
-        child = joinpath(root, "assignments", "F00.qmd")
-        mkpath(dirname(child))
-        write(child, "fixture\n")
-
-        root_with_separator = root * string(Base.Filesystem.path_separator)
-        @test path_inside(root_with_separator, "assignments/F00.qmd") == child
-    end
-end
+include(joinpath(@__DIR__, "path_contract_test.jl"))
 
 function write_fixture(root::AbstractString; student_path::Bool, canonical::AbstractString)
     public = joinpath(root, "public")
