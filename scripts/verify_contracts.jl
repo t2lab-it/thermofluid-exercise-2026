@@ -1,6 +1,7 @@
 using TOML
 
 const CANONICAL_BASE = "https://t2lab-it.github.io/thermofluid-exercise-2026/"
+const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "N01"])
 
 function fail(message::AbstractString)
     println(stderr, "contract error: ", message)
@@ -30,6 +31,17 @@ function verify_contracts(contracts_path, public_root, student_root)
     assignments isa AbstractDict || return fail("missing [assignments] table")
     isempty(assignments) && return fail("no assignment IDs declared")
 
+    actual_ids = Set(String.(keys(assignments)))
+    missing_ids = sort!(collect(setdiff(REQUIRED_IDS, actual_ids)))
+    unexpected_ids = sort!(collect(setdiff(actual_ids, REQUIRED_IDS)))
+    ok = true
+    if !isempty(missing_ids) || !isempty(unexpected_ids)
+        ok &= fail(
+            "assignment ID set mismatch: missing=" * join(missing_ids, ", ") *
+            "; unexpected=" * join(unexpected_ids, ", "),
+        )
+    end
+
     required = ("site_path", "student_path", "start_command", "canonical_url")
     seen_site = Set{String}()
     seen_student = Set{String}()
@@ -38,7 +50,6 @@ function verify_contracts(contracts_path, public_root, student_root)
     isfile(nav_path) || return fail("missing public path: _quarto.yml")
     navigation = read(nav_path, String)
 
-    ok = true
     for id in sort!(collect(keys(assignments)))
         entry = assignments[id]
         if !(entry isa AbstractDict) || !all(key -> haskey(entry, key), required)

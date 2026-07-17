@@ -14,29 +14,68 @@ julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(e
 
 `Pkg.add`はネットワークから大きな依存を取得するため、通信量と初回compile時間を見込んでください。
 
+## 交換ファイルを作る
+
+完成済みN01の配列を公式3出力とは分離して scratch/ へ書き出します。次のコードを学生リポジトリの scratch/export_n01.jl として保存してください。
+
+~~~julia
+using DelimitedFiles
+
+include(joinpath(@__DIR__, "..", "exercises", "N01_linear_advection", "run.jl"))
+using .N01LinearAdvection
+
+upwind = simulate(; scheme=:upwind)
+centered = simulate(; scheme=:centered)
+table = hcat(upwind.x, upwind.u0, upwind.u, centered.u)
+output_path = joinpath(@__DIR__, "n01-output.tsv")
+
+open(output_path, "w") do io
+    println(io, "x\tu0\tupwind\tcentered")
+    writedlm(io, table, Char(0x09))
+end
+println(output_path)
+~~~
+
+学生リポジトリのrootで実行します。
+
+~~~bash
+julia --project=. scratch/export_n01.jl
+~~~
+
+この交換ファイルは任意実験用であり、results/N01/ の公式3ファイルには加えず、commitもしません。
+
 ## N01データを描く
 
-学生リポジトリでN01を実行し、`results/N01/summary.toml`と二つの公式PNGを保存してから、別環境のスクリプトで実験します。元の`run.jl`を変更せず、同じ座標・初期値・最終値をTSVなどの明示的な交換ファイルへ書き出したコピーを用意すると、環境間の境界が明確になります。
+次のコードを scratch/plot_n01_cairomakie.jl として保存します。交換ファイルの4列を読み、安定例と意図的な不安定例を同じ図で比較します。
 
-```julia
+~~~julia
 using CairoMakie
 using DelimitedFiles
 
-data = readdlm("n01-output.tsv", '\t'; header=true)
-table = data[1]
-x = table[:, 1]
-u0 = table[:, 2]
-u = table[:, 3]
+data, header = readdlm(
+    joinpath(@__DIR__, "n01-output.tsv"),
+    Char(0x09);
+    header=true,
+)
+x = data[:, 1]
+u0 = data[:, 2]
+upwind = data[:, 3]
+centered = data[:, 4]
 
 figure = Figure(size=(800, 480))
 axis = Axis(figure[1, 1], xlabel="x", ylabel="u", title="N01 comparison")
-lines!(axis, x, u0, label="initial")
-lines!(axis, x, u, label="final")
+lines!(axis, x, u0, label="initial", linewidth=2)
+lines!(axis, x, upwind, label="upwind + Euler")
+lines!(axis, x, centered, label="centered + Euler")
 axislegend(axis)
-save("n01-cairomakie.png", figure)
-```
+save(joinpath(@__DIR__, "n01-cairomakie.png"), figure)
+~~~
 
-`readdlm`には標準ライブラリ`DelimitedFiles`が必要です。交換ファイルの列名、単位、生成条件も一緒に記録します。
+先ほど表示された一時環境の絶対パスを使います。このコマンド形式はWindows、macOS、Linuxで共通です。
+
+~~~bash
+julia --project="<表示されたn01-cairomakie環境の絶対パス>" scratch/plot_n01_cairomakie.jl
+~~~
 
 ## 後片付け
 

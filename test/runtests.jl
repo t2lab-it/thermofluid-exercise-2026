@@ -112,3 +112,64 @@ end
         @test open(io -> read(io, 8), path) == png_signature
     end
 end
+
+
+@testset "assignment link contract rejects structural mismatches" begin
+    canonical = "https://t2lab-it.github.io/thermofluid-exercise-2026/assignments/F00.html"
+
+    mktempdir() do root
+        fixture = write_fixture(root; student_path=true, canonical)
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("assignment ID set mismatch", output)
+        @test occursin("N01", output)
+    end
+
+    mktempdir() do root
+        fixture = write_fixture(root; student_path=true, canonical)
+        contract = read(fixture.contracts, String)
+        write(fixture.contracts, replace(contract, "[assignments.F00]" => "[assignments.F99]"))
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("unexpected=F99", output)
+    end
+
+    mktempdir() do root
+        fixture = write_fixture(root; student_path=true, canonical)
+        rm(joinpath(fixture.public, "assignments", "F00.qmd"))
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("missing site path", output)
+    end
+
+    mktempdir() do root
+        fixture = write_fixture(root; student_path=true, canonical)
+        write(joinpath(fixture.public, "_quarto.yml"), "website:\n")
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("nav inclusion missing", output)
+    end
+
+    mktempdir() do root
+        fixture = write_fixture(root; student_path=true, canonical)
+        page_path = joinpath(fixture.public, "assignments", "F00.qmd")
+        page = read(page_path, String)
+        write(page_path, replace(
+            page,
+            "julia --project=. scripts/course.jl preflight" =>
+                "julia --project=. scripts/course.jl wrong",
+        ))
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("site page start command mismatch", output)
+    end
+
+    mktempdir() do root
+        fixture = write_fixture(root; student_path=true, canonical)
+        task_path = joinpath(fixture.student, "exercises", "F00_environment", "TASK.md")
+        write(task_path, "wrong backlink\n")
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("canonical backlink mismatch", output)
+    end
+end
