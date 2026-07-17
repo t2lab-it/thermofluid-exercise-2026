@@ -8,13 +8,24 @@ function fail(message::AbstractString)
     return false
 end
 
+function canonical_existing_path(path::AbstractString)
+    try
+        return realpath(path)
+    catch error
+        error isa Base.IOError || error isa SystemError || rethrow()
+        return nothing
+    end
+end
+
 function path_inside(root::AbstractString, relative::AbstractString)
     isabspath(relative) && return nothing
-    candidate = normpath(joinpath(root, relative))
+    canonical_root = canonical_existing_path(root)
+    isnothing(canonical_root) && return nothing
+    candidate = canonical_existing_path(normpath(joinpath(root, relative)))
+    isnothing(candidate) && return nothing
     separator = string(Base.Filesystem.path_separator)
-    normalized_root = normpath(root)
-    root_prefix = endswith(normalized_root, separator) ? normalized_root : normalized_root * separator
-    candidate == root_prefix && return nothing
+    root_prefix = canonical_root * (endswith(canonical_root, separator) ? "" : separator)
+    candidate == canonical_root && return nothing
     startswith(candidate, root_prefix) || return nothing
     return candidate
 end

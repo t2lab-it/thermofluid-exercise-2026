@@ -32,6 +32,44 @@ isdefined(@__MODULE__, :path_inside) || include(PATH_VERIFY)
     end
 end
 
+@testset "contract paths enforce canonical filesystem containment" begin
+    mktempdir() do parent
+        root = joinpath(parent, "root")
+        outside = joinpath(parent, "outside")
+        mkpath.((root, outside))
+        inside_file = joinpath(root, "inside.txt")
+        outside_file = joinpath(outside, "outside.txt")
+        write(inside_file, "inside\n")
+        write(outside_file, "outside\n")
+
+        @test path_inside(root, "missing.txt") === nothing
+
+        symlinks_supported = try
+            symlink(inside_file, joinpath(root, "inside-link.txt"))
+            true
+        catch error
+            error isa Base.IOError || error isa SystemError || rethrow()
+            false
+        end
+
+        if symlinks_supported
+            @test path_inside(root, "inside-link.txt") == realpath(inside_file)
+
+            symlink(outside_file, joinpath(root, "outside-link.txt"))
+            @test path_inside(root, "outside-link.txt") === nothing
+
+            symlink(outside, joinpath(root, "outside-directory"))
+            @test path_inside(root, joinpath("outside-directory", "outside.txt")) === nothing
+
+            broken = joinpath(root, "broken-link.txt")
+            symlink(joinpath(parent, "absent.txt"), broken)
+            @test path_inside(root, "broken-link.txt") === nothing
+        else
+            @test_skip "symlink creation is unavailable on this host"
+        end
+    end
+end
+
 @testset "contract verifier accepts literal dot as public root" begin
     mktempdir() do student
         assignments = TOML.parsefile(
