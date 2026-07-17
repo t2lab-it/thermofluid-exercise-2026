@@ -124,64 +124,40 @@ function yaml_effective_values(lines, node)
     return [strip(lines[item.line].text[3:end], ['"', '\'']) for item in yaml_sequence_items(lines, node)]
 end
 
-function normalized_javascript(source::AbstractString)
-    known_strings = Dict(
-        "click" => "__JSSTR_CLICK__",
-        "keydown" => "__JSSTR_KEYDOWN__",
-        "pointerenter" => "__JSSTR_POINTERENTER__",
-        "aria-expanded" => "__JSSTR_ARIA_EXPANDED__",
-        "Escape" => "__JSSTR_ESCAPE__",
-        "Enter" => "__JSSTR_ENTER__",
-        " " => "__JSSTR_SPACE__",
-        "Spacebar" => "__JSSTR_SPACEBAR__",
-        "true" => "__JSSTR_TRUE__",
-        "false" => "__JSSTR_FALSE__",
+const NAVIGATION_LOADER = "assets/navigation-loader.html"
+const NAVIGATION_BEHAVIOR_TEST = joinpath(@__DIR__, "navigation_behavior_test.mjs")
+
+function navigation_loader_path(lines)
+    include_node = yaml_node(lines, ("format", "html", "include-after-body"))
+    isnothing(include_node) && return nothing
+    values = yaml_effective_values(lines, include_node)
+    length(values) == 1 || return nothing
+    only(values) == NAVIGATION_LOADER || return nothing
+    return only(values)
+end
+
+function is_module_navigation_loader(source::AbstractString)
+    script_pattern = r"(?is)<script\b([^>]*)>(.*?)</script\s*>"
+    scripts = collect(eachmatch(script_pattern, source))
+    length(scripts) == 1 || return false
+
+    attributes = only(scripts).captures[1]
+    body = only(scripts).captures[2]
+    module_type = occursin(r"(?i)\btype\s*=\s*[\"']module[\"']", attributes)
+    navigation_source = occursin(
+        r"(?i)\bsrc\s*=\s*[\"'][^\"']*assets/navigation\.js(?:\?[^\"']*)?[\"']",
+        attributes,
     )
-    bytes = codeunits(source)
-    output = IOBuffer()
-    index = 1
-
-    while index <= length(bytes)
-        if bytes[index] == UInt8('/') && index < length(bytes) && bytes[index + 1] == UInt8('/')
-            index += 2
-            while index <= length(bytes) && bytes[index] != UInt8('\n')
-                index += 1
-            end
-        elseif bytes[index] == UInt8('/') && index < length(bytes) && bytes[index + 1] == UInt8('*')
-            index += 2
-            while index < length(bytes) && !(bytes[index] == UInt8('*') && bytes[index + 1] == UInt8('/'))
-                index += 1
-            end
-            index = min(index + 2, length(bytes) + 1)
-        elseif bytes[index] in (UInt8('"'), UInt8('\''), UInt8('`'))
-            delimiter = bytes[index]
-            index += 1
-            value = IOBuffer()
-            while index <= length(bytes) && bytes[index] != delimiter
-                if bytes[index] == UInt8('\\') && index < length(bytes)
-                    index += 1
-                end
-                write(value, bytes[index])
-                index += 1
-            end
-            index += index <= length(bytes)
-            write(output, get(known_strings, String(take!(value)), "__JSSTR_OTHER__"))
-        else
-            write(output, bytes[index])
-            index += 1
-        end
-    end
-
-    return String(take!(output))
+    remainder = strip(replace(source, script_pattern => ""))
+    return module_type && navigation_source && isempty(strip(body)) && isempty(remainder)
 end
 
-function listener_count(javascript::AbstractString, event::AbstractString)
-    pattern = Regex("\\.addEventListener\\(\\s*__JSSTR_" * event * "__\\s*,")
-    return count(_ -> true, eachmatch(pattern, javascript))
+function run_navigation_behavior(node, module_path)
+    output = PipeBuffer()
+    command = `$node $NAVIGATION_BEHAVIOR_TEST $module_path`
+    process = run(pipeline(ignorestatus(command); stdout=output, stderr=output))
+    return success(process), String(take!(output))
 end
-
-const ARIA_STATE_UPDATE =
-    r"\.setAttribute\(\s*__JSSTR_ARIA_EXPANDED__\s*,\s*(?:String\(\s*[A-Za-z_$][\w$]*\s*\)|[A-Za-z_$][\w$]*\s*\?\s*__JSSTR_TRUE__\s*:\s*__JSSTR_FALSE__)"
 
 @testset "navigation source parsers reject inert configuration" begin
     nested = yaml_source_lines("""
@@ -202,25 +178,25 @@ const ARIA_STATE_UPDATE =
     include_node = yaml_node(nested, ("format", "html", "include-after-body"))
     @test !isnothing(include_node)
     @test yaml_effective_values(nested, include_node) == ["assets/navigation.js"]
+    @test isnothing(navigation_loader_path(nested))
 
-    inert_javascript = normalized_javascript("""
-    // button.addEventListener("click", handler);
-    const dead = '.addEventListener("click", handler)';
+    valid_loader_config = yaml_source_lines("""
+    format:
+      html:
+        include-after-body:
+          - assets/navigation-loader.html
     """)
-    active_javascript = normalized_javascript("""
-    button.addEventListener("click", handler);
-    button.addEventListener("keydown", handler);
-    button.addEventListener("pointerenter", handler);
+    @test navigation_loader_path(valid_loader_config) == NAVIGATION_LOADER
+    @test !is_module_navigation_loader("button.addEventListener('click', handler);")
+    @test !is_module_navigation_loader("""
+    <script type="module">
+      button.addEventListener("click", handler);
+    </script>
     """)
-    @test listener_count(inert_javascript, "CLICK") == 0
-    @test listener_count(active_javascript, "CLICK") == 1
-    @test listener_count(active_javascript, "KEYDOWN") == 1
-    @test listener_count(active_javascript, "POINTERENTER") == 1
-
-    inert_aria = normalized_javascript("const dead = '.setAttribute(\"aria-expanded\", String(open))';")
-    active_aria = normalized_javascript("button.setAttribute(\"aria-expanded\", String(open));")
-    @test !occursin(ARIA_STATE_UPDATE, inert_aria)
-    @test occursin(ARIA_STATE_UPDATE, active_aria)
+    @test !is_module_navigation_loader("<script src=\"assets/navigation.js\"></script>")
+    @test is_module_navigation_loader(
+        "<script type=\"module\" src=\"/thermofluid-exercise-2026/assets/navigation.js\"></script>",
+    )
 
     valid_sidebar = yaml_source_lines("""
     website:
@@ -247,6 +223,20 @@ const ARIA_STATE_UPDATE =
     @test yaml_item_field(valid_sidebar, adjacent_entries[2], "href").value == "assignments/F00.qmd"
 end
 
+@testset "navigation behavior harness fixture" begin
+    behavior_test_exists = isfile(NAVIGATION_BEHAVIOR_TEST)
+    @test behavior_test_exists
+    node = Sys.which("node")
+    @test !isnothing(node)
+    if behavior_test_exists && !isnothing(node)
+        passed, details = run_navigation_behavior(node, "--self-test")
+        @test passed
+        if !passed
+            @info "navigation behavior harness self-test failed" details
+        end
+    end
+end
+
 @testset "reviewed course navigation contract" begin
     public_root = SITE_ROOT
     quarto = read(joinpath(public_root, "_quarto.yml"), String)
@@ -263,9 +253,13 @@ end
     sidebar = yaml_node(yaml, ("website", "sidebar"))
     @test !isnothing(sidebar)
 
-    navigation_include = yaml_node(yaml, ("format", "html", "include-after-body"))
-    @test !isnothing(navigation_include)
-    !isnothing(navigation_include) && @test "assets/navigation.js" in yaml_effective_values(yaml, navigation_include)
+    loader_path = navigation_loader_path(yaml)
+    @test loader_path == NAVIGATION_LOADER
+    loader_exists = !isnothing(loader_path) && isfile(joinpath(public_root, loader_path))
+    @test loader_exists
+    if loader_exists
+        @test is_module_navigation_loader(read(joinpath(public_root, loader_path), String))
+    end
 
     for path in (
         "lessons/index.qmd",
@@ -275,6 +269,7 @@ end
         "guides/troubleshooting.qmd",
         "guides/glossary.qmd",
         "advanced/index.qmd",
+        NAVIGATION_LOADER,
         "assets/navigation.js",
     )
         @test isfile(joinpath(public_root, path))
@@ -285,7 +280,10 @@ end
     @test styles_exist
     if styles_exist
         styles = replace(read(styles_path, String), r"(?s)/\*.*?\*/" => "")
-        @test occursin(r"font-family\s*:\s*[\"']Noto Sans JP[\"']\s*,", styles)
+        @test occursin(
+            r"font-family\s*:\s*(?:[\"']Noto Sans JP[\"']|Noto\s+Sans\s+JP)\s*,",
+            styles,
+        )
     end
 
     lesson_paths = [joinpath(public_root, "lessons", "$id.qmd") for id in REQUIRED_COURSE_ORDER]
@@ -357,14 +355,16 @@ end
     navigation_path = joinpath(public_root, "assets", "navigation.js")
     navigation_exists = isfile(navigation_path)
     @test navigation_exists
-    if navigation_exists
-        navigation = normalized_javascript(read(navigation_path, String))
-        @test listener_count(navigation, "CLICK") >= 2
-        @test listener_count(navigation, "KEYDOWN") >= 1
-        @test listener_count(navigation, "POINTERENTER") >= 1
-        @test occursin(r"\.key\s*={2,3}\s*__JSSTR_ESCAPE__", navigation)
-        @test occursin(r"\.key\s*={2,3}\s*__JSSTR_ENTER__", navigation)
-        @test occursin(r"\.key\s*={2,3}\s*(?:__JSSTR_SPACE__|__JSSTR_SPACEBAR__)", navigation)
-        @test occursin(ARIA_STATE_UPDATE, navigation)
+
+    behavior_test_exists = isfile(NAVIGATION_BEHAVIOR_TEST)
+    @test behavior_test_exists
+    node = Sys.which("node")
+    @test !isnothing(node)
+    if behavior_test_exists && !isnothing(node)
+        passed, details = run_navigation_behavior(node, navigation_path)
+        @test passed
+        if !passed
+            @info "navigation behavior contract failed" details
+        end
     end
 end
