@@ -1,0 +1,45 @@
+---
+title: "受講環境の準備"
+---
+
+この演習では、Windows、macOS、Linux のローカル環境を正式にサポートします。受講開始までに、Julia 1.12.6、Git、Visual Studio Code（VS Code）、Julia 拡張機能、および対応 Coding Agent のうち一つを準備してください。
+
+## 準備するもの
+
+| 項目 | 必須条件 | 確認方法 |
+|---|---|---|
+| Julia | Juliaup で Julia 1.12.6 を選択 | `julia --version` |
+| Git | コマンドラインから実行可能 | `git --version` |
+| VS Code | 起動できる | アプリケーションを起動 |
+| Julia 拡張機能 | VS Code から Julia を実行できる | Julia ファイルを開いて実行 |
+| GitHub | Classroom の自分のリポジトリを閲覧できる | ブラウザで手動確認 |
+| Coding Agent | 標準または代替の一つで編集とコマンド実行ができる | [Agent の確認](agents.qmd) |
+
+## 推奨する準備順
+
+1. [Julia と VS Code](julia.qmd)を準備する。
+2. [Git と GitHub](git-github.qmd)を準備し、Classroom リポジトリを clone する。
+3. [Coding Agent](agents.qmd)を一つ確認する。
+4. リポジトリのルートで環境を復元する。
+
+   ```bash
+   julia --project=. -e 'using Pkg; Pkg.instantiate()'
+   ```
+
+5. [`F00` 環境診断](../assignments/F00.qmd)を実行する。
+
+   ```bash
+   julia --project=. scripts/course.jl preflight
+   ```
+
+`F00` は Git 操作を学ぶ前の診断です。課題 branch、pull request、学習ログは作りません。診断が通らないときは、表示された項目を一つずつ直し、同じコマンドを再実行してください。
+
+## 支援を依頼するとき
+
+教員・TA へ、OS、`julia --version`、`git --version`、失敗したコマンド、エラーメッセージを伝えてください。アクセストークン、API key、パスワード、個人情報は共有しないでください。
+
+## ライセンス
+
+この公開サイトの教材本文と独自作成図は CC BY 4.0、コードファイルとコード例は MIT です。第三者素材には個別の出典と権利条件を表示します。
+
+Copyright © 2026 荒木 亮（ARAKI, Ryo）

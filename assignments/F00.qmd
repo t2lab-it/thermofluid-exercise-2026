@@ -1,0 +1,59 @@
+---
+title: "F00: 環境診断"
+---
+
+## 目的
+
+授業で使うローカル環境を機械診断し、機械からは判定できない GitHub と Coding Agent の利用可否を自分で確認します。F00 は後続課題の前提をそろえるための preflight です。
+
+## 先に読むページ
+
+- [受講環境の準備](../setup/index.qmd)
+- [Julia 1.12.6 と VS Code](../setup/julia.qmd)
+- [Git・GitHub・Classroom リポジトリ](../setup/git-github.qmd)
+- [Coding Agent の準備](../setup/agents.qmd)
+
+## 課題リポジトリ内の場所
+
+短い実行手順と診断コードは学生リポジトリの次の場所にあります。
+
+- 課題契約: `exercises/F00_environment/TASK.md`
+- 診断コード: `exercises/F00_environment/run.jl`
+- 提供テスト: `test/provided/F00.jl`
+
+長い説明の正本はこのページです。学生リポジトリの `TASK.md` は、このページ、編集対象、コマンド、出力、完了条件だけを参照します。
+
+## 実行
+
+Classroom リポジトリのルートで、まず配布環境を復元します。
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+julia --project=. scripts/course.jl preflight
+```
+
+診断は次の二群を分けて表示します。
+
+1. **機械観測**: Julia が正確に 1.12.6 であること、Git が呼び出せること、VS Code と Julia 拡張機能の準備状況。
+2. **手動確認**: GitHub で自分の Classroom リポジトリを閲覧できること、および[対応 Agent の一つ](../setup/agents.qmd)でファイル編集とコマンド実行ができること。
+
+手動確認は、実際に自分で確かめてからプロンプトへ回答してください。すべての必須項目が通るまで進捗ファイルは更新されません。
+
+## 完了条件
+
+- `julia --version` が `julia version 1.12.6` を返す。
+- `git --version` が成功する。
+- VS Code と Julia 拡張機能を使える。
+- 自分の GitHub Classroom リポジトリをブラウザで閲覧できる。
+- 標準または指定された一つの代替 Agent で、ファイル編集とコマンド実行を確認した。
+- `preflight` が成功し、進捗の完了済み課題が `F00`、現在課題が `F01` になる。
+
+## F00 で作らないもの
+
+F00 では課題 branch、pull request、学習ログを作りません。ネットワーク Git 操作も診断コマンドから自動実行しません。最初の branch と pull request は `F01` で手動作成します。
+
+## 失敗したとき
+
+表示された修正案に従って該当するセットアップページへ戻ります。支援を依頼するときは OS、バージョン出力、実行したコマンド、秘密情報を除いたエラーを伝えてください。
+
+[授業での位置づけと診断の読み方](../lessons/F00.qmd)
