@@ -44,20 +44,53 @@ function section_body(source, heading)
     matched = match(Regex("(?ms)^## " * heading * "\\n(.*?)(?=^## |\\z)"), source)
     return isnothing(matched) ? nothing : matched.captures[1]
 end
+function frontmatter_title(source)
+    lines = split(source, '\n'; keepempty=true)
+    first(lines) == "---" || return nothing
+    closing = findnext(==("---"), lines, 2)
+    isnothing(closing) && return nothing
+    titles = filter(!isnothing, [match(r"^title:\s*\"([^\"]+)\"\s*$", line) for line in lines[2:(closing - 1)]])
+    length(titles) == 1 || return nothing
+    return only(titles).captures[1]
+end
+
+function public_qmd_paths()
+    paths = ["index.qmd"]
+    for directory in ("setup", "lessons", "assignments", "guides", "advanced")
+        for (root, _, files) in walkdir(joinpath(COPY_ROOT, directory))
+            for file in files
+                endswith(file, ".qmd") || continue
+                push!(paths, relpath(joinpath(root, file), COPY_ROOT))
+            end
+        end
+    end
+    return sort!(paths)
+end
+
+const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
+
 
 @testset "public learning-copy contract" begin
+@testset "copy-source parsers reject misleading placement" begin
+    @test frontmatter_title("---\ntitle: \"正しいタイトル\"\n---\ntitle: \"本文の偽物\"\n") == "正しいタイトル"
+    @test isnothing(frontmatter_title("title: \"frontmatter外\"\n"))
+    for fixture in ("0-15分", "0–15 分", "0〜15分", "0～15分", "0~15分")
+        @test !isnothing(match(MINUTE_RANGE_PATTERN, fixture))
+    end
+end
+
 @testset "public copy positions and visible titles" begin
     for (path, label) in POSITION_LABELS
         source = copy_source(path)
         @test occursin("::: {.course-position}\n$label\n:::", source)
     end
     for (path, title) in NO_ID_TITLE
-        @test occursin("title: \"$title\"", copy_source(path))
+        @test frontmatter_title(copy_source(path)) == title
     end
 end
 
 
-@testset "public lesson outcomes are observable" begin
+@testset "public lesson outcomes have bounded bullet counts" begin
     for id in ("F00", "F01", "F02", "F03", "N01")
         source = copy_source("lessons/$id.qmd")
         outcomes = section_body(source, "この回の到達点")
@@ -66,8 +99,14 @@ end
             bullets = [line for line in split(outcomes, '\n') if startswith(line, "- ")]
             @test 3 <= length(bullets) <= 5
         end
+    end
+end
+
+@testset "all public QMD content omits minute schedules" begin
+    for path in public_qmd_paths()
+        source = copy_source(path)
         @test !occursin("90分の流れ", source)
-        @test isnothing(match(r"\b[0-9]+\s*分\b", source))
+        @test isnothing(match(MINUTE_RANGE_PATTERN, source))
     end
 end
 
@@ -83,6 +122,8 @@ end
     positions = [findfirst(heading, lesson) for heading in required_headings]
     @test all(!isnothing, positions)
     all(!isnothing, positions) && @test issorted(first.(positions))
+    @test occursin("isapprox(steps * dt, t_final; atol=100eps())", lesson)
+    @test !occursin("steps * dt == t_final", lesson)
     for todo in ("rectangular_initial_condition", "upwind_step!", "centered_step!")
         @test occursin(todo, lesson)
     end

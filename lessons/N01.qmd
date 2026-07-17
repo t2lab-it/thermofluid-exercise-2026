@@ -150,7 +150,7 @@ $$
 \Delta t=\frac{t_{\mathrm{final}}}{N_{\mathrm{steps}}}
 $$
 
-と調整します。したがって確認するのは、`steps * dt == t_final`と、調整後の実効CFL `c * dt / dx`です。
+と調整するため、数学的には`steps * dt`が要求した`t_final`へ到達します。ただし浮動小数点では丸め誤差が入るので、`==`で完全一致を求めず、`isapprox(steps * dt, t_final; atol=100eps())`で十分近いことを確認します。`100eps()`は、この計算で許すごく小さな丸め誤差の幅です。併せて、調整後の実効CFL `c * dt / dx`を確認します。
 
 ## 二つの方法を比較する
 

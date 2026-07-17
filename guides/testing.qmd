@@ -36,7 +36,7 @@ N01の`main`はPNG二つとTOML summaryを生成します。ファイル名だ�
 
 - upwindの最小・最大が初期範囲内か
 - centered + Eulerにovershootまたはundershootがあるか
-- `steps * dt == t_final`か
+- `isapprox(steps * dt, t_final; atol=100eps())`で、丸め誤差の範囲内で最終時刻へ到達するか
 - 実効CFLが`c * dt / dx`か
 - PNGが開け、summaryの値が実行結果と一致するか
 
