@@ -35,7 +35,7 @@ git status --short
 git branch --show-current
 ```
 
-`Current: F01`、変更なし、現在branchが`main`であることを確認してください。意図しない変更が表示された場合は削除せず、教員・TAへ相談します。
+`Current: F01`、現在branchが`main`であることを確認してください。F00からF01へ進んだ直後は、`course_progress.toml`だけが変更済みと表示されるのが正常です。F00ではGit commitを作らないため、この進捗変更はF01で初めてcommitします。それ以外の変更が表示された場合は削除せず、branchを作る前に教員・TAへ相談します。
 
 ## 1. branchを手動で作る
 
@@ -62,7 +62,7 @@ julia --project=. exercises/F01_first_pull_request/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-提供テストを弱めたり削除したりしません。`test/student/F01.jl`には、自分の理解を確認する代表的なケースを追加します。テストが何を保証し、何を保証しないかを学習ログに一文ずつ書きます。
+提供テストを弱めたり削除したりしません。`test/student/F01.jl`のsmoke TODOを、自分で選んだ名前を使う代表的な挨拶のテストへ置き換えます。テストが何を保証し、何を保証しないかを学習ログに一文ずつ書きます。
 
 ## 4. 公式出力を確認する
 
@@ -85,7 +85,7 @@ F01でのAI利用は、説明、エラー解説、練習問題に限ります。
 ```bash
 git status --short
 git diff
-git add exercises/F01_first_pull_request/run.jl test/student/F01.jl learning_logs/F01.md
+git add course_progress.toml exercises/F01_first_pull_request/run.jl test/student/F01.jl learning_logs/F01.md
 git diff --cached
 git commit -m "feat: complete F01 first pull request"
 ```
@@ -130,7 +130,7 @@ git pull --ff-only origin main
 git status --short
 ```
 
-F01のbranch、PR、学習ログがそれぞれ一つあり、テスト、Actions、diff確認が完了していればF01完了です。cleanなmainからF02を開始します。
+F01のbranch、PR、学習ログがそれぞれ一つあり、`test/student/F01.jl`を代表例へ変更し、テスト、Actions、diff確認が完了していればF01完了です。cleanなmainからF02を開始します。
 
 ```bash
 julia --project=. scripts/course.jl start F02

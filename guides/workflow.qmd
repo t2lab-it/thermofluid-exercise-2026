@@ -28,8 +28,12 @@ F01以降は、**1課題につき1 branch、1 pull request、1学習ログ**を�
 F01だけはbranch作成を手動で学びます。
 
 ```bash
+git status --short
+git diff -- course_progress.toml
 git switch -c exercise/F01-first-pull-request
 ```
+
+F00からF01へ進んだ直後は、`course_progress.toml`だけが変更済みであることを確認します。F00ではcommitしないため、この進捗変更はF01で初めてcommitします。ほかの変更があればbranchを作らず、教員・TAへ相談します。
 
 F02以降はcleanなmainから開始します。
 
