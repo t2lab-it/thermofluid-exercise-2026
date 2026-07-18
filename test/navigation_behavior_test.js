@@ -210,7 +210,9 @@ function referenceEnhanceSplitNavigationUsing({ anchor, menu, document }, insert
     }
   });
   if (document.defaultView.matchMedia("(hover: hover)").matches) {
+    const hoverRegion = anchor.parentNode;
     trigger.addEventListener("pointerenter", () => setOpen(true));
+    hoverRegion.addEventListener("pointerleave", () => setOpen(false));
   }
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && (trigger.contains(event.target) || menu.contains(event.target))) {
@@ -289,9 +291,11 @@ assertClosed(trigger, menu);
 
 fire(trigger, "pointerenter");
 assertOpen(trigger, menu);
-
-fire(trigger, "click");
+fire(trigger, "pointerleave", { target: trigger });
+assertOpen(trigger, menu);
+fire(item, "pointerleave", { target: item });
 assertClosed(trigger, menu);
+
 fire(trigger, "click");
 assertOpen(trigger, menu);
 

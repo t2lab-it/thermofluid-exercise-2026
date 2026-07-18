@@ -71,6 +71,10 @@ code {
   min-width: 42rem;
 }
 
+.course-position {
+  text-align: right;
+}
+
 .navbar .nav-item.dropdown {
   display: flex;
   align-items: stretch;

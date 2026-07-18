@@ -173,6 +173,8 @@ const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
 end
 
 @testset "public copy positions and visible titles" begin
+    styles = copy_source("assets/styles.css")
+    @test occursin(r"(?s)\.course-position\s*\{[^}]*text-align\s*:\s*right\s*;", styles)
     for (path, label) in POSITION_LABELS
         source = copy_source(path)
         @test occursin("::: {.course-position}\n$label\n:::", source)

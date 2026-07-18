@@ -30,7 +30,9 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
     }
   });
   if (document.defaultView?.matchMedia?.("(hover: hover)").matches) {
+    const hoverRegion = anchor.parentNode;
     trigger.addEventListener("pointerenter", () => setOpen(true));
+    hoverRegion.addEventListener("pointerleave", () => setOpen(false));
   }
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && (trigger.contains(event.target) || menu.contains(event.target))) {
