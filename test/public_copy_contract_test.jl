@@ -615,6 +615,16 @@ end
     assignment = copy_source("assignments/N01.qmd")
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
+    for required_boundary in (
+        "provided_support.jl",
+        "おまじない",
+        "読解・編集する必要はありません",
+        "実行時の入力条件",
+        "教材側の包括的な確認",
+        "自分で選んだ代表例",
+    )
+        @test occursin(required_boundary, lesson * "\n" * assignment)
+    end
     for required_copy in (
         "`@test false`を削除",
         "保証することと保証しないこと",

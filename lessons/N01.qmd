@@ -19,7 +19,7 @@ title: "移流方程式と安定性"
 
 1. まずこの授業ページを上から読み、短いJulia例をコピー実行して式・添字・1step更新を確認する。
 2. 次に[課題ページ](../assignments/N01.qmd)で3つのTODO、実行コマンド、公式出力、完了条件を確認する。
-3. その後に学生リポジトリの`exercises/N01_linear_advection/TASK.md`と`run.jl`を上から読み、TODOだけを実装する。
+3. その後に学生リポジトリの`exercises/N01_linear_advection/TASK.md`と`run.jl`を開き、headerの読む順序に沿って3つのTODOだけを実装する。
 
 ## Julia構文の復習
 
@@ -144,6 +144,8 @@ end
 
 各stepでは、古い配列だけを参照して新しい配列の内部点を計算し、境界条件を適用してから次のstepへ進みます。このloopは編集対象ではありません。
 
+`run.jl`のheaderでは、`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate`の順に関数のつながりを示します。`include("provided_support.jl")`は、教材側が用意した入力検証と公式出力を読み込む「おまじない」として扱います。`provided_support.jl`を読解・編集する必要はありません。
+
 ## buffer交換
 
 `u_old, u_new = u_new, u_old`は、二つの配列が指す役割を交換します。配列全体を毎回コピーせず、計算済みの`u_new`を次のstepの`u_old`として使えます。新旧を同じ配列にすると、同じstepで更新した値が隣の点の計算へ混ざるため、別bufferが必要です。
@@ -171,9 +173,9 @@ $$
 
 ## テストで確かめる
 
-提供テストは、矩形初期条件の端点、局所更新の手計算値、入力bufferの不変性、定数場、境界条件、実効CFL、最終時刻、二方法の比較、公式出力を確認します。自分の`test/student/N01.jl`には、教材例の写しではない代表例を一つ書きます。
+各数値関数から呼ばれるvalidationは、実行時の入力条件を確認し、誤った配列や計算条件を早く知らせます。`test/provided/N01.jl`は教材側の包括的な確認として、数値式、入力条件、公式出力を保護します。`test/student/N01.jl`ではその網羅性を再現せず、自分で選んだ代表例を一件だけ、入力、関数呼び出し、期待値が分かる形で書きます。
 
-この1次元線形移流課題の完成要件は3つのTODOを実装し、時間loopと結果を説明することです。`TOML`、`Plots`、`module`、`export`、詳細な入力検証、TOML出力、作図処理の実装は提供済みであり、これらを自力で書けることは完成要件ではありません。関数名、引数、scheme、出力ファイル名、summaryのキーは変更しません。
+この1次元線形移流課題の完成要件は、`run.jl`の3つのTODOを実装し、時間loopと結果を説明することです。`provided_support.jl`にある`TOML`、`Plots`、詳細な入力検証、TOML出力、作図処理と`main`は提供済みであり、これらを自力で書けることは完成要件ではありません。`module`、`export`、`include`も変更しません。関数名、引数、scheme、出力ファイル名、summaryのキーは変更しません。
 
 ## 次へ進む条件
 
