@@ -40,6 +40,23 @@ N01の`main`はPNG二つとTOML summaryを生成します。ファイル名だ�
 - 実効CFLが`c * dt / dx`か
 - PNGが開け、summaryの値が実行結果と一致するか
 
+### 公開baselineと比べる
+
+まず、最小値と最大値の**符号**、初期値に対する**範囲**、overshoot・undershootの**フラグ**を比べます。小数の完全一致はその後に確認します。これにより、計算方法や境界条件の大きな違いを、丸め誤差の違いと混同しにくくなります。
+
+次の値は、公開baselineの`nx=81`、`dx=0.025`、`cfl=0.5`、`dt=0.0125`、`steps=40`に対応する値です。別のparameterで実行した結果に、この小数をそのまま要求しません。
+
+| Method | minimum | maximum | overshoot | undershoot |
+|---|---:|---:|---:|---:|
+| upwind + Euler | 1.0 | 1.9993204517450067 | 0.0 | 0.0 |
+| centered + Euler | -10.420010468371677 | 13.492726642559711 | 11.492726642559711 | 11.420010468371677 |
+
+![upwind + Eulerの公開baseline](../assets/n01-reference/upwind.png){fig-alt="初期値とupwind + Eulerの最終値を比較したグラフ"}
+
+![centered + Eulerの公開baseline](../assets/n01-reference/centered-euler.png){fig-alt="初期値とcentered + Eulerの最終値を比較し、振動を示したグラフ"}
+
+表の真偽フラグを含む機械可読な値は[`summary.toml`](../assets/n01-reference/summary.toml)でも確認できます。
+
 ## 失敗時の切り分け
 
 最初のfailureまたはerrorから読みます。次を秘密情報を除いて記録してください。

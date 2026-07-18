@@ -13,6 +13,18 @@ F01以降は、**1課題につき1 branch、1 pull request、1学習ログ**を�
 
 共通の順序は次です。
 
+```{mermaid}
+flowchart LR
+  A[課題を読む] --> B[branchを作る]
+  B --> C[実装する]
+  C --> D[ローカルテスト]
+  D --> E[出力と学習ログ]
+  E --> F[commit・push]
+  F --> G[PR・Actions]
+  G --> H[diff・セルフレビュー]
+  H --> I[merge]
+```
+
 1. 課題branchを作る。
 2. 実装する。
 3. ローカルテストを実行する。
@@ -120,17 +132,7 @@ git status --short
 
 次の課題は、変更のないmainから開始します。
 
-## mainへ直接pushしたとき
-
-private GitHub Freeではbranch protectionに依存しないため、操作ミスを完全には遮断しません。直接pushに気づいたら、force push、reset、履歴削除を自己判断で行わないでください。
-
-1. `git status --short`、`git log --oneline -5`、GitHubのmain画面を保存する。
-2. どのcommitをどのコマンドでpushしたか記録する。
-3. 教員・TAへ連絡する。
-4. 指示のもとでmainを安全な状態へ戻し、課題branchとPRを作り直す。
-5. Actions、diff、セルフレビュー、mergeを正しい順で再実行する。
-
-初学者の操作ミスと意図的な手順違反は区別します。大切なのは変更を隠すことではなく、履歴を保ったまま原因と復旧手順を説明できることです。
+mainで作業・commit・pushしてしまった場合は、自分で履歴を書き換えず、[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)へ進んでください。
 
 ## OSごとの扱い
 

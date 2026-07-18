@@ -1,4 +1,5 @@
 using Test
+using TOML
 
 const COPY_ROOT = normpath(joinpath(@__DIR__, ".."))
 copy_source(path) = read(joinpath(COPY_ROOT, path), String)
@@ -465,5 +466,77 @@ end
     assignment = copy_source("assignments/N01.qmd")
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
+end
+
+@testset "guides publish the concrete workflow and N01 baseline" begin
+    workflow = copy_source("guides/workflow.qmd")
+    @test occursin("```{mermaid}", workflow)
+    @test occursin("課題を読む] --> B[branchを作る", workflow)
+    @test occursin("[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)", workflow)
+    @test !occursin("## mainへ直接pushしたとき", workflow)
+
+    troubleshooting = copy_source("guides/troubleshooting.qmd")
+    @test occursin("## mainブランチで作業してしまったら", troubleshooting)
+    @test occursin("force push", troubleshooting)
+
+    testing = copy_source("guides/testing.qmd")
+    @test occursin("../assets/n01-reference/upwind.png", testing)
+    @test occursin("../assets/n01-reference/centered-euler.png", testing)
+    @test occursin("13.492726642559711", testing)
+    @test occursin("-10.420010468371677", testing)
+    signs = findfirst("符号", testing)
+    ranges = findfirst("範囲", testing)
+    flags = findfirst("フラグ", testing)
+    decimals = findfirst("小数", testing)
+    @test all(!isnothing, (signs, ranges, flags, decimals))
+    if all(!isnothing, (signs, ranges, flags, decimals))
+        @test first(signs) < first(decimals)
+        @test first(ranges) < first(decimals)
+        @test first(flags) < first(decimals)
+    end
+
+    for path in (
+        "assets/n01-reference/upwind.png",
+        "assets/n01-reference/centered-euler.png",
+        "assets/n01-reference/summary.toml",
+    )
+        @test isfile(joinpath(COPY_ROOT, path))
+    end
+    summary_path = joinpath(COPY_ROOT, "assets/n01-reference/summary.toml")
+    if isfile(summary_path)
+        summary = TOML.parsefile(summary_path)
+        @test summary["grid"] == Dict("dx" => 0.025, "nx" => 81)
+        @test summary["upwind"]["minimum"] == 1.0
+        @test summary["upwind"]["maximum"] == 1.9993204517450067
+        @test summary["upwind"]["overshoot_occurred"] === false
+        @test summary["upwind"]["undershoot_occurred"] === false
+        @test summary["centered_euler"]["minimum"] == -10.420010468371677
+        @test summary["centered_euler"]["maximum"] == 13.492726642559711
+        @test summary["centered_euler"]["overshoot_occurred"] === true
+        @test summary["centered_euler"]["undershoot_occurred"] === true
+    end
+
+    commands = copy_source("guides/commands.qmd")
+    command_blocks = collect(eachmatch(r"(?ms)```bash\n(.*?)```", commands))
+    @test !isempty(command_blocks)
+    for matched in command_blocks
+        lines = split(chomp(matched.captures[1]), '\n')
+        for (index, line) in pairs(lines)
+            isempty(strip(line)) && continue
+            startswith(strip(line), "#") && continue
+            @test index > 1 && startswith(strip(lines[index - 1]), "#")
+        end
+    end
+    @test occursin("新しい必須コマンド", commands)
+    @test occursin("セットアップまたは公開済みの課題", commands)
+
+    glossary = copy_source("guides/glossary.qmd")
+    @test occursin("括弧内は日本語訳", glossary)
+    for translated in (
+        "branch（分岐）", "commit（記録）", "repository（保管場所）",
+        "self-contained（自己完結）",
+    )
+        @test occursin(translated, glossary)
+    end
 end
 end
