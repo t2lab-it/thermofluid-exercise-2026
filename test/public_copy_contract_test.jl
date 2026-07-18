@@ -150,41 +150,86 @@ function learner_copy_id_led_lines(source)
         in_fence && continue
         isempty(line) && continue
 
-        is_heading = occursin(r"^#{1,6}\s+", line)
+        visible_line = replace(line, r"^(?:>\s*)+" => "")
+        is_heading = occursin(r"^#{1,6}\s+", visible_line)
+        visible_line = replace(visible_line, r"^#{1,6}\s+" => "")
+        is_list = occursin(r"^(?:[-*+]\s+|[0-9]+[.)]\s+)", visible_line)
+        visible_line = replace(
+            visible_line,
+            r"^(?:[-*+]\s+|[0-9]+[.)]\s+)" => "",
+        )
+        is_table = startswith(visible_line, "|") && endswith(visible_line, "|")
         is_normal_paragraph = !occursin(
-            r"^(?:[#>*+\-|]|:::|\$\$|\\|<|[0-9]+\.\s)",
-            line,
+            r"^(?:#|:::|\$\$|\\|<)",
+            visible_line,
         )
-        (is_heading || is_normal_paragraph) || continue
+        (is_heading || is_list || is_table || is_normal_paragraph) || continue
 
-        visible = replace(line, r"^#{1,6}\s+" => "")
-        visible = replace(visible, MARKDOWN_LINK_PATTERN => s"\1")
-        visible = replace(visible, r"`[^`]*`" => "")
-        visible = replace(visible, r"https?://\S+" => "")
-        visible = replace(
-            visible,
-            r"(?:[A-Za-z0-9_.-]+/)*[FN][0-9]{2}\.[A-Za-z0-9_.-]+" => "",
-        )
-        visible = replace(visible, r"課題ID\s*[:：]\s*[FN][0-9]{2}" => "")
-        visible = strip(visible, [' ', '\t', '*', '_'])
-        if occursin(r"(?:^|[。！？])\s*(?:F|N)[0-9]{2}(?![A-Za-z0-9])", visible)
-            push!(violations, (line_number, raw_line))
+        fragments = is_table ?
+            strip.(split(visible_line, '|'; keepempty=true)[2:(end - 1)]) :
+            [visible_line]
+        for fragment in fragments
+            occursin(r"^:?-{3,}:?$", fragment) && continue
+            visible = replace(fragment, MARKDOWN_LINK_PATTERN => s"\1")
+            visible = replace(visible, r"`[^`]*`" => "")
+            visible = replace(visible, r"https?://\S+" => "")
+            visible = replace(
+                visible,
+                r"(?:[A-Za-z0-9_.-]+/)*[FN][0-9]{2}\.[A-Za-z0-9_.-]+" => "",
+            )
+            visible = replace(visible, r"課題ID\s*[:：]\s*[FN][0-9]{2}" => "")
+            visible = strip(visible, [' ', '\t', '*', '_'])
+            if occursin(
+                r"(?:^|[。！？])\s*(?:F|N)[0-9]{2}(?![A-Za-z0-9])",
+                visible,
+            )
+                push!(violations, (line_number, raw_line))
+                break
+            end
         end
     end
     return violations
 end
 
 function glossary_parenthetical_mapping(source)
-    mapping = Dict{String,String}()
+    rows = Tuple{String,String,String}[]
     for line in split(source, '\n')
         startswith(strip(line), "|") || continue
         cells = strip.(split(strip(line), '|'; keepempty=true)[2:(end - 1)])
-        isempty(cells) && continue
+        length(cells) == 2 || continue
         matched = match(r"^(.+?)（([^（）]+)）$", first(cells))
         isnothing(matched) && continue
-        mapping[matched.captures[1]] = matched.captures[2]
+        push!(rows, (matched.captures[1], matched.captures[2], cells[2]))
     end
-    return mapping
+    return rows
+end
+
+const EXPECTED_GLOSSARY_MAPPING = [
+    ("branch", "分岐"),
+    ("commit", "記録"),
+    ("diff", "差分"),
+    ("pull request", "変更取り込み依頼"),
+    ("merge", "統合"),
+    ("local", "手元環境"),
+    ("repository", "保管場所"),
+    ("test", "テスト"),
+    ("regression test", "回帰テスト"),
+    ("tolerance", "許容誤差"),
+    ("self-contained", "自己完結"),
+]
+
+function glossary_rows_contract(source)
+    rows = glossary_parenthetical_mapping(source)
+    mappings = [(term, translation) for (term, translation, _) in rows]
+    terms = [term for (term, _, _) in rows]
+    pr_rows = [row for row in rows if row[1] == "pull request"]
+    return length(rows) == 11 &&
+           length(unique(terms)) == 11 &&
+           mappings == EXPECTED_GLOSSARY_MAPPING &&
+           length(pr_rows) == 1 &&
+           occursin("略称 PR", only(pr_rows)[3]) &&
+           count(row -> occursin("略称 PR", row[3]), rows) == 1 &&
+           length(findall("略称 PR", source)) == 1
 end
 
 const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
@@ -239,6 +284,13 @@ const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
     @test learner_copy_id_led_lines("前提を確認します。N01では境界条件を扱います。\n") == [
         (1, "前提を確認します。N01では境界条件を扱います。"),
     ]
+    for fixture in (
+        "- F01ではbranchを作ります。",
+        "> N01では境界条件を扱います。",
+        "| F02では配列を学びます。 | 説明 |",
+    )
+        @test learner_copy_id_led_lines(fixture * "\n") == [(1, fixture)]
+    end
     allowed_machine_contexts = """
     課題ID: F00 は進捗表示の補助情報です。
     `F01`はコマンド引数として入力します。
@@ -250,6 +302,14 @@ const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
     ```
     """
     @test isempty(learner_copy_id_led_lines(allowed_machine_contexts))
+    for fixture in (
+        "- assignments/F01.qmd は公開ページのpathです。",
+        "> `N01`はコマンド引数です。",
+        "| 課題ID: F02 | https://example.test/assignments/F03.html |",
+        "|---|---|",
+    )
+        @test isempty(learner_copy_id_led_lines(fixture * "\n"))
+    end
 end
 
 @testset "learner-facing headings and paragraphs use concrete names" begin
@@ -710,19 +770,29 @@ end
 
     glossary = copy_source("guides/glossary.qmd")
     @test occursin("括弧内は日本語訳", glossary)
-    @test glossary_parenthetical_mapping(glossary) == Dict(
-        "branch" => "分岐",
-        "commit" => "記録",
-        "diff" => "差分",
-        "pull request" => "変更取り込み依頼",
-        "merge" => "統合",
-        "local" => "手元環境",
-        "repository" => "保管場所",
-        "test" => "テスト",
-        "regression test" => "回帰テスト",
-        "tolerance" => "許容誤差",
-        "self-contained" => "自己完結",
+    glossary_rows = glossary_parenthetical_mapping(glossary)
+    @test length(glossary_rows) == 11
+    @test length(unique(first.(glossary_rows))) == 11
+    @test [(term, translation) for (term, translation, _) in glossary_rows] ==
+          EXPECTED_GLOSSARY_MAPPING
+    pull_request_rows = filter(row -> first(row) == "pull request", glossary_rows)
+    @test length(pull_request_rows) == 1
+    @test occursin("略称 PR", only(pull_request_rows)[3])
+    @test count(row -> occursin("略称 PR", row[3]), glossary_rows) == 1
+    @test glossary_rows_contract(glossary)
+    duplicate_wrong_row = replace(
+        glossary,
+        "| pull request（変更取り込み依頼）" =>
+            "| pull request（誤った意味） | 誤った説明。 |\n| pull request（変更取り込み依頼）";
+        count = 1,
     )
-    @test occursin("略称 PR", glossary)
+    @test !glossary_rows_contract(duplicate_wrong_row)
+    moved_pr_description = replace(
+        glossary,
+        "mainから分かれた一連の変更。" => "略称 PR。mainから分かれた一連の変更。",
+        "略称 PR。branchの変更" => "branchの変更";
+        count = 1,
+    )
+    @test !glossary_rows_contract(moved_pr_description)
 end
 end
