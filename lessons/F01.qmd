@@ -8,9 +8,9 @@ title: "Julia・Git・GitHubの最小操作"
 ## この回の到達点
 
 - 作業中の変更、commit、branch、pull request、mainの違いを説明できる。
-- F01用branchを作り、変更前後の`git diff`を確認できる。
+- この課題用のbranchを作り、変更前後の`git diff`を確認できる。
 - ローカルテスト、push、Actions、セルフレビューを正しい順で実行できる。
-- 一つのbranchと一つのPRでF01を完了できる。
+- 一つのbranchと一つのPRでこの課題を完了できる。
 
 
 ## 一つの変更が進む経路
@@ -20,7 +20,7 @@ clean main
   → exercise/F01-first-pull-request
   → 実装
   → ローカルテスト
-  → 公式出力の確認（F01はなし）
+  → 公式出力の確認（この課題はなし）
   → 学習ログ
   → commit
   → push
@@ -34,15 +34,15 @@ clean main
 
 順番には意味があります。ローカルテストを先に通すことで、push後に初めて単純な失敗へ気づく時間を減らせます。diffを読んでからmergeすることで、テスト対象外の意図しない変更も検出できます。
 
-## F01だけ手動でbranchを作る理由
+## 最初のbranchだけ手動で作る理由
 
-F01では、現在branchと新しいbranchの関係を自分の操作で確かめます。
+この最初のbranch課題では、現在branchと新しいbranchの関係を自分の操作で確かめます（課題ID: F01）。
 
 ```bash
 git switch -c exercise/F01-first-pull-request
 ```
 
-F02以降は`julia --project=. scripts/course.jl start <ID>`が、cleanなmain、課題順序、ローカルテスト、結果サイズを確認してからbranchを作ります。このコマンドはpull、push、PR、mergeを自動化しません。ネットワークへ送る内容は、学生自身がdiffを確認して決めます。
+次の配列・関数・テスト課題（課題ID: F02）以降は`julia --project=. scripts/course.jl start <ID>`が、cleanなmain、課題順序、ローカルテスト、結果サイズを確認してからbranchを作ります。このコマンドはpull、push、PR、mergeを自動化しません。ネットワークへ送る内容は、学生自身がdiffを確認して決めます。
 
 ## 状態を確認する基本コマンド
 
@@ -67,8 +67,8 @@ GitHub Freeのprivateリポジトリではbranch protectionに依存しません
 
 ## AI利用の境界
 
-F01では、概念の説明、エラーメッセージの解説、課題とは別の小さな練習問題に利用できます。課題の完成コード作成は依頼しません。提案を利用した場合も、実行前に対象を予想し、実行後にdiffとテストを自分で確認します。
+この最初のbranch課題では、概念の説明、エラーメッセージの解説、課題とは別の小さな練習問題に利用できます。課題の完成コード作成は依頼しません。提案を利用した場合も、実行前に対象を予想し、実行後にdiffとテストを自分で確認します。
 
 token、API key、パスワード、秘密鍵、個人情報をAgentやPRへ貼り付けません。誤って表示した場合はcommitやpushをせず、教員・TAへ相談してください。
 
-実作業は[`F01`課題](../assignments/F01.qmd)、以後の共通手順は[課題ワークフロー](../guides/workflow.qmd)を参照してください。
+実作業は[最初のbranchとpull request課題](../assignments/F01.qmd)（課題ID: F01）、以後の共通手順は[課題ワークフロー](../guides/workflow.qmd)を参照してください。

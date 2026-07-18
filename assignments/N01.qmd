@@ -25,7 +25,7 @@ Julia以外のプログラミング経験はあるものの構文を忘れてい
 
 ## 開始
 
-F03をmergeし、更新済みでcleanな`main`から始めます。
+前の座標・添字・差分課題（課題ID: F03）をmergeし、更新済みでcleanな`main`から始めます。
 
 ```bash
 julia --project=. scripts/course.jl start N01
@@ -39,7 +39,7 @@ julia --project=. scripts/course.jl start N01
 2. 正の速度に対する後退差分のupwind + Euler更新
 3. 中心差分のcentered + Euler更新
 
-後続課題で再利用する処理は段階的に`src/`へ切り出しますが、N01は`src/`をimportしません。
+後続課題で再利用する処理は段階的に`src/`へ切り出しますが、この1次元線形移流課題は`src/`をimportしません。
 TOML、Plots、`module`、`export`、境界条件、時間loop、詳細な入力検証、TOML出力、作図、`main`は提供済みです。これらの内部処理を実装できることは学習対象ではありません。関数名、引数、scheme、出力ファイル名、summaryのキーは変更しません。
 
 ## 実行とテスト

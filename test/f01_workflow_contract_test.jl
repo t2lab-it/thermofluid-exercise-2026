@@ -5,10 +5,10 @@ const F01_ASSIGNMENT = read(joinpath(SITE_ROOT, "assignments", "F01.qmd"), Strin
 const WORKFLOW_GUIDE = read(joinpath(SITE_ROOT, "guides", "workflow.qmd"), String)
 
 @testset "public F01 progress and student-test workflow" begin
-    @testset "F01 assignment acknowledges the intentional F00 progress diff" begin
-        @test occursin("F00からF01", F01_ASSIGNMENT)
+    @testset "first branch assignment acknowledges the intentional diagnosis progress diff" begin
+        @test occursin("最初の環境診断からこの課題へ", F01_ASSIGNMENT)
         @test occursin("`course_progress.toml`だけ", F01_ASSIGNMENT)
-        @test occursin("F01で初めてcommit", F01_ASSIGNMENT)
+        @test occursin("最初のbranch課題で初めてcommit", F01_ASSIGNMENT)
         @test !occursin("`Current: F01`、変更なし", F01_ASSIGNMENT)
     end
 
@@ -23,10 +23,13 @@ const WORKFLOW_GUIDE = read(joinpath(SITE_ROOT, "guides", "workflow.qmd"), Strin
         @test occursin("完了", F01_ASSIGNMENT)
     end
 
-    @testset "common guide documents the F01-only dirty-main exception" begin
-        @test occursin("F00からF01", WORKFLOW_GUIDE)
+    @testset "common guide documents the first-branch dirty-main exception" begin
+        @test occursin("最初の環境診断からbranchとpull request課題へ", WORKFLOW_GUIDE)
         @test occursin("`course_progress.toml`だけ", WORKFLOW_GUIDE)
-        @test occursin("F01で初めてcommit", WORKFLOW_GUIDE)
-        @test occursin("F02以降はcleanなmain", WORKFLOW_GUIDE)
+        @test occursin("最初のbranch課題で初めてcommit", WORKFLOW_GUIDE)
+        @test occursin(
+            "次の配列・関数・テスト課題（課題ID: F02）以降はcleanなmain",
+            WORKFLOW_GUIDE,
+        )
     end
 end

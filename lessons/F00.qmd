@@ -10,12 +10,12 @@ title: "ガイダンスと環境診断"
 - `julia --version`などの診断結果から、環境の問題と課題コードの問題を切り分けられる。
 - Julia、Git、VS Code、GitHub、Coding Agentについて、機械確認と手動確認の違いを説明できる。
 - 診断が止まったコマンドと段階を記録し、次に確認する操作を選べる。
-- F00ではbranchやPRを作らない理由を説明できる。
+- 最初の環境診断ではbranchやPRを作らない理由を説明できる。
 
 
 ## 機械観測と手動確認
 
-バージョンやコマンドの有無はプログラムが再現可能に検査できます。一方、GitHub の画面を自分が閲覧できることや、Agent の結果を自分で確認したことは機械だけでは保証できません。F00 は両者を別々に表示し、必要な確認がそろったときだけ F01 へ進めます。
+バージョンやコマンドの有無はプログラムが再現可能に検査できます。一方、GitHub の画面を自分が閲覧できることや、Agent の結果を自分で確認したことは機械だけでは保証できません。この環境診断は両者を別々に表示し、必要な確認がそろったときだけ最初のbranchとpull request課題（課題ID: F01）へ進めます。
 
 | 対象 | 診断の種類 | 合格の根拠 |
 |---|---|---|
@@ -43,4 +43,4 @@ Windows、macOS、Linux で画面やパスの表記は異なりますが、合�
 - GitHubで自分のClassroomリポジトリを閲覧でき、一つのCoding Agentで編集とコマンド実行を手動確認した。
 - `julia --project=. scripts/course.jl preflight`が環境診断の完了を進捗へ記録した。
 
-F00は環境診断だけです。branch、commit、push、pull request、Actions、diff、セルフレビュー、mergeはF01で順に学びます。
+この最初の課題は環境診断だけです。branch、commit、push、pull request、Actions、diff、セルフレビュー、mergeは次の「最初のbranchとpull request」課題（課題ID: F01）で順に学びます。

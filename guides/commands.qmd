@@ -48,7 +48,7 @@ git diff --cached
 git log --oneline -5
 ```
 
-F01でだけ、指定された課題branchを手動で作ります。
+最初のbranchとpull request課題（課題ID: F01）でだけ、指定された課題branchを手動で作ります。
 
 ```bash
 # F01で最初の課題branchを手動作成する

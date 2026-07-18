@@ -130,6 +130,63 @@ function public_qmd_paths()
     return sort!(paths)
 end
 
+function learner_copy_id_led_lines(source)
+    violations = Tuple{Int,String}[]
+    in_frontmatter = false
+    in_fence = false
+    for (line_number, raw_line) in enumerate(split(source, '\n'; keepempty=true))
+        line = strip(raw_line)
+        if line_number == 1 && line == "---"
+            in_frontmatter = true
+            continue
+        elseif in_frontmatter
+            line == "---" && (in_frontmatter = false)
+            continue
+        end
+        if occursin(r"^(?:```|~~~)", line)
+            in_fence = !in_fence
+            continue
+        end
+        in_fence && continue
+        isempty(line) && continue
+
+        is_heading = occursin(r"^#{1,6}\s+", line)
+        is_normal_paragraph = !occursin(
+            r"^(?:[#>*+\-|]|:::|\$\$|\\|<|[0-9]+\.\s)",
+            line,
+        )
+        (is_heading || is_normal_paragraph) || continue
+
+        visible = replace(line, r"^#{1,6}\s+" => "")
+        visible = replace(visible, MARKDOWN_LINK_PATTERN => s"\1")
+        visible = replace(visible, r"`[^`]*`" => "")
+        visible = replace(visible, r"https?://\S+" => "")
+        visible = replace(
+            visible,
+            r"(?:[A-Za-z0-9_.-]+/)*[FN][0-9]{2}\.[A-Za-z0-9_.-]+" => "",
+        )
+        visible = replace(visible, r"課題ID\s*[:：]\s*[FN][0-9]{2}" => "")
+        visible = strip(visible, [' ', '\t', '*', '_'])
+        if occursin(r"(?:^|[。！？])\s*(?:F|N)[0-9]{2}(?![A-Za-z0-9])", visible)
+            push!(violations, (line_number, raw_line))
+        end
+    end
+    return violations
+end
+
+function glossary_parenthetical_mapping(source)
+    mapping = Dict{String,String}()
+    for line in split(source, '\n')
+        startswith(strip(line), "|") || continue
+        cells = strip.(split(strip(line), '|'; keepempty=true)[2:(end - 1)])
+        isempty(cells) && continue
+        matched = match(r"^(.+?)（([^（）]+)）$", first(cells))
+        isnothing(matched) && continue
+        mapping[matched.captures[1]] = matched.captures[2]
+    end
+    return mapping
+end
+
 const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
 
 
@@ -172,6 +229,37 @@ const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
         "F00: ガイダンスと環境診断",
         "任意: CairoMakieによる可視化",
     ]
+
+    @test learner_copy_id_led_lines("## F01だけ手動でbranchを作る理由\n") == [
+        (1, "## F01だけ手動でbranchを作る理由"),
+    ]
+    @test learner_copy_id_led_lines("F02では配列と関数を学びます。\n") == [
+        (1, "F02では配列と関数を学びます。"),
+    ]
+    @test learner_copy_id_led_lines("前提を確認します。N01では境界条件を扱います。\n") == [
+        (1, "前提を確認します。N01では境界条件を扱います。"),
+    ]
+    allowed_machine_contexts = """
+    課題ID: F00 は進捗表示の補助情報です。
+    `F01`はコマンド引数として入力します。
+    assignments/F02.qmd は公開ページのpathです。
+    https://example.test/assignments/F03.html はcanonical URLです。
+
+    ```bash
+    julia --project=. scripts/course.jl start N01
+    ```
+    """
+    @test isempty(learner_copy_id_led_lines(allowed_machine_contexts))
+end
+
+@testset "learner-facing headings and paragraphs use concrete names" begin
+    violations = Tuple{String,Int,String}[]
+    for path in public_qmd_paths()
+        for (line_number, line) in learner_copy_id_led_lines(copy_source(path))
+            push!(violations, (path, line_number, line))
+        end
+    end
+    @test isempty(violations)
 end
 
 @testset "public copy positions and visible titles" begin
@@ -622,11 +710,19 @@ end
 
     glossary = copy_source("guides/glossary.qmd")
     @test occursin("括弧内は日本語訳", glossary)
-    for translated in (
-        "branch（分岐）", "commit（記録）", "repository（保管場所）",
-        "self-contained（自己完結）",
+    @test glossary_parenthetical_mapping(glossary) == Dict(
+        "branch" => "分岐",
+        "commit" => "記録",
+        "diff" => "差分",
+        "pull request" => "変更取り込み依頼",
+        "merge" => "統合",
+        "local" => "手元環境",
+        "repository" => "保管場所",
+        "test" => "テスト",
+        "regression test" => "回帰テスト",
+        "tolerance" => "許容誤差",
+        "self-contained" => "自己完結",
     )
-        @test occursin(translated, glossary)
-    end
+    @test occursin("略称 PR", glossary)
 end
 end

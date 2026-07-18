@@ -5,11 +5,11 @@ title: "課題のbranch・PRワークフロー"
 準備 5/5
 :::
 
-このページは受講準備の最後に読む「準備 5/5」です。F01以降の課題で繰り返すbranch・PR手順の正本として使います。
+このページは受講準備の最後に読む「準備 5/5」です。最初のbranchとpull request課題（課題ID: F01）以降で繰り返すbranch・PR手順の正本として使います。
 
 ## 共通契約
 
-F01以降は、**1課題につき1 branch、1 pull request、1学習ログ**を作ります。通常課題はセルフレビュー後に学生がmergeし、主要チェックポイントでは教員・TAの確認後に学生がmergeします。
+最初のbranchとpull request課題（課題ID: F01）以降は、**1課題につき1 branch、1 pull request、1学習ログ**を作ります。通常課題はセルフレビュー後に学生がmergeし、主要チェックポイントでは教員・TAの確認後に学生がmergeします。
 
 共通の順序は次です。
 
@@ -42,7 +42,7 @@ flowchart LR
 
 ## 課題を開始する
 
-F01だけはbranch作成を手動で学びます。
+最初のbranch作成だけは手動で学びます。
 
 ```bash
 git status --short
@@ -50,9 +50,9 @@ git diff -- course_progress.toml
 git switch -c exercise/F01-first-pull-request
 ```
 
-F00からF01へ進んだ直後は、`course_progress.toml`だけが変更済みであることを確認します。F00ではcommitしないため、この進捗変更はF01で初めてcommitします。ほかの変更があればbranchを作らず、教員・TAへ相談します。
+最初の環境診断からbranchとpull request課題へ進んだ直後は、`course_progress.toml`だけが変更済みであることを確認します。環境診断ではcommitしないため、この進捗変更は最初のbranch課題で初めてcommitします。ほかの変更があればbranchを作らず、教員・TAへ相談します。
 
-F02以降はcleanなmainから開始します。
+次の配列・関数・テスト課題（課題ID: F02）以降はcleanなmainから開始します。
 
 ```bash
 git status --short
@@ -76,7 +76,7 @@ Actionsだけを先に頼らず、ローカルで実行します。公式`run.jl
 
 学習ログには、実装、テストの意味、結果、diff確認、つまずき、判断を簡潔に残します。AI利用時は、実行前予想、依頼内容、重要な提案、採用・修正・却下、diff、テスト、結果、理由を要約します。
 
-秘密情報、不要な個人情報、私的な会話を含めません。F01のAI利用は説明、エラー解説、練習問題に限られます。課題ごとの許可範囲を超えて利用しません。
+秘密情報、不要な個人情報、私的な会話を含めません。最初のbranch課題（課題ID: F01）でのAI利用は説明、エラー解説、練習問題に限られます。課題ごとの許可範囲を超えて利用しません。
 
 ## commit前の確認
 

@@ -9,7 +9,7 @@ title: "Juliaの配列・関数・テスト"
 
 温度の配列を題材に、関数へ入力契約を持たせ、loopで値を集計し、戻り値の具体例と数学的性質をテストします。特定の`Float64`配列だけでなく、Juliaの型を保った一般的な実数配列を扱うことを目指します。
 
-前提は[`F01`](F01.qmd)のmergeです。F01で経験したbranch・PR手順は[共通課題ワークフロー](../guides/workflow.qmd)に従います。
+前提は[最初のbranchとpull request課題](F01.qmd)（課題ID: F01）のmergeです。そこで経験したbranch・PR手順は[共通課題ワークフロー](../guides/workflow.qmd)に従います。
 
 ## このページの進め方
 
@@ -48,7 +48,7 @@ Test Passed
 
 ## 課題を開始する
 
-F02からは、cleanな`main`で補助コマンドを実行します。
+この配列・関数・テスト課題からは、cleanな`main`で補助コマンドを実行します（課題ID: F02）。
 
 ```bash
 git status --short
@@ -56,7 +56,7 @@ git branch --show-current
 julia --project=. scripts/course.jl start F02
 ```
 
-成功すると`exercise/F02-julia-arrays-and-tests`へ移り、進捗がF02になります。補助コマンドはpull、push、PR、mergeを行いません。
+成功すると`exercise/F02-julia-arrays-and-tests`へ移り、進捗が`F02`になります。補助コマンドはpull、push、PR、mergeを行いません。
 
 ## 実装するAPI
 
@@ -108,11 +108,11 @@ julia --project=. exercises/F02_julia_arrays_and_tests/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-F02に公式生成物はありません。`results/F02/`は作りません。実行結果、テスト結果、入力契約とテストの意味を`learning_logs/F02.md`へ記録します。
+この配列・関数・テスト課題に公式生成物はありません。`results/F02/`は作りません。実行結果、テスト結果、入力契約とテストの意味を`learning_logs/F02.md`へ記録します。
 
 ## AI利用の範囲
 
-F02では、Juliaの構文や型の説明、エラーメッセージの解説、課題とは別の練習問題に利用できます。課題の関数本体や完成テストの生成は依頼しません。利用した場合は、提案の採否とdiff・テストで確認した内容を学習ログへ残します。
+この配列・関数・テスト課題では、Juliaの構文や型の説明、エラーメッセージの解説、課題とは別の練習問題に利用できます。課題の関数本体や完成テストの生成は依頼しません。利用した場合は、提案の採否とdiff・テストで確認した内容を学習ログへ残します。
 
 token、API key、パスワード、秘密鍵、個人情報をAgent、学習ログ、PRへ含めないでください。
 
@@ -128,4 +128,4 @@ token、API key、パスワード、秘密鍵、個人情報をAgent、学習ロ
 - 型の異なる代表配列を含む提供テストと学生テストが通る。
 - anomalyの性質と入力非変更を説明できる。
 - 公式出力がないことを確認した。
-- F02用のbranch、PR、学習ログを一つずつ作り、Actions、diff、セルフレビューを完了した。
+- この課題用のbranch、PR、学習ログを一つずつ作り、Actions、diff、セルフレビューを完了した。

@@ -5,7 +5,7 @@ title: "CairoMakieによる可視化"
 任意・発展資料
 :::
 
-このページは意欲的な学生向けの任意資料です。必修のpublic環境と学生環境には`CairoMakie.jl`を追加しません。N01の合否にも影響しません。
+このページは意欲的な学生向けの任意資料です。必修のpublic環境と学生環境には`CairoMakie.jl`を追加しません。1次元線形移流課題（課題ID: N01）の合否にも影響しません。
 
 ## 分離した環境を作る
 
@@ -19,7 +19,7 @@ julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(e
 
 ## 交換ファイルを作る
 
-完成済みN01の配列を公式3出力とは分離して scratch/ へ書き出します。次のコードを学生リポジトリの scratch/export_n01.jl として保存してください。
+完成済みの1次元線形移流課題（課題ID: N01）の配列を公式3出力とは分離して scratch/ へ書き出します。次のコードを学生リポジトリの scratch/export_n01.jl として保存してください。
 
 ~~~julia
 using DelimitedFiles
@@ -47,7 +47,7 @@ julia --project=. scratch/export_n01.jl
 
 この交換ファイルは任意実験用であり、results/N01/ の公式3ファイルには加えず、commitもしません。
 
-## N01データを描く
+## 1次元線形移流データを描く
 
 次のコードを scratch/plot_n01_cairomakie.jl として保存します。交換ファイルの4列を読み、安定例と意図的な不安定例を同じ図で比較します。
 

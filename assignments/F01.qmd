@@ -7,9 +7,9 @@ title: "最初のbranchとpull request"
 
 ## 目的
 
-小さなJuliaコードを変更し、ローカルテストで確かめ、その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します。F01では仕組みを見える形で学ぶため、課題branchを手動で作ります。
+小さなJuliaコードを変更し、ローカルテストで確かめ、その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します。この課題では仕組みを見える形で学ぶため、課題branchを手動で作ります。
 
-F02以降は、同じ事前確認とbranch作成を次の補助コマンドで行います。
+次の配列・関数・テスト課題（課題ID: F02）以降は、同じ事前確認とbranch作成を次の補助コマンドで行います。
 
 ```bash
 julia --project=. scripts/course.jl start F02
@@ -30,7 +30,7 @@ julia --project=. scripts/course.jl start F02
 
 ## 開始前の確認
 
-F00が完了し、現在課題がF01であることを確認します。
+最初の環境診断（課題ID: F00）が完了し、現在課題が「最初のbranchとpull request」（課題ID: F01）であることを確認します。
 
 ```bash
 julia --project=. scripts/course.jl status
@@ -38,7 +38,7 @@ git status --short
 git branch --show-current
 ```
 
-`Current: F01`、現在branchが`main`であることを確認してください。F00からF01へ進んだ直後は、`course_progress.toml`だけが変更済みと表示されるのが正常です。F00ではGit commitを作らないため、この進捗変更はF01で初めてcommitします。それ以外の変更が表示された場合は削除せず、branchを作る前に教員・TAへ相談します。
+`Current: F01`、現在branchが`main`であることを確認してください。最初の環境診断からこの課題へ進んだ直後は、`course_progress.toml`だけが変更済みと表示されるのが正常です。環境診断ではGit commitを作らないため、この進捗変更は最初のbranch課題で初めてcommitします。それ以外の変更が表示された場合は削除せず、branchを作る前に教員・TAへ相談します。
 
 ## 1. branchを手動で作る
 
@@ -47,7 +47,7 @@ git switch -c exercise/F01-first-pull-request
 git branch --show-current
 ```
 
-二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認します。F01だけはこの操作を手動で行います。1課題につきbranchは一つです。
+二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認します。最初のbranch課題だけはこの操作を手動で行います。1課題につきbranchは一つです。
 
 ## 2. 実装する
 
@@ -69,7 +69,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 ## 4. 公式出力を確認する
 
-F01に公式生成物はありません。`results/F01/`へファイルを作る必要はありません。ターミナルの実行結果とテスト成功が、この課題の実行確認です。
+この最初のbranch課題に公式生成物はありません。`results/F01/`へファイルを作る必要はありません。ターミナルの実行結果とテスト成功が、この課題の実行確認です。
 
 ## 5. 学習ログを書く
 
@@ -81,7 +81,7 @@ F01に公式生成物はありません。`results/F01/`へファイルを作る
 - つまずきと解決方法
 - AIを利用した場合は依頼内容、重要な提案、採用・修正・却下とその理由
 
-F01でのAI利用は、説明、エラー解説、練習問題に限ります。課題の完成コードを生成させないでください。
+この最初のbranch課題でのAI利用は、説明、エラー解説、練習問題に限ります。課題の完成コードを生成させないでください。
 
 ## 6. commitする
 
@@ -133,7 +133,7 @@ git pull --ff-only origin main
 git status --short
 ```
 
-F01のbranch、PR、学習ログがそれぞれ一つあり、`test/student/F01.jl`を代表例へ変更し、テスト、Actions、diff確認が完了していればF01完了です。cleanなmainからF02を開始します。
+この課題のbranch、PR、学習ログがそれぞれ一つあり、`test/student/F01.jl`を代表例へ変更し、テスト、Actions、diff確認が完了していれば「最初のbranchとpull request」は完了です。cleanなmainから次の配列・関数・テスト課題（課題ID: F02）を開始します。
 
 ```bash
 julia --project=. scripts/course.jl start F02
