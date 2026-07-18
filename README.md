@@ -37,7 +37,7 @@ $env:QUARTO_JULIA_PROJECT = "."
 quarto render
 ```
 
-生成物は`_site/`へ出力されます。`_quarto.yml`はJulia engineを明示し、`index.qmd`のsmoke cellを実行します。
+生成物は`_site/`へ出力されます。`_quarto.yml`はJulia engineを明示します。Julia実行確認用のsmoke cellは公開ページに置かず、教員用のrelease rehearsalが一時Quarto projectで検証します。
 
 ## テスト
 
