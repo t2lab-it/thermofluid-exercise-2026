@@ -156,6 +156,27 @@ function yaml_effective_values(lines, node)
     return [strip(lines[item.line].text[3:end], ['"', '\'']) for item in yaml_sequence_items(lines, node)]
 end
 
+function navbar_menu_pairs(lines, section_label)
+    navbar_left = yaml_node(lines, ("website", "navbar", "left"))
+    isnothing(navbar_left) && return Tuple{String,String}[]
+    section_items = [
+        item for item in yaml_sequence_items(lines, navbar_left)
+        if something(yaml_item_field(lines, item, "text"), (value="",)).value == section_label
+    ]
+    length(section_items) == 1 || return Tuple{String,String}[]
+
+    menu = yaml_item_field(lines, only(section_items), "menu")
+    isnothing(menu) && return Tuple{String,String}[]
+    pairs = Tuple{String,String}[]
+    for entry in yaml_sequence_items(lines, menu.node)
+        href = yaml_item_field(lines, entry, "href")
+        text = yaml_item_field(lines, entry, "text")
+        (isnothing(href) || isnothing(text)) && return Tuple{String,String}[]
+        push!(pairs, (href.value, text.value))
+    end
+    return pairs
+end
+
 const NAVIGATION_LOADER = "assets/navigation-loader.html"
 const NAVIGATION_BEHAVIOR_TEST = joinpath(@__DIR__, "navigation_behavior_test.js")
 
@@ -287,6 +308,30 @@ end
     @test length(adjacent_entries) == 2
     @test yaml_item_field(valid_sidebar, adjacent_entries[1], "href").value == "lessons/F00.qmd"
     @test yaml_item_field(valid_sidebar, adjacent_entries[2], "href").value == "assignments/F00.qmd"
+
+    swapped_navbar = yaml_source_lines("""
+    website:
+      navbar:
+        left:
+          - text: 授業
+            menu:
+              - href: lessons/index.qmd
+                text: 授業一覧
+              - href: lessons/F01.qmd
+                text: Julia・Git・GitHubの最小操作
+              - href: lessons/F00.qmd
+                text: ガイダンスと環境診断
+    """)
+    @test navbar_menu_pairs(swapped_navbar, "授業") == [
+        ("lessons/index.qmd", "授業一覧"),
+        ("lessons/F01.qmd", "Julia・Git・GitHubの最小操作"),
+        ("lessons/F00.qmd", "ガイダンスと環境診断"),
+    ]
+    @test navbar_menu_pairs(swapped_navbar, "授業") != [
+        ("lessons/index.qmd", "授業一覧"),
+        ("lessons/F00.qmd", "ガイダンスと環境診断"),
+        ("lessons/F01.qmd", "Julia・Git・GitHubの最小操作"),
+    ]
 end
 
 @testset "navigation behavior harness fixture" begin
@@ -335,30 +380,18 @@ end
         @test length(home_items) == 1
         length(home_items) == 1 && @test isnothing(yaml_item_field(yaml, only(home_items), "rel"))
 
-        for (section_label, field, href_prefix) in (
-            ("授業", :lesson, "lessons"),
-            ("課題", :assignment, "assignments"),
+        for (section_label, field, href_prefix, index_text) in (
+            ("授業", :lesson, "lessons", "授業一覧"),
+            ("課題", :assignment, "assignments", "課題一覧"),
         )
-            section_items = [
-                item for item in navbar_items
-                if something(yaml_item_field(yaml, item, "text"), (value="",)).value == section_label
-            ]
-            @test length(section_items) == 1
-            if length(section_items) == 1
-                menu = yaml_item_field(yaml, only(section_items), "menu")
-                @test !isnothing(menu)
-                if !isnothing(menu)
-                    entries = yaml_sequence_items(yaml, menu.node)
+            expected = [
+                ("$href_prefix/index.qmd", index_text),
+                [
+                    ("$href_prefix/$id.qmd", getproperty(VISIBLE_NAMES[id], field))
                     for id in REQUIRED_COURSE_ORDER
-                        matches = [
-                            entry for entry in entries
-                            if something(yaml_item_field(yaml, entry, "href"), (value="",)).value == "$href_prefix/$id.qmd"
-                        ]
-                        @test length(matches) == 1
-                        length(matches) == 1 && @test yaml_item_field(yaml, only(matches), "text").value == getproperty(VISIBLE_NAMES[id], field)
-                    end
-                end
-            end
+                ]...,
+            ]
+            @test navbar_menu_pairs(yaml, section_label) == expected
         end
     end
 
