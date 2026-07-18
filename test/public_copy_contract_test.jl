@@ -89,6 +89,32 @@ end
     end
 end
 
+@testset "public entry pages use concrete visible names" begin
+    home = copy_source("index.qmd")
+    for removed in (
+        "Juliaで理解・実装・検証・調査をつなぐ",
+        "この公開教材は、熱流体力学の式を読み",
+        "受講環境の準備から始める",
+    )
+        @test !occursin(removed, home)
+    end
+    for link_text in (
+        "[ガイダンスと環境診断](lessons/F00.qmd)",
+        "[環境診断](assignments/F00.qmd)",
+        "[Julia・Git・GitHubの最小操作](lessons/F01.qmd)",
+        "[最初のbranchとpull request](assignments/F01.qmd)",
+    )
+        @test occursin(link_text, home)
+    end
+    @test !occursin(r"\[[FN][0-9]{2}\s+(?:授業|課題)\]", home)
+    @test occursin("[受講環境の準備へ進む](setup/index.qmd){.start-button}", home)
+
+    for path in ("lessons/index.qmd", "assignments/index.qmd", "guides/index.qmd", "advanced/index.qmd")
+        hub = copy_source(path)
+        @test !occursin("::: {.eyebrow}", hub)
+    end
+end
+
 
 @testset "public lesson outcomes have bounded bullet counts" begin
     for id in ("F00", "F01", "F02", "F03", "N01")

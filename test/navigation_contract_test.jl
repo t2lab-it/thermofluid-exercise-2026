@@ -1,9 +1,34 @@
+using Test
+using TOML
+
+const NAVIGATION_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
+
 const VISIBLE_NAMES = Dict(
-    "F00" => "受講環境の準備",
-    "F01" => "GitHubを使った課題提出",
-    "F02" => "Juliaチュートリアル",
-    "F03" => "速習差分法",
-    "N01" => "1次元線形移流方程式",
+    "F00" => (
+        course="受講環境の準備",
+        lesson="ガイダンスと環境診断",
+        assignment="環境診断",
+    ),
+    "F01" => (
+        course="GitHubを使った課題提出",
+        lesson="Julia・Git・GitHubの最小操作",
+        assignment="最初のbranchとpull request",
+    ),
+    "F02" => (
+        course="Juliaチュートリアル",
+        lesson="配列・関数・loop・テスト",
+        assignment="Juliaの配列・関数・テスト",
+    ),
+    "F03" => (
+        course="速習差分法",
+        lesson="ベクトル解析・熱伝導・差分と添字",
+        assignment="座標・添字・差分の数値計算入門",
+    ),
+    "N01" => (
+        course="1次元線形移流方程式",
+        lesson="移流方程式と安定性",
+        assignment="1次元線形移流方程式",
+    ),
 )
 
 const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "N01")
@@ -281,7 +306,7 @@ end
 end
 
 @testset "reviewed course navigation contract" begin
-    public_root = SITE_ROOT
+    public_root = NAVIGATION_SITE_ROOT
     quarto = read(joinpath(public_root, "_quarto.yml"), String)
     yaml = yaml_source_lines(quarto)
     contracts = TOML.parsefile(joinpath(public_root, "assignments", "contracts.toml"))
@@ -309,6 +334,32 @@ end
         ]
         @test length(home_items) == 1
         length(home_items) == 1 && @test isnothing(yaml_item_field(yaml, only(home_items), "rel"))
+
+        for (section_label, field, href_prefix) in (
+            ("授業", :lesson, "lessons"),
+            ("課題", :assignment, "assignments"),
+        )
+            section_items = [
+                item for item in navbar_items
+                if something(yaml_item_field(yaml, item, "text"), (value="",)).value == section_label
+            ]
+            @test length(section_items) == 1
+            if length(section_items) == 1
+                menu = yaml_item_field(yaml, only(section_items), "menu")
+                @test !isnothing(menu)
+                if !isnothing(menu)
+                    entries = yaml_sequence_items(yaml, menu.node)
+                    for id in REQUIRED_COURSE_ORDER
+                        matches = [
+                            entry for entry in entries
+                            if something(yaml_item_field(yaml, entry, "href"), (value="",)).value == "$href_prefix/$id.qmd"
+                        ]
+                        @test length(matches) == 1
+                        length(matches) == 1 && @test yaml_item_field(yaml, only(matches), "text").value == getproperty(VISIBLE_NAMES[id], field)
+                    end
+                end
+            end
+        end
     end
 
     page_navigation = yaml_node(yaml, ("website", "page-navigation"))
@@ -381,7 +432,7 @@ end
                 for entry in sections
                     matching_ids = [
                         id for id in REQUIRED_COURSE_ORDER
-                        if occursin(VISIBLE_NAMES[id], entry.section.value)
+                        if occursin(VISIBLE_NAMES[id].course, entry.section.value)
                     ]
                     @test length(matching_ids) <= 1
                     length(matching_ids) == 1 && push!(reviewed_section_ids, only(matching_ids))
@@ -389,7 +440,7 @@ end
                 @test reviewed_section_ids == collect(REQUIRED_COURSE_ORDER)
 
                 for id in REQUIRED_COURSE_ORDER
-                    matching_sections = [entry for entry in sections if occursin(VISIBLE_NAMES[id], entry.section.value)]
+                    matching_sections = [entry for entry in sections if occursin(VISIBLE_NAMES[id].course, entry.section.value)]
                     @test length(matching_sections) == 1
                     if length(matching_sections) == 1
                         section_contents = yaml_item_field(yaml, matching_sections[1].item, "contents")

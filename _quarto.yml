@@ -38,30 +38,30 @@ website:
           - href: lessons/index.qmd
             text: 授業一覧
           - href: lessons/F00.qmd
-            text: F00
+            text: ガイダンスと環境診断
           - href: lessons/F01.qmd
-            text: F01
+            text: Julia・Git・GitHubの最小操作
           - href: lessons/F02.qmd
-            text: F02
+            text: 配列・関数・loop・テスト
           - href: lessons/F03.qmd
-            text: F03
+            text: ベクトル解析・熱伝導・差分と添字
           - href: lessons/N01.qmd
-            text: N01
+            text: 移流方程式と安定性
       - text: 課題
         rel: split-navigation
         menu:
           - href: assignments/index.qmd
             text: 課題一覧
           - href: assignments/F00.qmd
-            text: F00
+            text: 環境診断
           - href: assignments/F01.qmd
-            text: F01
+            text: 最初のbranchとpull request
           - href: assignments/F02.qmd
-            text: F02
+            text: Juliaの配列・関数・テスト
           - href: assignments/F03.qmd
-            text: F03
+            text: 座標・添字・差分の数値計算入門
           - href: assignments/N01.qmd
-            text: N01
+            text: 1次元線形移流方程式
       - text: ガイド
         rel: split-navigation
         menu:

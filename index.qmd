@@ -2,14 +2,6 @@
 title: "熱流体力学演習 2026"
 ---
 
-::: {.eyebrow}
-Juliaで理解・実装・検証・調査をつなぐ
-:::
-
-この公開教材は、熱流体力学の式を読み、Juliaで実装し、テストと数値結果から確かめるための演習サイトです。授業と課題を一組ずつ進めます。
-
-[受講環境の準備から始める](setup/index.qmd){.start-button}
-
 ## この演習で身につけること
 
 数式、配列、コード、可視化を対応づけ、結果がもっともらしいだけでなく、何を根拠に正しいと判断したかを説明します。GitとGitHubは提出のためだけでなく、変更を小さく記録し、diffとテストで検証するために使います。
@@ -19,18 +11,18 @@ Juliaで理解・実装・検証・調査をつなぐ
 ::: {.course-map}
 | 回 | 内容 | 教材・課題 |
 |---:|---|---|
-| 1 | ガイダンス、アカウント、環境診断 | [F00 授業](lessons/F00.qmd)・[課題](assignments/F00.qmd) |
-| 2 | Julia・Git・GitHubの最小操作 | [F01 授業](lessons/F01.qmd)・[課題](assignments/F01.qmd) |
-| 3 | 配列・関数・ループ、テスト | [F02 授業](lessons/F02.qmd)・[課題](assignments/F02.qmd) |
-| 4 | ベクトル解析、伝熱、差分と添字 | [F03 授業](lessons/F03.qmd)・[課題](assignments/F03.qmd) |
-| 5 | 一次元線形・非線形移流 | [N01 授業](lessons/N01.qmd)・[課題](assignments/N01.qmd)、N02（予定） |
-| 6 | 一次元拡散・移流拡散 | N03・N04（予定） |
-| 7 | Git、テスト、Agentic coding、共通化 | N05（予定） |
-| 8 | 二次元移流、配列軸、可視化、メモリ | N06（予定） |
-| 9 | 二次元拡散 | N07（予定） |
-| 10 | 二次元移流拡散 | N08（予定） |
-| 11 | PDE分類、Laplace方程式 | N09（予定） |
-| 12 | Poisson方程式 | N10（予定） |
+| 1 | ガイダンス、アカウント、環境診断 | [ガイダンスと環境診断](lessons/F00.qmd)・[環境診断](assignments/F00.qmd) |
+| 2 | Julia・Git・GitHubの最小操作 | [Julia・Git・GitHubの最小操作](lessons/F01.qmd)・[最初のbranchとpull request](assignments/F01.qmd) |
+| 3 | 配列・関数・ループ、テスト | [配列・関数・loop・テスト](lessons/F02.qmd)・[Juliaの配列・関数・テスト](assignments/F02.qmd) |
+| 4 | ベクトル解析、伝熱、差分と添字 | [ベクトル解析・熱伝導・差分と添字](lessons/F03.qmd)・[座標・添字・差分の数値計算入門](assignments/F03.qmd) |
+| 5 | 一次元線形・非線形移流 | [移流方程式と安定性](lessons/N01.qmd)・[1次元線形移流方程式](assignments/N01.qmd)・非線形移流方程式（予定） |
+| 6 | 一次元拡散・移流拡散 | 一次元拡散方程式・移流拡散方程式（予定） |
+| 7 | Git、テスト、Agentic coding、共通化 | Git・テスト・Agentic coding・共通化（予定） |
+| 8 | 二次元移流、配列軸、可視化、メモリ | 二次元移流・配列軸・可視化・メモリ（予定） |
+| 9 | 二次元拡散 | 二次元拡散方程式（予定） |
+| 10 | 二次元移流拡散 | 二次元移流拡散方程式（予定） |
+| 11 | PDE分類、Laplace方程式 | PDE分類・Laplace方程式（予定） |
+| 12 | Poisson方程式 | Poisson方程式（予定） |
 | 13 | 最終プレゼンテーション 1 | チーム成果 |
 | 14 | 最終プレゼンテーション 2・試験案内 | チーム成果 |
 | 15 | 到達度確認試験 | 紙試験 |
@@ -40,7 +32,7 @@ Juliaで理解・実装・検証・調査をつなぐ
 
 ## 課題の進め方
 
-F00で環境を診断した後は、原則として1課題につき1 branch、1 pull request、1学習ログを作ります。
+最初の環境診断を終えた後は、原則として1課題につき1 branch、1 pull request、1学習ログを作ります。
 
 1. 課題ページで前提と完了条件を読む。
 2. 専用branchで実装し、ローカルテストと公式出力を確認する。
@@ -58,6 +50,8 @@ F00で環境を診断した後は、原則として1課題につき1 branch、1 
 Windows、macOS、Linuxのローカル環境を正式に扱います。Julia 1.12.6、Git、VS CodeとJulia拡張、授業で認められたCoding Agentのうち一つを準備してください。Codespaces、devcontainer、Jupyterは使用しません。
 
 準備で止まった場合は、[トラブル対応](guides/troubleshooting.qmd)に沿って最初の証拠を残し、秘密情報を除いて教員・TAへ相談してください。
+
+[受講環境の準備へ進む](setup/index.qmd){.start-button}
 
 ## 公開利用とライセンス
 
