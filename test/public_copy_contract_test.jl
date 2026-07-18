@@ -264,6 +264,28 @@ end
     end
 end
 
+function snippets_in_order(source, snippets)
+    next_start = firstindex(source)
+    for snippet in snippets
+        matched = findnext(snippet, source, next_start)
+        isnothing(matched) && return false
+        next_start = nextind(source, last(matched))
+    end
+    return true
+end
+
+function section_has_ordered_snippets(source, heading, snippets)
+    body = section_body(source, heading)
+    return !isnothing(body) && snippets_in_order(body, snippets)
+end
+
+function swap_first(source, first_snippet, second_snippet)
+    marker = "__PUBLIC_COPY_SWAP_MARKER__"
+    swapped = replace(source, first_snippet => marker; count = 1)
+    swapped = replace(swapped, second_snippet => first_snippet; count = 1)
+    return replace(swapped, marker => second_snippet; count = 1)
+end
+
 @testset "prerequisite pages provide an executable reading order" begin
     f00_lesson = copy_source("lessons/F00.qmd")
     progression = section_body(f00_lesson, "課題へ進む条件")
@@ -280,72 +302,132 @@ end
         @test occursin("[環境診断の完了条件](../assignments/F00.qmd#完了条件)", progression)
     end
 
-    for path in (
+    guided_paths = (
         "lessons/F02.qmd", "assignments/F02.qmd",
         "lessons/F03.qmd", "assignments/F03.qmd",
         "lessons/N01.qmd", "assignments/N01.qmd",
     )
-        @test occursin("## このページの進め方", copy_source(path))
+    for path in guided_paths
+        source = copy_source(path)
+        for heading in ("このページの進め方", "次へ進む条件")
+            @test !isnothing(section_body(source, heading))
+            mutation = replace(source, "## $heading" => "## 見出し削除"; count = 1)
+            @test isnothing(section_body(mutation, heading))
+        end
     end
 
     f02_lesson = copy_source("lessons/F02.qmd")
-    for snippet in (
-        "```julia-repl",
-        "julia> values = [10.0, 20.0, 30.0]",
-        "3-element Vector{Float64}:",
-        "julia> values[2]",
-        "20.0",
-        "julia> for value in values",
-        "-10.0\n0.0\n10.0",
+    f02_lesson_sequence = (
+        "julia> values = [10.0, 20.0, 30.0]\n3-element Vector{Float64}:\n 10.0\n 20.0\n 30.0",
+        "julia> values[2]\n20.0",
+        "julia> for value in values\n           println(value - 20.0)\n       end\n-10.0\n0.0\n10.0",
+        "julia> function double_values(values)\n           result = similar(values)\n           for i in eachindex(values)\n               result[i] = 2 * values[i]\n           end\n           return result\n       end\ndouble_values (generic function with 1 method)",
+        "julia> double_values([1.0, 2.0, 3.0])\n3-element Vector{Float64}:\n 2.0\n 4.0\n 6.0",
         "julia> using Test",
-        "julia> @test",
+        "julia> @test double_values([1.0, 2.0, 3.0]) == [2.0, 4.0, 6.0]\nTest Passed",
     )
-        @test occursin(snippet, f02_lesson)
+    @test section_has_ordered_snippets(
+        f02_lesson, "配列・loop・関数・テストを順に動かす", f02_lesson_sequence,
+    )
+    for snippet in f02_lesson_sequence
+        mutation = replace(f02_lesson, snippet => "[removed example]"; count = 1)
+        @test !section_has_ordered_snippets(
+            mutation, "配列・loop・関数・テストを順に動かす", f02_lesson_sequence,
+        )
     end
-    function_example = findfirst("julia> function", f02_lesson)
     contract_explanation = findfirst("## 関数境界に契約を置く", f02_lesson)
-    @test !isnothing(function_example)
+    function_example = findfirst("julia> function double_values", f02_lesson)
     @test !isnothing(contract_explanation)
-    if !isnothing(function_example) && !isnothing(contract_explanation)
+    @test !isnothing(function_example)
+    if !isnothing(contract_explanation) && !isnothing(function_example)
         @test first(function_example) < first(contract_explanation)
     end
 
     f02_assignment = copy_source("assignments/F02.qmd")
+    f02_assignment_sequence = (
+        "julia> rectangle_areas(widths, height) = [width * height for width in widths]\nrectangle_areas (generic function with 1 method)",
+        "julia> rectangle_areas([1.0, 2.0, 3.0], 2.0)\n3-element Vector{Float64}:\n 2.0\n 4.0\n 6.0",
+        "julia> using Test",
+        "julia> @test rectangle_areas([1.0, 2.0, 3.0], 2.0) == [2.0, 4.0, 6.0]\nTest Passed",
+    )
+    @test section_has_ordered_snippets(
+        f02_assignment, "課題前のウォームアップ", f02_assignment_sequence,
+    )
+    for snippet in f02_assignment_sequence
+        mutation = replace(f02_assignment, snippet => "[removed warm-up]"; count = 1)
+        @test !section_has_ordered_snippets(
+            mutation, "課題前のウォームアップ", f02_assignment_sequence,
+        )
+    end
     warmup = section_body(f02_assignment, "課題前のウォームアップ")
     @test !isnothing(warmup)
     if !isnothing(warmup)
-        @test occursin("julia-repl", warmup)
-        @test occursin("@test", warmup)
         @test !occursin("mean_temperature", warmup)
         @test !occursin("temperature_anomaly", warmup)
     end
 
     f03_lesson = copy_source("lessons/F03.qmd")
-    @test occursin("1次元線形移流方程式のコードとの対応", f03_lesson)
-    for row in (
-        "| `uniform_grid` | `x`、`dx`、`u[i]`の対応 |",
-        "| 後退差分 | 正の速度でのupwind更新 |",
-        "| 中心差分 | 意図的なcentered + Euler比較 |",
-        "| 有効添字 | 周期境界の扱い |",
+    f03_repl_sequence = (
+        "julia> x = [0.0, 0.5, 1.0]\n3-element Vector{Float64}:\n 0.0\n 0.5\n 1.0",
+        "julia> u = [1.0, 2.0, 4.0]\n3-element Vector{Float64}:\n 1.0\n 2.0\n 4.0",
+        "julia> (x[2], u[2])\n(0.5, 2.0)",
     )
-        @test occursin(row, f03_lesson)
+    @test section_has_ordered_snippets(
+        f03_lesson, "最初に動かす座標と値", f03_repl_sequence,
+    )
+    for snippet in f03_repl_sequence
+        mutation = replace(f03_lesson, snippet => "[removed coordinate example]"; count = 1)
+        @test !section_has_ordered_snippets(
+            mutation, "最初に動かす座標と値", f03_repl_sequence,
+        )
     end
-    @test occursin("import", f03_lesson)
+
+    mapping = section_body(f03_lesson, "1次元線形移流方程式のコードとの対応")
+    @test !isnothing(mapping)
+    accurate_boundary_row =
+        "| 有効添字 | 内部点loopと、左端固定・右端ゼロ勾配の境界処理 |"
+    accurate_mapping(source) =
+        occursin(accurate_boundary_row, source) && !occursin("周期境界", source)
+    if !isnothing(mapping)
+        @test accurate_mapping(mapping)
+        for row in (
+            "| `uniform_grid` | `x`、`dx`、`u[i]`の対応 |",
+            "| 後退差分 | 正の速度でのupwind更新 |",
+            "| 中心差分 | 意図的なcentered + Euler比較 |",
+        )
+            @test occursin(row, mapping)
+        end
+        periodic_mutation = replace(
+            mapping,
+            accurate_boundary_row => "| 有効添字 | 周期境界の扱い |";
+            count = 1,
+        )
+        @test !accurate_mapping(periodic_mutation)
+        @test occursin("import", mapping)
+    end
 
     n01_lesson = copy_source("lessons/N01.qmd")
     n01_assignment = copy_source("assignments/N01.qmd")
     lesson_order = section_body(n01_lesson, "このページの進め方")
     assignment_order = section_body(n01_assignment, "このページの進め方")
+    lesson_sequence = (
+        "この授業ページ", "[課題ページ]", "学生リポジトリ", "TASK.md", "run.jl",
+    )
+    assignment_sequence = (
+        "[授業ページ]", "この課題ページ", "学生リポジトリ",
+        "TASK.md", "run.jl", "提供テスト", "3つのTODOだけ",
+    )
     @test !isnothing(lesson_order)
     @test !isnothing(assignment_order)
     if !isnothing(lesson_order)
-        @test occursin("授業ページ", lesson_order)
-        @test occursin("課題ページ", lesson_order)
-        @test occursin("学生リポジトリ", lesson_order)
+        @test snippets_in_order(lesson_order, lesson_sequence)
+        reordered = swap_first(lesson_order, "この授業ページ", "学生リポジトリ")
+        @test !snippets_in_order(reordered, lesson_sequence)
     end
     if !isnothing(assignment_order)
-        @test occursin("授業ページ", assignment_order)
-        @test occursin("学生リポジトリ", assignment_order)
+        @test snippets_in_order(assignment_order, assignment_sequence)
+        reordered = swap_first(assignment_order, "[授業ページ]", "学生リポジトリ")
+        @test !snippets_in_order(reordered, assignment_sequence)
     end
 end
 
