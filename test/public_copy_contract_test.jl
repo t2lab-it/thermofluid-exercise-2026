@@ -264,6 +264,91 @@ end
     end
 end
 
+@testset "prerequisite pages provide an executable reading order" begin
+    f00_lesson = copy_source("lessons/F00.qmd")
+    progression = section_body(f00_lesson, "課題へ進む条件")
+    @test !isnothing(progression)
+    if !isnothing(progression)
+        bullets = [line for line in split(progression, '\n') if startswith(line, "- ")]
+        @test length(bullets) == 3
+        @test occursin("Julia 1.12.6", progression)
+        @test occursin("Git", progression)
+        @test occursin("GitHub", progression)
+        @test occursin("Classroom", progression)
+        @test occursin("Coding Agent", progression)
+        @test occursin("scripts/course.jl preflight", progression)
+        @test occursin("[環境診断の完了条件](../assignments/F00.qmd#完了条件)", progression)
+    end
+
+    for path in (
+        "lessons/F02.qmd", "assignments/F02.qmd",
+        "lessons/F03.qmd", "assignments/F03.qmd",
+        "lessons/N01.qmd", "assignments/N01.qmd",
+    )
+        @test occursin("## このページの進め方", copy_source(path))
+    end
+
+    f02_lesson = copy_source("lessons/F02.qmd")
+    for snippet in (
+        "```julia-repl",
+        "julia> values = [10.0, 20.0, 30.0]",
+        "3-element Vector{Float64}:",
+        "julia> values[2]",
+        "20.0",
+        "julia> for value in values",
+        "-10.0\n0.0\n10.0",
+        "julia> using Test",
+        "julia> @test",
+    )
+        @test occursin(snippet, f02_lesson)
+    end
+    function_example = findfirst("julia> function", f02_lesson)
+    contract_explanation = findfirst("## 関数境界に契約を置く", f02_lesson)
+    @test !isnothing(function_example)
+    @test !isnothing(contract_explanation)
+    if !isnothing(function_example) && !isnothing(contract_explanation)
+        @test first(function_example) < first(contract_explanation)
+    end
+
+    f02_assignment = copy_source("assignments/F02.qmd")
+    warmup = section_body(f02_assignment, "課題前のウォームアップ")
+    @test !isnothing(warmup)
+    if !isnothing(warmup)
+        @test occursin("julia-repl", warmup)
+        @test occursin("@test", warmup)
+        @test !occursin("mean_temperature", warmup)
+        @test !occursin("temperature_anomaly", warmup)
+    end
+
+    f03_lesson = copy_source("lessons/F03.qmd")
+    @test occursin("1次元線形移流方程式のコードとの対応", f03_lesson)
+    for row in (
+        "| `uniform_grid` | `x`、`dx`、`u[i]`の対応 |",
+        "| 後退差分 | 正の速度でのupwind更新 |",
+        "| 中心差分 | 意図的なcentered + Euler比較 |",
+        "| 有効添字 | 周期境界の扱い |",
+    )
+        @test occursin(row, f03_lesson)
+    end
+    @test occursin("import", f03_lesson)
+
+    n01_lesson = copy_source("lessons/N01.qmd")
+    n01_assignment = copy_source("assignments/N01.qmd")
+    lesson_order = section_body(n01_lesson, "このページの進め方")
+    assignment_order = section_body(n01_assignment, "このページの進め方")
+    @test !isnothing(lesson_order)
+    @test !isnothing(assignment_order)
+    if !isnothing(lesson_order)
+        @test occursin("授業ページ", lesson_order)
+        @test occursin("課題ページ", lesson_order)
+        @test occursin("学生リポジトリ", lesson_order)
+    end
+    if !isnothing(assignment_order)
+        @test occursin("授業ページ", assignment_order)
+        @test occursin("学生リポジトリ", assignment_order)
+    end
+end
+
 @testset "all public QMD content omits minute schedules" begin
     for path in public_qmd_paths()
         source = copy_source(path)

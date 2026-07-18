@@ -35,6 +35,12 @@ title: "ガイダンスと環境診断"
 
 Windows、macOS、Linux で画面やパスの表記は異なりますが、合格条件は共通です。エラー全文を理解できなくても、どのコマンドがどの段階で失敗したかを残せば支援できます。
 
-## 次の課題との境界
+## 課題へ進む条件
 
-F00 は環境診断だけです。branch、commit、push、pull request、Actions、diff、セルフレビュー、merge は F01 で順に学びます。ここでは先回りせず、[`F00` の完了条件](../assignments/F00.qmd)を満たしてください。
+次の3項目がそろったら、[環境診断の完了条件](../assignments/F00.qmd#完了条件)を確認して課題へ進みます。
+
+- 機械確認でJulia 1.12.6とGitが利用可能だと分かる。
+- GitHubで自分のClassroomリポジトリを閲覧でき、一つのCoding Agentで編集とコマンド実行を手動確認した。
+- `julia --project=. scripts/course.jl preflight`が環境診断の完了を進捗へ記録した。
+
+F00は環境診断だけです。branch、commit、push、pull request、Actions、diff、セルフレビュー、mergeはF01で順に学びます。

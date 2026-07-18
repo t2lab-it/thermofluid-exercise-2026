@@ -9,6 +9,12 @@ title: "1次元線形移流方程式"
 
 Julia以外のプログラミング経験はあるものの構文を忘れている学習者が、最初の偏微分方程式コードを一つのファイルで追い、upwind + Eulerとcentered + Eulerを同じ条件で比較します。式と配列の対応は[授業ページ](../lessons/N01.qmd)で順に確認します。
 
+## このページの進め方
+
+1. 先に[授業ページ](../lessons/N01.qmd)を上から読み、短いJulia例をコピー実行する。
+2. この課題ページで、3つのTODO、実行・テスト、公式出力、完了条件を確認する。
+3. 最後に学生リポジトリの`TASK.md`、`run.jl`、提供テストの順に読み、`run.jl`の3つのTODOだけを実装する。
+
 ## 課題リポジトリ内の場所
 
 - 課題契約: `exercises/N01_linear_advection/TASK.md`
@@ -52,6 +58,12 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ![安定なupwind + Eulerの公式出力](../assets/figures/N01-upwind.png){fig-alt="upwind + Eulerで移流した矩形波"}
 
 ![意図的に不安定なcentered + Eulerの公式出力](../assets/figures/N01-centered-euler.png){fig-alt="centered + Eulerで発生する数値振動"}
+
+## 次へ進む条件
+
+- 授業ページの小さな例を実行し、式と配列添字の対応を確認した。
+- 学生リポジトリで編集する3つのTODOと、変更しない提供部分を区別できる。
+- 実行コマンド、3つの公式出力、提供テスト、自分のテストを確認した。
 
 ## 完了条件
 

@@ -51,7 +51,7 @@ julia --project=. scripts/course.jl preflight
 - 標準または指定された一つの代替 Agent で、ファイル編集とコマンド実行を確認した。
 - `preflight` が成功し、進捗の完了済み課題が `F00`、現在課題が `F01` になる。
 
-## F00 で作らないもの
+## この環境診断で作らないもの
 
 F00 では課題 branch、pull request、学習ログを作りません。ネットワーク Git 操作も診断コマンドから自動実行しません。最初の branch と pull request は `F01` で手動作成します。
 

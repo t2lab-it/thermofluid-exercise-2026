@@ -13,25 +13,60 @@ title: "配列・関数・loop・テスト"
 - 入力配列が変更されていないことをテストできる。
 
 
-## 配列とloop
+## このページの進め方
 
-配列`values`の要素は`values[i]`で参照します。Juliaの標準的な添字は1から始まり、全要素を順に読むloopは次の形です。
+1. Juliaを起動し、以下の`julia-repl`ブロックを上から順にコピーして、入力と出力を見比べる。
+2. 配列、添字、loop、関数、`@test`を動かしてから、入力契約と抽象型の説明を読む。
+3. 最後の「次へ進む条件」を確認し、課題ページへ移る。
 
-```julia
-for value in values
-    # valueを使った処理
-end
+## 配列・loop・関数・テストを順に動かす
+
+ターミナルで`julia --project=.`を実行し、表示された`julia>`へ次を一つずつ入力します。出力行は入力せず、表示内容と見比べます。
+
+```julia-repl
+julia> values = [10.0, 20.0, 30.0]
+3-element Vector{Float64}:
+ 10.0
+ 20.0
+ 30.0
+
+julia> values[2]
+20.0
+
+julia> for value in values
+           println(value - 20.0)
+       end
+-10.0
+0.0
+10.0
 ```
 
-添字そのものが必要なら`eachindex(values)`を使います。
+値だけを使うloopは配列を直接たどれます。添字も必要なら`eachindex(values)`を使います。次は課題の二関数とは異なる、各要素を2倍にする練習です。
 
-```julia
-for i in eachindex(values)
-    # values[i]を使った処理
-end
+```julia-repl
+julia> function double_values(values)
+           result = similar(values)
+           for i in eachindex(values)
+               result[i] = 2 * values[i]
+           end
+           return result
+       end
+double_values (generic function with 1 method)
+
+julia> double_values([1.0, 2.0, 3.0])
+3-element Vector{Float64}:
+ 2.0
+ 4.0
+ 6.0
+
+julia> using Test
+
+julia> @test double_values([1.0, 2.0, 3.0]) == [2.0, 4.0, 6.0]
+Test Passed
 ```
 
-`1:length(values)`を機械的に使う前に、値だけが必要か、添字も必要かを考えます。
+関数は入力を受け取り、loopで新しい配列を組み立て、`return`で結果を返します。`@test`は式がtrueになることを確認します。この練習を動かしてから、課題で必要な契約へ進みます。
+
 
 ## 関数境界に契約を置く
 
@@ -68,6 +103,12 @@ $$
 | 副作用 | 入力配列が不変 | 関数が新しい結果を返す |
 
 一つのテストですべてを確認せず、失敗時にどの契約が壊れたか分かる大きさへ分けます。
+
+## 次へ進む条件
+
+- 配列の作成、2番目の要素の参照、loopの出力をREPLで再現した。
+- `double_values`を定義し、`@test`が`Test Passed`になることを確認した。
+- 具体的な`Vector{Float64}`と、入力契約に使う`AbstractVector`の役割の違いを説明できる。
 
 ## 課題への接続
 

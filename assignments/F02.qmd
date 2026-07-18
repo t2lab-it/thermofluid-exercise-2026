@@ -11,6 +11,32 @@ title: "Juliaの配列・関数・テスト"
 
 前提は[`F01`](F01.qmd)のmergeです。F01で経験したbranch・PR手順は[共通課題ワークフロー](../guides/workflow.qmd)に従います。
 
+## このページの進め方
+
+1. 下のウォームアップをREPLでコピー実行し、関数と`@test`の流れを確認する。
+2. 課題リポジトリ内の場所、固定API、入力契約、テスト観点の順に読む。
+3. 開始コマンドを実行し、最後の「次へ進む条件」と完了条件を照合する。
+
+## 課題前のウォームアップ
+
+これは課題の解答ではなく、幅の配列から長方形の面積を作る別題です。
+
+```julia-repl
+julia> rectangle_areas(widths, height) = [width * height for width in widths]
+rectangle_areas (generic function with 1 method)
+
+julia> rectangle_areas([1.0, 2.0, 3.0], 2.0)
+3-element Vector{Float64}:
+ 2.0
+ 4.0
+ 6.0
+
+julia> using Test
+
+julia> @test rectangle_areas([1.0, 2.0, 3.0], 2.0) == [2.0, 4.0, 6.0]
+Test Passed
+```
+
 ## 課題リポジトリ内の場所
 
 - 課題契約: `exercises/F02_julia_arrays_and_tests/TASK.md`
@@ -89,6 +115,12 @@ F02に公式生成物はありません。`results/F02/`は作りません。実
 F02では、Juliaの構文や型の説明、エラーメッセージの解説、課題とは別の練習問題に利用できます。課題の関数本体や完成テストの生成は依頼しません。利用した場合は、提案の採否とdiff・テストで確認した内容を学習ログへ残します。
 
 token、API key、パスワード、秘密鍵、個人情報をAgent、学習ログ、PRへ含めないでください。
+
+## 次へ進む条件
+
+- ウォームアップをコピー実行し、入力、戻り値、期待値の対応を説明できる。
+- 二つの固定API、入力を変更しない契約、拒否する入力を確認した。
+- 編集ファイル、提供テスト、自分のテスト、実行コマンドを確認した。
 
 ## 完了条件
 
