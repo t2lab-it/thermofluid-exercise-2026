@@ -347,4 +347,10 @@ const touchTrigger = navigation.enhanceSplitNavigation({
 });
 fire(touchTrigger, "pointerenter");
 assertClosed(touchTrigger, touchMenu);
+fire(touchTrigger, "click");
+assertOpen(touchTrigger, touchMenu);
+fire(touchItem, "pointerleave", { target: touchItem });
+assertOpen(touchTrigger, touchMenu);
+fire(touchTrigger, "click");
+assertClosed(touchTrigger, touchMenu);
 console.log("navigation behavior contract passed");
