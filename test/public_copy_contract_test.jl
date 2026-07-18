@@ -473,6 +473,11 @@ end
     workflow = copy_source("guides/workflow.qmd")
     @test occursin("```{mermaid}", workflow)
     @test occursin("課題を読む] --> B[branchを作る", workflow)
+    recovery_link = "[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)"
+    @test length(findall(recovery_link, workflow)) == 1
+    @test length(findall("自分で履歴を書き換えず", workflow)) == 1
+    recovery_heading = r"(?m)^## (?=[^\n]*main)(?=[^\n]*(?:誤操作|直接push|作業してしまった))[^\n]*$"
+    @test isnothing(match(recovery_heading, workflow))
     common_contract = section_body(workflow, "共通契約")
     @test !isnothing(common_contract)
     if !isnothing(common_contract)
