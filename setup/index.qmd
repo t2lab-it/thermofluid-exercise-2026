@@ -24,28 +24,11 @@ title: "受講環境の準備"
 2. [Julia と VS Code](julia.qmd)を準備する。
 3. [Git と GitHub](git-github.qmd)を準備し、Classroom リポジトリを clone する。
 4. [Coding Agent](agents.qmd)を一つ確認する。
-5. [課題ワークフロー](../guides/workflow.qmd)で、F01以降のbranch・PR手順を確認する。
+5. [課題ワークフロー](../guides/workflow.qmd)で、最初の課題以降のbranch・PR手順を確認する。
+6. 5ページの準備を終えてから、[最初の環境診断](../assignments/F00.qmd)（課題ID: F00）を実行する。
 
-5ページの準備を終えたら、リポジトリのルートで環境を復元します。
-
-```bash
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
-```
-
-続けて[`F00` 環境診断](../assignments/F00.qmd)を実行します。
-
-```bash
-julia --project=. scripts/course.jl preflight
-```
-
-`F00` は Git 操作を学ぶ前の診断です。課題 branch、pull request、学習ログは作りません。診断が通らないときは、表示された項目を一つずつ直し、同じコマンドを再実行してください。
+環境の復元と診断に使うコマンドは、clone 後に実行できるよう[Git と GitHub](git-github.qmd)にまとめています。Coding Agent と課題ワークフローを確認してから、最初の環境診断へ進んでください。
 
 ## 支援を依頼するとき
 
 教員・TA へ、OS、`julia --version`、`git --version`、失敗したコマンド、エラーメッセージを伝えてください。アクセストークン、API key、パスワード、個人情報は共有しないでください。
-
-## ライセンス
-
-この公開サイトの教材本文と独自作成図は CC BY 4.0、コードファイルとコード例は MIT です。第三者素材には個別の出典と権利条件を表示します。
-
-Copyright © 2026 荒木 亮（ARAKI, Ryo）

@@ -32,6 +32,8 @@ website:
             text: Git・GitHub
           - href: setup/agents.qmd
             text: Coding Agent
+          - href: guides/workflow.qmd
+            text: 課題ワークフロー
       - text: 授業
         rel: split-navigation
         menu:
@@ -67,8 +69,6 @@ website:
         menu:
           - href: guides/index.qmd
             text: ガイド一覧
-          - href: guides/workflow.qmd
-            text: 課題ワークフロー
           - href: guides/testing.qmd
             text: テスト
           - href: guides/commands.qmd
@@ -138,8 +138,6 @@ website:
       contents:
         - href: guides/index.qmd
           text: "ガイド一覧"
-        - href: guides/workflow.qmd
-          text: "課題ワークフロー"
         - href: guides/testing.qmd
           text: "テストと数値検証"
         - href: guides/commands.qmd

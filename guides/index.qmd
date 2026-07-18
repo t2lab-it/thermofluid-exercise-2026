@@ -2,7 +2,6 @@
 title: "ガイド"
 ---
 
-- [課題のbranch・PRワークフロー](workflow.qmd): 開始からmerge後までの共通手順
 - [テストと数値検証](testing.qmd): テスト層、許容誤差、公式出力の読み方
 - [コマンド一覧](commands.qmd): セットアップと課題ですでに扱ったコマンド
 - [トラブル対応](troubleshooting.qmd): 最初に残す証拠と相談手順

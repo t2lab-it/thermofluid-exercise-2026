@@ -224,6 +224,30 @@ end
     end
 end
 
+@testset "setup follows one forward sequence" begin
+    setup = copy_source("setup/index.qmd")
+    @test !occursin("## ライセンス", setup)
+    @test !occursin("Pkg.instantiate", setup)
+    @test !occursin("scripts/course.jl preflight", setup)
+
+    julia_setup = copy_source("setup/julia.qmd")
+    @test !occursin("## 課題用 Julia 環境を復元する", julia_setup)
+    @test !occursin("Pkg.instantiate", julia_setup)
+    @test !occursin("scripts/course.jl preflight", julia_setup)
+    @test occursin("[Git・GitHub・Classroom リポジトリ](git-github.qmd)", julia_setup)
+
+    git_setup = copy_source("setup/git-github.qmd")
+    @test occursin("## 最初の環境診断で確認する範囲", git_setup)
+    @test !occursin("## F00 で確認する範囲", git_setup)
+    clone = findfirst("git clone YOUR_CLASSROOM_REPOSITORY_URL", git_setup)
+    instantiate = findfirst("Pkg.instantiate", git_setup)
+    preflight = findfirst("scripts/course.jl preflight", git_setup)
+    @test all(!isnothing, (clone, instantiate, preflight))
+    if all(!isnothing, (clone, instantiate, preflight))
+        @test first(clone) < first(instantiate) < first(preflight)
+    end
+    @test occursin("最初の環境診断（課題ID: F00）", git_setup)
+end
 
 @testset "public lesson outcomes have bounded bullet counts" begin
     for id in ("F00", "F01", "F02", "F03", "N01")

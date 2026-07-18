@@ -393,6 +393,21 @@ end
             ]
             @test navbar_menu_pairs(yaml, section_label) == expected
         end
+
+        @test navbar_menu_pairs(yaml, "セットアップ") == [
+            ("setup/index.qmd", "セットアップ概要"),
+            ("setup/julia.qmd", "Julia"),
+            ("setup/git-github.qmd", "Git・GitHub"),
+            ("setup/agents.qmd", "Coding Agent"),
+            ("guides/workflow.qmd", "課題ワークフロー"),
+        ]
+        @test navbar_menu_pairs(yaml, "ガイド") == [
+            ("guides/index.qmd", "ガイド一覧"),
+            ("guides/testing.qmd", "テスト"),
+            ("guides/commands.qmd", "コマンド"),
+            ("guides/troubleshooting.qmd", "トラブル対応"),
+            ("guides/glossary.qmd", "用語集"),
+        ]
     end
 
     page_navigation = yaml_node(yaml, ("website", "page-navigation"))
@@ -444,6 +459,24 @@ end
 
     if !isnothing(sidebar)
         sidebar_items = yaml_sequence_items(yaml, sidebar)
+
+        guide_matches = [
+            item for item in sidebar_items
+            if something(yaml_item_field(yaml, item, "id"), (value="",)).value == "guides"
+        ]
+        @test length(guide_matches) == 1
+        if length(guide_matches) == 1
+            guide_contents = yaml_item_field(yaml, only(guide_matches), "contents")
+            @test !isnothing(guide_contents)
+            if !isnothing(guide_contents)
+                guide_hrefs = [
+                    something(yaml_item_field(yaml, item, "href"), (value="",)).value
+                    for item in yaml_sequence_items(yaml, guide_contents.node)
+                ]
+                @test !in("guides/workflow.qmd", guide_hrefs)
+            end
+        end
+
         course_matches = [
             item for item in sidebar_items
             if something(yaml_item_field(yaml, item, "id"), (value="",)).value == "course"
