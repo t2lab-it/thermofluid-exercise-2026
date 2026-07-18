@@ -517,6 +517,7 @@ end
     end
 
     f03_lesson = copy_source("lessons/F03.qmd")
+    f03_assignment = copy_source("assignments/F03.qmd")
     f03_repl_sequence = (
         "julia> x = [0.0, 0.5, 1.0]\n3-element Vector{Float64}:\n 0.0\n 0.5\n 1.0",
         "julia> u = [1.0, 2.0, 4.0]\n3-element Vector{Float64}:\n 1.0\n 2.0\n 4.0",
@@ -554,6 +555,10 @@ end
         )
         @test !accurate_mapping(periodic_mutation)
         @test occursin("import", mapping)
+    end
+    for source in (f03_lesson, f03_assignment)
+        @test occursin("主要な数値計算の流れ", source)
+        @test occursin("provided_support.jl", source)
     end
 
     n01_lesson = copy_source("lessons/N01.qmd")
@@ -611,19 +616,27 @@ end
     end
     @test occursin("完成要件ではありません", lesson)
     @test occursin("Julia以外のプログラミング経験", lesson)
+    for syntax in (
+        "`value::T`", "`{<:Real}`", "`:upwind`",
+        "`condition ? true_value : false_value`", "named tuple",
+    )
+        @test occursin(syntax, lesson)
+    end
 
     assignment = copy_source("assignments/N01.qmd")
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
-    for required_boundary in (
-        "provided_support.jl",
-        "おまじない",
-        "読解・編集する必要はありません",
-        "実行時の入力条件",
-        "教材側の包括的な確認",
-        "自分で選んだ代表例",
-    )
-        @test occursin(required_boundary, lesson * "\n" * assignment)
+    for source in (lesson, assignment)
+        for required_boundary in (
+            "provided_support.jl",
+            "おまじない",
+            "読解・編集する必要はありません",
+            "実行時の入力条件",
+            "教材側の包括的な確認",
+            "自分で選んだ代表例",
+        )
+            @test occursin(required_boundary, source)
+        end
     end
     for required_copy in (
         "`@test false`を削除",
