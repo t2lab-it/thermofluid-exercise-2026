@@ -615,6 +615,16 @@ end
     assignment = copy_source("assignments/N01.qmd")
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
+    for required_copy in (
+        "`@test false`を削除",
+        "保証することと保証しないこと",
+        "buffer交換を学習ログ",
+        "完成コード全体の生成",
+        "個人情報・秘密情報",
+        "関数名、引数、scheme、出力ファイル名、summaryのキー",
+    )
+        @test occursin(required_copy, assignment)
+    end
 end
 
 @testset "guides publish the concrete workflow and N01 baseline" begin
