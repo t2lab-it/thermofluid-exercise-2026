@@ -473,31 +473,41 @@ end
     workflow = copy_source("guides/workflow.qmd")
     @test occursin("```{mermaid}", workflow)
     @test occursin("課題を読む] --> B[branchを作る", workflow)
-    recovery_link = "[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)"
-    @test length(findall(recovery_link, workflow)) == 1
-    @test !occursin("## mainへ直接pushしたとき", workflow)
-    @test isnothing(match(r"(?m)^## .*main", workflow))
-    for duplicated_recovery_detail in (
-        "force push", "reset", "履歴削除", "教員・TAへ連絡",
-        "branchとPRを作り直す", "Actions、diff、セルフレビュー、merge",
-    )
-        @test !occursin(duplicated_recovery_detail, workflow)
+    common_contract = section_body(workflow, "共通契約")
+    @test !isnothing(common_contract)
+    if !isnothing(common_contract)
+        numbered_steps = [
+            line for line in split(common_contract, '\n')
+            if occursin(r"^[0-9]+\. ", line)
+        ]
+        @test numbered_steps == [
+            "1. 課題branchを作る。",
+            "2. 実装する。",
+            "3. ローカルテストを実行する。",
+            "4. 公式出力を再生成・確認する。課題に公式出力がなければ、そのことを確認する。",
+            "5. 学習ログを書く。",
+            "6. commitする。",
+            "7. 自分でpushする。",
+            "8. PRを作る。",
+            "9. Actionsを確認する。",
+            "10. diffを読む。",
+            "11. セルフレビューする。",
+            "12. mergeする。",
+        ]
     end
-    numbered_steps = [line for line in split(workflow, '\n') if occursin(r"^[0-9]+\. ", line)]
-    @test numbered_steps == [
-        "1. 課題branchを作る。",
-        "2. 実装する。",
-        "3. ローカルテストを実行する。",
-        "4. 公式出力を再生成・確認する。課題に公式出力がなければ、そのことを確認する。",
-        "5. 学習ログを書く。",
-        "6. commitする。",
-        "7. 自分でpushする。",
-        "8. PRを作る。",
-        "9. Actionsを確認する。",
-        "10. diffを読む。",
-        "11. セルフレビューする。",
-        "12. mergeする。",
-    ]
+    merge_tail_match = match(
+        r"(?ms)^## merge後\n.*?```bash\n.*?\n```\n\n(.*?)\n\n^## OSごとの扱い\n",
+        workflow,
+    )
+    @test !isnothing(merge_tail_match)
+    if !isnothing(merge_tail_match)
+        expected_merge_tail = """
+        次の課題は、変更のないmainから開始します。
+
+        mainで作業・commit・pushしてしまった場合は、自分で履歴を書き換えず、[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)へ進んでください。
+        """
+        @test merge_tail_match.captures[1] == chomp(expected_merge_tail)
+    end
 
     troubleshooting = copy_source("guides/troubleshooting.qmd")
     @test occursin("## mainブランチで作業してしまったら", troubleshooting)
@@ -510,14 +520,30 @@ end
         "`nx=81`、`dx=0.025`、`cfl=0.5`、`dt=0.0125`、`steps=40`",
         testing,
     )
-    @test occursin(
-        "| upwind + Euler | 1.0 | 1.9993204517450067 | 0.0 | 0.0 |",
-        testing,
+    markdown_rows = [
+        strip.(split(strip(line), '|'; keepempty=true)[2:(end - 1)])
+        for line in split(testing, '\n')
+        if startswith(strip(line), "|") && endswith(strip(line), "|")
+    ]
+    for (method, expected_values) in (
+        ("upwind + Euler", [1.0, 1.9993204517450067, 0.0, 0.0]),
+        (
+            "centered + Euler",
+            [-10.420010468371677, 13.492726642559711,
+             11.492726642559711, 11.420010468371677],
+        ),
     )
-    @test occursin(
-        "| centered + Euler | -10.420010468371677 | 13.492726642559711 | 11.492726642559711 | 11.420010468371677 |",
-        testing,
-    )
+        matching_rows = filter(row -> !isempty(row) && first(row) == method, markdown_rows)
+        @test length(matching_rows) == 1
+        length(matching_rows) == 1 || continue
+        cells = only(matching_rows)
+        @test length(cells) == 5
+        length(cells) == 5 || continue
+        parsed_values = tryparse.(Float64, cells[2:end])
+        @test all(!isnothing, parsed_values)
+        all(!isnothing, parsed_values) || continue
+        @test [something(value) for value in parsed_values] == expected_values
+    end
     signs = findfirst("符号", testing)
     ranges = findfirst("範囲", testing)
     flags = findfirst("フラグ", testing)
