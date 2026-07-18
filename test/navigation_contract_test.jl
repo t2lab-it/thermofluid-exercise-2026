@@ -489,6 +489,22 @@ end
             @test !isnothing(course_contents)
             if !isnothing(course_contents)
                 course_items = yaml_sequence_items(yaml, course_contents.node)
+                expected_setup_prefix = [
+                    "setup/index.qmd",
+                    "setup/julia.qmd",
+                    "setup/git-github.qmd",
+                    "setup/agents.qmd",
+                    "guides/workflow.qmd",
+                ]
+                @test length(course_items) >= length(expected_setup_prefix)
+                if length(course_items) >= length(expected_setup_prefix)
+                    actual_setup_prefix = [
+                        something(yaml_item_field(yaml, item, "href"), (value="",)).value
+                        for item in course_items[1:length(expected_setup_prefix)]
+                    ]
+                    @test actual_setup_prefix == expected_setup_prefix
+                end
+
                 sections = [
                     (item=item, section=yaml_item_field(yaml, item, "section"))
                     for item in course_items if !isnothing(yaml_item_field(yaml, item, "section"))

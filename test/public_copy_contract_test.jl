@@ -230,6 +230,9 @@ end
     @test !occursin("Pkg.instantiate", setup)
     @test !occursin("scripts/course.jl preflight", setup)
 
+    guide_index = copy_source("guides/index.qmd")
+    @test !occursin("(workflow.qmd)", guide_index)
+
     julia_setup = copy_source("setup/julia.qmd")
     @test !occursin("## 課題用 Julia 環境を復元する", julia_setup)
     @test !occursin("Pkg.instantiate", julia_setup)
