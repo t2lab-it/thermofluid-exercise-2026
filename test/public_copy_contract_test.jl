@@ -1,5 +1,6 @@
 using Test
 using TOML
+using SHA
 
 const COPY_ROOT = normpath(joinpath(@__DIR__, ".."))
 copy_source(path) = read(joinpath(COPY_ROOT, path), String)
@@ -472,8 +473,31 @@ end
     workflow = copy_source("guides/workflow.qmd")
     @test occursin("```{mermaid}", workflow)
     @test occursin("課題を読む] --> B[branchを作る", workflow)
-    @test occursin("[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)", workflow)
+    recovery_link = "[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)"
+    @test length(findall(recovery_link, workflow)) == 1
     @test !occursin("## mainへ直接pushしたとき", workflow)
+    @test isnothing(match(r"(?m)^## .*main", workflow))
+    for duplicated_recovery_detail in (
+        "force push", "reset", "履歴削除", "教員・TAへ連絡",
+        "branchとPRを作り直す", "Actions、diff、セルフレビュー、merge",
+    )
+        @test !occursin(duplicated_recovery_detail, workflow)
+    end
+    numbered_steps = [line for line in split(workflow, '\n') if occursin(r"^[0-9]+\. ", line)]
+    @test numbered_steps == [
+        "1. 課題branchを作る。",
+        "2. 実装する。",
+        "3. ローカルテストを実行する。",
+        "4. 公式出力を再生成・確認する。課題に公式出力がなければ、そのことを確認する。",
+        "5. 学習ログを書く。",
+        "6. commitする。",
+        "7. 自分でpushする。",
+        "8. PRを作る。",
+        "9. Actionsを確認する。",
+        "10. diffを読む。",
+        "11. セルフレビューする。",
+        "12. mergeする。",
+    ]
 
     troubleshooting = copy_source("guides/troubleshooting.qmd")
     @test occursin("## mainブランチで作業してしまったら", troubleshooting)
@@ -482,8 +506,18 @@ end
     testing = copy_source("guides/testing.qmd")
     @test occursin("../assets/n01-reference/upwind.png", testing)
     @test occursin("../assets/n01-reference/centered-euler.png", testing)
-    @test occursin("13.492726642559711", testing)
-    @test occursin("-10.420010468371677", testing)
+    @test occursin(
+        "`nx=81`、`dx=0.025`、`cfl=0.5`、`dt=0.0125`、`steps=40`",
+        testing,
+    )
+    @test occursin(
+        "| upwind + Euler | 1.0 | 1.9993204517450067 | 0.0 | 0.0 |",
+        testing,
+    )
+    @test occursin(
+        "| centered + Euler | -10.420010468371677 | 13.492726642559711 | 11.492726642559711 | 11.420010468371677 |",
+        testing,
+    )
     signs = findfirst("符号", testing)
     ranges = findfirst("範囲", testing)
     flags = findfirst("フラグ", testing)
@@ -495,25 +529,50 @@ end
         @test first(flags) < first(decimals)
     end
 
-    for path in (
-        "assets/n01-reference/upwind.png",
-        "assets/n01-reference/centered-euler.png",
-        "assets/n01-reference/summary.toml",
+    expected_hashes = Dict(
+        "assets/n01-reference/upwind.png" =>
+            "4fc26c63750813b6c1e365e5e1cfdd547d300aa2aa3cf04c435be1afacf9ea2d",
+        "assets/n01-reference/centered-euler.png" =>
+            "e1d2acb91d50612f026f2e6a34ed43d987eeaef369d4c5cb3f9c965714100c93",
+        "assets/n01-reference/summary.toml" =>
+            "f99aa0501e13198e97b41084fea4e248277395180b49557fa82947d95213a5fa",
     )
-        @test isfile(joinpath(COPY_ROOT, path))
+    for (path, expected_hash) in expected_hashes
+        full_path = joinpath(COPY_ROOT, path)
+        @test isfile(full_path)
+        isfile(full_path) && @test bytes2hex(open(sha256, full_path)) == expected_hash
     end
     summary_path = joinpath(COPY_ROOT, "assets/n01-reference/summary.toml")
     if isfile(summary_path)
         summary = TOML.parsefile(summary_path)
-        @test summary["grid"] == Dict("dx" => 0.025, "nx" => 81)
-        @test summary["upwind"]["minimum"] == 1.0
-        @test summary["upwind"]["maximum"] == 1.9993204517450067
-        @test summary["upwind"]["overshoot_occurred"] === false
-        @test summary["upwind"]["undershoot_occurred"] === false
-        @test summary["centered_euler"]["minimum"] == -10.420010468371677
-        @test summary["centered_euler"]["maximum"] == 13.492726642559711
-        @test summary["centered_euler"]["overshoot_occurred"] === true
-        @test summary["centered_euler"]["undershoot_occurred"] === true
+        @test summary == Dict(
+            "course_id" => "N01",
+            "grid" => Dict("dx" => 0.025, "nx" => 81),
+            "upwind" => Dict(
+                "cfl" => 0.5,
+                "dt" => 0.0125,
+                "maximum" => 1.9993204517450067,
+                "minimum" => 1.0,
+                "overshoot" => 0.0,
+                "overshoot_occurred" => false,
+                "scheme" => "upwind-euler",
+                "steps" => 40,
+                "undershoot" => 0.0,
+                "undershoot_occurred" => false,
+            ),
+            "centered_euler" => Dict(
+                "cfl" => 0.5,
+                "dt" => 0.0125,
+                "maximum" => 13.492726642559711,
+                "minimum" => -10.420010468371677,
+                "overshoot" => 11.492726642559711,
+                "overshoot_occurred" => true,
+                "scheme" => "centered-euler",
+                "steps" => 40,
+                "undershoot" => 11.420010468371677,
+                "undershoot_occurred" => true,
+            ),
+        )
     end
 
     commands = copy_source("guides/commands.qmd")
