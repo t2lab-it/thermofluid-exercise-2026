@@ -503,7 +503,7 @@ end
     for id in REQUIRED_COURSE_ORDER
         lesson = read(joinpath(NAVIGATION_SITE_ROOT, "lessons", "$id.qmd"), String)
         assignment = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
-        @test !occursin("../assignments/$id.qmd", lesson)
-        @test !occursin("../lessons/$id.qmd", assignment)
+        @test !occursin("../assignments/", lesson)
+        @test !occursin("../lessons/", assignment)
     end
 end
