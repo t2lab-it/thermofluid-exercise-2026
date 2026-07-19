@@ -55,23 +55,6 @@ code {
   letter-spacing: 0.08em;
 }
 
-.start-button {
-  display: inline-block;
-  margin: 0.75rem 0 1.5rem;
-  padding: 0.72rem 1.1rem;
-  border: 2px solid var(--tf-accent);
-  border-radius: 0.35rem;
-  background: var(--tf-accent);
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.start-button:hover {
-  background: var(--tf-accent-strong);
-  color: #fff;
-}
-
 body.quarto-dark .start-button,
 body.quarto-dark .start-button:hover {
   color: #003f50;
@@ -130,7 +113,6 @@ body.quarto-dark .start-button:hover {
   margin: 0;
 }
 
-.start-button:focus-visible,
 .split-nav-trigger:focus-visible,
 .split-nav-anchor:focus-visible,
 a:focus-visible,

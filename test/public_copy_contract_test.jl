@@ -43,7 +43,7 @@ const NO_ID_TITLE = Dict(
 )
 
 function section_body(source, heading)
-    matched = match(Regex("(?ms)^## " * heading * "\\n(.*?)(?=^## |\\z)"), source)
+    matched = match(Regex("(?ms)^## " * heading * "\\n\\n?(.*?)(?=^## |\\z)"), source)
     return isnothing(matched) ? nothing : matched.captures[1]
 end
 function frontmatter_title(source)
@@ -359,7 +359,29 @@ end
 @testset "public entry pages use concrete visible names" begin
     home = copy_source("index.qmd")
     @test course_map_table(home) == EXPECTED_COURSE_MAP
-    @test startswith(body_after_frontmatter(home), "## この演習で身につけること\n")
+    expected_summary = "熱流体力学は、物質の性質、エンジンや熱交換器の設計、環境・エネルギー問題、人類の特殊環境への進出を理解するために欠かせない分野です。本演習では、熱力学1・2、伝熱工学、流体力学1・2で学んだ内容への理解を深めるため、基礎的・応用的な問題を解析的・数値的に解き、応用力と問題解決力を養います。"
+    expected_audience = "熱力学1・2と流体力学1・2の内容を復習している受講者を対象とします。伝熱工学を履修していることが望まれます。授業と自習では教科書の例題や演習問題にも取り組み、受講時にはノートPCを持参してください。"
+    @test startswith(body_after_frontmatter(home), "## 概要\n\n$expected_summary\n")
+    @test section_body(home, "概要") == expected_summary * "\n\n"
+    @test section_body(home, "対象者・前提") == expected_audience * "\n\n"
+    headings = [matched.captures[1] for matched in eachmatch(r"(?m)^## (.+)$", home)]
+    @test headings == [
+        "概要",
+        "対象者・前提",
+        "全15回のコースマップ",
+        "公開利用とライセンス",
+    ]
+    for removed in (
+        "この演習で身につけること",
+        "課題の進め方",
+        "必要な環境",
+        "受講環境の準備へ進む",
+        ".start-button",
+    )
+        @test !occursin(removed, home)
+    end
+    @test isempty(visible_course_map_machine_ids(home))
+    @test !occursin(r"(?s)\.start-button\s*\{", copy_source("assets/styles.css"))
     @test !occursin("::: {.eyebrow}", home)
     for removed in (
         "Juliaで理解・実装・検証・調査をつなぐ",
@@ -368,18 +390,6 @@ end
     )
         @test !occursin(removed, home)
     end
-    @test isempty(visible_course_map_machine_ids(home))
-    cta = "[受講環境の準備へ進む](setup/index.qmd){.start-button}"
-    @test length(findall(cta, home)) == 1
-    necessary_environment = findfirst("## 必要な環境", home)
-    troubleshooting = findfirst("[トラブル対応](guides/troubleshooting.qmd)", home)
-    cta_position = findfirst(cta, home)
-    license = findfirst("## 公開利用とライセンス", home)
-    @test all(!isnothing, (necessary_environment, troubleshooting, cta_position, license))
-    if all(!isnothing, (necessary_environment, troubleshooting, cta_position, license))
-        @test first(necessary_environment) < first(troubleshooting) < first(cta_position) < first(license)
-    end
-    @test occursin("$cta\n\n## 公開利用とライセンス", home)
 
     for path in ("lessons/index.qmd", "assignments/index.qmd", "guides/index.qmd", "advanced/index.qmd")
         hub = copy_source(path)
