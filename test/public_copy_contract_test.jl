@@ -213,44 +213,43 @@ function learner_copy_id_led_lines(source)
     return violations
 end
 
-function glossary_parenthetical_mapping(source)
-    rows = Tuple{String,String,String}[]
+function glossary_rows(source)
+    rows = Tuple{String,String}[]
     for line in split(source, '\n')
         startswith(strip(line), "|") || continue
         cells = strip.(split(strip(line), '|'; keepempty=true)[2:(end - 1)])
         length(cells) == 2 || continue
-        matched = match(r"^(.+?)（([^（）]+)）$", first(cells))
-        isnothing(matched) && continue
-        push!(rows, (matched.captures[1], matched.captures[2], cells[2]))
+        first(cells) in ("用語", "---") && continue
+        push!(rows, (cells[1], cells[2]))
     end
     return rows
 end
 
-const EXPECTED_GLOSSARY_MAPPING = [
-    ("branch", "分岐"),
-    ("commit", "記録"),
-    ("diff", "差分"),
-    ("pull request", "変更取り込み依頼"),
-    ("merge", "統合"),
-    ("local", "手元環境"),
-    ("repository", "保管場所"),
-    ("test", "テスト"),
-    ("regression test", "回帰テスト"),
-    ("tolerance", "許容誤差"),
-    ("self-contained", "自己完結"),
+const EXPECTED_GLOSSARY_ROWS = [
+    ("branch", "mainから分けて管理する一連の変更。原則として1課題に一つ作る。"),
+    ("commit", "内容と理由を確認し、Gitへ記録した変更の区切り。"),
+    ("diff", "変更前後で追加・削除された差分。テスト対象外の変更も人が読む。"),
+    ("pull request", "略称 PR。branchの変更をmainへ戻す前に、Actionsとdiffを確認する場所。"),
+    ("merge", "確認済みのbranchをmainへ統合すること。"),
+    ("Actions", "GitHub上で公開テストを実行する仕組み。成功してもセルフレビューは別に行う。"),
+    ("local", "自分のPC上の手元環境。push前のテストとdiff確認をここで行う。"),
+    ("repository", "教材コード、課題、履歴をまとめて保管する作業場所。"),
+    ("test", "入力に対する期待結果や性質を自動確認するコード。"),
+    ("smoke test", "実行経路が最低限動くことを確認する小さなテスト。"),
+    ("regression test", "以前できたことが変更後も壊れていないかを確認する回帰テスト。"),
+    ("tolerance", "浮動小数点計算を「十分近い」と判定するための許容誤差。"),
+    ("preflight", "課題開始前にJulia、Gitなどの前提を診断する手順。"),
+    ("canonical", "公開サイトで正本として参照するURLやページ。"),
+    ("self-contained", "主要な計算を一つのファイル内で追える、自己完結した構成。"),
+    ("Agent / Coding Agent", "コマンド実行や編集を支援するツール。出力、diff、テストは学生が確認する。"),
 ]
 
 function glossary_rows_contract(source)
-    rows = glossary_parenthetical_mapping(source)
-    mappings = [(term, translation) for (term, translation, _) in rows]
-    terms = [term for (term, _, _) in rows]
-    pr_rows = [row for row in rows if row[1] == "pull request"]
-    return length(rows) == 11 &&
-           length(unique(terms)) == 11 &&
-           mappings == EXPECTED_GLOSSARY_MAPPING &&
-           length(pr_rows) == 1 &&
-           occursin("略称 PR", only(pr_rows)[3]) &&
-           count(row -> occursin("略称 PR", row[3]), rows) == 1 &&
+    rows = glossary_rows(source)
+    terms = first.(rows)
+    return rows == EXPECTED_GLOSSARY_ROWS &&
+           length(unique(terms)) == length(terms) &&
+           all(isnothing(match(r"（[^（）]+）", term)) for term in terms) &&
            length(findall("略称 PR", source)) == 1
 end
 
@@ -827,30 +826,18 @@ end
     @test occursin("セットアップまたは公開済みの課題", commands)
 
     glossary = copy_source("guides/glossary.qmd")
-    @test occursin("括弧内は日本語訳", glossary)
-    glossary_rows = glossary_parenthetical_mapping(glossary)
-    @test length(glossary_rows) == 11
-    @test length(unique(first.(glossary_rows))) == 11
-    @test [(term, translation) for (term, translation, _) in glossary_rows] ==
-          EXPECTED_GLOSSARY_MAPPING
-    pull_request_rows = filter(row -> first(row) == "pull request", glossary_rows)
-    @test length(pull_request_rows) == 1
-    @test occursin("略称 PR", only(pull_request_rows)[3])
-    @test count(row -> occursin("略称 PR", row[3]), glossary_rows) == 1
+    @test !occursin("括弧内は日本語訳", glossary)
+    @test glossary_rows(glossary) == EXPECTED_GLOSSARY_ROWS
     @test glossary_rows_contract(glossary)
-    duplicate_wrong_row = replace(
+    @test all(isnothing(match(r"（[^（）]+）", term)) for (term, _) in glossary_rows(glossary))
+    @test length(findall("略称 PR", glossary)) == 1
+
+    duplicate_pr = replace(
         glossary,
-        "| pull request（変更取り込み依頼）" =>
-            "| pull request（誤った意味） | 誤った説明。 |\n| pull request（変更取り込み依頼）";
-        count = 1,
+        "| pull request |" => "| pull request | 誤った説明。 |\n| pull request |";
+        count=1,
     )
-    @test !glossary_rows_contract(duplicate_wrong_row)
-    moved_pr_description = replace(
-        glossary,
-        "mainから分かれた一連の変更。" => "略称 PR。mainから分かれた一連の変更。",
-        "略称 PR。branchの変更" => "branchの変更";
-        count = 1,
-    )
-    @test !glossary_rows_contract(moved_pr_description)
+    @test !glossary_rows_contract(duplicate_pr)
+    @test !glossary_rows_contract(replace(glossary, "略称 PR。" => ""; count=1))
 end
 end
