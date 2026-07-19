@@ -71,4 +71,4 @@ GitHub Freeのprivateリポジトリではbranch protectionに依存しません
 
 token、API key、パスワード、秘密鍵、個人情報をAgentやPRへ貼り付けません。誤って表示した場合はcommitやpushをせず、教員・TAへ相談してください。
 
-実作業は[最初のbranchとpull request課題](../assignments/F01.qmd)（課題ID: F01）、以後の共通手順は[課題ワークフロー](../guides/workflow.qmd)を参照してください。
+実作業はページ下部の［次へ］から進む「最初のbranchとpull request課題」（課題ID: F01）で行い、以後の共通手順は[課題ワークフロー](../guides/workflow.qmd)を参照してください。

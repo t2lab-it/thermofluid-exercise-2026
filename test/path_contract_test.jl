@@ -5,7 +5,7 @@ const PATH_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
 const PATH_VERIFY = joinpath(PATH_SITE_ROOT, "scripts", "verify_contracts.jl")
 isdefined(@__MODULE__, :path_inside) || include(PATH_VERIFY)
 
-function write_verifier_fixture(parent; missing_lesson_link=nothing, navigation_paths=false)
+function write_verifier_fixture(parent)
     public = joinpath(parent, "public")
     student = joinpath(parent, "student")
     mkpath.((joinpath(public, "assignments"), joinpath(public, "lessons"), student))
@@ -15,10 +15,7 @@ function write_verifier_fixture(parent; missing_lesson_link=nothing, navigation_
     cp(contracts_source, contracts_path)
     assignments = TOML.parsefile(contracts_path)["assignments"]
 
-    navigation = navigation_paths ?
-                 join((entry["site_path"] for entry in values(assignments)), '\n') :
-                 "website:\n  title: fixture\n"
-    write(joinpath(public, "_quarto.yml"), navigation)
+    write(joinpath(public, "_quarto.yml"), "website:\n  title: fixture\n")
 
     for (id, entry) in assignments
         site_path = entry["site_path"]
@@ -30,11 +27,7 @@ function write_verifier_fixture(parent; missing_lesson_link=nothing, navigation_
         mkpath(dirname(site_file))
         write(site_file, "student: $student_path\ncommand: $command\n")
 
-        lesson_file = joinpath(public, "lessons", "$id.qmd")
-        lesson = id == missing_lesson_link ?
-                 "# Lesson $id\n" :
-                 "[課題](../$site_path#完了条件)\n"
-        write(lesson_file, lesson)
+        write(joinpath(public, "lessons", "$id.qmd"), "# Lesson $id\n")
 
         student_file = joinpath(student, student_path)
         mkpath(dirname(student_file))
@@ -130,47 +123,6 @@ end
             ) === nothing
         else
             @test_skip "directory symlink creation is unavailable on this host"
-        end
-    end
-end
-
-@testset "contract verifier follows lesson assignment links" begin
-    mktempdir() do parent
-        contracts, public, student = write_verifier_fixture(parent)
-        passed, output = run_contract_verifier(contracts, public, student)
-
-        @test passed
-        @test occursin("assignment contracts verified", output)
-    end
-
-    mktempdir() do parent
-        contracts, public, student = write_verifier_fixture(
-            parent;
-            missing_lesson_link="F00",
-            navigation_paths=true,
-        )
-        passed, output = run_contract_verifier(contracts, public, student)
-
-        @test !passed
-        @test occursin("lesson assignment link missing for F00", output)
-        @test occursin("../assignments/F00.qmd", output)
-        @test !occursin("nav inclusion missing", output)
-    end
-
-    deceptive_lessons = Dict(
-        "plain assignment path" => "See ../assignments/F00.qmd for details.\n",
-        "longer invalid target" => "[課題](../assignments/F00.qmd.disabled)\n",
-        "fenced code example" => "```markdown\n[課題](../assignments/F00.qmd)\n```\n",
-        "HTML comment" => "<!-- [課題](../assignments/F00.qmd) -->\n",
-    )
-    for (description, lesson) in deceptive_lessons
-        mktempdir() do parent
-            contracts, public, student = write_verifier_fixture(parent)
-            write(joinpath(public, "lessons", "F00.qmd"), lesson)
-            passed, output = run_contract_verifier(contracts, public, student)
-
-            @test !passed
-            @test occursin("lesson assignment link missing for F00", output)
         end
     end
 end

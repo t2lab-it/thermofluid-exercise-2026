@@ -498,3 +498,12 @@ end
         end
     end
 end
+
+@testset "lesson and assignment pages use sidebar navigation only" begin
+    for id in REQUIRED_COURSE_ORDER
+        lesson = read(joinpath(NAVIGATION_SITE_ROOT, "lessons", "$id.qmd"), String)
+        assignment = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
+        @test !occursin("../assignments/$id.qmd", lesson)
+        @test !occursin("../lessons/$id.qmd", assignment)
+    end
+end
