@@ -537,7 +537,7 @@ end
             styles,
         )
         @test occursin(
-            r"(?s)@media\s*\(max-width:\s*991\.98px\)\s*\{.*?\.navbar\s+\.nav-item\.dropdown\.split-nav-open\s*>\s*\.dropdown-menu\s*\{[^}]*position\s*:\s*static\s*;[^}]*width\s*:\s*100%\s*;",
+            r"(?s)@media\s*\(max-width:\s*991\.98px\)\s*\{.*?\.navbar\s+\.nav-item\.dropdown\.split-nav-open\s*>\s*\.dropdown-menu\s*\{[^}]*position\s*:\s*static\s*;[^}]*grid-column\s*:\s*1\s*/\s*-1\s*;[^}]*width\s*:\s*100%\s*;",
             styles,
         )
         start_button_exists = occursin(r"(?m)^\.start-button\s*\{", styles)

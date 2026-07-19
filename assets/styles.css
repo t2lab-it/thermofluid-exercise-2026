@@ -151,6 +151,7 @@ button:focus-visible {
 @media (max-width: 991.98px) {
   .navbar .nav-item.dropdown.split-nav-open > .dropdown-menu {
     position: static;
+    grid-column: 1 / -1;
     min-width: 0;
     flex-direction: column;
     width: 100%;
