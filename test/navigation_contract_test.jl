@@ -472,6 +472,11 @@ end
             r"(?s)\.tf-theme-switch\.alternate\s+\.tf-theme-switch-thumb\s*\{[^}]*transform\s*:\s*translateX\(1rem\)\s*;",
             styles,
         )
+        @test occursin(
+            r"(?s)body\.quarto-dark\s+:not\(pre\)\s*>\s*code\s*\{[^}]*color\s*:\s*#f8f9fa\s*;[^}]*background-color\s*:\s*#343a40\s*;",
+            styles,
+        )
+        @test !occursin(r"body\.quarto-dark\s+pre\s+code", styles)
     end
 
     navigation_path = joinpath(public_root, "assets", "navigation.js")

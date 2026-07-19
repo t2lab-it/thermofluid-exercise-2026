@@ -39,6 +39,11 @@ code {
   overflow-wrap: anywhere;
 }
 
+body.quarto-dark :not(pre) > code {
+  color: #f8f9fa;
+  background-color: #343a40;
+}
+
 .callout-note {
   border-left-color: var(--tf-accent);
 }
