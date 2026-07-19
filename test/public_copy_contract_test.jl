@@ -474,11 +474,11 @@ end
     assignment_order = section_body(n01_assignment, "このページの進め方")
     lesson_sequence = (
         "この授業ページ", "ページ下部の［次へ］", "課題ページ",
-        "学生リポジトリ", "TASK.md", "run.jl",
+        "学生リポジトリ", "run.jl", "提供テスト", "自分のテスト", "3つの実装箇所",
     )
     assignment_sequence = (
         "ページ下部の［前へ］", "授業ページ", "この課題ページ", "学生リポジトリ",
-        "TASK.md", "run.jl", "提供テスト", "3つのTODOだけ",
+        "run.jl", "提供テスト", "自分のテスト", "3つの実装箇所",
     )
     @test !isnothing(lesson_order)
     @test !isnothing(assignment_order)
@@ -677,4 +677,25 @@ end
     glossary = copy_source("guides/glossary.qmd")
     @test glossary_rows_contract(glossary)
 end
+@testset "assignment pages are the only assignment prose source" begin
+    pages = Dict(
+        "F00" => copy_source("assignments/F00.qmd"),
+        "F01" => copy_source("assignments/F01.qmd"),
+        "F02" => copy_source("assignments/F02.qmd"),
+        "F03" => copy_source("assignments/F03.qmd"),
+        "N01" => copy_source("assignments/N01.qmd"),
+    )
+    removed_task_name = "TASK" * ".md"
+    @test all(!occursin(removed_task_name, page) for page in values(pages))
+    @test occursin("--confirm-github --confirm-agent copilot", pages["F00"])
+    @test occursin("--confirm-github --confirm-agent codex", pages["F00"])
+    @test occursin("--confirm-github --confirm-agent amazon-q", pages["F00"])
+    @test occursin("Hello, name!", pages["F01"])
+    @test occursin("空白だけの名前", pages["F01"])
+    @test occursin("test/student/F02.jl", pages["F02"])
+    @test occursin("(u[i] - u[i - 1]) / dx", pages["F03"])
+    @test occursin("(u[i + 1] - u[i - 1]) / (2 * dx)", pages["F03"])
+    @test occursin("results/N01/summary.toml", pages["N01"])
+end
+
 end

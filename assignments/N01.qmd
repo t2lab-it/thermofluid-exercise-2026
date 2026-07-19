@@ -13,11 +13,10 @@ Julia以外のプログラミング経験はあるものの構文を忘れてい
 
 1. 必要ならページ下部の［前へ］から授業ページへ戻り、短いJulia例を上から読み、コピー実行する。
 2. この課題ページで、3つのTODO、実行・テスト、公式出力、完了条件を確認する。
-3. 最後に学生リポジトリの`TASK.md`、`run.jl`のheader、提供テストの順に読み、`run.jl`の3つのTODOだけを実装する。
+3. 最後に学生リポジトリの`run.jl`のheader、提供テスト、自分のテストの順に読み、`run.jl`の3つの実装箇所だけを実装する。
 
 ## 課題リポジトリ内の場所
 
-- 課題契約: `exercises/N01_linear_advection/TASK.md`
 - 実装・実行: `exercises/N01_linear_advection/run.jl`
 - 提供済みsupport: `exercises/N01_linear_advection/provided_support.jl`
 - 提供テスト: `test/provided/N01.jl`
