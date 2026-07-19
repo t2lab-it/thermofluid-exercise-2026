@@ -502,6 +502,13 @@ end
             @test count(occursin(variable), split(styles, '\n')) >= 2
         end
         @test occursin("outline: 3px solid var(--tf-focus)", styles)
+        start_button_exists = occursin(r"(?m)^\.start-button\s*\{", styles)
+        if start_button_exists
+            @test occursin(
+                r"(?s)body\.quarto-dark\s+\.start-button\s*,\s*body\.quarto-dark\s+\.start-button:hover\s*\{[^}]*color\s*:\s*#003f50\s*;",
+                styles,
+            )
+        end
     end
 
     lesson_paths = [joinpath(public_root, "lessons", "$id.qmd") for id in REQUIRED_COURSE_ORDER]
