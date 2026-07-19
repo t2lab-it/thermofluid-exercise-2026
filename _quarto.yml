@@ -19,56 +19,10 @@ website:
   page-navigation: true
   navbar:
     left:
-      - href: index.qmd
-        text: ホーム
-      - text: セットアップ
-        rel: split-navigation
-        menu:
-          - href: setup/index.qmd
-            text: セットアップ概要
-          - href: setup/julia.qmd
-            text: Julia
-          - href: setup/git-github.qmd
-            text: Git・GitHub
-          - href: setup/agents.qmd
-            text: Coding Agent
-          - href: guides/workflow.qmd
-            text: 課題ワークフロー
-      - text: 授業
-        rel: split-navigation
-        menu:
-          - href: lessons/index.qmd
-            text: 授業一覧
-          - href: lessons/F00.qmd
-            text: ガイダンスと環境診断
-          - href: lessons/F01.qmd
-            text: Julia・Git・GitHubの最小操作
-          - href: lessons/F02.qmd
-            text: 配列・関数・loop・テスト
-          - href: lessons/F03.qmd
-            text: ベクトル解析・熱伝導・差分と添字
-          - href: lessons/N01.qmd
-            text: 移流方程式と安定性
-      - text: 課題
-        rel: split-navigation
-        menu:
-          - href: assignments/index.qmd
-            text: 課題一覧
-          - href: assignments/F00.qmd
-            text: 環境診断
-          - href: assignments/F01.qmd
-            text: 最初のbranchとpull request
-          - href: assignments/F02.qmd
-            text: Juliaの配列・関数・テスト
-          - href: assignments/F03.qmd
-            text: 座標・添字・差分の数値計算入門
-          - href: assignments/N01.qmd
-            text: 1次元線形移流方程式
       - text: ガイド
+        href: guides/index.qmd
         rel: split-navigation
         menu:
-          - href: guides/index.qmd
-            text: ガイド一覧
           - href: guides/testing.qmd
             text: テスト
           - href: guides/commands.qmd
@@ -78,60 +32,55 @@ website:
           - href: guides/glossary.qmd
             text: 用語集
       - text: 発展資料
+        href: advanced/index.qmd
         rel: split-navigation
         menu:
-          - href: advanced/index.qmd
-            text: 発展資料一覧
           - href: advanced/cairomakie.qmd
             text: CairoMakieによる可視化
   sidebar:
     - id: course
-      title: "授業と課題"
+      title: "熱流体力学演習 2026"
       style: docked
       collapse-level: 1
       contents:
-        - href: setup/index.qmd
-          text: "受講環境の準備"
-        - href: setup/julia.qmd
-          text: "Julia・VS Code"
-        - href: setup/git-github.qmd
-          text: "Git・GitHub"
-        - href: setup/agents.qmd
-          text: "Coding Agent"
-        - href: guides/workflow.qmd
-          text: "課題ワークフロー"
-        - section: "第1回 受講環境の準備"
+        - href: index.qmd
+          text: "ホーム"
+        - section: "受講準備・共通ガイド"
           contents:
-            - text: "1/2 授業"
+            - href: setup/index.qmd
+              text: "受講環境の準備"
+            - href: setup/julia.qmd
+              text: "Julia・VS Code"
+            - href: setup/git-github.qmd
+              text: "Git・GitHub"
+            - href: setup/agents.qmd
+              text: "Coding Agent"
+            - href: guides/workflow.qmd
+              text: "課題ワークフロー"
+            - href: guides/testing.qmd
+              text: "テストと数値検証"
+        - section: "全15回"
+          contents:
+            - text: "第1回 ガイダンス、アカウント、環境診断"
               href: lessons/F00.qmd
-            - text: "2/2 課題"
-              href: assignments/F00.qmd
-        - section: "第2回 GitHubを使った課題提出"
-          contents:
-            - text: "1/2 授業"
+            - text: "第2回 Julia・Git・GitHubの最小操作"
               href: lessons/F01.qmd
-            - text: "2/2 課題"
-              href: assignments/F01.qmd
-        - href: guides/testing.qmd
-          text: "テストと数値検証"
-        - section: "第3回 Juliaチュートリアル"
-          contents:
-            - text: "1/2 授業"
+            - text: "第3回 配列・関数・ループ、テスト"
               href: lessons/F02.qmd
-            - text: "2/2 課題"
-              href: assignments/F02.qmd
-        - section: "第4回 速習差分法"
-          contents:
-            - text: "1/2 授業"
+            - text: "第4回 ベクトル解析、伝熱、差分と添字"
               href: lessons/F03.qmd
-            - text: "2/2 課題"
-              href: assignments/F03.qmd
-        - section: "第5回 1次元線形移流方程式"
-          contents:
-            - text: "1/2 授業"
+            - text: "第5回 一次元線形・非線形移流"
               href: lessons/N01.qmd
-            - text: "2/2 課題"
-              href: assignments/N01.qmd
+            - text: "第6回 一次元拡散・移流拡散"
+            - text: "第7回 Git、テスト、Agentic coding、共通化"
+            - text: "第8回 二次元移流、配列軸、可視化、メモリ"
+            - text: "第9回 二次元拡散"
+            - text: "第10回 二次元移流拡散"
+            - text: "第11回 PDE分類、Laplace方程式"
+            - text: "第12回 Poisson方程式"
+            - text: "第13回 最終プレゼンテーション 1"
+            - text: "第14回 最終プレゼンテーション 2・試験案内"
+            - text: "第15回 到達度確認試験"
     - id: guides
       title: "ガイド"
       style: docked

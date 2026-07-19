@@ -1,4 +1,9 @@
 export function enhanceSplitNavigation({ anchor, menu, document }) {
+  if (!anchor || !menu || !document) return null;
+
+  const item = anchor.parentNode;
+  if (!item) return null;
+
   const trigger = document.createElement("button");
   const label = anchor.textContent?.trim() || "section";
 
@@ -11,6 +16,7 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
   const setOpen = (open) => {
     menu.hidden = !open;
     menu.classList?.toggle("show", open);
+    item.classList?.toggle("split-nav-open", open);
     trigger.setAttribute("aria-expanded", String(open));
   };
   const toggle = () => setOpen(trigger.getAttribute("aria-expanded") !== "true");
@@ -19,7 +25,7 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
   if (typeof anchor.after === "function") {
     anchor.after(trigger);
   } else {
-    anchor.parentNode.insertBefore(trigger, menu);
+    item.insertBefore(trigger, menu);
   }
 
   trigger.addEventListener("click", toggle);
@@ -30,9 +36,8 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
     }
   });
   if (document.defaultView?.matchMedia?.("(hover: hover)").matches) {
-    const hoverRegion = anchor.parentNode;
     trigger.addEventListener("pointerenter", () => setOpen(true));
-    hoverRegion.addEventListener("pointerleave", () => setOpen(false));
+    item.addEventListener("pointerleave", () => setOpen(false));
   }
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && (trigger.contains(event.target) || menu.contains(event.target))) {
@@ -53,16 +58,10 @@ function enhanceRenderedNavbar(document) {
   );
   for (const anchor of sectionLinks) {
     const item = anchor.parentNode;
-    const menu = item.querySelector(":scope > .dropdown-menu");
-    if (!anchor || !menu || item.querySelector(".split-nav-trigger")) continue;
+    const menu = item?.querySelector(":scope > .dropdown-menu");
+    if (!anchor.getAttribute("href") || !menu || item.querySelector(".split-nav-trigger")) continue;
 
-    const sectionLink = menu.querySelector("a.dropdown-item");
-    if (!sectionLink?.getAttribute("href")) continue;
-    anchor.setAttribute("href", sectionLink.getAttribute("href"));
-
-    if (!menu.id) {
-      menu.id = `${anchor.id || "navbar-section"}-submenu`;
-    }
+    if (!menu.id) menu.id = `${anchor.id || "navbar-section"}-submenu`;
     anchor.classList.remove("dropdown-toggle");
     anchor.removeAttribute("data-bs-toggle");
     anchor.removeAttribute("aria-expanded");

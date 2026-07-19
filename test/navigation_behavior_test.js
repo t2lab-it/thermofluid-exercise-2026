@@ -61,6 +61,34 @@ class FakeEventTarget {
   }
 }
 
+class FakeClassList {
+  constructor(element) {
+    this.element = element;
+    this.values = new Set();
+  }
+
+  add(...tokens) {
+    tokens.forEach((token) => this.values.add(token));
+    this.element.className = [...this.values].join(" ");
+  }
+
+  remove(...tokens) {
+    tokens.forEach((token) => this.values.delete(token));
+    this.element.className = [...this.values].join(" ");
+  }
+
+  toggle(token, force = undefined) {
+    const enabled = force === undefined ? !this.values.has(token) : force;
+    enabled ? this.values.add(token) : this.values.delete(token);
+    this.element.className = [...this.values].join(" ");
+    return enabled;
+  }
+
+  contains(token) {
+    return this.values.has(token);
+  }
+}
+
 class FakeElement extends FakeEventTarget {
   constructor(tagName) {
     super();
@@ -74,6 +102,7 @@ class FakeElement extends FakeEventTarget {
     this.textContent = "";
     this.className = "";
     this.focused = false;
+    this.classList = new FakeClassList(this);
   }
 
   focus() {
@@ -181,14 +210,23 @@ function fire(target, type, options = {}) {
 function assertClosed(trigger, menu) {
   assertEqual(trigger.getAttribute("aria-expanded"), "false");
   assertEqual(menu.hidden, true);
+  assertEqual(menu.classList.contains("show"), false);
+  assertEqual(menu.parentNode.classList.contains("split-nav-open"), false);
 }
 
 function assertOpen(trigger, menu) {
   assertEqual(trigger.getAttribute("aria-expanded"), "true");
   assertEqual(menu.hidden, false);
+  assertEqual(menu.classList.contains("show"), true);
+  assertEqual(menu.parentNode.classList.contains("split-nav-open"), true);
 }
 
 function referenceEnhanceSplitNavigationUsing({ anchor, menu, document }, insertTrigger) {
+  if (!anchor || !menu || !document) return null;
+
+  const item = anchor.parentNode;
+  if (!item) return null;
+
   const trigger = document.createElement("button");
   trigger.setAttribute("type", "button");
   trigger.setAttribute("aria-label", `${anchor.textContent || "section"} menu`);
@@ -197,6 +235,8 @@ function referenceEnhanceSplitNavigationUsing({ anchor, menu, document }, insert
 
   const setOpen = (open) => {
     menu.hidden = !open;
+    menu.classList.toggle("show", open);
+    item.classList.toggle("split-nav-open", open);
     trigger.setAttribute("aria-expanded", String(open));
   };
   const toggle = () => setOpen(trigger.getAttribute("aria-expanded") !== "true");
@@ -210,9 +250,8 @@ function referenceEnhanceSplitNavigationUsing({ anchor, menu, document }, insert
     }
   });
   if (document.defaultView.matchMedia("(hover: hover)").matches) {
-    const hoverRegion = anchor.parentNode;
     trigger.addEventListener("pointerenter", () => setOpen(true));
-    hoverRegion.addEventListener("pointerleave", () => setOpen(false));
+    item.addEventListener("pointerleave", () => setOpen(false));
   }
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && (trigger.contains(event.target) || menu.contains(event.target))) {
@@ -269,8 +308,9 @@ assertEqual(
 
 const item = new FakeElement("li");
 const anchor = new FakeElement("a");
-anchor.href = "lessons/index.html";
-anchor.textContent = "授業";
+anchor.setAttribute("href", "guides/index.html");
+anchor.href = "guides/index.html";
+anchor.textContent = "ガイド";
 const menu = new FakeElement("ul");
 menu.id = "course-menu";
 item.append(anchor, menu);
@@ -283,10 +323,12 @@ assertEqual(trigger.getAttribute("aria-controls"), menu.id);
 assertClosed(trigger, menu);
 assertEqual(trigger.getAttribute("type"), "button");
 assert(trigger.getAttribute("aria-label")?.trim());
+assertEqual(anchor.getAttribute("href"), "guides/index.html");
+assertEqual(anchor.href, "guides/index.html");
 
 const anchorClick = fire(anchor, "click");
 assertEqual(anchorClick.defaultPrevented, false, "the section anchor must remain navigable");
-assertEqual(anchor.href, "lessons/index.html");
+assertEqual(anchor.href, "guides/index.html");
 assertClosed(trigger, menu);
 
 fire(trigger, "pointerenter");
@@ -353,4 +395,14 @@ fire(touchItem, "pointerleave", { target: touchItem });
 assertOpen(touchTrigger, touchMenu);
 fire(touchTrigger, "click");
 assertClosed(touchTrigger, touchMenu);
+assertEqual(
+  navigation.enhanceSplitNavigation({ anchor: null, menu, document }),
+  null,
+  "missing anchor must skip enhancement",
+);
+assertEqual(
+  navigation.enhanceSplitNavigation({ anchor, menu: null, document }),
+  null,
+  "missing menu must skip enhancement",
+);
 console.log("navigation behavior contract passed");

@@ -4,41 +4,40 @@ using TOML
 const NAVIGATION_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
 
 const VISIBLE_NAMES = Dict(
-    "F00" => (
-        course="受講環境の準備",
-        lesson="ガイダンスと環境診断",
-        assignment="環境診断",
-    ),
-    "F01" => (
-        course="GitHubを使った課題提出",
-        lesson="Julia・Git・GitHubの最小操作",
-        assignment="最初のbranchとpull request",
-    ),
-    "F02" => (
-        course="Juliaチュートリアル",
-        lesson="配列・関数・loop・テスト",
-        assignment="Juliaの配列・関数・テスト",
-    ),
-    "F03" => (
-        course="速習差分法",
-        lesson="ベクトル解析・熱伝導・差分と添字",
-        assignment="座標・添字・差分の数値計算入門",
-    ),
-    "N01" => (
-        course="1次元線形移流方程式",
-        lesson="移流方程式と安定性",
-        assignment="1次元線形移流方程式",
-    ),
+    "F00" => (lesson="ガイダンスと環境診断", assignment="環境診断"),
+    "F01" => (lesson="Julia・Git・GitHubの最小操作", assignment="最初のbranchとpull request"),
+    "F02" => (lesson="配列・関数・loop・テスト", assignment="Juliaの配列・関数・テスト"),
+    "F03" => (lesson="ベクトル解析・熱伝導・差分と添字", assignment="座標・添字・差分の数値計算入門"),
+    "N01" => (lesson="移流方程式と安定性", assignment="1次元線形移流方程式"),
 )
 
 const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "N01")
-const REQUIRED_SECTION_LABELS = (
-    "セットアップ",
-    "授業",
-    "課題",
-    "ガイド",
-    "発展資料",
-)
+const REQUIRED_SECTION_LABELS = ("ガイド", "発展資料")
+const EXPECTED_PREPARATION_LINKS = [
+    ("setup/index.qmd", "受講環境の準備"),
+    ("setup/julia.qmd", "Julia・VS Code"),
+    ("setup/git-github.qmd", "Git・GitHub"),
+    ("setup/agents.qmd", "Coding Agent"),
+    ("guides/workflow.qmd", "課題ワークフロー"),
+    ("guides/testing.qmd", "テストと数値検証"),
+]
+const EXPECTED_SESSION_ENTRIES = [
+    ("第1回 ガイダンス、アカウント、環境診断", "lessons/F00.qmd"),
+    ("第2回 Julia・Git・GitHubの最小操作", "lessons/F01.qmd"),
+    ("第3回 配列・関数・ループ、テスト", "lessons/F02.qmd"),
+    ("第4回 ベクトル解析、伝熱、差分と添字", "lessons/F03.qmd"),
+    ("第5回 一次元線形・非線形移流", "lessons/N01.qmd"),
+    ("第6回 一次元拡散・移流拡散", nothing),
+    ("第7回 Git、テスト、Agentic coding、共通化", nothing),
+    ("第8回 二次元移流、配列軸、可視化、メモリ", nothing),
+    ("第9回 二次元拡散", nothing),
+    ("第10回 二次元移流拡散", nothing),
+    ("第11回 PDE分類、Laplace方程式", nothing),
+    ("第12回 Poisson方程式", nothing),
+    ("第13回 最終プレゼンテーション 1", nothing),
+    ("第14回 最終プレゼンテーション 2・試験案内", nothing),
+    ("第15回 到達度確認試験", nothing),
+]
 
 function yaml_source_lines(source::AbstractString)
     lines = NamedTuple{(:indent, :text),Tuple{Int,String}}[]
@@ -177,6 +176,37 @@ function navbar_menu_pairs(lines, section_label)
     return pairs
 end
 
+function navbar_item(lines, label)
+    navbar_left = yaml_node(lines, ("website", "navbar", "left"))
+    isnothing(navbar_left) && return nothing
+    matches = [
+        item for item in yaml_sequence_items(lines, navbar_left)
+        if something(yaml_item_field(lines, item, "text"), (value="",)).value == label
+    ]
+    return length(matches) == 1 ? only(matches) : nothing
+end
+
+function sidebar_section_entries(lines, sidebar_item, section_label)
+    contents = yaml_item_field(lines, sidebar_item, "contents")
+    isnothing(contents) && return []
+    matches = [
+        item for item in yaml_sequence_items(lines, contents.node)
+        if something(yaml_item_field(lines, item, "section"), (value="",)).value == section_label
+    ]
+    length(matches) == 1 || return []
+    section_contents = yaml_item_field(lines, only(matches), "contents")
+    isnothing(section_contents) && return []
+    return [
+        (
+            something(yaml_item_field(lines, item, "text"), (value="",)).value,
+            let href = yaml_item_field(lines, item, "href")
+                isnothing(href) ? nothing : href.value
+            end,
+        )
+        for item in yaml_sequence_items(lines, section_contents.node)
+    ]
+end
+
 const NAVIGATION_LOADER = "assets/navigation-loader.html"
 const NAVIGATION_BEHAVIOR_TEST = joinpath(@__DIR__, "navigation_behavior_test.js")
 
@@ -290,47 +320,38 @@ end
       sidebar:
         - id: course
           contents:
-            - section: "第1回 受講環境の準備"
+            - section: "全15回"
               contents:
-                - text: "1/2 授業"
+                - text: "第1回 ガイダンス、アカウント、環境診断"
                   href: lessons/F00.qmd
-                - text: "2/2 課題"
-                  href: assignments/F00.qmd
+                - text: "第6回 一次元拡散・移流拡散"
     """)
     sidebar_node = yaml_node(valid_sidebar, ("website", "sidebar"))
     course_item = only(yaml_sequence_items(valid_sidebar, sidebar_node))
-    @test yaml_item_field(valid_sidebar, course_item, "id").value == "course"
-    course_contents = yaml_item_field(valid_sidebar, course_item, "contents").node
-    section_item = only(yaml_sequence_items(valid_sidebar, course_contents))
-    @test yaml_item_field(valid_sidebar, section_item, "section").value == "第1回 受講環境の準備"
-    section_contents = yaml_item_field(valid_sidebar, section_item, "contents").node
-    adjacent_entries = yaml_sequence_items(valid_sidebar, section_contents)
-    @test length(adjacent_entries) == 2
-    @test yaml_item_field(valid_sidebar, adjacent_entries[1], "href").value == "lessons/F00.qmd"
-    @test yaml_item_field(valid_sidebar, adjacent_entries[2], "href").value == "assignments/F00.qmd"
+    @test sidebar_section_entries(valid_sidebar, course_item, "全15回") == [
+        ("第1回 ガイダンス、アカウント、環境診断", "lessons/F00.qmd"),
+        ("第6回 一次元拡散・移流拡散", nothing),
+    ]
 
     swapped_navbar = yaml_source_lines("""
     website:
       navbar:
         left:
-          - text: 授業
+          - text: ガイド
+            href: guides/index.qmd
+            rel: split-navigation
             menu:
-              - href: lessons/index.qmd
-                text: 授業一覧
-              - href: lessons/F01.qmd
-                text: Julia・Git・GitHubの最小操作
-              - href: lessons/F00.qmd
-                text: ガイダンスと環境診断
+              - href: guides/commands.qmd
+                text: コマンド
+              - href: guides/testing.qmd
+                text: テスト
     """)
-    @test navbar_menu_pairs(swapped_navbar, "授業") == [
-        ("lessons/index.qmd", "授業一覧"),
-        ("lessons/F01.qmd", "Julia・Git・GitHubの最小操作"),
-        ("lessons/F00.qmd", "ガイダンスと環境診断"),
-    ]
-    @test navbar_menu_pairs(swapped_navbar, "授業") != [
-        ("lessons/index.qmd", "授業一覧"),
-        ("lessons/F00.qmd", "ガイダンスと環境診断"),
-        ("lessons/F01.qmd", "Julia・Git・GitHubの最小操作"),
+    guide_item = navbar_item(swapped_navbar, "ガイド")
+    @test !isnothing(guide_item)
+    !isnothing(guide_item) && @test yaml_item_field(swapped_navbar, guide_item, "href").value == "guides/index.qmd"
+    @test navbar_menu_pairs(swapped_navbar, "ガイド") == [
+        ("guides/commands.qmd", "コマンド"),
+        ("guides/testing.qmd", "テスト"),
     ]
 end
 
@@ -363,51 +384,45 @@ end
     @test !isnothing(language)
     !isnothing(language) && @test yaml_scalar(yaml, language) == "ja"
 
+    site_title = yaml_node(yaml, ("website", "title"))
+    @test !isnothing(site_title)
+    !isnothing(site_title) && @test yaml_scalar(yaml, site_title) == "熱流体力学演習 2026"
+
     navbar_left = yaml_node(yaml, ("website", "navbar", "left"))
     @test !isnothing(navbar_left)
     if !isnothing(navbar_left)
         navbar_items = yaml_sequence_items(yaml, navbar_left)
-        marked_labels = [
+        labels = [
             something(yaml_item_field(yaml, item, "text"), (value="",)).value
             for item in navbar_items
-            if something(yaml_item_field(yaml, item, "rel"), (value="",)).value == "split-navigation"
         ]
-        @test marked_labels == collect(REQUIRED_SECTION_LABELS)
-        home_items = [
-            item for item in navbar_items
-            if something(yaml_item_field(yaml, item, "text"), (value="",)).value == "ホーム"
-        ]
-        @test length(home_items) == 1
-        length(home_items) == 1 && @test isnothing(yaml_item_field(yaml, only(home_items), "rel"))
-
-        for (section_label, field, href_prefix, index_text) in (
-            ("授業", :lesson, "lessons", "授業一覧"),
-            ("課題", :assignment, "assignments", "課題一覧"),
-        )
-            expected = [
-                ("$href_prefix/index.qmd", index_text),
+        @test labels == collect(REQUIRED_SECTION_LABELS)
+        for (label, parent_href, expected_menu) in (
+            (
+                "ガイド",
+                "guides/index.qmd",
                 [
-                    ("$href_prefix/$id.qmd", getproperty(VISIBLE_NAMES[id], field))
-                    for id in REQUIRED_COURSE_ORDER
-                ]...,
-            ]
-            @test navbar_menu_pairs(yaml, section_label) == expected
+                    ("guides/testing.qmd", "テスト"),
+                    ("guides/commands.qmd", "コマンド"),
+                    ("guides/troubleshooting.qmd", "トラブル対応"),
+                    ("guides/glossary.qmd", "用語集"),
+                ],
+            ),
+            (
+                "発展資料",
+                "advanced/index.qmd",
+                [("advanced/cairomakie.qmd", "CairoMakieによる可視化")],
+            ),
+        )
+            item = navbar_item(yaml, label)
+            @test !isnothing(item)
+            if !isnothing(item)
+                @test yaml_item_field(yaml, item, "href").value == parent_href
+                @test yaml_item_field(yaml, item, "rel").value == "split-navigation"
+            end
+            @test navbar_menu_pairs(yaml, label) == expected_menu
+            @test all(first(pair) != parent_href for pair in expected_menu)
         end
-
-        @test navbar_menu_pairs(yaml, "セットアップ") == [
-            ("setup/index.qmd", "セットアップ概要"),
-            ("setup/julia.qmd", "Julia"),
-            ("setup/git-github.qmd", "Git・GitHub"),
-            ("setup/agents.qmd", "Coding Agent"),
-            ("guides/workflow.qmd", "課題ワークフロー"),
-        ]
-        @test navbar_menu_pairs(yaml, "ガイド") == [
-            ("guides/index.qmd", "ガイド一覧"),
-            ("guides/testing.qmd", "テスト"),
-            ("guides/commands.qmd", "コマンド"),
-            ("guides/troubleshooting.qmd", "トラブル対応"),
-            ("guides/glossary.qmd", "用語集"),
-        ]
     end
 
     page_navigation = yaml_node(yaml, ("website", "page-navigation"))
@@ -416,6 +431,32 @@ end
 
     sidebar = yaml_node(yaml, ("website", "sidebar"))
     @test !isnothing(sidebar)
+    if !isnothing(sidebar)
+        sidebar_items = yaml_sequence_items(yaml, sidebar)
+        course_matches = [
+            item for item in sidebar_items
+            if something(yaml_item_field(yaml, item, "id"), (value="",)).value == "course"
+        ]
+        @test length(course_matches) == 1
+        if length(course_matches) == 1
+            course = only(course_matches)
+            contents = yaml_item_field(yaml, course, "contents")
+            @test !isnothing(contents)
+            if !isnothing(contents)
+                top_level = yaml_sequence_items(yaml, contents.node)
+                home = first(top_level)
+                @test yaml_item_field(yaml, home, "href").value == "index.qmd"
+                @test yaml_item_field(yaml, home, "text").value == "ホーム"
+            end
+            @test sidebar_section_entries(yaml, course, "受講準備・共通ガイド") == [
+                (text, href) for (href, text) in EXPECTED_PREPARATION_LINKS
+            ]
+            @test sidebar_section_entries(yaml, course, "全15回") == EXPECTED_SESSION_ENTRIES
+            course_lines = yaml[course.line:course.last]
+            @test !any(occursin("assignments/", line.text) for line in course_lines)
+            @test !any(occursin("advanced/cairomakie.qmd", line.text) for line in course_lines)
+        end
+    end
 
     loader_path = navigation_loader_path(yaml)
     @test loader_path == NAVIGATION_LOADER
@@ -474,78 +515,6 @@ end
                     for item in yaml_sequence_items(yaml, guide_contents.node)
                 ]
                 @test !in("guides/workflow.qmd", guide_hrefs)
-            end
-        end
-
-        course_matches = [
-            item for item in sidebar_items
-            if something(yaml_item_field(yaml, item, "id"), (value="",)).value == "course"
-        ]
-        @test length(course_matches) == 1
-
-        if length(course_matches) == 1
-            course = course_matches[1]
-            course_contents = yaml_item_field(yaml, course, "contents")
-            @test !isnothing(course_contents)
-            if !isnothing(course_contents)
-                course_items = yaml_sequence_items(yaml, course_contents.node)
-                expected_setup_prefix = [
-                    "setup/index.qmd",
-                    "setup/julia.qmd",
-                    "setup/git-github.qmd",
-                    "setup/agents.qmd",
-                    "guides/workflow.qmd",
-                ]
-                @test length(course_items) >= length(expected_setup_prefix)
-                if length(course_items) >= length(expected_setup_prefix)
-                    actual_setup_prefix = [
-                        something(yaml_item_field(yaml, item, "href"), (value="",)).value
-                        for item in course_items[1:length(expected_setup_prefix)]
-                    ]
-                    @test actual_setup_prefix == expected_setup_prefix
-                end
-
-                sections = [
-                    (item=item, section=yaml_item_field(yaml, item, "section"))
-                    for item in course_items if !isnothing(yaml_item_field(yaml, item, "section"))
-                ]
-
-                reviewed_section_ids = String[]
-                for entry in sections
-                    matching_ids = [
-                        id for id in REQUIRED_COURSE_ORDER
-                        if occursin(VISIBLE_NAMES[id].course, entry.section.value)
-                    ]
-                    @test length(matching_ids) <= 1
-                    length(matching_ids) == 1 && push!(reviewed_section_ids, only(matching_ids))
-                end
-                @test reviewed_section_ids == collect(REQUIRED_COURSE_ORDER)
-
-                for id in REQUIRED_COURSE_ORDER
-                    matching_sections = [entry for entry in sections if occursin(VISIBLE_NAMES[id].course, entry.section.value)]
-                    @test length(matching_sections) == 1
-                    if length(matching_sections) == 1
-                        section_contents = yaml_item_field(yaml, matching_sections[1].item, "contents")
-                        @test !isnothing(section_contents)
-                        if !isnothing(section_contents)
-                            entries = yaml_sequence_items(yaml, section_contents.node)
-                            @test length(entries) == 2
-                            if length(entries) == 2
-                                lesson_text = yaml_item_field(yaml, entries[1], "text")
-                                lesson_href = yaml_item_field(yaml, entries[1], "href")
-                                assignment_text = yaml_item_field(yaml, entries[2], "text")
-                                assignment_href = yaml_item_field(yaml, entries[2], "href")
-                                @test !isnothing(lesson_text) && occursin("授業", lesson_text.value)
-                                @test !isnothing(lesson_href) && lesson_href.value == "lessons/$id.qmd"
-                                @test !isnothing(assignment_text) && occursin("課題", assignment_text.value)
-                                @test !isnothing(assignment_href) && assignment_href.value == "assignments/$id.qmd"
-                            end
-                        end
-                    end
-                end
-
-                course_lines = yaml[course.line:course.last]
-                @test !any(occursin("advanced/cairomakie.qmd", line.text) for line in course_lines)
             end
         end
     end
