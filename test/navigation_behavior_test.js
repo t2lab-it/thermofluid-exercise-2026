@@ -180,15 +180,27 @@ class FakeElement extends FakeEventTarget {
     if (candidate === this) return true;
     return this.children.some((child) => child.contains(candidate));
   }
+
+  querySelector(selector) {
+    if (selector === ":scope > .dropdown-menu") {
+      return this.children.find((child) => child.classList.contains("dropdown-menu")) ?? null;
+    }
+    if (selector === ".split-nav-trigger") {
+      return this.children.find((child) => child.classList.contains("split-nav-trigger")) ?? null;
+    }
+    return null;
+  }
 }
 
 class FakeDocument extends FakeEventTarget {
-  constructor({ hover = true } = {}) {
+  constructor({ hover = true, sectionLinks = [], offset = "./" } = {}) {
     super();
     this.queries = [];
     this.defaultView = {
       matchMedia: (query) => ({ matches: hover && query.includes("hover") }),
     };
+    this.sectionLinks = sectionLinks;
+    this.offset = offset;
   }
 
   createElement(tagName) {
@@ -197,7 +209,14 @@ class FakeDocument extends FakeEventTarget {
 
   querySelectorAll(selector) {
     this.queries.push(selector);
-    return [];
+    return selector.includes("split-navigation") ? this.sectionLinks : [];
+  }
+
+  querySelector(selector) {
+    if (selector === 'meta[name="quarto:offset"]') {
+      return { getAttribute: (name) => name === "content" ? this.offset : null };
+    }
+    return null;
   }
 }
 
@@ -251,10 +270,11 @@ function referenceEnhanceSplitNavigationUsing({ anchor, menu, document }, insert
   });
   if (document.defaultView.matchMedia("(hover: hover)").matches) {
     trigger.addEventListener("pointerenter", () => setOpen(true));
+    item.addEventListener("pointerenter", () => setOpen(true));
     item.addEventListener("pointerleave", () => setOpen(false));
   }
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && (trigger.contains(event.target) || menu.contains(event.target))) {
+    if (event.key === "Escape" && trigger.getAttribute("aria-expanded") === "true") {
       setOpen(false);
       trigger.focus();
     }
@@ -282,7 +302,21 @@ function referenceEnhanceSplitNavigationWithInsertBefore(options) {
 const modulePath = Deno.args[0];
 assert(modulePath, "usage: quarto run test/navigation_behavior_test.js assets/navigation.js");
 
-const document = new FakeDocument();
+const renderedGuideItem = new FakeElement("li");
+renderedGuideItem.classList.add("nav-item", "dropdown");
+const renderedGuideToggle = new FakeElement("a");
+renderedGuideToggle.classList.add("nav-link", "dropdown-toggle");
+renderedGuideToggle.setAttribute("href", "#");
+renderedGuideToggle.href = "#";
+renderedGuideToggle.setAttribute("rel", "split-navigation split-navigation-guides");
+renderedGuideToggle.setAttribute("data-bs-toggle", "dropdown");
+renderedGuideToggle.setAttribute("aria-expanded", "false");
+renderedGuideToggle.textContent = "ガイド";
+const renderedGuideMenu = new FakeElement("ul");
+renderedGuideMenu.classList.add("dropdown-menu");
+renderedGuideItem.append(renderedGuideToggle, renderedGuideMenu);
+
+const document = new FakeDocument({ sectionLinks: [renderedGuideToggle] });
 globalThis.document = document;
 globalThis.window = document.defaultView;
 
@@ -298,6 +332,42 @@ if (modulePath === "--self-test") {
   assert(
     document.queries.some((selector) => selector.includes("split-navigation")),
     "automatic enhancement must select only explicitly marked section links",
+  );
+  assertEqual(
+    renderedGuideToggle.getAttribute("href"),
+    "./guides/index.html",
+    "automatic enhancement must replace Quarto's dropdown placeholder with the guide parent href",
+  );
+  assertEqual(renderedGuideToggle.getAttribute("data-bs-toggle"), null);
+  assertEqual(renderedGuideToggle.classList.contains("dropdown-toggle"), false);
+  assertEqual(renderedGuideToggle.classList.contains("split-nav-anchor"), true);
+  assertEqual(
+    renderedGuideItem.children[1].className.split(/\s+/).includes("split-nav-trigger"),
+    true,
+  );
+  assertEqual(renderedGuideItem.children[2], renderedGuideMenu);
+
+  const nestedItem = new FakeElement("li");
+  nestedItem.classList.add("nav-item", "dropdown");
+  const nestedToggle = new FakeElement("a");
+  nestedToggle.classList.add("nav-link", "dropdown-toggle");
+  nestedToggle.setAttribute("href", "#");
+  nestedToggle.setAttribute("rel", "split-navigation split-navigation-advanced");
+  nestedToggle.textContent = "発展資料";
+  const nestedMenu = new FakeElement("ul");
+  nestedMenu.classList.add("dropdown-menu");
+  nestedItem.append(nestedToggle, nestedMenu);
+  const nestedDocument = new FakeDocument({ sectionLinks: [nestedToggle], offset: "../" });
+  assertEqual(
+    typeof navigation.enhanceRenderedNavbar,
+    "function",
+    "the actual rendered-navbar path must be directly regression-testable",
+  );
+  navigation.enhanceRenderedNavbar(nestedDocument);
+  assertEqual(
+    nestedToggle.getAttribute("href"),
+    "../advanced/index.html",
+    "nested pages must resolve section parents from Quarto's site-root offset",
   );
 }
 assertEqual(
@@ -329,6 +399,11 @@ assertEqual(anchor.href, "guides/index.html");
 const anchorClick = fire(anchor, "click");
 assertEqual(anchorClick.defaultPrevented, false, "the section anchor must remain navigable");
 assertEqual(anchor.href, "guides/index.html");
+assertClosed(trigger, menu);
+
+fire(item, "pointerenter", { target: anchor });
+assertOpen(trigger, menu);
+fire(item, "pointerleave", { target: item });
 assertClosed(trigger, menu);
 
 fire(trigger, "pointerenter");
@@ -374,6 +449,16 @@ fire(document, "click", { target: menu });
 assertOpen(trigger, menu);
 fire(document, "click", { target: outside });
 assertClosed(trigger, menu);
+
+trigger.focused = false;
+fire(trigger, "click");
+fire(document, "keydown", { key: "Escape", target: outside });
+assertClosed(trigger, menu);
+assertEqual(
+  trigger.focused,
+  true,
+  "Escape must close an open menu and restore trigger focus regardless of event target",
+);
 
 const touchDocument = new FakeDocument({ hover: false });
 const touchItem = new FakeElement("li");

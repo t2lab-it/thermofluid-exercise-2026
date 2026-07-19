@@ -1,3 +1,8 @@
+const SECTION_HREFS = new Map([
+  ["split-navigation-guides", "guides/index.html"],
+  ["split-navigation-advanced", "advanced/index.html"],
+]);
+
 export function enhanceSplitNavigation({ anchor, menu, document }) {
   if (!anchor || !menu || !document) return null;
 
@@ -37,10 +42,11 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
   });
   if (document.defaultView?.matchMedia?.("(hover: hover)").matches) {
     trigger.addEventListener("pointerenter", () => setOpen(true));
+    item.addEventListener("pointerenter", () => setOpen(true));
     item.addEventListener("pointerleave", () => setOpen(false));
   }
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && (trigger.contains(event.target) || menu.contains(event.target))) {
+    if (event.key === "Escape" && trigger.getAttribute("aria-expanded") === "true") {
       setOpen(false);
       trigger.focus();
     }
@@ -52,16 +58,23 @@ export function enhanceSplitNavigation({ anchor, menu, document }) {
   return trigger;
 }
 
-function enhanceRenderedNavbar(document) {
+export function enhanceRenderedNavbar(document) {
   const sectionLinks = document.querySelectorAll(
     '.navbar .nav-item.dropdown > a[rel~="split-navigation"]',
   );
+  const siteOffset =
+    document.querySelector('meta[name="quarto:offset"]')?.getAttribute("content") ?? "./";
   for (const anchor of sectionLinks) {
     const item = anchor.parentNode;
     const menu = item?.querySelector(":scope > .dropdown-menu");
-    if (!anchor.getAttribute("href") || !menu || item.querySelector(".split-nav-trigger")) continue;
+    const relTokens = anchor.getAttribute("rel")?.trim().split(/\s+/) ?? [];
+    const sectionHref = relTokens
+      .map((token) => SECTION_HREFS.get(token))
+      .find((href) => href);
+    if (!sectionHref || !menu || item.querySelector(".split-nav-trigger")) continue;
 
     if (!menu.id) menu.id = `${anchor.id || "navbar-section"}-submenu`;
+    anchor.setAttribute("href", `${siteOffset}${sectionHref}`);
     anchor.classList.remove("dropdown-toggle");
     anchor.removeAttribute("data-bs-toggle");
     anchor.removeAttribute("aria-expanded");

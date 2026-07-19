@@ -20,8 +20,7 @@ website:
   navbar:
     left:
       - text: ガイド
-        href: guides/index.qmd
-        rel: split-navigation
+        rel: split-navigation split-navigation-guides
         menu:
           - href: guides/testing.qmd
             text: テスト
@@ -32,8 +31,7 @@ website:
           - href: guides/glossary.qmd
             text: 用語集
       - text: 発展資料
-        href: advanced/index.qmd
-        rel: split-navigation
+        rel: split-navigation split-navigation-advanced
         menu:
           - href: advanced/cairomakie.qmd
             text: CairoMakieによる可視化

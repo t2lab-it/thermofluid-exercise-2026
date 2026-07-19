@@ -417,8 +417,9 @@ end
             item = navbar_item(yaml, label)
             @test !isnothing(item)
             if !isnothing(item)
-                @test yaml_item_field(yaml, item, "href").value == parent_href
-                @test yaml_item_field(yaml, item, "rel").value == "split-navigation"
+                @test isnothing(yaml_item_field(yaml, item, "href"))
+                expected_marker = label == "ガイド" ? "split-navigation-guides" : "split-navigation-advanced"
+                @test yaml_item_field(yaml, item, "rel").value == "split-navigation $expected_marker"
             end
             @test navbar_menu_pairs(yaml, label) == expected_menu
             @test all(first(pair) != parent_href for pair in expected_menu)
