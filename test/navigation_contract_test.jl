@@ -503,6 +503,19 @@ end
             @test count(occursin(variable), split(styles, '\n')) >= 2
         end
         @test occursin("outline: 3px solid var(--tf-focus)", styles)
+        @test occursin(
+            r"(?s)\.quarto-color-scheme-toggle\s+\.bi::before\s*\{[^}]*content\s*:\s*[\"']🌙[\"']\s*;",
+            styles,
+        )
+        @test occursin(
+            r"(?s)\.quarto-color-scheme-toggle\s+\.bi\s*\{[^}]*opacity\s*:\s*0\.45\s*;",
+            styles,
+        )
+        @test occursin(
+            r"(?s)\.quarto-color-scheme-toggle\.alternate\s+\.bi\s*\{[^}]*opacity\s*:\s*1\s*;",
+            styles,
+        )
+        @test !occursin("☀️", styles)
         start_button_exists = occursin(r"(?m)^\.start-button\s*\{", styles)
         if start_button_exists
             @test occursin(

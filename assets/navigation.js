@@ -3,6 +3,26 @@ const SECTION_HREFS = new Map([
   ["split-navigation-advanced", "advanced/index.html"],
 ]);
 
+export function syncThemeToggleLabel(toggle) {
+  if (!toggle) return null;
+  const enabled = toggle.classList?.contains("alternate") ?? false;
+  const label = `ダークモード ${enabled ? "ON" : "OFF"}`;
+  toggle.setAttribute("aria-label", label);
+  toggle.setAttribute("title", label);
+  return label;
+}
+
+export function enhanceThemeToggle(document) {
+  const toggle = document?.querySelector?.(".quarto-color-scheme-toggle");
+  if (!toggle) return null;
+
+  syncThemeToggleLabel(toggle);
+  toggle.addEventListener("click", () => {
+    globalThis.queueMicrotask(() => syncThemeToggleLabel(toggle));
+  });
+  return toggle;
+}
+
 export function enhanceSplitNavigation({ anchor, menu, document }) {
   if (!anchor || !menu || !document) return null;
 
@@ -85,4 +105,5 @@ export function enhanceRenderedNavbar(document) {
 
 if (typeof globalThis.document !== "undefined") {
   enhanceRenderedNavbar(globalThis.document);
+  enhanceThemeToggle(globalThis.document);
 }

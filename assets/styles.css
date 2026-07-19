@@ -129,6 +129,20 @@ button:focus-visible {
   background: var(--tf-soft);
 }
 
+.quarto-color-scheme-toggle .bi::before {
+  content: "🌙";
+  font-family: inherit;
+}
+
+.quarto-color-scheme-toggle .bi {
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
+}
+
+.quarto-color-scheme-toggle.alternate .bi {
+  opacity: 1;
+}
+
 @media (max-width: 991.98px) {
   .navbar .nav-item.dropdown.split-nav-open > .dropdown-menu {
     flex-direction: column;

@@ -370,6 +370,29 @@ if (modulePath === "--self-test") {
     "nested pages must resolve section parents from Quarto's site-root offset",
   );
 }
+
+if (!modulePath.startsWith("--")) {
+  assertEqual(
+    typeof navigation.syncThemeToggleLabel,
+    "function",
+    "assets/navigation.js must export syncThemeToggleLabel(toggle)",
+  );
+  const themeToggle = new FakeElement("a");
+  navigation.syncThemeToggleLabel(themeToggle);
+  assertEqual(themeToggle.getAttribute("aria-label"), "ダークモード OFF");
+  assertEqual(themeToggle.getAttribute("title"), "ダークモード OFF");
+
+  themeToggle.classList.add("alternate");
+  navigation.syncThemeToggleLabel(themeToggle);
+  assertEqual(themeToggle.getAttribute("aria-label"), "ダークモード ON");
+  assertEqual(themeToggle.getAttribute("title"), "ダークモード ON");
+
+  themeToggle.classList.remove("alternate");
+  navigation.syncThemeToggleLabel(themeToggle);
+  assertEqual(themeToggle.getAttribute("aria-label"), "ダークモード OFF");
+  assertEqual(themeToggle.getAttribute("title"), "ダークモード OFF");
+
+}
 assertEqual(
   typeof navigation.enhanceSplitNavigation,
   "function",
