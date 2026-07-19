@@ -457,6 +457,10 @@ end
         end
         @test occursin(":focus-visible", styles)
         @test occursin(r"@media\s*\(max-width:\s*991\.98px\)", styles)
+        @test occursin(
+            r"(?s)\.navbar\s*\{[^}]*padding-block\s*:\s*0\.5rem\s*;",
+            styles,
+        )
         @test !occursin("🌙", styles)
         @test !occursin(r"\.quarto-color-scheme-toggle\s+\.bi::before", styles)
         @test occursin(r"\.tf-theme-switch\s*\{", styles)

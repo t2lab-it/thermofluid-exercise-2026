@@ -49,6 +49,7 @@ body.quarto-dark :not(pre) > code {
 }
 
 .navbar {
+  padding-block: 0.5rem;
   border-bottom: 3px solid var(--tf-soft);
 }
 
