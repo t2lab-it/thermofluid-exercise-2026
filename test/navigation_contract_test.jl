@@ -429,6 +429,13 @@ end
     @test !isnothing(page_navigation)
     !isnothing(page_navigation) && @test yaml_scalar(yaml, page_navigation) == "true"
 
+    light_theme = yaml_node(yaml, ("format", "html", "theme", "light"))
+    dark_theme = yaml_node(yaml, ("format", "html", "theme", "dark"))
+    @test !isnothing(light_theme)
+    @test !isnothing(dark_theme)
+    !isnothing(light_theme) && @test yaml_scalar(yaml, light_theme) == "cosmo"
+    !isnothing(dark_theme) && @test yaml_scalar(yaml, dark_theme) == "darkly"
+
     sidebar = yaml_node(yaml, ("website", "sidebar"))
     @test !isnothing(sidebar)
     if !isnothing(sidebar)
@@ -489,6 +496,12 @@ end
             r"font-family\s*:\s*(?:[\"']Noto Sans JP[\"']|Noto\s+Sans\s+JP)\s*,",
             styles,
         )
+        @test occursin(r"body\.quarto-light\s*\{", styles)
+        @test occursin(r"body\.quarto-dark\s*\{", styles)
+        for variable in ("--tf-accent", "--tf-accent-strong", "--tf-soft", "--tf-border", "--tf-focus")
+            @test count(occursin(variable), split(styles, '\n')) >= 2
+        end
+        @test occursin("outline: 3px solid var(--tf-focus)", styles)
     end
 
     lesson_paths = [joinpath(public_root, "lessons", "$id.qmd") for id in REQUIRED_COURSE_ORDER]

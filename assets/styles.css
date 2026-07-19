@@ -1,8 +1,18 @@
-:root {
+:root,
+body.quarto-light {
   --tf-accent: #005b73;
-  --tf-accent-dark: #003f50;
+  --tf-accent-strong: #003f50;
   --tf-soft: #e9f5f7;
   --tf-border: #bfd8de;
+  --tf-focus: #d65f00;
+}
+
+body.quarto-dark {
+  --tf-accent: #7dd3e0;
+  --tf-accent-strong: #b8f0f5;
+  --tf-soft: #17343b;
+  --tf-border: #52717a;
+  --tf-focus: #ffb45e;
 }
 
 body,
@@ -58,7 +68,7 @@ code {
 }
 
 .start-button:hover {
-  background: var(--tf-accent-dark);
+  background: var(--tf-accent-strong);
   color: #fff;
 }
 
@@ -120,14 +130,14 @@ code {
 .split-nav-anchor:focus-visible,
 a:focus-visible,
 button:focus-visible {
-  outline: 3px solid #f4a261;
+  outline: 3px solid var(--tf-focus);
   outline-offset: 3px;
 }
 
 .sidebar-item a.active,
 .sidebar-item .active {
   border-left: 3px solid var(--tf-accent);
-  color: var(--tf-accent-dark);
+  color: var(--tf-accent-strong);
   font-weight: 700;
 }
 

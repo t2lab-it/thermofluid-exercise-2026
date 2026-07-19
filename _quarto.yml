@@ -109,7 +109,9 @@ website:
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: cosmo
+      dark: darkly
     css: assets/styles.css
     toc: true
     include-after-body:
