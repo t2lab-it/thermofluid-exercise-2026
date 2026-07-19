@@ -448,6 +448,9 @@ end
         @test length(course_matches) == 1
         if length(course_matches) == 1
             course = only(course_matches)
+            collapse_level = yaml_item_field(yaml, course, "collapse-level")
+            @test !isnothing(collapse_level)
+            !isnothing(collapse_level) && @test collapse_level.value == "2"
             contents = yaml_item_field(yaml, course, "contents")
             @test !isnothing(contents)
             if !isnothing(contents)
@@ -464,6 +467,15 @@ end
             @test !any(occursin("assignments/", line.text) for line in course_lines)
             @test !any(occursin("advanced/cairomakie.qmd", line.text) for line in course_lines)
         end
+    end
+
+    assignment_metadata_path = joinpath(public_root, "assignments", "_metadata.yml")
+    @test isfile(assignment_metadata_path)
+    if isfile(assignment_metadata_path)
+        assignment_metadata = yaml_source_lines(read(assignment_metadata_path, String))
+        assignment_sidebar = yaml_node(assignment_metadata, ("sidebar",))
+        @test !isnothing(assignment_sidebar)
+        !isnothing(assignment_sidebar) && @test yaml_scalar(assignment_metadata, assignment_sidebar) == "course"
     end
 
     loader_path = navigation_loader_path(yaml)

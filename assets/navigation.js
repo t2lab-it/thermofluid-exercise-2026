@@ -23,6 +23,20 @@ export function enhanceThemeToggle(document) {
   return toggle;
 }
 
+export function enhanceAssignmentLessonContext(document, pathname) {
+  const match = pathname?.match(/\/assignments\/([^/]+)\.html$/);
+  if (!match || !document) return null;
+
+  const lessonSuffix = "/lessons/" + match[1] + ".html";
+  const lessonLink = [...document.querySelectorAll("#quarto-sidebar a.sidebar-link[href]")]
+    .find((link) => new URL(link.href, document.baseURI).pathname.endsWith(lessonSuffix));
+  if (!lessonLink) return null;
+
+  lessonLink.classList.add("active");
+  lessonLink.setAttribute("aria-current", "step");
+  return lessonLink;
+}
+
 export function enhanceSplitNavigation({ anchor, menu, document }) {
   if (!anchor || !menu || !document) return null;
 
@@ -106,4 +120,5 @@ export function enhanceRenderedNavbar(document) {
 if (typeof globalThis.document !== "undefined") {
   enhanceRenderedNavbar(globalThis.document);
   enhanceThemeToggle(globalThis.document);
+  enhanceAssignmentLessonContext(globalThis.document, globalThis.location?.pathname);
 }

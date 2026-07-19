@@ -39,7 +39,7 @@ website:
     - id: course
       title: "熱流体力学演習 2026"
       style: docked
-      collapse-level: 1
+      collapse-level: 2
       contents:
         - href: index.qmd
           text: "ホーム"
