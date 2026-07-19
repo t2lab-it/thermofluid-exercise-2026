@@ -143,6 +143,12 @@ class FakeElement extends FakeEventTarget {
     return element;
   }
 
+  replaceChildren(...elements) {
+    for (const child of this.children) child.parentNode = null;
+    this.children = [];
+    this.append(...elements);
+  }
+
   insertBefore(element, reference) {
     if (reference !== null && reference.parentNode !== this) {
       throw new Error("reference node is not a child of this parent");
@@ -181,6 +187,14 @@ class FakeElement extends FakeEventTarget {
     if (selector === ".split-nav-trigger") {
       return this.children.find((child) => child.classList.contains("split-nav-trigger")) ?? null;
     }
+    if (selector.startsWith(".")) {
+      const className = selector.slice(1);
+      for (const child of this.children) {
+        if (child.classList.contains(className)) return child;
+        const nested = child.querySelector(selector);
+        if (nested) return nested;
+      }
+    }
     return null;
   }
 }
@@ -188,7 +202,7 @@ class FakeElement extends FakeEventTarget {
 class FakeDocument extends FakeEventTarget {
   constructor({
     hover = true, sectionLinks = [], sidebarLinks = [], offset = "./",
-    pathname = "/index.html",
+    pathname = "/index.html", themeToggle = null,
   } = {}) {
     super();
     this.queries = [];
@@ -200,10 +214,15 @@ class FakeDocument extends FakeEventTarget {
     this.sectionLinks = sectionLinks;
     this.sidebarLinks = sidebarLinks;
     this.offset = offset;
+    this.themeToggle = themeToggle;
   }
 
   createElement(tagName) {
     return new FakeElement(tagName);
+  }
+
+  createElementNS(_namespace, tagName) {
+    return this.createElement(tagName);
   }
 
   querySelectorAll(selector) {
@@ -215,6 +234,7 @@ class FakeDocument extends FakeEventTarget {
   }
 
   querySelector(selector) {
+    if (selector === ".quarto-color-scheme-toggle") return this.themeToggle;
     if (selector === 'meta[name="quarto:offset"]') {
       return { getAttribute: (name) => name === "content" ? this.offset : null };
     }
@@ -364,12 +384,29 @@ if (!modulePath.startsWith("--")) {
     "assets/navigation.js must export syncThemeToggleLabel(toggle)",
   );
   const themeToggle = new FakeElement("a");
-  navigation.syncThemeToggleLabel(themeToggle);
+  themeToggle.append(new FakeElement("i"));
+  const themeDocument = new FakeDocument({ themeToggle });
+
+  assertEqual(navigation.enhanceThemeToggle(themeDocument), themeToggle);
+  assertEqual(themeToggle.getAttribute("role"), "switch");
+  assertEqual(themeToggle.getAttribute("aria-checked"), "false");
   assertEqual(themeToggle.getAttribute("aria-label"), "ダークモード OFF");
   assertEqual(themeToggle.getAttribute("title"), "ダークモード OFF");
+  assertEqual(themeToggle.children.length, 3);
+  assertEqual(themeToggle.children[0].classList.contains("tf-theme-icon-sun"), true);
+  assertEqual(themeToggle.children[1].classList.contains("tf-theme-switch-track"), true);
+  assertEqual(themeToggle.children[2].classList.contains("tf-theme-icon-moon"), true);
+  assertEqual(
+    themeToggle.children[1].querySelector(".tf-theme-switch-thumb") !== null,
+    true,
+  );
+
+  navigation.enhanceThemeToggle(themeDocument);
+  assertEqual(themeToggle.children.length, 3, "theme enhancement must be idempotent");
 
   themeToggle.classList.add("alternate");
   navigation.syncThemeToggleLabel(themeToggle);
+  assertEqual(themeToggle.getAttribute("aria-checked"), "true");
   assertEqual(themeToggle.getAttribute("aria-label"), "ダークモード ON");
   assertEqual(themeToggle.getAttribute("title"), "ダークモード ON");
 
