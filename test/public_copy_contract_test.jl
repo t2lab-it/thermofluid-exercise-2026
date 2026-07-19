@@ -381,7 +381,7 @@ end
         @test !occursin(removed, home)
     end
     @test isempty(visible_course_map_machine_ids(home))
-    @test !occursin(r"(?s)\.start-button\s*\{", copy_source("assets/styles.css"))
+    @test !occursin(".start-button", copy_source("assets/styles.css"))
     @test !occursin("::: {.eyebrow}", home)
     for removed in (
         "Juliaで理解・実装・検証・調査をつなぐ",

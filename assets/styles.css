@@ -55,11 +55,6 @@ code {
   letter-spacing: 0.08em;
 }
 
-body.quarto-dark .start-button,
-body.quarto-dark .start-button:hover {
-  color: #003f50;
-}
-
 .course-map {
   overflow-x: auto;
   margin-block: 1rem 1.5rem;
