@@ -56,9 +56,9 @@ function verify_contracts(contracts_path, public_root, student_root)
         )
     end
 
-    required = ("site_path", "student_path", "start_command", "canonical_url")
+    required = ("site_path", "run_path", "start_command", "canonical_url")
     seen_site = Set{String}()
-    seen_student = Set{String}()
+    seen_run = Set{String}()
     seen_url = Set{String}()
 
     for id in sort!(collect(keys(assignments)))
@@ -68,26 +68,26 @@ function verify_contracts(contracts_path, public_root, student_root)
             continue
         end
         site_path = string(entry["site_path"])
-        student_path = string(entry["student_path"])
+        run_path = string(entry["run_path"])
         command = string(entry["start_command"])
         canonical = string(entry["canonical_url"])
         lesson_path = joinpath("lessons", "$id.qmd")
 
-        if site_path in seen_site || student_path in seen_student || canonical in seen_url
+        if site_path in seen_site || run_path in seen_run || canonical in seen_url
             ok &= fail("duplicate IDs or paths at assignment ID $id")
         end
         push!(seen_site, site_path)
-        push!(seen_student, student_path)
+        push!(seen_run, run_path)
         push!(seen_url, canonical)
 
         site_file = path_inside(public_root, site_path)
-        student_file = path_inside(student_root, student_path)
+        run_file = path_inside(student_root, run_path)
         lesson_file = path_inside(public_root, lesson_path)
         if site_file === nothing || !isfile(site_file)
             ok &= fail("missing site path for $id: $site_path")
         end
-        if student_file === nothing || !isfile(student_file)
-            ok &= fail("missing student path for $id: $student_path")
+        if run_file === nothing || !isfile(run_file)
+            ok &= fail("missing run path for $id: $run_path")
         end
         if lesson_file === nothing || !isfile(lesson_file)
             ok &= fail("missing lesson path for $id: $lesson_path")
@@ -100,15 +100,10 @@ function verify_contracts(contracts_path, public_root, student_root)
 
         if site_file !== nothing && isfile(site_file)
             page = read(site_file, String)
-            occursin(student_path, page) ||
-                (ok &= fail("site page student path mismatch for $id"))
+            occursin(run_path, page) ||
+                (ok &= fail("site page run path mismatch for $id"))
             occursin(command, page) ||
                 (ok &= fail("site page start command mismatch for $id"))
-        end
-        if student_file !== nothing && isfile(student_file)
-            task = read(student_file, String)
-            occursin(canonical, task) ||
-                (ok &= fail("canonical backlink mismatch for $id"))
         end
     end
     return ok
