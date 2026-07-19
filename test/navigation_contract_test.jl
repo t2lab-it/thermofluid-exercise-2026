@@ -516,6 +516,18 @@ end
             styles,
         )
         @test !occursin("☀️", styles)
+        @test occursin(
+            r"(?s)\.navbar\s+\.nav-item\.dropdown\s*\{[^}]*position\s*:\s*relative\s*;",
+            styles,
+        )
+        @test occursin(
+            r"(?s)\.navbar\s+\.nav-item\.dropdown\.split-nav-open\s*>\s*\.dropdown-menu\s*\{[^}]*position\s*:\s*absolute\s*;[^}]*flex-direction\s*:\s*column\s*;[^}]*flex-wrap\s*:\s*nowrap\s*;",
+            styles,
+        )
+        @test occursin(
+            r"(?s)@media\s*\(max-width:\s*991\.98px\)\s*\{.*?\.navbar\s+\.nav-item\.dropdown\.split-nav-open\s*>\s*\.dropdown-menu\s*\{[^}]*position\s*:\s*static\s*;[^}]*width\s*:\s*100%\s*;",
+            styles,
+        )
         start_button_exists = occursin(r"(?m)^\.start-button\s*\{", styles)
         if start_button_exists
             @test occursin(

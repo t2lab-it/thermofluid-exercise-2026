@@ -69,6 +69,7 @@ code {
 }
 
 .navbar .nav-item.dropdown {
+  position: relative;
   display: grid;
   grid-template-columns: auto 2rem;
   align-items: start;
@@ -100,11 +101,15 @@ code {
 }
 
 .navbar .nav-item.dropdown.split-nav-open > .dropdown-menu {
-  position: static;
-  grid-column: 1 / -1;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1030;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
   gap: 0.25rem;
+  min-width: max-content;
   margin: 0;
 }
 
@@ -145,6 +150,8 @@ button:focus-visible {
 
 @media (max-width: 991.98px) {
   .navbar .nav-item.dropdown.split-nav-open > .dropdown-menu {
+    position: static;
+    min-width: 0;
     flex-direction: column;
     width: 100%;
   }
