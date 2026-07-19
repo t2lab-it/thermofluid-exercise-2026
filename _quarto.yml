@@ -59,16 +59,26 @@ website:
               text: "テストと数値検証"
         - section: "全15回"
           contents:
-            - text: "第1回 ガイダンス、アカウント、環境診断"
+            - text: "第1回 授業: ガイダンス、アカウント、環境診断"
               href: lessons/F00.qmd
-            - text: "第2回 Julia・Git・GitHubの最小操作"
+            - text: "第1回 課題: 環境診断"
+              href: assignments/F00.qmd
+            - text: "第2回 授業: Julia・Git・GitHubの最小操作"
               href: lessons/F01.qmd
-            - text: "第3回 配列・関数・ループ、テスト"
+            - text: "第2回 課題: 最初のbranchとpull request"
+              href: assignments/F01.qmd
+            - text: "第3回 授業: 配列・関数・ループ、テスト"
               href: lessons/F02.qmd
-            - text: "第4回 ベクトル解析、伝熱、差分と添字"
+            - text: "第3回 課題: Juliaの配列・関数・テスト"
+              href: assignments/F02.qmd
+            - text: "第4回 授業: ベクトル解析、伝熱、差分と添字"
               href: lessons/F03.qmd
-            - text: "第5回 一次元線形・非線形移流"
+            - text: "第4回 課題: 座標・添字・差分の数値計算入門"
+              href: assignments/F03.qmd
+            - text: "第5回 授業: 一次元線形・非線形移流"
               href: lessons/N01.qmd
+            - text: "第5回 課題: 1次元線形移流方程式"
+              href: assignments/N01.qmd
             - text: "第6回 一次元拡散・移流拡散"
             - text: "第7回 Git、テスト、Agentic coding、共通化"
             - text: "第8回 二次元移流、配列軸、可視化、メモリ"
