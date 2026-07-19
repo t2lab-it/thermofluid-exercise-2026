@@ -9,13 +9,13 @@ title: "熱流体力学演習 2026"
 ## 全15回のコースマップ
 
 ::: {.course-map}
-| 回 | 内容 | 教材・課題 |
+| 回 | 内容 | 課題 |
 |---:|---|---|
-| 1 | ガイダンス、アカウント、環境診断 | [ガイダンスと環境診断](lessons/F00.qmd)・[環境診断](assignments/F00.qmd) |
-| 2 | Julia・Git・GitHubの最小操作 | [Julia・Git・GitHubの最小操作](lessons/F01.qmd)・[最初のbranchとpull request](assignments/F01.qmd) |
-| 3 | 配列・関数・ループ、テスト | [配列・関数・loop・テスト](lessons/F02.qmd)・[Juliaの配列・関数・テスト](assignments/F02.qmd) |
-| 4 | ベクトル解析、伝熱、差分と添字 | [ベクトル解析・熱伝導・差分と添字](lessons/F03.qmd)・[座標・添字・差分の数値計算入門](assignments/F03.qmd) |
-| 5 | 一次元線形・非線形移流 | [移流方程式と安定性](lessons/N01.qmd)・[1次元線形移流方程式](assignments/N01.qmd)・非線形移流方程式（予定） |
+| 1 | [ガイダンス、アカウント、環境診断](lessons/F00.qmd) | [環境診断](assignments/F00.qmd) |
+| 2 | [Julia・Git・GitHubの最小操作](lessons/F01.qmd) | [最初のbranchとpull request](assignments/F01.qmd) |
+| 3 | [配列・関数・ループ、テスト](lessons/F02.qmd) | [Juliaの配列・関数・テスト](assignments/F02.qmd) |
+| 4 | [ベクトル解析、伝熱、差分と添字](lessons/F03.qmd) | [座標・添字・差分の数値計算入門](assignments/F03.qmd) |
+| 5 | [一次元線形・非線形移流](lessons/N01.qmd) | [1次元線形移流方程式](assignments/N01.qmd) |
 | 6 | 一次元拡散・移流拡散 | 一次元拡散方程式・移流拡散方程式（予定） |
 | 7 | Git、テスト、Agentic coding、共通化 | Git・テスト・Agentic coding・共通化（予定） |
 | 8 | 二次元移流、配列軸、可視化、メモリ | 二次元移流・配列軸・可視化・メモリ（予定） |
@@ -23,9 +23,9 @@ title: "熱流体力学演習 2026"
 | 10 | 二次元移流拡散 | 二次元移流拡散方程式（予定） |
 | 11 | PDE分類、Laplace方程式 | PDE分類・Laplace方程式（予定） |
 | 12 | Poisson方程式 | Poisson方程式（予定） |
-| 13 | 最終プレゼンテーション 1 | チーム成果 |
-| 14 | 最終プレゼンテーション 2・試験案内 | チーム成果 |
-| 15 | 到達度確認試験 | 紙試験 |
+| 13 | 最終プレゼンテーション 1 | — |
+| 14 | 最終プレゼンテーション 2・試験案内 | — |
+| 15 | 到達度確認試験 | — |
 :::
 
 標準課題は授業回への強制同期ではありません。全体説明を聞きながら、自分が現在取り組む課題の完了条件を確認して進めます。

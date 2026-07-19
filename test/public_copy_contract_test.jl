@@ -66,6 +66,23 @@ end
 
 const MACHINE_ID_PATTERN = r"(?<![A-Za-z0-9])(?:F|N)[0-9]{2}(?![A-Za-z0-9])"
 const MARKDOWN_LINK_PATTERN = r"(?<!!)\[([^\]]+)\]\([^)]+\)"
+const EXPECTED_COURSE_MAP = raw"""| 回 | 内容 | 課題 |
+|---:|---|---|
+| 1 | [ガイダンス、アカウント、環境診断](lessons/F00.qmd) | [環境診断](assignments/F00.qmd) |
+| 2 | [Julia・Git・GitHubの最小操作](lessons/F01.qmd) | [最初のbranchとpull request](assignments/F01.qmd) |
+| 3 | [配列・関数・ループ、テスト](lessons/F02.qmd) | [Juliaの配列・関数・テスト](assignments/F02.qmd) |
+| 4 | [ベクトル解析、伝熱、差分と添字](lessons/F03.qmd) | [座標・添字・差分の数値計算入門](assignments/F03.qmd) |
+| 5 | [一次元線形・非線形移流](lessons/N01.qmd) | [1次元線形移流方程式](assignments/N01.qmd) |
+| 6 | 一次元拡散・移流拡散 | 一次元拡散方程式・移流拡散方程式（予定） |
+| 7 | Git、テスト、Agentic coding、共通化 | Git・テスト・Agentic coding・共通化（予定） |
+| 8 | 二次元移流、配列軸、可視化、メモリ | 二次元移流・配列軸・可視化・メモリ（予定） |
+| 9 | 二次元拡散 | 二次元拡散方程式（予定） |
+| 10 | 二次元移流拡散 | 二次元移流拡散方程式（予定） |
+| 11 | PDE分類、Laplace方程式 | PDE分類・Laplace方程式（予定） |
+| 12 | Poisson方程式 | Poisson方程式（予定） |
+| 13 | 最終プレゼンテーション 1 | — |
+| 14 | 最終プレゼンテーション 2・試験案内 | — |
+| 15 | 到達度確認試験 | — |"""
 
 function list_link_texts(source)
     texts = String[]
@@ -80,6 +97,11 @@ end
 
 function machine_ids(text)
     return [matched.match for matched in eachmatch(MACHINE_ID_PATTERN, text)]
+end
+
+function course_map_table(source)
+    block = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", source)
+    return isnothing(block) ? nothing : strip(block.captures[1])
 end
 
 function visible_course_map_machine_ids(source)
@@ -245,7 +267,7 @@ const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
 
     mutated_map = """
     ::: {.course-map}
-    | 回 | 内容 | 教材・課題 |
+    | 回 | 内容 | 課題 |
     |---:|---|---|
     | 5 | 一次元線形・非線形移流 | [移流方程式と安定性](lessons/N01.qmd)・N02（予定） |
     | 6 | 一次元拡散・移流拡散 | N03・N04（予定） |
@@ -259,7 +281,7 @@ const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
     )))
     allowed_context_map = """
     ::: {.course-map}
-    | 回 | 内容 | 教材・課題 |
+    | 回 | 内容 | 課題 |
     |---:|---|---|
     | 5 | 許可文脈 | [具体名](lessons/N01.qmd)・課題ID: F00・`N05`・assignments/F01.qmd・https://example.test/assignments/N01.html |
     :::
@@ -336,6 +358,7 @@ end
 
 @testset "public entry pages use concrete visible names" begin
     home = copy_source("index.qmd")
+    @test course_map_table(home) == EXPECTED_COURSE_MAP
     @test startswith(body_after_frontmatter(home), "## この演習で身につけること\n")
     @test !occursin("::: {.eyebrow}", home)
     for removed in (
@@ -344,14 +367,6 @@ end
         "受講環境の準備から始める",
     )
         @test !occursin(removed, home)
-    end
-    for link_text in (
-        "[ガイダンスと環境診断](lessons/F00.qmd)",
-        "[環境診断](assignments/F00.qmd)",
-        "[Julia・Git・GitHubの最小操作](lessons/F01.qmd)",
-        "[最初のbranchとpull request](assignments/F01.qmd)",
-    )
-        @test occursin(link_text, home)
     end
     @test isempty(visible_course_map_machine_ids(home))
     cta = "[受講環境の準備へ進む](setup/index.qmd){.start-button}"
