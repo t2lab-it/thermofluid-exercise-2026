@@ -382,7 +382,7 @@ end
         @test occursin("Classroom", progression)
         @test occursin("Coding Agent", progression)
         @test occursin("scripts/course.jl preflight", progression)
-        @test occursin("[環境診断の完了条件](../assignments/F00.qmd#完了条件)", progression)
+        @test occursin("ページ下部の［次へ］から環境診断課題へ進み", progression)
     end
 
     guided_paths = (
@@ -473,10 +473,11 @@ end
     lesson_order = section_body(n01_lesson, "このページの進め方")
     assignment_order = section_body(n01_assignment, "このページの進め方")
     lesson_sequence = (
-        "この授業ページ", "[課題ページ]", "学生リポジトリ", "TASK.md", "run.jl",
+        "この授業ページ", "ページ下部の［次へ］", "課題ページ",
+        "学生リポジトリ", "TASK.md", "run.jl",
     )
     assignment_sequence = (
-        "[授業ページ]", "この課題ページ", "学生リポジトリ",
+        "ページ下部の［前へ］", "授業ページ", "この課題ページ", "学生リポジトリ",
         "TASK.md", "run.jl", "提供テスト", "3つのTODOだけ",
     )
     @test !isnothing(lesson_order)

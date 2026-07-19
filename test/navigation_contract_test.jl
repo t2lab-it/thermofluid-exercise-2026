@@ -22,11 +22,16 @@ const EXPECTED_PREPARATION_LINKS = [
     ("guides/testing.qmd", "テストと数値検証"),
 ]
 const EXPECTED_SESSION_ENTRIES = [
-    ("第1回 ガイダンス、アカウント、環境診断", "lessons/F00.qmd"),
-    ("第2回 Julia・Git・GitHubの最小操作", "lessons/F01.qmd"),
-    ("第3回 配列・関数・ループ、テスト", "lessons/F02.qmd"),
-    ("第4回 ベクトル解析、伝熱、差分と添字", "lessons/F03.qmd"),
-    ("第5回 一次元線形・非線形移流", "lessons/N01.qmd"),
+    ("第1回 授業: ガイダンス、アカウント、環境診断", "lessons/F00.qmd"),
+    ("第1回 課題: 環境診断", "assignments/F00.qmd"),
+    ("第2回 授業: Julia・Git・GitHubの最小操作", "lessons/F01.qmd"),
+    ("第2回 課題: 最初のbranchとpull request", "assignments/F01.qmd"),
+    ("第3回 授業: 配列・関数・ループ、テスト", "lessons/F02.qmd"),
+    ("第3回 課題: Juliaの配列・関数・テスト", "assignments/F02.qmd"),
+    ("第4回 授業: ベクトル解析、伝熱、差分と添字", "lessons/F03.qmd"),
+    ("第4回 課題: 座標・添字・差分の数値計算入門", "assignments/F03.qmd"),
+    ("第5回 授業: 一次元線形・非線形移流", "lessons/N01.qmd"),
+    ("第5回 課題: 1次元線形移流方程式", "assignments/N01.qmd"),
     ("第6回 一次元拡散・移流拡散", nothing),
     ("第7回 Git、テスト、Agentic coding、共通化", nothing),
     ("第8回 二次元移流、配列軸、可視化、メモリ", nothing),
@@ -409,19 +414,13 @@ end
             ]
             @test sidebar_section_entries(yaml, course, "全15回") == EXPECTED_SESSION_ENTRIES
             course_lines = yaml[course.line:course.last]
-            @test !any(occursin("assignments/", line.text) for line in course_lines)
+            @test count(occursin("assignments/", line.text) for line in course_lines) == 5
             @test !any(occursin("advanced/cairomakie.qmd", line.text) for line in course_lines)
         end
     end
 
     assignment_metadata_path = joinpath(public_root, "assignments", "_metadata.yml")
-    @test isfile(assignment_metadata_path)
-    if isfile(assignment_metadata_path)
-        assignment_metadata = yaml_source_lines(read(assignment_metadata_path, String))
-        assignment_sidebar = yaml_node(assignment_metadata, ("sidebar",))
-        @test !isnothing(assignment_sidebar)
-        !isnothing(assignment_sidebar) && @test yaml_scalar(assignment_metadata, assignment_sidebar) == "course"
-    end
+    @test !isfile(assignment_metadata_path)
 
     loader_path = navigation_loader_path(yaml)
     @test loader_path == NAVIGATION_LOADER
@@ -497,5 +496,14 @@ end
         if !passed
             @info "navigation behavior contract failed" details
         end
+    end
+end
+
+@testset "lesson and assignment pages use sidebar navigation only" begin
+    for id in REQUIRED_COURSE_ORDER
+        lesson = read(joinpath(NAVIGATION_SITE_ROOT, "lessons", "$id.qmd"), String)
+        assignment = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
+        @test !occursin("../assignments/", lesson)
+        @test !occursin("../lessons/", assignment)
     end
 end

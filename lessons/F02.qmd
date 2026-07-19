@@ -112,4 +112,4 @@ $$
 
 ## 課題への接続
 
-[配列・関数・テスト課題](../assignments/F02.qmd)（課題ID: F02）では、`mean_temperature(values)`と`temperature_anomaly(values)`を実装します。前の課題で学んだ[共通ワークフロー](../guides/workflow.qmd)を使い、ローカルテスト、学習ログ、PR、Actions、diff、セルフレビューを一巡してください。
+ページ下部の［次へ］から進む「配列・関数・テスト課題」（課題ID: F02）では、`mean_temperature(values)`と`temperature_anomaly(values)`を実装します。前の課題で学んだ[共通ワークフロー](../guides/workflow.qmd)を使い、ローカルテスト、学習ログ、PR、Actions、diff、セルフレビューを一巡してください。

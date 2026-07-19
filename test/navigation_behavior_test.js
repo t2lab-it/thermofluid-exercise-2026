@@ -200,19 +200,13 @@ class FakeElement extends FakeEventTarget {
 }
 
 class FakeDocument extends FakeEventTarget {
-  constructor({
-    hover = true, sectionLinks = [], sidebarLinks = [], offset = "./",
-    pathname = "/index.html", themeToggle = null,
-  } = {}) {
+  constructor({ hover = true, sectionLinks = [], offset = "./", themeToggle = null } = {}) {
     super();
     this.queries = [];
-    this.baseURI = "https://example.test/course/";
     this.defaultView = {
       matchMedia: (query) => ({ matches: hover && query.includes("hover") }),
-      location: { pathname },
     };
     this.sectionLinks = sectionLinks;
-    this.sidebarLinks = sidebarLinks;
     this.offset = offset;
     this.themeToggle = themeToggle;
   }
@@ -227,9 +221,6 @@ class FakeDocument extends FakeEventTarget {
 
   querySelectorAll(selector) {
     this.queries.push(selector);
-    if (selector === "#quarto-sidebar a.sidebar-link[href]") {
-      return this.sidebarLinks;
-    }
     return selector.includes("split-navigation") ? this.sectionLinks : [];
   }
 
@@ -412,36 +403,8 @@ if (!modulePath.startsWith("--")) {
 
   assertEqual(
     typeof navigation.enhanceAssignmentLessonContext,
-    "function",
-    "assets/navigation.js must export enhanceAssignmentLessonContext(document, pathname)",
-  );
-  const lessonF00 = new FakeElement("a");
-  lessonF00.setAttribute("href", "../lessons/F00.html");
-  lessonF00.href = "https://example.test/course/lessons/F00.html";
-  const assignmentDocument = new FakeDocument({
-    pathname: "/course/assignments/F00.html",
-    sidebarLinks: [lessonF00],
-  });
-  assertEqual(
-    navigation.enhanceAssignmentLessonContext(
-      assignmentDocument,
-      assignmentDocument.defaultView.location.pathname,
-    ),
-    lessonF00,
-  );
-  assertEqual(lessonF00.classList.contains("active"), true);
-  assertEqual(lessonF00.getAttribute("aria-current"), "step");
-
-  const unmatchedLesson = new FakeElement("a");
-  unmatchedLesson.href = "https://example.test/course/lessons/F00.html";
-  const unmatchedDocument = new FakeDocument({ sidebarLinks: [unmatchedLesson] });
-  assertEqual(
-    navigation.enhanceAssignmentLessonContext(unmatchedDocument, "/course/lessons/F00.html"),
-    null,
-  );
-  assertEqual(
-    navigation.enhanceAssignmentLessonContext(unmatchedDocument, "/course/assignments/F99.html"),
-    null,
+    "undefined",
+    "assignment pages must rely on Quarto's native active sidebar entry",
   );
 }
 assertEqual(
