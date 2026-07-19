@@ -1,0 +1,679 @@
+using Test
+using TOML
+
+const COPY_ROOT = normpath(joinpath(@__DIR__, ".."))
+copy_source(path) = read(joinpath(COPY_ROOT, path), String)
+
+const POSITION_LABELS = Dict(
+    "setup/index.qmd" => "準備 1/5",
+    "setup/julia.qmd" => "準備 2/5",
+    "setup/git-github.qmd" => "準備 3/5",
+    "setup/agents.qmd" => "準備 4/5",
+    "guides/workflow.qmd" => "準備 5/5",
+    "lessons/F00.qmd" => "第1回・授業 1/2 · 課題ID: F00",
+    "assignments/F00.qmd" => "第1回・課題 2/2 · 課題ID: F00",
+    "lessons/F01.qmd" => "第2回・授業 1/2 · 課題ID: F01",
+    "assignments/F01.qmd" => "第2回・課題 2/2 · 課題ID: F01",
+    "guides/testing.qmd" => "第2回後・必読",
+    "lessons/F02.qmd" => "第3回・授業 1/2 · 課題ID: F02",
+    "assignments/F02.qmd" => "第3回・課題 2/2 · 課題ID: F02",
+    "lessons/F03.qmd" => "第4回・授業 1/2 · 課題ID: F03",
+    "assignments/F03.qmd" => "第4回・課題 2/2 · 課題ID: F03",
+    "lessons/N01.qmd" => "第5回・授業 1/2 · 課題ID: N01",
+    "assignments/N01.qmd" => "第5回・課題 2/2 · 課題ID: N01",
+    "guides/commands.qmd" => "参照・コマンド一覧",
+    "guides/troubleshooting.qmd" => "参照・トラブル対応",
+    "guides/glossary.qmd" => "参照・用語集",
+    "advanced/cairomakie.qmd" => "任意・発展資料",
+)
+
+const NO_ID_TITLE = Dict(
+    "lessons/F00.qmd" => "ガイダンスと環境診断",
+    "assignments/F00.qmd" => "環境診断",
+    "lessons/F01.qmd" => "Julia・Git・GitHubの最小操作",
+    "assignments/F01.qmd" => "最初のbranchとpull request",
+    "lessons/F02.qmd" => "配列・関数・loop・テスト",
+    "assignments/F02.qmd" => "Juliaの配列・関数・テスト",
+    "lessons/F03.qmd" => "ベクトル解析・熱伝導・差分と添字",
+    "assignments/F03.qmd" => "座標・添字・差分の数値計算入門",
+    "lessons/N01.qmd" => "移流方程式と安定性",
+    "assignments/N01.qmd" => "1次元線形移流方程式",
+    "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
+)
+
+function section_body(source, heading)
+    matched = match(Regex("(?ms)^## " * heading * "\\n\\n?(.*?)(?=^## |\\z)"), source)
+    return isnothing(matched) ? nothing : matched.captures[1]
+end
+function frontmatter_title(source)
+    lines = split(source, '\n'; keepempty=true)
+    first(lines) == "---" || return nothing
+    closing = findnext(==("---"), lines, 2)
+    isnothing(closing) && return nothing
+    titles = filter(!isnothing, [match(r"^title:\s*\"([^\"]+)\"\s*$", line) for line in lines[2:(closing - 1)]])
+    length(titles) == 1 || return nothing
+    return only(titles).captures[1]
+end
+
+function body_after_frontmatter(source)
+    lines = split(source, '\n'; keepempty=true)
+    first(lines) == "---" || return source
+    closing = findnext(==("---"), lines, 2)
+    isnothing(closing) && return source
+    return lstrip(join(lines[(closing + 1):end], '\n'))
+end
+
+const MACHINE_ID_PATTERN = r"(?<![A-Za-z0-9])(?:F|N)[0-9]{2}(?![A-Za-z0-9])"
+const MARKDOWN_LINK_PATTERN = r"(?<!!)\[([^\]]+)\]\([^)]+\)"
+const EXPECTED_IMPLEMENTED_COURSE_LINKS = Dict(
+    1 => ["lessons/F00.qmd", "assignments/F00.qmd"],
+    2 => ["lessons/F01.qmd", "assignments/F01.qmd"],
+    3 => ["lessons/F02.qmd", "assignments/F02.qmd"],
+    4 => ["lessons/F03.qmd", "assignments/F03.qmd"],
+    5 => ["lessons/N01.qmd", "assignments/N01.qmd"],
+)
+
+function list_link_texts(source)
+    texts = String[]
+    for line in split(source, '\n')
+        startswith(lstrip(line), "- ") || continue
+        for matched in eachmatch(MARKDOWN_LINK_PATTERN, line)
+            push!(texts, matched.captures[1])
+        end
+    end
+    return texts
+end
+
+function machine_ids(text)
+    return [matched.match for matched in eachmatch(MACHINE_ID_PATTERN, text)]
+end
+
+function course_map_table(source)
+    block = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", source)
+    return isnothing(block) ? nothing : strip(block.captures[1])
+end
+
+function course_map_rows(source)
+    table = course_map_table(source)
+    isnothing(table) && return NamedTuple[]
+    rows = NamedTuple[]
+    for line in split(table, '\n')
+        startswith(strip(line), "|") || continue
+        cells = strip.(split(strip(line), '|'; keepempty=true)[2:(end - 1)])
+        length(cells) == 3 || continue
+        number = tryparse(Int, cells[1])
+        isnothing(number) && continue
+        links = [matched.captures[2] for matched in eachmatch(r"\[([^\]]+)\]\(([^)]+)\)", line)]
+        push!(rows, (number=number, links=links))
+    end
+    return rows
+end
+
+function png_dimensions(path)
+    data = read(path)
+    signature = UInt8[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+    length(data) >= 24 && data[1:8] == signature || return nothing
+    width = Int(ntoh(only(reinterpret(UInt32, data[17:20]))))
+    height = Int(ntoh(only(reinterpret(UInt32, data[21:24]))))
+    return (width=width, height=height)
+end
+
+function visible_course_map_machine_ids(source)
+    block = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", source)
+    isnothing(block) && return String[]
+
+    ids = String[]
+    for line in split(block.captures[1], '\n')
+        startswith(strip(line), "|") || continue
+        visible = replace(line, MARKDOWN_LINK_PATTERN => s"\1")
+        visible = replace(visible, r"`[^`]*`" => "")
+        visible = replace(visible, r"https?://\S+" => "")
+        visible = replace(
+            visible,
+            r"(?:[A-Za-z0-9_.-]+/)+[FN][0-9]{2}\.[A-Za-z0-9_.-]+" => "",
+        )
+        visible = replace(visible, r"課題ID\s*[:：]\s*[FN][0-9]{2}" => "")
+        append!(ids, machine_ids(visible))
+    end
+    return unique(ids)
+end
+
+function prefixed_list_link_texts(source)
+    return [
+        text for text in list_link_texts(source)
+        if occursin(r"^(?:[FN][0-9]{2}|任意)\s*:", text)
+    ]
+end
+
+function visible_list_link_machine_ids(source)
+    ids = String[]
+    for text in list_link_texts(source)
+        append!(ids, machine_ids(text))
+    end
+    return unique(ids)
+end
+
+function public_qmd_paths()
+    paths = ["index.qmd"]
+    for directory in ("setup", "lessons", "assignments", "guides", "advanced")
+        for (root, _, files) in walkdir(joinpath(COPY_ROOT, directory))
+            for file in files
+                endswith(file, ".qmd") || continue
+                push!(paths, relpath(joinpath(root, file), COPY_ROOT))
+            end
+        end
+    end
+    return sort!(paths)
+end
+
+function learner_copy_id_led_lines(source)
+    violations = Tuple{Int,String}[]
+    in_frontmatter = false
+    in_fence = false
+    for (line_number, raw_line) in enumerate(split(source, '\n'; keepempty=true))
+        line = strip(raw_line)
+        if line_number == 1 && line == "---"
+            in_frontmatter = true
+            continue
+        elseif in_frontmatter
+            line == "---" && (in_frontmatter = false)
+            continue
+        end
+        if occursin(r"^(?:```|~~~)", line)
+            in_fence = !in_fence
+            continue
+        end
+        in_fence && continue
+        isempty(line) && continue
+
+        visible_line = replace(line, r"^(?:>\s*)+" => "")
+        is_heading = occursin(r"^#{1,6}\s+", visible_line)
+        visible_line = replace(visible_line, r"^#{1,6}\s+" => "")
+        is_list = occursin(r"^(?:[-*+]\s+|[0-9]+[.)]\s+)", visible_line)
+        visible_line = replace(
+            visible_line,
+            r"^(?:[-*+]\s+|[0-9]+[.)]\s+)" => "",
+        )
+        is_table = startswith(visible_line, "|") && endswith(visible_line, "|")
+        is_normal_paragraph = !occursin(
+            r"^(?:#|:::|\$\$|\\|<)",
+            visible_line,
+        )
+        (is_heading || is_list || is_table || is_normal_paragraph) || continue
+
+        fragments = is_table ?
+            strip.(split(visible_line, '|'; keepempty=true)[2:(end - 1)]) :
+            [visible_line]
+        for fragment in fragments
+            occursin(r"^:?-{3,}:?$", fragment) && continue
+            visible = replace(fragment, MARKDOWN_LINK_PATTERN => s"\1")
+            visible = replace(visible, r"`[^`]*`" => "")
+            visible = replace(visible, r"https?://\S+" => "")
+            visible = replace(
+                visible,
+                r"(?:[A-Za-z0-9_.-]+/)*[FN][0-9]{2}\.[A-Za-z0-9_.-]+" => "",
+            )
+            visible = replace(visible, r"課題ID\s*[:：]\s*[FN][0-9]{2}" => "")
+            visible = strip(visible, [' ', '\t', '*', '_'])
+            if occursin(
+                r"(?:^|[。！？])\s*(?:F|N)[0-9]{2}(?![A-Za-z0-9])",
+                visible,
+            )
+                push!(violations, (line_number, raw_line))
+                break
+            end
+        end
+    end
+    return violations
+end
+
+function glossary_rows(source)
+    rows = Tuple{String,String}[]
+    for line in split(source, '\n')
+        startswith(strip(line), "|") || continue
+        cells = strip.(split(strip(line), '|'; keepempty=true)[2:(end - 1)])
+        length(cells) == 2 || continue
+        first(cells) in ("用語", "---") && continue
+        push!(rows, (cells[1], cells[2]))
+    end
+    return rows
+end
+
+const EXPECTED_GLOSSARY_TERMS = [
+    "branch", "commit", "diff", "pull request", "merge", "Actions", "local",
+    "repository", "test", "smoke test", "regression test", "tolerance", "preflight",
+    "canonical", "self-contained", "Agent / Coding Agent",
+]
+
+function glossary_rows_contract(source)
+    rows = glossary_rows(source)
+    terms = first.(rows)
+    return terms == EXPECTED_GLOSSARY_TERMS &&
+           length(unique(terms)) == length(terms) &&
+           all(!isempty(strip(description)) for (_, description) in rows) &&
+           all(isnothing(match(r"（[^（）]+）", term)) for term in terms) &&
+           length(findall("略称 PR", source)) == 1
+end
+
+const MINUTE_RANGE_PATTERN = r"[0-9]+\s*[-–—〜~～]\s*[0-9]+\s*分"
+
+
+@testset "public learning-copy contract" begin
+@testset "copy-source parsers reject misleading placement" begin
+    @test frontmatter_title("---\ntitle: \"正しいタイトル\"\n---\ntitle: \"本文の偽物\"\n") == "正しいタイトル"
+    @test !isnothing(match(MINUTE_RANGE_PATTERN, "0–15 分"))
+
+    mutated_map = """
+    ::: {.course-map}
+    | 回 | 内容 | 課題 |
+    |---:|---|---|
+    | 5 | 一次元線形・非線形移流 | [移流方程式と安定性](lessons/N01.qmd)・N02（予定） |
+    :::
+    """
+    @test visible_course_map_machine_ids(mutated_map) == ["N02"]
+    @test learner_copy_id_led_lines("F02では配列と関数を学びます。\n") == [
+        (1, "F02では配列と関数を学びます。"),
+    ]
+    @test isempty(learner_copy_id_led_lines("""
+    課題ID: F00 は進捗表示の補助情報です。
+    `F01`はコマンド引数として入力します。
+    assignments/F02.qmd は公開ページのpathです。
+    """))
+end
+
+@testset "learner-facing headings and paragraphs use concrete names" begin
+    violations = Tuple{String,Int,String}[]
+    for path in public_qmd_paths()
+        for (line_number, line) in learner_copy_id_led_lines(copy_source(path))
+            push!(violations, (path, line_number, line))
+        end
+    end
+    @test isempty(violations)
+end
+
+@testset "public copy positions and visible titles" begin
+    for (path, label) in POSITION_LABELS
+        source = copy_source(path)
+        @test occursin("::: {.course-position}\n$label\n:::", source)
+    end
+    for (path, title) in NO_ID_TITLE
+        @test frontmatter_title(copy_source(path)) == title
+    end
+end
+
+@testset "public entry pages use concrete visible names" begin
+    home = copy_source("index.qmd")
+    rows = course_map_rows(home)
+    @test length(rows) == 15
+    @test getproperty.(rows, :number) == collect(1:15)
+    for row in rows
+        @test row.links == get(EXPECTED_IMPLEMENTED_COURSE_LINKS, row.number, String[])
+    end
+    expected_summary = "熱流体力学は、物質の性質、エンジンや熱交換器の設計、環境・エネルギー問題、人類の特殊環境への進出を理解するために欠かせない分野です。本演習では、熱力学1・2、伝熱工学、流体力学1・2で学んだ内容への理解を深めるため、基礎的・応用的な問題を解析的・数値的に解き、応用力と問題解決力を養います。"
+    expected_audience = "熱力学1・2と流体力学1・2の内容を復習している受講者を対象とします。伝熱工学を履修していることが望まれます。授業と自習では教科書の例題や演習問題にも取り組み、受講時にはノートPCを持参してください。"
+    @test startswith(body_after_frontmatter(home), "## 概要\n\n$expected_summary\n")
+    @test section_body(home, "概要") == expected_summary * "\n\n"
+    @test section_body(home, "対象者・前提") == expected_audience * "\n\n"
+    headings = [matched.captures[1] for matched in eachmatch(r"(?m)^## (.+)$", home)]
+    required_headings = ["概要", "対象者・前提", "全15回のコースマップ", "公開利用とライセンス"]
+    positions = [findfirst(==(heading), headings) for heading in required_headings]
+    @test all(!isnothing, positions)
+    all(!isnothing, positions) && @test issorted(something.(positions))
+    @test isempty(visible_course_map_machine_ids(home))
+
+    for path in ("lessons/index.qmd", "assignments/index.qmd", "guides/index.qmd", "advanced/index.qmd")
+        hub = copy_source(path)
+        @test isempty(prefixed_list_link_texts(hub))
+        @test isempty(visible_list_link_machine_ids(hub))
+    end
+end
+
+@testset "setup follows one forward sequence" begin
+    julia_setup = copy_source("setup/julia.qmd")
+    @test occursin("[Git・GitHub・Classroom リポジトリ](git-github.qmd)", julia_setup)
+
+    git_setup = copy_source("setup/git-github.qmd")
+    @test occursin("## 最初の環境診断で確認する範囲", git_setup)
+    clone = findfirst("git clone YOUR_CLASSROOM_REPOSITORY_URL", git_setup)
+    instantiate = findfirst("Pkg.instantiate", git_setup)
+    preflight = findfirst("scripts/course.jl preflight", git_setup)
+    @test all(!isnothing, (clone, instantiate, preflight))
+    all(!isnothing, (clone, instantiate, preflight)) &&
+        @test first(clone) < first(instantiate) < first(preflight)
+end
+
+@testset "public lesson outcomes have bounded bullet counts" begin
+    for id in ("F00", "F01", "F02", "F03", "N01")
+        source = copy_source("lessons/$id.qmd")
+        outcomes = section_body(source, "この回の到達点")
+        @test !isnothing(outcomes)
+        if !isnothing(outcomes)
+            bullets = [line for line in split(outcomes, '\n') if startswith(line, "- ")]
+            @test 3 <= length(bullets) <= 5
+        end
+    end
+end
+
+function snippets_in_order(source, snippets)
+    next_start = firstindex(source)
+    for snippet in snippets
+        matched = findnext(snippet, source, next_start)
+        isnothing(matched) && return false
+        next_start = nextind(source, last(matched))
+    end
+    return true
+end
+
+function section_has_ordered_snippets(source, heading, snippets)
+    body = section_body(source, heading)
+    return !isnothing(body) && snippets_in_order(body, snippets)
+end
+
+@testset "prerequisite pages provide an executable reading order" begin
+    f00_lesson = copy_source("lessons/F00.qmd")
+    progression = section_body(f00_lesson, "課題へ進む条件")
+    @test !isnothing(progression)
+    if !isnothing(progression)
+        bullets = [line for line in split(progression, '\n') if startswith(line, "- ")]
+        @test length(bullets) == 3
+        @test occursin("Julia 1.12.6", progression)
+        @test occursin("Git", progression)
+        @test occursin("GitHub", progression)
+        @test occursin("Classroom", progression)
+        @test occursin("Coding Agent", progression)
+        @test occursin("scripts/course.jl preflight", progression)
+        @test occursin("[環境診断の完了条件](../assignments/F00.qmd#完了条件)", progression)
+    end
+
+    guided_paths = (
+        "lessons/F02.qmd", "assignments/F02.qmd",
+        "lessons/F03.qmd", "assignments/F03.qmd",
+        "lessons/N01.qmd", "assignments/N01.qmd",
+    )
+    for path in guided_paths
+        source = copy_source(path)
+        for heading in ("このページの進め方", "次へ進む条件")
+            @test !isnothing(section_body(source, heading))
+        end
+    end
+
+    f02_lesson = copy_source("lessons/F02.qmd")
+    f02_lesson_sequence = (
+        "julia> values = [10.0, 20.0, 30.0]\n3-element Vector{Float64}:\n 10.0\n 20.0\n 30.0",
+        "julia> values[2]\n20.0",
+        "julia> for value in values\n           println(value - 20.0)\n       end\n-10.0\n0.0\n10.0",
+        "julia> function double_values(values)\n           result = similar(values)\n           for i in eachindex(values)\n               result[i] = 2 * values[i]\n           end\n           return result\n       end\ndouble_values (generic function with 1 method)",
+        "julia> double_values([1.0, 2.0, 3.0])\n3-element Vector{Float64}:\n 2.0\n 4.0\n 6.0",
+        "julia> using Test",
+        "julia> @test double_values([1.0, 2.0, 3.0]) == [2.0, 4.0, 6.0]\nTest Passed",
+    )
+    @test section_has_ordered_snippets(
+        f02_lesson, "配列・loop・関数・テストを順に動かす", f02_lesson_sequence,
+    )
+    contract_explanation = findfirst("## 関数境界に契約を置く", f02_lesson)
+    function_example = findfirst("julia> function double_values", f02_lesson)
+    @test !isnothing(contract_explanation)
+    @test !isnothing(function_example)
+    if !isnothing(contract_explanation) && !isnothing(function_example)
+        @test first(function_example) < first(contract_explanation)
+    end
+
+    f02_assignment = copy_source("assignments/F02.qmd")
+    f02_assignment_sequence = (
+        "julia> rectangle_areas(widths, height) = [width * height for width in widths]\nrectangle_areas (generic function with 1 method)",
+        "julia> rectangle_areas([1.0, 2.0, 3.0], 2.0)\n3-element Vector{Float64}:\n 2.0\n 4.0\n 6.0",
+        "julia> using Test",
+        "julia> @test rectangle_areas([1.0, 2.0, 3.0], 2.0) == [2.0, 4.0, 6.0]\nTest Passed",
+    )
+    @test section_has_ordered_snippets(
+        f02_assignment, "課題前のウォームアップ", f02_assignment_sequence,
+    )
+    warmup = section_body(f02_assignment, "課題前のウォームアップ")
+    @test !isnothing(warmup)
+    if !isnothing(warmup)
+        @test !occursin("mean_temperature", warmup)
+        @test !occursin("temperature_anomaly", warmup)
+    end
+
+    f03_lesson = copy_source("lessons/F03.qmd")
+    f03_assignment = copy_source("assignments/F03.qmd")
+    f03_repl_sequence = (
+        "julia> x = [0.0, 0.5, 1.0]\n3-element Vector{Float64}:\n 0.0\n 0.5\n 1.0",
+        "julia> u = [1.0, 2.0, 4.0]\n3-element Vector{Float64}:\n 1.0\n 2.0\n 4.0",
+        "julia> (x[2], u[2])\n(0.5, 2.0)",
+    )
+    @test section_has_ordered_snippets(
+        f03_lesson, "最初に動かす座標と値", f03_repl_sequence,
+    )
+
+    mapping = section_body(f03_lesson, "1次元線形移流方程式のコードとの対応")
+    @test !isnothing(mapping)
+    accurate_boundary_row =
+        "| 有効添字 | 内部点loopと、左端固定・右端ゼロ勾配の境界処理 |"
+    accurate_mapping(source) =
+        occursin(accurate_boundary_row, source) && !occursin("周期境界", source)
+    if !isnothing(mapping)
+        @test accurate_mapping(mapping)
+        for row in (
+            "| `uniform_grid` | `x`、`dx`、`u[i]`の対応 |",
+            "| 後退差分 | 正の速度でのupwind更新 |",
+            "| 中心差分 | 意図的なcentered + Euler比較 |",
+        )
+            @test occursin(row, mapping)
+        end
+        @test occursin("import", mapping)
+    end
+    for source in (f03_lesson, f03_assignment)
+        @test occursin("主要な数値計算の流れ", source)
+        @test occursin("provided_support.jl", source)
+    end
+
+    n01_lesson = copy_source("lessons/N01.qmd")
+    n01_assignment = copy_source("assignments/N01.qmd")
+    lesson_order = section_body(n01_lesson, "このページの進め方")
+    assignment_order = section_body(n01_assignment, "このページの進め方")
+    lesson_sequence = (
+        "この授業ページ", "[課題ページ]", "学生リポジトリ", "TASK.md", "run.jl",
+    )
+    assignment_sequence = (
+        "[授業ページ]", "この課題ページ", "学生リポジトリ",
+        "TASK.md", "run.jl", "提供テスト", "3つのTODOだけ",
+    )
+    @test !isnothing(lesson_order)
+    @test !isnothing(assignment_order)
+    if !isnothing(lesson_order)
+        @test snippets_in_order(lesson_order, lesson_sequence)
+    end
+    if !isnothing(assignment_order)
+        @test snippets_in_order(assignment_order, assignment_sequence)
+    end
+end
+
+@testset "all public QMD content omits minute schedules" begin
+    for path in public_qmd_paths()
+        source = copy_source(path)
+        @test !occursin("90分の流れ", source)
+        @test isnothing(match(MINUTE_RANGE_PATTERN, source))
+    end
+end
+
+@testset "N01 follows the novice-facing learning boundary" begin
+    lesson = copy_source("lessons/N01.qmd")
+    required_headings = [
+        "## この回の到達点", "## Julia構文の復習", "## 偏微分方程式が表すこと",
+        "## 格子と添字", "## 初期条件", "## 境界条件", "## upwind + Euler",
+        "## centered + Euler", "## 時間loop", "## buffer交換",
+        "## CFLと最終時刻", "## 二つの方法を比較する",
+        "## テストで確かめる", "## 課題へ進む",
+    ]
+    positions = [findfirst(heading, lesson) for heading in required_headings]
+    @test all(!isnothing, positions)
+    all(!isnothing, positions) && @test issorted(first.(positions))
+    @test occursin("isapprox(steps * dt, t_final; atol=100eps())", lesson)
+    @test !occursin("steps * dt == t_final", lesson)
+    for todo in ("rectangular_initial_condition", "upwind_step!", "centered_step!")
+        @test occursin(todo, lesson)
+    end
+    for supplied in ("TOML", "Plots", "module", "export", "詳細な入力検証")
+        @test occursin(supplied, lesson)
+    end
+    @test occursin("完成要件ではありません", lesson)
+    @test occursin("Julia以外のプログラミング経験", lesson)
+    for syntax in (
+        "`value::T`", "`{<:Real}`", "`:upwind`",
+        "`condition ? true_value : false_value`", "named tuple",
+    )
+        @test occursin(syntax, lesson)
+    end
+
+    assignment = copy_source("assignments/N01.qmd")
+    @test occursin("3つのTODOだけ", assignment)
+    @test occursin("学習対象ではありません", assignment)
+    for source in (lesson, assignment)
+        for required_boundary in (
+            "provided_support.jl",
+            "おまじない",
+            "読解・編集する必要はありません",
+            "実行時の入力条件",
+            "教材側の包括的な確認",
+            "自分で選んだ代表例",
+        )
+            @test occursin(required_boundary, source)
+        end
+    end
+    for required_copy in (
+        "`@test false`を削除",
+        "保証することと保証しないこと",
+        "buffer交換を学習ログ",
+        "完成コード全体の生成",
+        "個人情報・秘密情報",
+        "関数名、引数、scheme、出力ファイル名、summaryのキー",
+    )
+        @test occursin(required_copy, assignment)
+    end
+end
+
+@testset "guides publish the concrete workflow and N01 baseline" begin
+    workflow = copy_source("guides/workflow.qmd")
+    @test occursin("```{mermaid}", workflow)
+    @test occursin("課題を読む] --> B[branchを作る", workflow)
+    recovery_link = "[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)"
+    @test length(findall(recovery_link, workflow)) == 1
+    @test length(findall("自分で履歴を書き換えず", workflow)) == 1
+    common_contract = section_body(workflow, "共通契約")
+    @test !isnothing(common_contract)
+    if !isnothing(common_contract)
+        numbered_steps = [
+            line for line in split(common_contract, '\n')
+            if occursin(r"^[0-9]+\. ", line)
+        ]
+        @test length(numbered_steps) == 12
+        @test snippets_in_order(
+            join(numbered_steps, '\n'),
+            ("branch", "実装", "ローカルテスト", "公式出力", "学習ログ", "commit",
+             "push", "PR", "Actions", "diff", "セルフレビュー", "merge"),
+        )
+    end
+    merge_after = section_body(workflow, "merge後")
+    @test !isnothing(merge_after)
+    if !isnothing(merge_after)
+        @test occursin("変更のないmain", merge_after)
+        @test occursin(recovery_link, merge_after)
+    end
+
+    troubleshooting = copy_source("guides/troubleshooting.qmd")
+    @test occursin("## mainブランチで作業してしまったら", troubleshooting)
+    @test occursin("force push", troubleshooting)
+
+    testing = copy_source("guides/testing.qmd")
+    @test occursin("../assets/n01-reference/upwind.png", testing)
+    @test occursin("../assets/n01-reference/centered-euler.png", testing)
+    @test occursin(
+        "`nx=81`、`dx=0.025`、`cfl=0.5`、`dt=0.0125`、`steps=40`",
+        testing,
+    )
+    markdown_rows = [
+        strip.(split(strip(line), '|'; keepempty=true)[2:(end - 1)])
+        for line in split(testing, '\n')
+        if startswith(strip(line), "|") && endswith(strip(line), "|")
+    ]
+    for (method, expected_values) in (
+        ("upwind + Euler", [1.0, 1.9993204517450067, 0.0, 0.0]),
+        (
+            "centered + Euler",
+            [-10.420010468371677, 13.492726642559711,
+             11.492726642559711, 11.420010468371677],
+        ),
+    )
+        matching_rows = filter(row -> !isempty(row) && first(row) == method, markdown_rows)
+        @test length(matching_rows) == 1
+        length(matching_rows) == 1 || continue
+        cells = only(matching_rows)
+        @test length(cells) == 5
+        length(cells) == 5 || continue
+        parsed_values = tryparse.(Float64, cells[2:end])
+        @test all(!isnothing, parsed_values)
+        all(!isnothing, parsed_values) || continue
+        @test [something(value) for value in parsed_values] == expected_values
+    end
+    signs = findfirst("符号", testing)
+    ranges = findfirst("範囲", testing)
+    flags = findfirst("フラグ", testing)
+    decimals = findfirst("小数", testing)
+    @test all(!isnothing, (signs, ranges, flags, decimals))
+    if all(!isnothing, (signs, ranges, flags, decimals))
+        @test first(signs) < first(decimals)
+        @test first(ranges) < first(decimals)
+        @test first(flags) < first(decimals)
+    end
+
+    for path in ("assets/n01-reference/upwind.png", "assets/n01-reference/centered-euler.png")
+        full_path = joinpath(COPY_ROOT, path)
+        @test isfile(full_path)
+        if isfile(full_path)
+            dimensions = png_dimensions(full_path)
+            @test !isnothing(dimensions)
+            !isnothing(dimensions) && @test dimensions.width >= 600 && dimensions.height >= 400
+            @test filesize(full_path) > 10_000
+        end
+    end
+    summary_path = joinpath(COPY_ROOT, "assets/n01-reference/summary.toml")
+    @test isfile(summary_path)
+    if isfile(summary_path)
+        summary = TOML.parsefile(summary_path)
+        @test Set(keys(summary)) == Set(["course_id", "grid", "upwind", "centered_euler"])
+        @test summary["course_id"] == "N01"
+        @test summary["grid"] == Dict("dx" => 0.025, "nx" => 81)
+        for (name, scheme, unstable) in (
+            ("upwind", "upwind-euler", false),
+            ("centered_euler", "centered-euler", true),
+        )
+            method = summary[name]
+            @test method["scheme"] == scheme
+            @test method["cfl"] == 0.5
+            @test method["dt"] == 0.0125
+            @test method["steps"] == 40
+            @test method["overshoot_occurred"] == unstable
+            @test method["undershoot_occurred"] == unstable
+            @test all(isfinite, Float64[method["minimum"], method["maximum"], method["overshoot"], method["undershoot"]])
+        end
+    end
+
+    commands = copy_source("guides/commands.qmd")
+    command_blocks = collect(eachmatch(r"(?ms)```bash\n(.*?)```", commands))
+    @test !isempty(command_blocks)
+    for matched in command_blocks
+        lines = split(chomp(matched.captures[1]), '\n')
+        for (index, line) in pairs(lines)
+            isempty(strip(line)) && continue
+            startswith(strip(line), "#") && continue
+            @test index > 1 && startswith(strip(lines[index - 1]), "#")
+        end
+    end
+    @test occursin("新しい必須コマンド", commands)
+    @test occursin("セットアップまたは公開済みの課題", commands)
+
+    glossary = copy_source("guides/glossary.qmd")
+    @test glossary_rows_contract(glossary)
+end
+end

@@ -1,0 +1,85 @@
+---
+title: "CairoMakieによる可視化"
+---
+::: {.course-position}
+任意・発展資料
+:::
+
+このページは意欲的な学生向けの任意資料です。必修のpublic環境と学生環境には`CairoMakie.jl`を追加しません。1次元線形移流課題（課題ID: N01）の合否にも影響しません。
+
+## 分離した環境を作る
+
+授業リポジトリの`Project.toml`を変更しないよう、一時的な別環境を作ります。次のJuliaコードはWindows、macOS、Linuxで同じように動作し、OSの一時ディレクトリ内に専用環境を作ります。
+
+```bash
+julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(env); Pkg.add("CairoMakie"); println(env)'
+```
+
+`Pkg.add`はネットワークから大きな依存を取得するため、通信量と初回compile時間を見込んでください。
+
+## 交換ファイルを作る
+
+完成済みの1次元線形移流課題（課題ID: N01）の配列を公式3出力とは分離して scratch/ へ書き出します。次のコードを学生リポジトリの scratch/export_n01.jl として保存してください。
+
+~~~julia
+using DelimitedFiles
+
+include(joinpath(@__DIR__, "..", "exercises", "N01_linear_advection", "run.jl"))
+using .N01LinearAdvection
+
+upwind = simulate(; scheme=:upwind)
+centered = simulate(; scheme=:centered)
+table = hcat(upwind.x, upwind.u0, upwind.u, centered.u)
+output_path = joinpath(@__DIR__, "n01-output.tsv")
+
+open(output_path, "w") do io
+    println(io, "x\tu0\tupwind\tcentered")
+    writedlm(io, table, Char(0x09))
+end
+println(output_path)
+~~~
+
+学生リポジトリのrootで実行します。
+
+~~~bash
+julia --project=. scratch/export_n01.jl
+~~~
+
+この交換ファイルは任意実験用であり、results/N01/ の公式3ファイルには加えず、commitもしません。
+
+## 1次元線形移流データを描く
+
+次のコードを scratch/plot_n01_cairomakie.jl として保存します。交換ファイルの4列を読み、安定例と意図的な不安定例を同じ図で比較します。
+
+~~~julia
+using CairoMakie
+using DelimitedFiles
+
+data, header = readdlm(
+    joinpath(@__DIR__, "n01-output.tsv"),
+    Char(0x09);
+    header=true,
+)
+x = data[:, 1]
+u0 = data[:, 2]
+upwind = data[:, 3]
+centered = data[:, 4]
+
+figure = Figure(size=(800, 480))
+axis = Axis(figure[1, 1], xlabel="x", ylabel="u", title="N01 comparison")
+lines!(axis, x, u0, label="initial", linewidth=2)
+lines!(axis, x, upwind, label="upwind + Euler")
+lines!(axis, x, centered, label="centered + Euler")
+axislegend(axis)
+save(joinpath(@__DIR__, "n01-cairomakie.png"), figure)
+~~~
+
+先ほど表示された一時環境の絶対パスを使います。このコマンド形式はWindows、macOS、Linuxで共通です。
+
+~~~bash
+julia --project="<表示されたn01-cairomakie環境の絶対パス>" scratch/plot_n01_cairomakie.jl
+~~~
+
+## 後片付け
+
+必要がなくなったら一時環境を削除できます。学生リポジトリのrootで`Pkg.add("CairoMakie")`を実行してはいけません。誤って実行した場合は自己判断で履歴を書き換えず、`git diff Project.toml Manifest.toml`を教員・TAと確認してください。

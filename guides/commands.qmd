@@ -1,0 +1,60 @@
+---
+title: "コマンド一覧"
+---
+::: {.course-position}
+参照・コマンド一覧
+:::
+
+このページは、セットアップと現在公開済みの課題ですでに扱ったコマンドだけをまとめています。リポジトリのルートで実行してください。
+
+## 環境と復元
+
+```bash
+# Juliaのversionを確認する
+julia --version
+# Gitのversionを確認する
+git --version
+# 課題で固定されたJulia packageを復元する
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+```
+
+## 課題の状態
+
+```bash
+# 課題を始める前の環境を診断する
+julia --project=. scripts/course.jl preflight
+# 現在の課題進捗を確認する
+julia --project=. scripts/course.jl status
+# F02の課題branchを作って開始する
+julia --project=. scripts/course.jl start F02
+# 現在課題と前提課題のtestを実行する
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+`F02`は、実際に開始する課題IDへ置き換えます。順序を飛ばしません。
+
+## Gitで変更を確認する
+
+```bash
+# 変更済み・staged・untracked fileを一覧する
+git status --short
+# 現在のbranch名を確認する
+git branch --show-current
+# まだstageしていない変更内容を確認する
+git diff
+# stage済みで次のcommitに入る変更を確認する
+git diff --cached
+# 直近5件のcommitを確認する
+git log --oneline -5
+```
+
+最初のbranchとpull request課題（課題ID: F01）でだけ、指定された課題branchを手動で作ります。
+
+```bash
+# F01で最初の課題branchを手動作成する
+git switch -c exercise/F01-first-pull-request
+```
+
+commit、push、mergeの前後を含む手順は[課題ワークフロー](workflow.qmd)を参照してください。
+
+この一覧の新しい必須コマンドは、セットアップまたは公開済みの課題で使われた後にだけ追加します。

@@ -1,0 +1,34 @@
+---
+title: "受講環境の準備"
+---
+::: {.course-position}
+準備 1/5
+:::
+
+この演習では、Windows、macOS、Linux のローカル環境を正式にサポートします。受講開始までに、Julia 1.12.6、Git、Visual Studio Code（VS Code）、Julia 拡張機能、および対応 Coding Agent のうち一つを準備してください。
+
+## 準備するもの
+
+| 項目 | 必須条件 | 確認方法 |
+|---|---|---|
+| Julia | Juliaup で Julia 1.12.6 を選択 | `julia --version` |
+| Git | コマンドラインから実行可能 | `git --version` |
+| VS Code | 起動できる | アプリケーションを起動 |
+| Julia 拡張機能 | VS Code から Julia を実行できる | Julia ファイルを開いて実行 |
+| GitHub | Classroom の自分のリポジトリを閲覧できる | ブラウザで手動確認 |
+| Coding Agent | 標準または代替の一つで編集とコマンド実行ができる | [Agent の確認](agents.qmd) |
+
+## 推奨する準備順
+
+1. このページで、準備するものと支援を依頼するときの情報を確認する。
+2. [Julia と VS Code](julia.qmd)を準備する。
+3. [Git と GitHub](git-github.qmd)を準備し、Classroom リポジトリを clone する。
+4. [Coding Agent](agents.qmd)を一つ確認する。
+5. [課題ワークフロー](../guides/workflow.qmd)で、最初の課題以降のbranch・PR手順を確認する。
+6. 5ページの準備を終えてから、[最初の環境診断](../assignments/F00.qmd)（課題ID: F00）を実行する。
+
+環境の復元と診断に使うコマンドは、clone 後に実行できるよう[Git と GitHub](git-github.qmd)にまとめています。Coding Agent と課題ワークフローを確認してから、最初の環境診断へ進んでください。
+
+## 支援を依頼するとき
+
+教員・TA へ、OS、`julia --version`、`git --version`、失敗したコマンド、エラーメッセージを伝えてください。アクセストークン、API key、パスワード、個人情報は共有しないでください。

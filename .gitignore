@@ -1,3 +1,5 @@
 .worktrees/
 _site/
-.quarto/
+/.quarto/
+**/*.quarto_ipynb
+/*_files/

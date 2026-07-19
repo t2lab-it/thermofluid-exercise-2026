@@ -1,0 +1,74 @@
+---
+title: "Julia・Git・GitHubの最小操作"
+---
+::: {.course-position}
+第2回・授業 1/2 · 課題ID: F01
+:::
+
+## この回の到達点
+
+- 作業中の変更、commit、branch、pull request、mainの違いを説明できる。
+- この課題用のbranchを作り、変更前後の`git diff`を確認できる。
+- ローカルテスト、push、Actions、セルフレビューを正しい順で実行できる。
+- 一つのbranchと一つのPRでこの課題を完了できる。
+
+
+## 一つの変更が進む経路
+
+```text
+clean main
+  → exercise/F01-first-pull-request
+  → 実装
+  → ローカルテスト
+  → 公式出力の確認（この課題はなし）
+  → 学習ログ
+  → commit
+  → push
+  → pull request
+  → Actions
+  → diff確認
+  → セルフレビュー
+  → merge
+  → 更新されたclean main
+```
+
+順番には意味があります。ローカルテストを先に通すことで、push後に初めて単純な失敗へ気づく時間を減らせます。diffを読んでからmergeすることで、テスト対象外の意図しない変更も検出できます。
+
+## 最初のbranchだけ手動で作る理由
+
+この最初のbranch課題では、現在branchと新しいbranchの関係を自分の操作で確かめます（課題ID: F01）。
+
+```bash
+git switch -c exercise/F01-first-pull-request
+```
+
+次の配列・関数・テスト課題（課題ID: F02）以降は`julia --project=. scripts/course.jl start <ID>`が、cleanなmain、課題順序、ローカルテスト、結果サイズを確認してからbranchを作ります。このコマンドはpull、push、PR、mergeを自動化しません。ネットワークへ送る内容は、学生自身がdiffを確認して決めます。
+
+## 状態を確認する基本コマンド
+
+次のコマンドはWindowsのPowerShell、macOSとLinuxのターミナルで共通して使えます。リポジトリのルートで実行します。
+
+```bash
+git status --short
+git branch --show-current
+git diff
+git log --oneline -5
+```
+
+画面表示やパス区切りが違っても、課題branch名とGitの状態契約は同じです。
+
+## PRで見る三つの証拠
+
+1. **Actions**: 公開テストが新しいcheckout相当の環境でも成功する。
+2. **diff**: 何を追加・削除したかを人間が確認する。
+3. **学習ログ**: なぜ変更し、テストをどう解釈したかを説明する。
+
+GitHub Freeのprivateリポジトリではbranch protectionに依存しません。そのため、仕組みだけに任せず、PRテンプレート、Git履歴、学習ログ、セルフレビューで手順を確認します。
+
+## AI利用の境界
+
+この最初のbranch課題では、概念の説明、エラーメッセージの解説、課題とは別の小さな練習問題に利用できます。課題の完成コード作成は依頼しません。提案を利用した場合も、実行前に対象を予想し、実行後にdiffとテストを自分で確認します。
+
+token、API key、パスワード、秘密鍵、個人情報をAgentやPRへ貼り付けません。誤って表示した場合はcommitやpushをせず、教員・TAへ相談してください。
+
+実作業は[最初のbranchとpull request課題](../assignments/F01.qmd)（課題ID: F01）、以後の共通手順は[課題ワークフロー](../guides/workflow.qmd)を参照してください。

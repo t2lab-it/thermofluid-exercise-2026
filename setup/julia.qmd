@@ -1,0 +1,58 @@
+---
+title: "Julia 1.12.6 と VS Code"
+---
+::: {.course-position}
+準備 2/5
+:::
+
+## Juliaup で Julia を導入する
+
+Julia は Juliaup で管理し、この演習では **1.12.6 ちょうど**を使います。インストール方法が変わった場合は、[Julia 公式インストール案内](https://julialang.org/downloads/)を優先してください。
+
+### Windows
+
+PowerShell で Juliaup を導入します。
+
+```powershell
+winget install --name Julia --id 9NJNWW8PVKMN -e -s msstore
+```
+
+### macOS
+
+ターミナルで Juliaup の公式インストーラーを実行します。
+
+```bash
+curl -fsSL https://install.julialang.org | sh
+```
+
+### Linux
+
+ターミナルで Juliaup の公式インストーラーを実行します。
+
+```bash
+curl -fsSL https://install.julialang.org | sh
+```
+
+インストール後、新しいターミナルを開いてください。どの OS でも次のコマンドで授業用バージョンを追加し、既定にします。
+
+```bash
+juliaup add 1.12.6
+juliaup default 1.12.6
+julia --version
+```
+
+最後の出力が `julia version 1.12.6` であることを確認します。別のバージョンが表示された場合は、ターミナルを開き直して `juliaup status` と `juliaup default 1.12.6` を再実行してください。
+
+## VS Code と Julia 拡張機能
+
+1. [VS Code](https://code.visualstudio.com/)をインストールする。
+2. Extensions で `Julia` を検索し、Julia 拡張機能をインストールする。
+3. VS Code を起動する。
+4. メニューから Terminal > New Terminal を選ぶ。
+5. 開いたターミナルで `julia --version` を実行する。
+
+VS Code のターミナルでも `julia version 1.12.6` が表示される必要があります。通常のターミナルと結果が異なる場合は VS Code を完全に終了してから起動し直してください。
+
+この時点では Classroom リポジトリはまだ clone せず、課題用パッケージ環境も復元しません。
+
+端末で Julia を確認できたら、[Git・GitHub・Classroom リポジトリ](git-github.qmd)へ進みます。

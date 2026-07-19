@@ -1,0 +1,159 @@
+:root,
+body.quarto-light {
+  --tf-accent: #005b73;
+  --tf-accent-strong: #003f50;
+  --tf-soft: #e9f5f7;
+  --tf-border: #bfd8de;
+  --tf-focus: #d65f00;
+}
+
+body.quarto-dark {
+  --tf-accent: #7dd3e0;
+  --tf-accent-strong: #b8f0f5;
+  --tf-soft: #17343b;
+  --tf-border: #52717a;
+  --tf-focus: #ffb45e;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+.navbar,
+.sidebar-navigation {
+  font-family: "Noto Sans JP", "Noto Sans CJK JP", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic", "Meiryo", sans-serif;
+}
+
+h1,
+h2 {
+  color: var(--tf-accent);
+}
+
+table {
+  font-size: 0.94rem;
+}
+
+code {
+  overflow-wrap: anywhere;
+}
+
+.callout-note {
+  border-left-color: var(--tf-accent);
+}
+
+.navbar {
+  border-bottom: 3px solid var(--tf-soft);
+}
+
+.eyebrow {
+  margin-bottom: 0.35rem;
+  color: var(--tf-accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.course-map {
+  overflow-x: auto;
+  margin-block: 1rem 1.5rem;
+}
+
+.course-map table {
+  min-width: 42rem;
+}
+
+.course-position {
+  text-align: right;
+}
+
+.navbar .nav-item.dropdown {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 2rem;
+  align-items: start;
+}
+
+.navbar .split-nav-anchor {
+  padding-right: 0.25rem;
+}
+
+.split-nav-trigger {
+  width: 2rem;
+  padding-inline: 0.35rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.split-nav-trigger::after {
+  display: inline-block;
+  content: "";
+  border-top: 0.32em solid currentColor;
+  border-right: 0.32em solid transparent;
+  border-left: 0.32em solid transparent;
+  vertical-align: 0.18em;
+}
+
+.navbar .nav-item.dropdown > .dropdown-menu[hidden] {
+  display: none;
+}
+
+.navbar .nav-item.dropdown.split-nav-open > .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1030;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+  min-width: max-content;
+  margin: 0;
+}
+
+.split-nav-trigger:focus-visible,
+.split-nav-anchor:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--tf-focus);
+  outline-offset: 3px;
+}
+
+.sidebar-item a.active,
+.sidebar-item .active {
+  border-left: 3px solid var(--tf-accent);
+  color: var(--tf-accent-strong);
+  font-weight: 700;
+}
+
+.page-navigation .nav-page {
+  border: 1px solid var(--tf-border);
+  border-radius: 0.35rem;
+  background: var(--tf-soft);
+}
+
+.quarto-color-scheme-toggle .bi::before {
+  content: "🌙";
+  font-family: inherit;
+}
+
+.quarto-color-scheme-toggle .bi {
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
+}
+
+.quarto-color-scheme-toggle.alternate .bi {
+  opacity: 1;
+}
+
+@media (max-width: 991.98px) {
+  .navbar .nav-item.dropdown.split-nav-open > .dropdown-menu {
+    position: static;
+    grid-column: 1 / -1;
+    min-width: 0;
+    flex-direction: column;
+    width: 100%;
+  }
+}

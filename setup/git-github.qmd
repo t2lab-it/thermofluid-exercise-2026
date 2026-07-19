@@ -1,0 +1,78 @@
+---
+title: "Git・GitHub・Classroom リポジトリ"
+---
+::: {.course-position}
+準備 3/5
+:::
+
+## Git を導入する
+
+Git は VS Code の機能だけでなく、ターミナルから実行できる必要があります。
+
+### Windows
+
+PowerShell で Git for Windows を導入できます。
+
+```powershell
+winget install --id Git.Git -e --source winget
+```
+
+### macOS
+
+ターミナルで次を実行し、案内に従って Command Line Tools を導入します。
+
+```bash
+xcode-select --install
+```
+
+### Linux
+
+ディストリビューションのパッケージ管理機能で Git を導入します。Ubuntu の例は次のとおりです。
+
+```bash
+sudo apt update
+sudo apt install git
+```
+
+新しいターミナルで確認します。
+
+```bash
+git --version
+```
+
+## 最初の設定
+
+commit に記録する名前と、GitHub で使うメールアドレスを設定します。次の値は自分の情報に置き換えてください。
+
+```bash
+git config --global user.name "YOUR NAME"
+git config --global user.email "YOUR_GITHUB_EMAIL"
+```
+
+共有 PC では `--global` を使わず教員・TAへ相談してください。
+
+## Classroom リポジトリを clone する
+
+1. 授業で案内された Classroom の招待リンクを開く。
+2. 課題を受け取り、自分の非公開リポジトリが表示されるまで待つ。
+3. GitHub で自分のリポジトリを閲覧できることを手動で確認する。
+4. リポジトリの Code メニューから clone URL を取得する。
+5. 作業用ディレクトリで次を実行する。
+   clone 後はそのリポジトリへ移動し、配布された Julia 環境を復元してから preflight を実行します。
+
+```bash
+git clone YOUR_CLASSROOM_REPOSITORY_URL
+cd YOUR_CLASSROOM_REPOSITORY
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+julia --project=. scripts/course.jl preflight
+```
+
+`YOUR_CLASSROOM_REPOSITORY_URL` と `YOUR_CLASSROOM_REPOSITORY` は、自分の URL と clone 後のディレクトリ名に置き換えます。URL をそのまま公開チャットや提出物へ貼らないでください。`Pkg.instantiate()` は配布された `Project.toml` と `Manifest.toml` から課題用環境を復元し、`preflight` はその環境を診断します。
+
+## 最初の環境診断で確認する範囲
+
+最初の環境診断（課題ID: F00）では clone とローカル環境の診断までを行います。branch の作成、commit、push、pull request、merge は次の課題で一つずつ学びます。診断のためにこれらを先回りして実行しないでください。
+
+GitHub へログインできない、Classroom リポジトリが作られない、または clone の認証に失敗する場合は、画面に表示された文面を秘密情報を除いて教員・TAへ伝えてください。
+
+ここまで確認できたら、[Coding Agent](agents.qmd)へ進みます。

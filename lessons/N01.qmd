@@ -1,0 +1,199 @@
+---
+title: "移流方程式と安定性"
+---
+::: {.course-position}
+第5回・授業 1/2 · 課題ID: N01
+:::
+
+## この回の到達点
+
+- 移流方程式の各項を「分布が速度`c`で運ばれる」という現象に対応づけられる。
+- 格子・添字・境界条件をJulia配列の要素に対応づけられる。
+- 3つのTODOを小さな実行例で確かめ、upwindとcenteredの更新式をコードへ写せる。
+- 時間loopとbuffer交換を追い、実効CFLと最終時刻を確認できる。
+- 二つの計算結果を数値・図・テストで比較し、安定例と不安定例を説明できる。
+
+この回は、Julia以外のプログラミング経験はあるものの、構文を忘れている学習者を想定します。Julia固有の書き方を短く復習してから、偏微分方程式の計算へ進みます。
+
+## このページの進め方
+
+1. まずこの授業ページを上から読み、短いJulia例をコピー実行して式・添字・1step更新を確認する。
+2. 次に[課題ページ](../assignments/N01.qmd)で3つのTODO、実行コマンド、公式出力、完了条件を確認する。
+3. その後に学生リポジトリの`exercises/N01_linear_advection/TASK.md`と`run.jl`を開き、headerの読む順序に沿って3つのTODOだけを実装する。
+
+## Julia構文の復習
+
+Juliaの配列は1番から始まります。`u[i]`は現在の点、`u[i - 1]`は左隣、`u[i + 1]`は右隣です。`end`は最後の添字を表します。
+
+```julia
+u = [1.0, 2.0, 1.0]
+u[1]       # 1.0
+u[end]     # 1.0
+copy(u)    # 同じ値を持つ別の配列
+```
+
+関数名の末尾の`!`は、引数の配列を変更する関数であることを知らせる慣習です。keyword引数は`;`の後に書きます。
+
+```julia
+function set_left!(u; value=1.0)
+    u[1] = value
+    return u
+end
+
+u = [0.0, 0.0, 0.0]
+set_left!(u; value=1.0)
+```
+
+この先で使う記号は、次の意味です。実装時に型や結果の形を変更する必要はありません。
+
+| Juliaの書き方 | この課題での読み方 |
+|---|---|
+| `value::T` | `value`を型`T`の値として受け取る |
+| `{<:Real}` | `Real`またはその下位の実数型を要素に持つ配列を許す |
+| `:upwind` | 差分法の名前を表すSymbol |
+| `a === b` | 二つがまったく同じかを比べる |
+| `condition ? true_value : false_value` | 条件が真なら前、偽なら後の値を選ぶ |
+| `(x = x, u = u)` | 名前付きの値をまとめるnamed tuple。`result.x`のように読む |
+
+## 偏微分方程式が表すこと
+
+正の一定速度$c>0$で形を右へ運ぶ1次元線形移流方程式は
+
+$$
+\frac{\partial u}{\partial t}+c\frac{\partial u}{\partial x}=0
+$$
+
+です。$u(x,t)$は位置$x$と時刻$t$で決まる量です。時間変化$\partial u/\partial t$と空間変化$c\,\partial u/\partial x$が釣り合うため、厳密解では初期分布が形を変えず右へ移動します。数値計算では、微分を格子点の値の差へ置き換える方法によって、なまりや振動が生じます。
+
+## 格子と添字
+
+領域$0\le x\le2$に`nx`個の格子点を置きます。Juliaの添字`i`と座標$x_i$は別のものです。
+
+```text
+index:       1        2        3              nx
+coordinate:  0       dx       2dx      ...    2
+              o--------o--------o------- ... ---o
+```
+
+内部点のloopは`2:(length(u_old) - 1)`です。両端を除くのは、左端と右端を境界条件として別に扱うためです。
+
+## 初期条件
+
+最初のTODOは`rectangular_initial_condition`です。背景を1、`0.5 <= x <= 1.0`を2にします。まず小さな配列で、条件式が端点を含むことを確かめます。
+
+```julia
+x = [0.0, 0.5, 1.0, 1.5]
+u0 = [0.5 <= xi <= 1.0 ? 2.0 : 1.0 for xi in x]
+# [1.0, 2.0, 2.0, 1.0]
+```
+
+`run.jl`では`base`、`plateau`、`plateau_start`、`plateau_end`という引数名を保ち、この条件を各`x`へ適用します。
+
+## 境界条件
+
+正の速度では情報が左から領域へ入り、右へ出ます。この1次元線形移流課題では左端を1に固定し、右端は左隣の値をコピーしてゼロ勾配を表します。
+
+```julia
+u[1] = 1.0
+u[end] = u[end - 1]
+```
+
+提供済みの`apply_boundary!`が1step更新の後にこの処理を行います。境界条件そのものは学生TODOではありませんが、時間発展を説明するために意味を読める必要があります。
+
+## upwind + Euler
+
+正の$c$では風上側が左なので、空間微分に後退差分を使います。陽Euler法と組み合わせると
+
+$$
+u_i^{n+1}=u_i^n-\nu\left(u_i^n-u_{i-1}^n\right),
+\qquad \nu=\frac{c\Delta t}{\Delta x}
+$$
+
+です。二つ目のTODO `upwind_step!`に対応します。loopへ入れる前に、1点だけを手で実行できます。
+
+```julia
+u_old = [1.0, 2.0, 4.0]
+courant = 0.5
+i = 2
+u_new_i = u_old[i] - courant * (u_old[i] - u_old[i - 1])
+# 1.5
+```
+
+$0\le\nu\le1$なら更新値は現在値と左隣の間に収まり、初期範囲を越えません。ただし段差は数値拡散でなだらかになります。
+
+## centered + Euler
+
+中心差分は左右の値を対称に使います。
+
+$$
+u_i^{n+1}=u_i^n-\frac{\nu}{2}\left(u_{i+1}^n-u_{i-1}^n\right)
+$$
+
+三つ目のTODO `centered_step!`も、まず1点だけ計算します。
+
+```julia
+u_old = [1.0, 2.0, 4.0]
+courant = 0.5
+i = 2
+u_new_i = u_old[i] - courant / 2 * (u_old[i + 1] - u_old[i - 1])
+# 1.25
+```
+
+centered + Eulerはこの方程式に対して不安定です。この課題では人工粘性などを加えず、overshoot、undershoot、振動が現れる失敗例として比較します。
+
+## 時間loop
+
+局所的な1step更新を理解してから、提供済みの時間loopを読みます。
+
+```julia
+for _ in 1:steps
+    step!(u_new, u_old, c, dt, dx)
+    apply_boundary!(u_new)
+    u_old, u_new = u_new, u_old
+end
+```
+
+各stepでは、古い配列だけを参照して新しい配列の内部点を計算し、境界条件を適用してから次のstepへ進みます。このloopは編集対象ではありません。
+
+`run.jl`のheaderでは、`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate`の順に関数のつながりを示します。`include("provided_support.jl")`は、教材側が用意した入力検証と公式出力を読み込む「おまじない」として扱います。`provided_support.jl`を読解・編集する必要はありません。
+
+## buffer交換
+
+`u_old, u_new = u_new, u_old`は、二つの配列が指す役割を交換します。配列全体を毎回コピーせず、計算済みの`u_new`を次のstepの`u_old`として使えます。新旧を同じ配列にすると、同じstepで更新した値が隣の点の計算へ混ざるため、別bufferが必要です。
+
+## CFLと最終時刻
+
+CFL数$\nu=c\Delta t/\Delta x$は、1stepで情報が格子間隔の何倍進むかを表します。指定CFLから候補`dt`を作り、必要なstep数を切り上げた後、
+
+$$
+\Delta t=\frac{t_{\mathrm{final}}}{N_{\mathrm{steps}}}
+$$
+
+と調整するため、数学的には`steps * dt`が要求した`t_final`へ到達します。ただし浮動小数点では丸め誤差が入るので、`==`で完全一致を求めず、`isapprox(steps * dt, t_final; atol=100eps())`で十分近いことを確認します。`100eps()`は、この計算で許すごく小さな丸め誤差の幅です。併せて、調整後の実効CFL `c * dt / dx`を確認します。
+
+## 二つの方法を比較する
+
+既定値は`nx=81`、`c=1`、指定CFL 0.5、`t_final=0.5`です。
+
+| 方法 | 数値と図で観察すること | 解釈 |
+|---|---|---|
+| upwind + Euler | 最小・最大が初期範囲内で、段差がなだらかになる | 安定だが数値拡散がある |
+| centered + Euler | overshootまたはundershootと振動が現れる | 意図的な不安定比較 |
+
+`summary.toml`の最小・最大と公式図を同じ実行結果として見比べます。centered + Eulerを実用的な解法として推奨しているのではありません。
+
+## テストで確かめる
+
+各数値関数から呼ばれるvalidationは、実行時の入力条件を確認し、誤った配列や計算条件を早く知らせます。`test/provided/N01.jl`は教材側の包括的な確認として、数値式、入力条件、公式出力を保護します。`test/student/N01.jl`ではその網羅性を再現せず、自分で選んだ代表例を一件だけ、入力、関数呼び出し、期待値が分かる形で書きます。
+
+この1次元線形移流課題の完成要件は、`run.jl`の3つのTODOを実装し、時間loopと結果を説明することです。`provided_support.jl`にある`TOML`、`Plots`、詳細な入力検証、TOML出力、作図処理と`main`は提供済みであり、これらを自力で書けることは完成要件ではありません。`module`、`export`、`include`も変更しません。関数名、引数、scheme、出力ファイル名、summaryのキーは変更しません。
+
+## 次へ進む条件
+
+- 矩形初期条件、upwind更新、centered更新を小さな配列で追える。
+- 時間loop、buffer交換、実効CFL、最終時刻を説明できる。
+- 授業ページ、課題ページ、学生リポジトリの順で読む場所を確認した。
+
+## 課題へ進む
+
+実装対象、実行コマンド、公式出力、完了条件は[1次元線形移流課題](../assignments/N01.qmd)（課題ID: N01）で確認してください。テストの読み方は[テストと数値検証](../guides/testing.qmd)を参照します。
