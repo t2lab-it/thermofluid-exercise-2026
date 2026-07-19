@@ -39,11 +39,17 @@ code {
   overflow-wrap: anywhere;
 }
 
+body.quarto-dark :not(pre) > code {
+  color: #f8f9fa;
+  background-color: #343a40;
+}
+
 .callout-note {
   border-left-color: var(--tf-accent);
 }
 
 .navbar {
+  padding-block: 0.5rem;
   border-bottom: 3px solid var(--tf-soft);
 }
 
@@ -134,18 +140,46 @@ button:focus-visible {
   background: var(--tf-soft);
 }
 
-.quarto-color-scheme-toggle .bi::before {
-  content: "🌙";
-  font-family: inherit;
+.tf-theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  block-size: 1.5rem;
+  line-height: 1;
+  text-decoration: none;
 }
 
-.quarto-color-scheme-toggle .bi {
-  opacity: 0.45;
-  transition: opacity 0.15s ease;
+.tf-theme-icon {
+  display: block;
+  flex: 0 0 auto;
+  inline-size: 1rem;
+  block-size: 1rem;
 }
 
-.quarto-color-scheme-toggle.alternate .bi {
-  opacity: 1;
+.tf-theme-switch-track {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  inline-size: 2.25rem;
+  block-size: 1.25rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+
+.tf-theme-switch-thumb {
+  position: absolute;
+  inset-block-start: 0.125rem;
+  inset-inline-start: 0.125rem;
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateX(0);
+  transition: transform 0.15s ease;
+}
+
+.tf-theme-switch.alternate .tf-theme-switch-thumb {
+  transform: translateX(1rem);
 }
 
 @media (max-width: 991.98px) {
