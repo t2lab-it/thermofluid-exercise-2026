@@ -60,9 +60,6 @@ function verify_contracts(contracts_path, public_root, student_root)
     seen_site = Set{String}()
     seen_student = Set{String}()
     seen_url = Set{String}()
-    nav_path = joinpath(public_root, "_quarto.yml")
-    isfile(nav_path) || return fail("missing public path: _quarto.yml")
-    navigation = read(nav_path, String)
 
     for id in sort!(collect(keys(assignments)))
         entry = assignments[id]
@@ -74,6 +71,8 @@ function verify_contracts(contracts_path, public_root, student_root)
         student_path = string(entry["student_path"])
         command = string(entry["start_command"])
         canonical = string(entry["canonical_url"])
+        lesson_path = joinpath("lessons", "$id.qmd")
+        assignment_target = "../$site_path"
 
         if site_path in seen_site || student_path in seen_student || canonical in seen_url
             ok &= fail("duplicate IDs or paths at assignment ID $id")
@@ -84,19 +83,27 @@ function verify_contracts(contracts_path, public_root, student_root)
 
         site_file = path_inside(public_root, site_path)
         student_file = path_inside(student_root, student_path)
+        lesson_file = path_inside(public_root, lesson_path)
         if site_file === nothing || !isfile(site_file)
             ok &= fail("missing site path for $id: $site_path")
         end
         if student_file === nothing || !isfile(student_file)
             ok &= fail("missing student path for $id: $student_path")
         end
+        if lesson_file === nothing || !isfile(lesson_file)
+            ok &= fail("missing lesson path for $id: $lesson_path")
+        end
 
         expected = expected_canonical(site_path)
         if canonical != expected
             ok &= fail("canonical URL mismatch for $id: expected $expected, got $canonical")
         end
-        occursin(site_path, navigation) ||
-            (ok &= fail("nav inclusion missing for $id: $site_path"))
+
+        if lesson_file !== nothing && isfile(lesson_file)
+            lesson = read(lesson_file, String)
+            occursin(assignment_target, lesson) ||
+                (ok &= fail("lesson assignment link missing for $id: $assignment_target"))
+        end
 
         if site_file !== nothing && isfile(site_file)
             page = read(site_file, String)

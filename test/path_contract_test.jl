@@ -5,6 +5,52 @@ const PATH_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
 const PATH_VERIFY = joinpath(PATH_SITE_ROOT, "scripts", "verify_contracts.jl")
 isdefined(@__MODULE__, :path_inside) || include(PATH_VERIFY)
 
+function write_verifier_fixture(parent; missing_lesson_link=nothing, navigation_paths=false)
+    public = joinpath(parent, "public")
+    student = joinpath(parent, "student")
+    mkpath.((joinpath(public, "assignments"), joinpath(public, "lessons"), student))
+
+    contracts_source = joinpath(PATH_SITE_ROOT, "assignments", "contracts.toml")
+    contracts_path = joinpath(public, "assignments", "contracts.toml")
+    cp(contracts_source, contracts_path)
+    assignments = TOML.parsefile(contracts_path)["assignments"]
+
+    navigation = navigation_paths ?
+                 join((entry["site_path"] for entry in values(assignments)), '\n') :
+                 "website:\n  title: fixture\n"
+    write(joinpath(public, "_quarto.yml"), navigation)
+
+    for (id, entry) in assignments
+        site_path = entry["site_path"]
+        student_path = entry["student_path"]
+        command = entry["start_command"]
+        canonical = entry["canonical_url"]
+
+        site_file = joinpath(public, site_path)
+        mkpath(dirname(site_file))
+        write(site_file, "student: $student_path\ncommand: $command\n")
+
+        lesson_file = joinpath(public, "lessons", "$id.qmd")
+        lesson = id == missing_lesson_link ?
+                 "# Lesson $id\n" :
+                 "[課題](../$site_path#完了条件)\n"
+        write(lesson_file, lesson)
+
+        student_file = joinpath(student, student_path)
+        mkpath(dirname(student_file))
+        write(student_file, "詳しい説明: $canonical\n")
+    end
+
+    return contracts_path, public, student
+end
+
+function run_contract_verifier(contracts_path, public, student)
+    command = `$(Base.julia_cmd()) --startup-file=no --project=. $(PATH_VERIFY) $(contracts_path) $(public) $(student)`
+    output = PipeBuffer()
+    process = run(pipeline(ignorestatus(command); stdout=output, stderr=output))
+    return success(process), String(take!(output))
+end
+
 @testset "contract paths enforce strict lexical descendants" begin
     mktempdir() do parent
         root = joinpath(parent, "root")
@@ -85,6 +131,30 @@ end
         else
             @test_skip "directory symlink creation is unavailable on this host"
         end
+    end
+end
+
+@testset "contract verifier follows lesson assignment links" begin
+    mktempdir() do parent
+        contracts, public, student = write_verifier_fixture(parent)
+        passed, output = run_contract_verifier(contracts, public, student)
+
+        @test passed
+        @test occursin("assignment contracts verified", output)
+    end
+
+    mktempdir() do parent
+        contracts, public, student = write_verifier_fixture(
+            parent;
+            missing_lesson_link="F00",
+            navigation_paths=true,
+        )
+        passed, output = run_contract_verifier(contracts, public, student)
+
+        @test !passed
+        @test occursin("lesson assignment link missing for F00", output)
+        @test occursin("../assignments/F00.qmd", output)
+        @test !occursin("nav inclusion missing", output)
     end
 end
 

@@ -152,7 +152,7 @@ end
         write(joinpath(fixture.public, "_quarto.yml"), "website:\n")
         passed, output = verify_fixture(fixture)
         @test !passed
-        @test occursin("nav inclusion missing", output)
+        @test occursin("missing lesson path for F00: lessons/F00.qmd", output)
     end
 
     mktempdir() do root
