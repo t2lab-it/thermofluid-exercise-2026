@@ -35,6 +35,46 @@ function expected_canonical(site_path::AbstractString)
     return CANONICAL_BASE * replace(site_path, r"\.qmd$" => ".html")
 end
 
+function markdown_without_inert_blocks(markdown::AbstractString)
+    uncommented = replace(markdown, r"<!--.*?-->"s => "")
+    visible = String[]
+    fence_character = nothing
+    fence_length = 0
+
+    for line in split(uncommented, '\n'; keepempty=true)
+        stripped = lstrip(line)
+        leading_spaces = length(line) - length(stripped)
+        marker = match(r"^(`{3,}|~{3,})", stripped)
+
+        if isnothing(fence_character)
+            if leading_spaces <= 3 && marker !== nothing
+                fence_character = first(marker.match)
+                fence_length = length(marker.match)
+            else
+                push!(visible, line)
+            end
+        elseif leading_spaces <= 3 &&
+               !isempty(stripped) &&
+               first(stripped) == fence_character &&
+               length(match(Regex("^" * string(fence_character) * "+"), stripped).match) >= fence_length
+            fence_character = nothing
+            fence_length = 0
+        end
+    end
+
+    return join(visible, '\n')
+end
+
+# A fragment on the exact assignment path is valid; alternate suffixes and titles are not.
+function has_assignment_markdown_link(markdown::AbstractString, target::AbstractString)
+    visible = markdown_without_inert_blocks(markdown)
+    for link in eachmatch(r"(?<!!)\[[^\]\n]+\]\(\s*([^\s\)]+)\s*\)", visible)
+        destination = link.captures[1]
+        (destination == target || startswith(destination, target * "#")) && return true
+    end
+    return false
+end
+
 function verify_contracts(contracts_path, public_root, student_root)
     parsed = try
         TOML.parsefile(contracts_path)
@@ -101,7 +141,7 @@ function verify_contracts(contracts_path, public_root, student_root)
 
         if lesson_file !== nothing && isfile(lesson_file)
             lesson = read(lesson_file, String)
-            occursin(assignment_target, lesson) ||
+            has_assignment_markdown_link(lesson, assignment_target) ||
                 (ok &= fail("lesson assignment link missing for $id: $assignment_target"))
         end
 

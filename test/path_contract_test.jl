@@ -156,6 +156,23 @@ end
         @test occursin("../assignments/F00.qmd", output)
         @test !occursin("nav inclusion missing", output)
     end
+
+    deceptive_lessons = Dict(
+        "plain assignment path" => "See ../assignments/F00.qmd for details.\n",
+        "longer invalid target" => "[課題](../assignments/F00.qmd.disabled)\n",
+        "fenced code example" => "```markdown\n[課題](../assignments/F00.qmd)\n```\n",
+        "HTML comment" => "<!-- [課題](../assignments/F00.qmd) -->\n",
+    )
+    for (description, lesson) in deceptive_lessons
+        mktempdir() do parent
+            contracts, public, student = write_verifier_fixture(parent)
+            write(joinpath(public, "lessons", "F00.qmd"), lesson)
+            passed, output = run_contract_verifier(contracts, public, student)
+
+            @test !passed
+            @test occursin("lesson assignment link missing for F00", output)
+        end
+    end
 end
 
 @testset "contract verifier accepts literal dot as public root" begin
