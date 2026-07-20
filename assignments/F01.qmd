@@ -19,7 +19,6 @@ julia --project=. scripts/course.jl start F02
 
 ## 課題リポジトリ内の場所
 
-- 課題契約: `exercises/F01_first_pull_request/TASK.md`
 - 編集するコード: `exercises/F01_first_pull_request/run.jl`
 - 提供テスト: `test/provided/F01.jl`
 - 自分で追加するテスト: `test/student/F01.jl`
@@ -51,10 +50,10 @@ git branch --show-current
 
 ## 2. 実装する
 
-`exercises/F01_first_pull_request/TASK.md`の契約を読み、`run.jl`の指定箇所を編集します。実行入口は次です。
+`exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装します。`strip`で名前の前後の空白を除き、空白だけの名前は既存の処理で拒否します。それ以外は、空白を除いた名前を使う`Hello, name!`という`String`を返します。空白だけの名前を拒否する処理は変更・弱体化しません。実行入口は次です。
 
 ```bash
-julia --project=. exercises/F01_first_pull_request/run.jl
+julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
 ```
 
 変更前後に`git diff`を読み、自分が意図したファイルだけが変わっていることを確認します。

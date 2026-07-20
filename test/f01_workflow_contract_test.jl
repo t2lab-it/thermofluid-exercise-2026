@@ -32,4 +32,11 @@ const WORKFLOW_GUIDE = read(joinpath(SITE_ROOT, "guides", "workflow.qmd"), Strin
             WORKFLOW_GUIDE,
         )
     end
+    @testset "greeting implementation contract is explicit" begin
+        @test occursin("student_greeting", F01_ASSIGNMENT)
+        @test occursin("strip", F01_ASSIGNMENT)
+        @test occursin("Hello, name!", F01_ASSIGNMENT)
+        @test occursin("空白だけの名前", F01_ASSIGNMENT)
+    end
+
 end

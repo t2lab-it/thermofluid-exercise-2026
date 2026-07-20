@@ -39,7 +39,6 @@ Test Passed
 
 ## 課題リポジトリ内の場所
 
-- 課題契約: `exercises/F02_julia_arrays_and_tests/TASK.md`
 - 編集するコード: `exercises/F02_julia_arrays_and_tests/run.jl`
 - 提供テスト: `test/provided/F02.jl`
 - 自分で追加するテスト: `test/student/F02.jl`

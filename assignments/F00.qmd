@@ -18,13 +18,22 @@ title: "環境診断"
 
 ## 課題リポジトリ内の場所
 
-短い実行手順と診断コードは学生リポジトリの次の場所にあります。
+実行する診断コードと提供テストは、学生リポジトリの次の場所にあります。
 
-- 課題契約: `exercises/F00_environment/TASK.md`
 - 診断コード: `exercises/F00_environment/run.jl`
 - 提供テスト: `test/provided/F00.jl`
 
-長い説明の正本はこのページです。学生リポジトリの `TASK.md` は、このページ、編集対象、コマンド、出力、完了条件だけを参照します。
+## Julia 1.12.6を固定する
+
+Juliaupをインストールした後、Classroomリポジトリのrootで次を実行します。
+
+```bash
+juliaup add 1.12.6
+juliaup override set 1.12.6
+julia --version
+```
+
+最後の出力が `julia version 1.12.6` と完全に一致することを確認します。VS CodeのJulia拡張IDは `julialang.language-julia` です。
 
 ## 実行
 
@@ -33,6 +42,7 @@ Classroom リポジトリのルートで、まず配布環境を復元します�
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. scripts/course.jl preflight
+julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
 診断は次の二群を分けて表示します。
@@ -41,6 +51,22 @@ julia --project=. scripts/course.jl preflight
 2. **手動確認**: GitHub で自分の Classroom リポジトリを閲覧できること、および[対応 Agent の一つ](../setup/agents.qmd)でファイル編集とコマンド実行ができること。
 
 手動確認は、実際に自分で確かめてからプロンプトへ回答してください。すべての必須項目が通るまで進捗ファイルは更新されません。
+
+## 手動確認を付けて完了する
+
+GitHubへサインインして自分のClassroomリポジトリを開けることを確認します。次に、正式対応Agentを一つ選び、`scratch/F00-agent-check.txt`の作成と短い確認文の追記、安全なローカルコマンドの実行を依頼します。結果を確認したら一時ファイルを削除し、追跡対象のファイルは編集しません。
+
+選んだAgentに対応する次のコマンドを一つだけ実行します。
+
+```bash
+julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent copilot
+julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent codex
+julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent amazon-q
+```
+
+成功すると `F00 is complete` と `Current exercise is now F01` が表示されます。公式生成物はありません。この環境診断ではbranch、commit、push、PR、学習ログを作りません。
+
+アクセストークン、パスワード、秘密鍵、個人情報をAgentへの依頼、terminal出力、スクリーンショット、リポジトリへ含めません。誤って表示した場合はcommitせず、教員・TAへ相談します。
 
 ## 完了条件
 

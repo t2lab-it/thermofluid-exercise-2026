@@ -19,7 +19,6 @@ title: "座標・添字・差分の数値計算入門"
 
 ## 課題リポジトリ内の場所
 
-- 課題契約: `exercises/F03_numerical_primer/TASK.md`
 - 編集するコード: `exercises/F03_numerical_primer/run.jl`
 - 提供テスト: `test/provided/F03.jl`
 - 自分で追加するテスト: `test/student/F03.jl`
@@ -72,6 +71,8 @@ $$
 
 を返します。有効な添字は`2:length(u)`です。端点`i=1`では左隣がないため、この式を使えません。
 
+Juliaでは `(u[i] - u[i - 1]) / dx` と対応します。
+
 ### `centered_difference_at(u, i, dx)`
 
 $$
@@ -81,6 +82,8 @@ $$
 $$
 
 を返します。有効な添字は`2:length(u)-1`です。左右の点を使うため、両端ではこの式を使えません。
+
+Juliaでは `(u[i + 1] - u[i - 1]) / (2 * dx)` と対応します。
 
 二つの差分関数では、`u`の要素と`dx`が有限、`dx > 0`、`i`が各式の有効範囲にあることを確認します。入力配列`u`は変更しません。
 

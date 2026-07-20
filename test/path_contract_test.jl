@@ -19,19 +19,18 @@ function write_verifier_fixture(parent)
 
     for (id, entry) in assignments
         site_path = entry["site_path"]
-        student_path = entry["student_path"]
+        run_path = entry["run_path"]
         command = entry["start_command"]
-        canonical = entry["canonical_url"]
 
         site_file = joinpath(public, site_path)
         mkpath(dirname(site_file))
-        write(site_file, "student: $student_path\ncommand: $command\n")
+        write(site_file, "run: $run_path\ncommand: $command\n")
 
         write(joinpath(public, "lessons", "$id.qmd"), "# Lesson $id\n")
 
-        student_file = joinpath(student, student_path)
-        mkpath(dirname(student_file))
-        write(student_file, "詳しい説明: $canonical\n")
+        run_file = joinpath(student, run_path)
+        mkpath(dirname(run_file))
+        write(run_file, "# fixture\n")
     end
 
     return contracts_path, public, student
@@ -133,10 +132,9 @@ end
             joinpath(PATH_SITE_ROOT, "assignments", "contracts.toml"),
         )["assignments"]
         for entry in values(assignments)
-            task = joinpath(student, entry["student_path"])
-            mkpath(dirname(task))
-            canonical = entry["canonical_url"]
-            write(task, "詳しい説明: $canonical\n")
+            run_file = joinpath(student, entry["run_path"])
+            mkpath(dirname(run_file))
+            write(run_file, "# fixture\n")
         end
 
         command = Cmd(
