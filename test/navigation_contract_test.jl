@@ -19,7 +19,6 @@ const EXPECTED_PREPARATION_LINKS = [
     ("setup/git-github.qmd", "Git・GitHub"),
     ("setup/agents.qmd", "Coding Agent"),
     ("guides/workflow.qmd", "課題ワークフロー"),
-    ("guides/testing.qmd", "テストと数値検証"),
 ]
 const EXPECTED_SESSION_ENTRIES = [
     ("第1回 授業: ガイダンス、アカウント、環境診断", "lessons/F00.qmd"),
@@ -415,6 +414,7 @@ end
             @test sidebar_section_entries(yaml, course, "全15回") == EXPECTED_SESSION_ENTRIES
             course_lines = yaml[course.line:course.last]
             @test count(occursin("assignments/", line.text) for line in course_lines) == 5
+            @test count(occursin("guides/testing.qmd", line.text) for line in course_lines) == 0
             @test !any(occursin("advanced/cairomakie.qmd", line.text) for line in course_lines)
         end
     end

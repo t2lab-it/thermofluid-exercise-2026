@@ -55,8 +55,6 @@ website:
               text: "Coding Agent"
             - href: guides/workflow.qmd
               text: "課題ワークフロー"
-            - href: guides/testing.qmd
-              text: "テストと数値検証"
         - section: "全15回"
           contents:
             - text: "第1回 授業: ガイダンス、アカウント、環境診断"
