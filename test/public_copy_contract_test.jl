@@ -14,7 +14,7 @@ const POSITION_LABELS = Dict(
     "assignments/F00.qmd" => "第1回・課題 2/2 · 課題ID: F00",
     "lessons/F01.qmd" => "第2回・授業 1/2 · 課題ID: F01",
     "assignments/F01.qmd" => "第2回・課題 2/2 · 課題ID: F01",
-    "guides/testing.qmd" => "第2回後・必読",
+    "guides/testing.qmd" => "参照・テストと数値検証",
     "lessons/F02.qmd" => "第3回・授業 1/2 · 課題ID: F02",
     "assignments/F02.qmd" => "第3回・課題 2/2 · 課題ID: F02",
     "lessons/F03.qmd" => "第4回・授業 1/2 · 課題ID: F03",
@@ -554,21 +554,30 @@ end
     end
 end
 
-@testset "F01 completion routes through the required testing guide" begin
+@testset "F01 completion routes to the F02 lesson" begin
     f01_assignment = copy_source("assignments/F01.qmd")
+    f02_lesson = copy_source("lessons/F02.qmd")
     testing = copy_source("guides/testing.qmd")
     f02_assignment = copy_source("assignments/F02.qmd")
 
     @test occursin(
-        "ページ下部の［次へ］から「テストと数値検証」へ進んでください。",
+        "ページ下部の［次へ］から第3回授業「配列・関数・loop・テスト」へ進んでください。",
         f01_assignment,
     )
     @test !occursin("scripts/course.jl start F02", f01_assignment)
-    @test occursin(
-        "ページ下部の［次へ］から第3回授業「配列・関数・loop・テスト」へ進んでください。",
-        testing,
+    @test occursin("参照・テストと数値検証", testing)
+    @test !occursin("F01）を終えた直後の必読資料", testing)
+    @test !occursin("## 次の授業へ", testing)
+    for required_copy in (
+        "手計算できる具体例",
+        "複数の入力に共通する性質",
+        "契約外入力の失敗条件",
+        "配列・関数・テスト課題（課題ID: F02）では、自分で選んだ代表例を学生テストへ追加",
+        "テストがpassしても、数値的・物理的な妥当性のすべてを保証するわけではありません。",
+        "[テストと数値検証](../guides/testing.qmd)",
     )
-    @test !occursin("scripts/course.jl start F02", testing)
+        @test occursin(required_copy, f02_lesson)
+    end
     @test occursin("julia --project=. scripts/course.jl start F02", f02_assignment)
 end
 
