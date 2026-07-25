@@ -19,8 +19,10 @@ const POSITION_LABELS = Dict(
     "assignments/F02.qmd" => "第3回・課題 2/2 · 課題ID: F02",
     "lessons/F03.qmd" => "第4回・授業 1/2 · 課題ID: F03",
     "assignments/F03.qmd" => "第4回・課題 2/2 · 課題ID: F03",
-    "lessons/N01.qmd" => "第5回・授業 1/2 · 課題ID: N01",
-    "assignments/N01.qmd" => "第5回・課題 2/2 · 課題ID: N01",
+    "lessons/F04.qmd" => "第5回・授業 1/2 · 課題ID: F04",
+    "assignments/F04.qmd" => "第5回・課題 2/2 · 課題ID: F04",
+    "lessons/N01.qmd" => "第6回・授業 1/2 · 課題ID: N01",
+    "assignments/N01.qmd" => "第6回・課題 2/2 · 課題ID: N01",
     "guides/commands.qmd" => "参照・コマンド一覧",
     "guides/troubleshooting.qmd" => "参照・トラブル対応",
     "guides/glossary.qmd" => "参照・用語集",
@@ -37,7 +39,9 @@ const NO_ID_TITLE = Dict(
     "lessons/F02.qmd" => "配列・関数・loop・テスト",
     "assignments/F02.qmd" => "Juliaの配列・関数・テスト",
     "lessons/F03.qmd" => "ベクトル解析",
-    "assignments/F03.qmd" => "ベクトル解析の公式の数値的検証",
+    "assignments/F03.qmd" => "ベクトル解析の公式と自動微分",
+    "lessons/F04.qmd" => "数値微分と格子収束",
+    "assignments/F04.qmd" => "数値微分によるベクトル公式の検証",
     "lessons/N01.qmd" => "移流方程式と安定性",
     "assignments/N01.qmd" => "1次元線形移流方程式",
     "advanced/github-ssh.qmd" => "SSHでGitHubへ接続する",
@@ -74,7 +78,8 @@ const EXPECTED_IMPLEMENTED_COURSE_LINKS = Dict(
     2 => ["lessons/F01.qmd", "assignments/F01.qmd"],
     3 => ["lessons/F02.qmd", "assignments/F02.qmd"],
     4 => ["lessons/F03.qmd", "assignments/F03.qmd"],
-    5 => ["lessons/N01.qmd", "assignments/N01.qmd"],
+    5 => ["lessons/F04.qmd", "assignments/F04.qmd"],
+    6 => ["lessons/N01.qmd", "assignments/N01.qmd"],
 )
 
 const EXPECTED_COURSE_DATES = [
@@ -92,7 +97,7 @@ const EXPECTED_COURSE_DATES = [
     "12/4（金）",
     "12/11（金）",
     "12/18（金）",
-    "2027/1/??（金）",
+    "2027/1/8（金）",
 ]
 
 function list_link_texts(source)
@@ -425,7 +430,7 @@ end
 end
 
 @testset "public lesson outcomes have bounded bullet counts" begin
-    for id in ("F00", "F01", "F02", "F03", "N01")
+    for id in ("F00", "F01", "F02", "F03", "F04", "N01")
         source = copy_source("lessons/$id.qmd")
         outcomes = section_body(source, "この回の到達点")
         @test !isnothing(outcomes)
@@ -576,6 +581,7 @@ end
     guided_paths = (
         "lessons/F02.qmd", "assignments/F02.qmd",
         "lessons/F03.qmd", "assignments/F03.qmd",
+        "lessons/F04.qmd", "assignments/F04.qmd",
         "lessons/N01.qmd", "assignments/N01.qmd",
     )
     for path in guided_paths
@@ -634,51 +640,34 @@ end
         @test occursin(identity, f03_lesson)
         @test occursin(identity, f03_assignment)
     end
-    for reference_marker in (
-        "ForwardDiff",
-        "automatic_reference",
-        "gradient",
-        "jacobian",
-        "hessian",
-        "自動微分",
-        "中心差分",
-        "解析式との誤差",
-    )
-        @test occursin(reference_marker, f03_pages)
-    end
-    @test occursin("automatic_reference", f03_assignment)
-    @test !occursin("automatic_reference` を実装", f03_assignment)
-
-    lesson_outcomes = section_body(f03_lesson, "この回の到達点")
-    completion_conditions = section_body(f03_assignment, "完了条件")
-    @test !isnothing(lesson_outcomes)
-    @test !isnothing(completion_conditions)
-    if !isnothing(lesson_outcomes) && !isnothing(completion_conditions)
-        for evidence in ("手計算", "ForwardDiff", "解析式との誤差", "中心差分", "格子収束")
-            @test occursin(evidence, lesson_outcomes)
-            @test occursin(evidence, completion_conditions)
-        end
-    end
-    for requirement in ("手計算", "途中式", "混合偏微分", "学習ログ")
-        @test occursin(requirement, f03_assignment)
-    end
-    for api in (
-        "centered_partial",
-        "curl_gradient_residual",
-        "divergence_curl_residual",
-        "laplacian_identity_residual",
-        "verify_identities",
-    )
+    for api in ("gradient_scalar", "curl_vector", "laplacian_scalar")
         @test occursin(api, f03_assignment)
     end
-    @test occursin("n=9", f03_assignment)
-    @test occursin("n=17", f03_assignment)
-    @test occursin("3.0", f03_assignment)
-    @test occursin("4.8", f03_assignment)
+    @test occursin("ForwardDiff", f03_pages)
+    @test occursin("automatic_reference", f03_assignment)
+    @test !occursin("centered_partial", f03_pages)
+    @test !occursin("n=9", f03_pages)
+    @test !occursin("n=17", f03_pages)
     @test occursin("exercises/F03_vector_calculus/run.jl", f03_assignment)
-    @test !occursin("Fourier", f03_pages)
-    @test !occursin("熱伝導", f03_pages)
-    @test !occursin("proof-and-rubric", f03_pages)
+
+    f04_lesson = copy_source("lessons/F04.qmd")
+    f04_assignment = copy_source("assignments/F04.qmd")
+    f04_pages = f04_lesson * "\n" * f04_assignment
+    for api in (
+        "forward_difference", "backward_difference", "centered_difference",
+        "centered_partial", "verify_vector_identities",
+    )
+        @test occursin(api, f04_assignment)
+    end
+    @test occursin("exercises/F04_numerical_differentiation/run.jl", f04_assignment)
+    @test occursin("julia --project=. scripts/course.jl start F04", f04_assignment)
+    @test occursin("n=9", f04_assignment)
+    @test occursin("n=17", f04_assignment)
+    @test occursin("3.0", f04_assignment)
+    @test occursin("4.8", f04_assignment)
+    @test occursin("centered_difference", f04_lesson)
+    @test occursin("F03", f04_pages)
+    @test occursin("公式出力を作りません", f04_assignment)
 
     n01_lesson = copy_source("lessons/N01.qmd")
     n01_assignment = copy_source("assignments/N01.qmd")
@@ -754,7 +743,7 @@ end
 
     assignment = copy_source("assignments/N01.qmd")
     @test occursin("## 座標・添字・差分の確認", assignment)
-    @test occursin("ベクトル解析課題（課題ID: F03）", assignment)
+    @test occursin("数値微分課題（課題ID: F04）", assignment)
     @test !occursin("前の座標・添字・差分課題", assignment)
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
@@ -936,6 +925,7 @@ end
         "F01" => copy_source("assignments/F01.qmd"),
         "F02" => copy_source("assignments/F02.qmd"),
         "F03" => copy_source("assignments/F03.qmd"),
+        "F04" => copy_source("assignments/F04.qmd"),
         "N01" => copy_source("assignments/N01.qmd"),
     )
     removed_task_name = "TASK" * ".md"
@@ -946,8 +936,10 @@ end
     @test occursin("Hello, name!", pages["F01"])
     @test occursin("空白だけの名前", pages["F01"])
     @test occursin("test/student/F02.jl", pages["F02"])
-    @test occursin("centered_partial", pages["F03"])
-    @test occursin("verify_identities", pages["F03"])
+    @test occursin("gradient_scalar", pages["F03"])
+    @test !occursin("centered_partial", pages["F03"])
+    @test occursin("centered_partial", pages["F04"])
+    @test occursin("verify_vector_identities", pages["F04"])
     @test occursin("results/N01/summary.toml", pages["N01"])
 end
 

@@ -7,11 +7,12 @@ const VISIBLE_NAMES = Dict(
     "F00" => (lesson="ガイダンスと環境診断", assignment="環境診断"),
     "F01" => (lesson="Julia・Git・GitHubの最小操作", assignment="最初のbranchとpull request"),
     "F02" => (lesson="配列・関数・loop・テスト", assignment="Juliaの配列・関数・テスト"),
-    "F03" => (lesson="ベクトル解析", assignment="ベクトル解析の公式の数値的検証"),
+    "F03" => (lesson="ベクトル解析", assignment="ベクトル解析の公式と自動微分"),
+    "F04" => (lesson="数値微分と格子収束", assignment="数値微分によるベクトル公式の検証"),
     "N01" => (lesson="移流方程式と安定性", assignment="1次元線形移流方程式"),
 )
 
-const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "N01")
+const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01")
 const REQUIRED_SECTION_LABELS = ("ガイド", "発展資料")
 const EXPECTED_PREPARATION_LINKS = [
     ("setup/index.qmd", "受講環境の準備"),
@@ -28,14 +29,15 @@ const EXPECTED_SESSION_ENTRIES = [
     ("第3回 授業: 配列・関数・ループ、テスト", "lessons/F02.qmd"),
     ("第3回 課題: Juliaの配列・関数・テスト", "assignments/F02.qmd"),
     ("第4回 授業: ベクトル解析", "lessons/F03.qmd"),
-    ("第4回 課題: ベクトル解析の公式の数値的検証", "assignments/F03.qmd"),
-    ("第5回 授業: 一次元線形・非線形移流", "lessons/N01.qmd"),
-    ("第5回 課題: 1次元線形移流方程式", "assignments/N01.qmd"),
-    ("第6回 一次元拡散・移流拡散", nothing),
-    ("第7回 Git、テスト、Agentic coding、共通化", nothing),
-    ("第8回 二次元移流、配列軸、可視化、メモリ", nothing),
-    ("第9回 二次元拡散", nothing),
-    ("第10回 二次元移流拡散", nothing),
+    ("第4回 課題: ベクトル解析の公式と自動微分", "assignments/F03.qmd"),
+    ("第5回 授業: 数値微分と格子収束", "lessons/F04.qmd"),
+    ("第5回 課題: 数値微分によるベクトル公式の検証", "assignments/F04.qmd"),
+    ("第6回 授業: 一次元線形・非線形移流", "lessons/N01.qmd"),
+    ("第6回 課題: 1次元線形移流方程式", "assignments/N01.qmd"),
+    ("第7回 一次元拡散・移流拡散", nothing),
+    ("第8回 Git、テスト、Agentic coding、共通化", nothing),
+    ("第9回 二次元移流、配列軸、可視化、メモリ", nothing),
+    ("第10回 二次元拡散・移流拡散", nothing),
     ("第11回 PDE分類、Laplace方程式", nothing),
     ("第12回 Poisson方程式", nothing),
     ("第13回 最終プレゼンテーション 1", nothing),
@@ -442,7 +444,7 @@ end
             ]
             @test sidebar_section_entries(yaml, course, "全15回") == EXPECTED_SESSION_ENTRIES
             course_lines = yaml[course.line:course.last]
-            @test count(occursin("assignments/", line.text) for line in course_lines) == 5
+            @test count(occursin("assignments/", line.text) for line in course_lines) == 6
             @test count(occursin("guides/testing.qmd", line.text) for line in course_lines) == 0
             @test !any(occursin("advanced/cairomakie.qmd", line.text) for line in course_lines)
         end

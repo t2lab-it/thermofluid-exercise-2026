@@ -1,7 +1,7 @@
 using TOML
 
 const CANONICAL_BASE = "https://t2lab-it.github.io/thermofluid-exercise-2026/"
-const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "N01"])
+const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01"])
 
 function fail(message::AbstractString)
     println(stderr, "contract error: ", message)

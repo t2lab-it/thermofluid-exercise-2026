@@ -7,126 +7,53 @@ title: "ベクトル解析"
 
 ## この回の到達点
 
-- 勾配・発散・回転・Laplacianを成分表示と添字表示で書ける。
-- 手計算で使う定義、仮定、対称性から三つの公式の証明方針を説明できる。
-- ForwardDiffを独立な参照値にして解析式との誤差を評価できる。
-- 中心差分の残差と格子収束を調べ、手計算・自動微分との役割の違いを説明できる。
+- gradient、curl、Laplacianを成分で計算し、ベクトル解析の三公式を説明する。
+- 解析式をJuliaの3関数へ移し、ForwardDiffを独立参照として照合する。
+- 完全証明、供給された骨格の完成、成分展開という異なる深さで根拠を残す。
 
 ## このページの進め方
 
-1. スカラー場・ベクトル場と添字記法を確認する。
-2. 微分演算子の定義と、対称・反対称な量の性質を確認する。
-3. 三つの公式の証明材料を整理する。
-4. ForwardDiffによる連続微分の参照値を確認する。
-5. 中心差分による数値検証と格子収束の見方を確認する。
+1. この授業ページで定義と三公式を確認する。
+2. ページ下部の［次へ］から課題ページへ進む。
+3. 学生リポジトリの`run.jl`、提供テスト、自分のテストの順に読む。
 
-## 場と添字記法
+## 場と四つの微分演算子
 
-位置を $\boldsymbol{x}=(x_1,x_2,x_3)=(x,y,z)$ とします。$\phi(\boldsymbol{x})$ はスカラー場、
-$\boldsymbol{A}(\boldsymbol{x})=(A_1,A_2,A_3)$ はベクトル場です。同じ添字が一つの項に2回現れたら、その添字について1から3まで和を取ります。偏微分は $\partial_i=\partial/\partial x_i$ と略記します。
+スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し、gradient、divergence、curl、Laplacianを成分で定義します。この回では指定された場について解析式を手で導きます。
 
-Kroneckerのデルタは $\delta_{ij}a_j=a_i$ のように成分を選びます。Levi-Civita記号
-$\varepsilon_{ijk}$ は二つの添字を入れ替えると符号が反転します。一方、$S_{jk}=S_{kj}$
-を満たす量は添字を交換しても変わりません。したがって、反対称な量と対称な量の縮約
-$\varepsilon_{ijk}S_{jk}$ は0です。
+## 添字記法と証明の道具
 
-## 四つの微分演算子
+Kronecker delta、Levi-Civita記号、混合偏微分の交換を使い、同じ項が反対符号で現れる構造を追います。途中式と、どこで滑らかさを仮定したかを明記します。
+
+## 三つの公式
 
 $$
-(\nabla\phi)_i=\partial_i\phi,
-\qquad
-\nabla\cdot\boldsymbol{A}=\partial_i A_i,
+\nabla\times(\nabla\phi)=\boldsymbol{0},\qquad
+\nabla\cdot(\nabla\times\boldsymbol{A})=0,
 $$
 
 $$
-(\nabla\times\boldsymbol{A})_i=\varepsilon_{ijk}\partial_j A_k,
-\qquad
-\nabla^2\phi=\partial_i\partial_i\phi.
+\nabla\cdot(\nabla\phi)=\nabla^2\phi.
 $$
 
-証明では、対象の場が少なくとも2回連続微分可能であり、混合偏微分の順序を交換できると仮定します。
+`curl grad`は完全証明、`div curl`は供給された証明骨格の完成、`div grad`は成分和の展開として確認します。
 
-## 手計算で証明する三つの公式
+## 解析式をJuliaへ移す
 
-課題では、定義から成分を展開し、途中式を省略せずに次の三式を証明します。
+学生が実装するAPIは`gradient_scalar(point)`、`curl_vector(point)`、`laplacian_scalar(point)`の3つです。式の各成分とTupleの位置を一対一に対応させます。
 
-$$
-\nabla\times(\nabla\phi)=\boldsymbol{0}
-$$
+## ForwardDiffを独立参照にする
 
-$$
-\nabla\cdot(\nabla\times\boldsymbol{A})=0
-$$
+提供済み`automatic_reference(point)`はForwardDiffの`gradient`、`jacobian`、`hessian`から参照値を作ります。学生の解析関数を参照値の生成に使わないため、同じ誤りを共有しません。解析式との誤差を第2の点でも確認します。
 
-$$
-\nabla\cdot(\nabla\phi)=\nabla^2\phi
-$$
+## 授業内チェックポイント
 
-最初の二式では混合偏微分の対称性とLevi-Civita記号の反対称性、三式目では勾配・発散・Laplacianの定義を使います。完成した証明はこのページには置きません。自分で添字を追い、課題の学習ログへ提出してください。
-
-## 中心差分による偏微分
-
-座標方向 $x_i$ の単位ベクトルを $\boldsymbol{e}_i$ とすると
-
-$$
-D_i^{(h)}f(\boldsymbol{x})
-=\frac{f(\boldsymbol{x}+h\boldsymbol{e}_i)-f(\boldsymbol{x}-h\boldsymbol{e}_i)}{2h}
-$$
-
-です。滑らかな関数に対する打切り誤差は $O(h^2)$ です。課題では `centered_partial` でこの式を計算します。
-
-## 数値検証に使う場
-
-区間 $[-1,1]^3$ 上で
-
-$$
-\phi(x,y,z)=\sin x\cos y\,e^z,
-\qquad
-\boldsymbol{A}(x,y,z)=\left(\sin y\,e^z,\sin z\,e^x,\sin x\,e^y\right)
-$$
-
-を使います。解析的には
-
-$$
-\nabla\phi=\left(\cos x\cos y\,e^z,-\sin x\sin y\,e^z,\sin x\cos y\,e^z\right),
-\qquad \nabla^2\phi=-\phi
-$$
-
-です。$\nabla\times\boldsymbol{A}$ も定義から各成分を求め、コードと手計算を照合します。
-
-## 自動微分を独立な参照値にする
-
-この課題では、解析式をForwardDiffで独立に確認してから、自作中心差分の格子収束を調べます。ForwardDiffは四つのTODOを置き換えるためではなく、連続微分に対する参照値として使います。
-
-- `ForwardDiff.gradient`: $\nabla\phi$
-- `ForwardDiff.jacobian`: Jacobianの成分から$\nabla\times\boldsymbol A$
-- `ForwardDiff.hessian`と`LinearAlgebra.tr`: $\nabla^2\phi$
-
-教材提供の`automatic_reference(point)`がこれらをまとめます。学生が実装するのは従来どおり中心差分の四関数です。代表点では、手で導いた解析式との誤差を記録します。
-
-| 層 | 対象 | 証拠 |
-|---|---|---|
-| 手計算 | 厳密な恒等式 | 仮定、定義、途中式 |
-| ForwardDiff | 連続微分の参照値 | 解析式との誤差 |
-| 中心差分 | 離散近似 | 格子収束と誤差比 |
-
-自動微分も浮動小数点計算ですが、有限の刻み幅を選びません。したがって、中心差分と同じ近似を繰り返すのではなく、解析式と離散近似の間をつなぐ独立な確認になります。
-
-## 残差と格子収束
-
-各公式の左辺と右辺の差を残差と呼び、格子上の最大絶対値を誤差とします。解析的に求めた
-$\nabla\phi$ や $\nabla\times\boldsymbol{A}$ の成分へ中心差分を適用します。同じ離散演算子を合成すると、演算子の可換性によって残差が機械的に消え、差分近似の収束を測れない場合があるためです。
-
-点数を `n=9` から `n=17` へ増やすと刻み幅は半分になります。二次精度なら
-$E_h/E_{h/2}\approx4$ です。有限精度などを考慮し、課題では比が3.0以上4.8以下なら期待どおりと判定します。
-
-連続な公式は仮定の下で厳密です。数値残差が0でないのは、偏微分を有限の刻み幅で近似したためです。格子を細かくしたとき理論どおり減ることまで確認します。
+- 三公式それぞれで、使った定義と結論を説明できる。
+- 3つのJulia関数と解析成分の対応を示せる。
+- 手計算と自動微分の役割の違いを説明できる。
 
 ## 次へ進む条件
 
-- 四つの微分演算子を添字表示で書ける。
-- 三つの公式の手計算に必要な滑らかさ、定義、対称性を説明できる。
-- ForwardDiffの参照値と解析式との誤差を使う理由を説明できる。
-- 中心差分の`n=9`と`n=17`の格子収束で二次精度を検証する方法を説明できる。
-
-実装と提出物は、ページ下部の［次へ］から進む「ベクトル解析の公式の数値的検証」（課題ID: F03）で確認してください。
+- この授業ページ、課題ページ、学生リポジトリの読む順を確認した。
+- 完全証明、構造確認、成分確認の提出範囲を区別できる。
+- この回では有限差分や格子収束を扱わないことを確認した。
