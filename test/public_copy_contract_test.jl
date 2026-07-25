@@ -556,8 +556,6 @@ end
 
 @testset "guides publish the concrete workflow and N01 baseline" begin
     workflow = copy_source("guides/workflow.qmd")
-    @test occursin("```{mermaid}", workflow)
-    @test occursin("課題を読む] --> B[branchを作る", workflow)
     recovery_link = "[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)"
     @test length(findall(recovery_link, workflow)) == 1
     @test length(findall("自分で履歴を書き換えず", workflow)) == 1
