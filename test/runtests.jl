@@ -93,6 +93,7 @@ end
     @test occursin("Copyright © 2026 荒木 亮（ARAKI, Ryo）", quarto)
     for path in (
         "index.qmd", "lessons/N01.qmd", "assignments/N01.qmd",
+        "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
         "advanced/cairomakie.qmd", "LICENSE-CC-BY-4.0.txt", "LICENSE-MIT.txt",
     )
         @test isfile(joinpath(SITE_ROOT, path))

@@ -130,6 +130,10 @@ git status --short
 
 ページ下部の［次へ］から第3回授業「配列・関数・loop・テスト」へ進んでください。授業ページを読んだ後、その次の配列・関数・テスト課題（課題ID: F02）で、案内されるコマンドを使ってcleanなmainから課題branchを作成します。
 
+## 任意のCLI発展資料
+
+この課題でHTTPS接続とブラウザ上のpull requestを一度経験した後は、任意で[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)へ進み、その後に[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)へ進めます。必修課題ではなく、標準手順を置き換えるものではありません。
+
 ## mainへ直接pushしてしまった場合
 
 慌ててforce pushや履歴削除をしないでください。commit hash、実行したコマンド、GitHub上の状態を記録し、教員・TAへ連絡します。

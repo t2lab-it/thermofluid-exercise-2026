@@ -33,6 +33,10 @@ website:
       - text: 発展資料
         rel: split-navigation split-navigation-advanced
         menu:
+          - href: advanced/github-ssh.qmd
+            text: SSHでGitHubへ接続する
+          - href: advanced/github-cli.qmd
+            text: GitHub CLIでpull requestを操作する
           - href: advanced/cairomakie.qmd
             text: CairoMakieによる可視化
   sidebar:
@@ -107,6 +111,10 @@ website:
       contents:
         - href: advanced/index.qmd
           text: "発展資料一覧"
+        - href: advanced/github-ssh.qmd
+          text: "任意: SSHでGitHubへ接続する"
+        - href: advanced/github-cli.qmd
+          text: "任意: GitHub CLIでpull requestを操作する"
         - href: advanced/cairomakie.qmd
           text: "任意: CairoMakieによる可視化"
   page-footer:

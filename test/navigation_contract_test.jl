@@ -360,7 +360,11 @@ end
             (
                 "発展資料",
                 "advanced/index.qmd",
-                [("advanced/cairomakie.qmd", "CairoMakieによる可視化")],
+                [
+                    ("advanced/github-ssh.qmd", "SSHでGitHubへ接続する"),
+                    ("advanced/github-cli.qmd", "GitHub CLIでpull requestを操作する"),
+                    ("advanced/cairomakie.qmd", "CairoMakieによる可視化"),
+                ],
             ),
         )
             item = navbar_item(yaml, label)
@@ -390,6 +394,31 @@ end
     @test !isnothing(sidebar)
     if !isnothing(sidebar)
         sidebar_items = yaml_sequence_items(yaml, sidebar)
+        advanced_matches = [
+            item for item in sidebar_items
+            if something(yaml_item_field(yaml, item, "id"), (value="",)).value == "advanced"
+        ]
+        @test length(advanced_matches) == 1
+        if length(advanced_matches) == 1
+            advanced = only(advanced_matches)
+            contents = yaml_item_field(yaml, advanced, "contents")
+            @test !isnothing(contents)
+            if !isnothing(contents)
+                advanced_sidebar_entries = [
+                    (
+                        something(yaml_item_field(yaml, item, "text"), (value="",)).value,
+                        something(yaml_item_field(yaml, item, "href"), (value="",)).value,
+                    )
+                    for item in yaml_sequence_items(yaml, contents.node)
+                ]
+                @test advanced_sidebar_entries == [
+                    ("発展資料一覧", "advanced/index.qmd"),
+                    ("任意: SSHでGitHubへ接続する", "advanced/github-ssh.qmd"),
+                    ("任意: GitHub CLIでpull requestを操作する", "advanced/github-cli.qmd"),
+                    ("任意: CairoMakieによる可視化", "advanced/cairomakie.qmd"),
+                ]
+            end
+        end
         course_matches = [
             item for item in sidebar_items
             if something(yaml_item_field(yaml, item, "id"), (value="",)).value == "course"

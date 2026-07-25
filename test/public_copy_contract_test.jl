@@ -24,6 +24,8 @@ const POSITION_LABELS = Dict(
     "guides/commands.qmd" => "参照・コマンド一覧",
     "guides/troubleshooting.qmd" => "参照・トラブル対応",
     "guides/glossary.qmd" => "参照・用語集",
+    "advanced/github-ssh.qmd" => "任意・発展資料",
+    "advanced/github-cli.qmd" => "任意・発展資料",
     "advanced/cairomakie.qmd" => "任意・発展資料",
 )
 
@@ -38,6 +40,8 @@ const NO_ID_TITLE = Dict(
     "assignments/F03.qmd" => "ベクトル解析の公式の数値的検証",
     "lessons/N01.qmd" => "移流方程式と安定性",
     "assignments/N01.qmd" => "1次元線形移流方程式",
+    "advanced/github-ssh.qmd" => "SSHでGitHubへ接続する",
+    "advanced/github-cli.qmd" => "GitHub CLIでpull requestを操作する",
     "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
 )
 
@@ -390,6 +394,112 @@ function snippets_in_order(source, snippets)
         next_start = nextind(source, last(matched))
     end
     return true
+end
+
+@testset "advanced GitHub guides publish one optional sequence" begin
+    advanced_index = copy_source("advanced/index.qmd")
+    @test snippets_in_order(
+        advanced_index,
+        (
+            "[SSHでGitHubへ接続する](github-ssh.qmd)",
+            "[GitHub CLIでpull requestを操作する](github-cli.qmd)",
+            "[CairoMakieによる可視化](cairomakie.qmd)",
+        ),
+    )
+end
+
+@testset "advanced SSH guide preserves existing keys and the standard path" begin
+    setup = copy_source("setup/git-github.qmd")
+    ssh = copy_source("advanced/github-ssh.qmd")
+
+    @test occursin(
+        "[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)",
+        setup,
+    )
+    @test snippets_in_order(
+        setup,
+        (
+            "git clone YOUR_CLASSROOM_REPOSITORY_URL",
+            "[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)",
+        ),
+    )
+
+    for required_copy in (
+        "標準のHTTPS cloneと最初のpull requestを完了",
+        "既存の鍵ファイルを削除・上書きしない",
+        "パスフレーズ",
+        "秘密鍵",
+        "共有PC",
+        "ssh -T git@github.com",
+        "id_ed25519_github",
+        "ssh-add -l",
+        "git remote set-url origin",
+        "git fetch origin",
+        "Permission denied (publickey)",
+    )
+        @test occursin(required_copy, ssh)
+    end
+
+    @test snippets_in_order(
+        ssh,
+        (
+            "## SSHを使えると何が嬉しいか",
+            "fetchやpushのたびに認証方法を選び直さずに済む",
+            "秘密鍵を自分のPCから出さない形で認証できる",
+            "GitHub CLIやCoding Agentとの協働へ進みやすくなる",
+            "## このページの到達点",
+        ),
+    )
+end
+
+@testset "advanced GitHub CLI guide keeps humans in control of PR creation" begin
+    f01 = copy_source("assignments/F01.qmd")
+    cli = copy_source("advanced/github-cli.qmd")
+
+    @test snippets_in_order(
+        f01,
+        (
+            "この課題のbranch、PR、学習ログがそれぞれ一つあり",
+            "[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)",
+            "[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)",
+        ),
+    )
+
+    for required_copy in (
+        "ブラウザでpull requestを一度作成・確認・merge",
+        "gh --version",
+        "gh auth login",
+        "gh auth status",
+        "gh repo view",
+        "gh pr list --state all",
+        "gh pr view",
+        "gh pr diff",
+        "gh pr checks",
+        "git push -u origin",
+        "scratch/pr-body.md",
+        "--base main",
+        "--body-file scratch/pr-body.md",
+        "mergeは標準手順",
+        "token",
+    )
+        @test occursin(required_copy, cli)
+    end
+
+    @test snippets_in_order(
+        cli,
+        (
+            "## GitHub CLIを使えると何が嬉しいか",
+            "terminal中心の一連の流れで進められる",
+            "ブラウザとの行き来を減らせる",
+            "人が確認しながらCoding Agentへ作業を依頼しやすくなる",
+            "## このページの到達点",
+        ),
+    )
+
+    push = findfirst("git push -u origin", cli)
+    create = findfirst("gh pr create", cli)
+    @test all(!isnothing, (push, create))
+    all(!isnothing, (push, create)) && @test first(push) < first(create)
 end
 
 function section_has_ordered_snippets(source, heading, snippets)
