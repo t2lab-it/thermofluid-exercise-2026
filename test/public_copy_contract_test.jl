@@ -333,6 +333,34 @@ end
     @test occursin("[Git・GitHub・Classroom リポジトリ](git-github.qmd)", julia_setup)
 
     git_setup = copy_source("setup/git-github.qmd")
+    account_heading = findfirst("## GitHub アカウントを作成する", git_setup)
+    git_heading = findfirst("## Git を導入する", git_setup)
+    config_heading = findfirst("## 最初の設定", git_setup)
+    @test all(!isnothing, (git_heading, account_heading, config_heading))
+    all(!isnothing, (git_heading, account_heading, config_heading)) &&
+        @test first(git_heading) < first(account_heading) < first(config_heading)
+
+    account_setup = section_body(git_setup, "GitHub アカウントを作成する")
+    @test !isnothing(account_setup)
+    if !isnothing(account_setup)
+        for required_copy in (
+            "授業日より前",
+            "授業中に一斉登録しないでください",
+            "不正利用と判定され",
+            "本人が継続して管理できるメールアドレス",
+            "メールアドレスを確認",
+            "ログインできることを確認",
+            "パスワードや確認コード",
+            "GitHub 公式のアカウント作成手順",
+        )
+            @test occursin(required_copy, account_setup)
+        end
+        @test occursin(
+            "::: {.callout-warning title=\"教室で一斉に作成しない\"}",
+            account_setup,
+        )
+    end
+
     @test occursin("## 最初の環境診断で確認する範囲", git_setup)
     clone = findfirst("git clone YOUR_CLASSROOM_REPOSITORY_URL", git_setup)
     instantiate = findfirst("Pkg.instantiate", git_setup)
