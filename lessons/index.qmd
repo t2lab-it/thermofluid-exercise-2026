@@ -8,4 +8,5 @@ title: "授業"
 - [Julia・Git・GitHubの最小操作](F01.qmd)
 - [配列・関数・loop・テスト](F02.qmd)
 - [ベクトル解析](F03.qmd)
+- [数値微分と格子収束](F04.qmd)
 - [移流方程式と安定性](N01.qmd)
