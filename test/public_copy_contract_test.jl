@@ -335,6 +335,37 @@ end
 @testset "setup follows one forward sequence" begin
     julia_setup = copy_source("setup/julia.qmd")
     @test occursin("[Git・GitHub・Classroom リポジトリ](git-github.qmd)", julia_setup)
+    for required in (
+        "LinearAlgebra",
+        "ForwardDiff",
+        "JuliaFormatter",
+        "OrdinaryDiffEqLowOrderRK",
+        "Project.toml",
+        "Manifest.toml",
+        "Pkg.instantiate()",
+        "julia --project=.",
+        "Julia: Start REPL",
+        "Julia: Run File in New Process",
+        "Pkg.test()",
+        "julialang.language-julia",
+        "MS-CEINTL.vscode-language-pack-ja",
+        "scripts/format.jl",
+        "formatter",
+        "linter",
+        "tests",
+    )
+        @test occursin(required, julia_setup)
+    end
+
+    setup_order = findfirst.((
+        "## パッケージ環境を復元する",
+        "## Juliaコードを実行する",
+        "## VS Codeを授業用に整える",
+        "## pull request前に整形とテストを行う",
+    ), Ref(julia_setup))
+    @test all(!isnothing, setup_order)
+    all(!isnothing, setup_order) &&
+        @test issorted(first.(something.(setup_order)))
 
     git_setup = copy_source("setup/git-github.qmd")
     account_heading = findfirst("## GitHub アカウントを作成する", git_setup)
