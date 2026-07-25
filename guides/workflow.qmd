@@ -13,18 +13,6 @@ title: "課題のbranch・PRワークフロー"
 
 共通の順序は次です。
 
-```{mermaid}
-flowchart LR
-  A[課題を読む] --> B[branchを作る]
-  B --> C[実装する]
-  C --> D[ローカルテスト]
-  D --> E[出力と学習ログ]
-  E --> F[commit・push]
-  F --> G[PR・Actions]
-  G --> H[diff・セルフレビュー]
-  H --> I[merge]
-```
-
 1. 課題branchを作る。
 2. 実装する。
 3. ローカルテストを実行する。
