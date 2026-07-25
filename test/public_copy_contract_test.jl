@@ -77,6 +77,24 @@ const EXPECTED_IMPLEMENTED_COURSE_LINKS = Dict(
     5 => ["lessons/N01.qmd", "assignments/N01.qmd"],
 )
 
+const EXPECTED_COURSE_DATES = [
+    "9/11（金）",
+    "9/18（金）",
+    "9/25（金）",
+    "10/2（金）",
+    "10/9（金）",
+    "10/16（金）",
+    "10/23（金）",
+    "10/30（金）",
+    "11/6（金）",
+    "11/13（金）",
+    "11/27（金）",
+    "12/4（金）",
+    "12/11（金）",
+    "12/18（金）",
+    "2027/1/??（金）",
+]
+
 function list_link_texts(source)
     texts = String[]
     for line in split(source, '\n')
@@ -104,11 +122,11 @@ function course_map_rows(source)
     for line in split(table, '\n')
         startswith(strip(line), "|") || continue
         cells = strip.(split(strip(line), '|'; keepempty=true)[2:(end - 1)])
-        length(cells) == 3 || continue
+        length(cells) == 4 || continue
         number = tryparse(Int, cells[1])
         isnothing(number) && continue
         links = [matched.captures[2] for matched in eachmatch(r"\[([^\]]+)\]\(([^)]+)\)", line)]
-        push!(rows, (number=number, links=links))
+        push!(rows, (number=number, date=cells[2], links=links))
     end
     return rows
 end
@@ -310,6 +328,7 @@ end
     rows = course_map_rows(home)
     @test length(rows) == 15
     @test getproperty.(rows, :number) == collect(1:15)
+    @test getproperty.(rows, :date) == EXPECTED_COURSE_DATES
     for row in rows
         @test row.links == get(EXPECTED_IMPLEMENTED_COURSE_LINKS, row.number, String[])
     end
