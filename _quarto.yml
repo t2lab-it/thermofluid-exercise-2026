@@ -55,8 +55,6 @@ website:
               text: "Coding Agent"
             - href: guides/workflow.qmd
               text: "課題ワークフロー"
-            - href: guides/testing.qmd
-              text: "テストと数値検証"
         - section: "全15回"
           contents:
             - text: "第1回 授業: ガイダンス、アカウント、環境診断"
@@ -67,6 +65,8 @@ website:
               href: lessons/F01.qmd
             - text: "第2回 課題: 最初のbranchとpull request"
               href: assignments/F01.qmd
+            - text: "第2回後 必読: テストと数値検証"
+              href: guides/testing.qmd
             - text: "第3回 授業: 配列・関数・ループ、テスト"
               href: lessons/F02.qmd
             - text: "第3回 課題: Juliaの配列・関数・テスト"
