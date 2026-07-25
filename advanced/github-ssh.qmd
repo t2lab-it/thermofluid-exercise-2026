@@ -1,0 +1,11 @@
+---
+title: "SSHでGitHubへ接続する"
+---
+
+::: {.course-position}
+任意・発展資料
+:::
+
+このページは、標準のHTTPS cloneと最初のpull requestを完了した学生向けの任意資料です。必修課題の合否や標準の学生環境には影響しません。
+
+このページを完了したら、[GitHub CLIでpull requestを操作する](github-cli.qmd)へ進みます。

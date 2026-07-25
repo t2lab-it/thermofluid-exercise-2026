@@ -24,6 +24,8 @@ const POSITION_LABELS = Dict(
     "guides/commands.qmd" => "参照・コマンド一覧",
     "guides/troubleshooting.qmd" => "参照・トラブル対応",
     "guides/glossary.qmd" => "参照・用語集",
+    "advanced/github-ssh.qmd" => "任意・発展資料",
+    "advanced/github-cli.qmd" => "任意・発展資料",
     "advanced/cairomakie.qmd" => "任意・発展資料",
 )
 
@@ -38,6 +40,8 @@ const NO_ID_TITLE = Dict(
     "assignments/F03.qmd" => "座標・添字・差分の数値計算入門",
     "lessons/N01.qmd" => "移流方程式と安定性",
     "assignments/N01.qmd" => "1次元線形移流方程式",
+    "advanced/github-ssh.qmd" => "SSHでGitHubへ接続する",
+    "advanced/github-cli.qmd" => "GitHub CLIでpull requestを操作する",
     "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
 )
 
@@ -390,6 +394,18 @@ function snippets_in_order(source, snippets)
         next_start = nextind(source, last(matched))
     end
     return true
+end
+
+@testset "advanced GitHub guides publish one optional sequence" begin
+    advanced_index = copy_source("advanced/index.qmd")
+    @test snippets_in_order(
+        advanced_index,
+        (
+            "[SSHでGitHubへ接続する](github-ssh.qmd)",
+            "[GitHub CLIでpull requestを操作する](github-cli.qmd)",
+            "[CairoMakieによる可視化](cairomakie.qmd)",
+        ),
+    )
 end
 
 function section_has_ordered_snippets(source, heading, snippets)
