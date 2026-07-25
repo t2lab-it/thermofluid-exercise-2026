@@ -8,6 +8,12 @@ title: "GitHub CLIでpull requestを操作する"
 
 このページは、[SSHでGitHubへ接続する](github-ssh.qmd)を完了し、ブラウザでpull requestを一度作成・確認・mergeした学生向けの任意資料です。必修課題の合否や標準の学生環境には影響しません。
 
+## GitHub CLIを使えると何が嬉しいか
+
+- branchのpushからpull requestの作成・確認まで、terminal中心の一連の流れで進められる。
+- PRの本文、diff、checksをコマンドで確認でき、ブラウザとの行き来を減らせる。
+- 実行するコマンドと結果が明確になるため、人が確認しながらCoding Agentへ作業を依頼しやすくなる。
+
 ## このページの到達点
 
 GitHub CLI（`gh`）を導入・認証し、既存のF01 pull requestをCLIで読みます。その後、次の正当な実課題で、自分が確認してpushしたbranchからpull requestを作成し、内容・diff・checksをCLIで確認します。練習専用のcommitやpull requestは作りません。

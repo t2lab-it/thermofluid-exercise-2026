@@ -8,6 +8,12 @@ title: "SSHでGitHubへ接続する"
 
 このページは、標準のHTTPS cloneと最初のpull requestを完了した学生向けの任意資料です。必修課題の合否や標準の学生環境には影響しません。
 
+## SSHを使えると何が嬉しいか
+
+- GitHubへの接続方法を一度整えると、fetchやpushのたびに認証方法を選び直さずに済む。
+- 公開鍵をGitHubへ登録し、秘密鍵を自分のPCから出さない形で認証できる。
+- terminal中心のGit操作を続けやすくなり、後続のGitHub CLIやCoding Agentとの協働へ進みやすくなる。
+
 ## このページの到達点
 
 すでにcloneした自分の非公開Classroomリポジトリについて、GitHubへのSSH認証を確認し、`origin`をHTTPS URLからSSH URLへ安全に切り替えます。新しい練習commitやpushは作りません。

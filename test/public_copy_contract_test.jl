@@ -439,6 +439,17 @@ end
     )
         @test occursin(required_copy, ssh)
     end
+
+    @test snippets_in_order(
+        ssh,
+        (
+            "## SSHを使えると何が嬉しいか",
+            "fetchやpushのたびに認証方法を選び直さずに済む",
+            "秘密鍵を自分のPCから出さない形で認証できる",
+            "GitHub CLIやCoding Agentとの協働へ進みやすくなる",
+            "## このページの到達点",
+        ),
+    )
 end
 
 @testset "advanced GitHub CLI guide keeps humans in control of PR creation" begin
@@ -473,6 +484,17 @@ end
     )
         @test occursin(required_copy, cli)
     end
+
+    @test snippets_in_order(
+        cli,
+        (
+            "## GitHub CLIを使えると何が嬉しいか",
+            "terminal中心の一連の流れで進められる",
+            "ブラウザとの行き来を減らせる",
+            "人が確認しながらCoding Agentへ作業を依頼しやすくなる",
+            "## このページの到達点",
+        ),
+    )
 
     push = findfirst("git push -u origin", cli)
     create = findfirst("gh pr create", cli)
