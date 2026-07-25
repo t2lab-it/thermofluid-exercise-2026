@@ -335,6 +335,37 @@ end
 @testset "setup follows one forward sequence" begin
     julia_setup = copy_source("setup/julia.qmd")
     @test occursin("[Git・GitHub・Classroom リポジトリ](git-github.qmd)", julia_setup)
+    for required in (
+        "LinearAlgebra",
+        "ForwardDiff",
+        "JuliaFormatter",
+        "OrdinaryDiffEqLowOrderRK",
+        "Project.toml",
+        "Manifest.toml",
+        "Pkg.instantiate()",
+        "julia --project=.",
+        "Julia: Start REPL",
+        "Julia: Run File in New Process",
+        "Pkg.test()",
+        "julialang.language-julia",
+        "MS-CEINTL.vscode-language-pack-ja",
+        "scripts/format.jl",
+        "formatter",
+        "linter",
+        "tests",
+    )
+        @test occursin(required, julia_setup)
+    end
+
+    setup_order = findfirst.((
+        "## パッケージ環境を復元する",
+        "## Juliaコードを実行する",
+        "## VS Codeを授業用に整える",
+        "## pull request前に整形とテストを行う",
+    ), Ref(julia_setup))
+    @test all(!isnothing, setup_order)
+    all(!isnothing, setup_order) &&
+        @test issorted(first.(something.(setup_order)))
 
     git_setup = copy_source("setup/git-github.qmd")
     account_heading = findfirst("## GitHub アカウントを作成する", git_setup)
@@ -583,6 +614,31 @@ end
     )
         @test occursin(identity, f03_lesson)
         @test occursin(identity, f03_assignment)
+    end
+    for reference_marker in (
+        "ForwardDiff",
+        "automatic_reference",
+        "gradient",
+        "jacobian",
+        "hessian",
+        "自動微分",
+        "中心差分",
+        "解析式との誤差",
+    )
+        @test occursin(reference_marker, f03_pages)
+    end
+    @test occursin("automatic_reference", f03_assignment)
+    @test !occursin("automatic_reference` を実装", f03_assignment)
+
+    lesson_outcomes = section_body(f03_lesson, "この回の到達点")
+    completion_conditions = section_body(f03_assignment, "完了条件")
+    @test !isnothing(lesson_outcomes)
+    @test !isnothing(completion_conditions)
+    if !isnothing(lesson_outcomes) && !isnothing(completion_conditions)
+        for evidence in ("手計算", "ForwardDiff", "解析式との誤差", "中心差分", "格子収束")
+            @test occursin(evidence, lesson_outcomes)
+            @test occursin(evidence, completion_conditions)
+        end
     end
     for requirement in ("手計算", "途中式", "混合偏微分", "学習ログ")
         @test occursin(requirement, f03_assignment)
