@@ -112,11 +112,11 @@ website:
         - href: advanced/index.qmd
           text: "発展資料一覧"
         - href: advanced/github-ssh.qmd
-          text: "任意: SSHでGitHubへ接続する"
+          text: "SSHでGitHubへ接続する"
         - href: advanced/github-cli.qmd
-          text: "任意: GitHub CLIでpull requestを操作する"
+          text: "GitHub CLIでpull requestを操作する"
         - href: advanced/cairomakie.qmd
-          text: "任意: CairoMakieによる可視化"
+          text: "CairoMakieによる可視化"
   page-footer:
     left: "Copyright © 2026 荒木 亮（ARAKI, Ryo）"
     right: "教材・図: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) / コード: [MIT](LICENSE-MIT.txt)"

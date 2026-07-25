@@ -413,9 +413,9 @@ end
                 ]
                 @test advanced_sidebar_entries == [
                     ("発展資料一覧", "advanced/index.qmd"),
-                    ("任意: SSHでGitHubへ接続する", "advanced/github-ssh.qmd"),
-                    ("任意: GitHub CLIでpull requestを操作する", "advanced/github-cli.qmd"),
-                    ("任意: CairoMakieによる可視化", "advanced/cairomakie.qmd"),
+                    ("SSHでGitHubへ接続する", "advanced/github-ssh.qmd"),
+                    ("GitHub CLIでpull requestを操作する", "advanced/github-cli.qmd"),
+                    ("CairoMakieによる可視化", "advanced/cairomakie.qmd"),
                 ]
             end
         end
