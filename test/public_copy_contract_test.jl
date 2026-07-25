@@ -408,6 +408,39 @@ end
     )
 end
 
+@testset "advanced SSH guide preserves existing keys and the standard path" begin
+    setup = copy_source("setup/git-github.qmd")
+    ssh = copy_source("advanced/github-ssh.qmd")
+
+    @test occursin(
+        "[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)",
+        setup,
+    )
+    @test snippets_in_order(
+        setup,
+        (
+            "git clone YOUR_CLASSROOM_REPOSITORY_URL",
+            "[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)",
+        ),
+    )
+
+    for required_copy in (
+        "標準のHTTPS cloneと最初のpull requestを完了",
+        "既存の鍵ファイルを削除・上書きしない",
+        "パスフレーズ",
+        "秘密鍵",
+        "共有PC",
+        "ssh -T git@github.com",
+        "id_ed25519_github",
+        "ssh-add -l",
+        "git remote set-url origin",
+        "git fetch origin",
+        "Permission denied (publickey)",
+    )
+        @test occursin(required_copy, ssh)
+    end
+end
+
 function section_has_ordered_snippets(source, heading, snippets)
     body = section_body(source, heading)
     return !isnothing(body) && snippets_in_order(body, snippets)
