@@ -441,6 +441,45 @@ end
     end
 end
 
+@testset "advanced GitHub CLI guide keeps humans in control of PR creation" begin
+    f01 = copy_source("assignments/F01.qmd")
+    cli = copy_source("advanced/github-cli.qmd")
+
+    @test snippets_in_order(
+        f01,
+        (
+            "この課題のbranch、PR、学習ログがそれぞれ一つあり",
+            "[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)",
+            "[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)",
+        ),
+    )
+
+    for required_copy in (
+        "ブラウザでpull requestを一度作成・確認・merge",
+        "gh --version",
+        "gh auth login",
+        "gh auth status",
+        "gh repo view",
+        "gh pr list --state all",
+        "gh pr view",
+        "gh pr diff",
+        "gh pr checks",
+        "git push -u origin",
+        "scratch/pr-body.md",
+        "--base main",
+        "--body-file scratch/pr-body.md",
+        "mergeは標準手順",
+        "token",
+    )
+        @test occursin(required_copy, cli)
+    end
+
+    push = findfirst("git push -u origin", cli)
+    create = findfirst("gh pr create", cli)
+    @test all(!isnothing, (push, create))
+    all(!isnothing, (push, create)) && @test first(push) < first(create)
+end
+
 function section_has_ordered_snippets(source, heading, snippets)
     body = section_body(source, heading)
     return !isnothing(body) && snippets_in_order(body, snippets)
