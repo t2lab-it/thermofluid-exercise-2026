@@ -79,3 +79,7 @@ QUARTO_JULIA_PROJECT=. quarto render
 ```
 
 `PUBLIC_ROOT`と`STUDENT_ROOT`には対象checkoutの絶対パスを渡します。検証器は5つの課題ID、パス、開始コマンド、canonical backlink、navigationを照合します。
+
+## 次の授業へ
+
+ここまで確認したら、ページ下部の［次へ］から第3回授業「配列・関数・loop・テスト」へ進んでください。配列・関数・テスト課題のbranchは、授業ページの次にある同課題ページで作成します。

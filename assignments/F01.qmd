@@ -9,13 +9,7 @@ title: "最初のbranchとpull request"
 
 小さなJuliaコードを変更し、ローカルテストで確かめ、その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します。この課題では仕組みを見える形で学ぶため、課題branchを手動で作ります。
 
-次の配列・関数・テスト課題（課題ID: F02）以降は、同じ事前確認とbranch作成を次の補助コマンドで行います。
-
-```bash
-julia --project=. scripts/course.jl start F02
-```
-
-この補助コマンドもpush、PR作成、mergeなどのネットワーク操作は実行しません。
+次の配列・関数・テスト課題（課題ID: F02）以降は、各課題ページで案内する補助コマンドが同じ事前確認とbranch作成を行います。補助コマンドもpush、PR作成、mergeなどのネットワーク操作は実行しません。
 
 ## 課題リポジトリ内の場所
 
@@ -132,11 +126,9 @@ git pull --ff-only origin main
 git status --short
 ```
 
-この課題のbranch、PR、学習ログがそれぞれ一つあり、`test/student/F01.jl`を代表例へ変更し、テスト、Actions、diff確認が完了していれば「最初のbranchとpull request」は完了です。cleanなmainから次の配列・関数・テスト課題（課題ID: F02）を開始します。
+この課題のbranch、PR、学習ログがそれぞれ一つあり、`test/student/F01.jl`を代表例へ変更し、テスト、Actions、diff確認が完了していれば「最初のbranchとpull request」は完了です。
 
-```bash
-julia --project=. scripts/course.jl start F02
-```
+ページ下部の［次へ］から「テストと数値検証」へ進んでください。そこでテストと数値検証の役割を確認した後、第3回授業と配列・関数・テスト課題（課題ID: F02）へ進みます。配列・関数・テスト課題のbranchは、同課題ページで案内されるコマンドを使ってcleanなmainから作成します。
 
 ## mainへ直接pushしてしまった場合
 

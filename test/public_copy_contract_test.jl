@@ -554,6 +554,24 @@ end
     end
 end
 
+@testset "F01 completion routes through the required testing guide" begin
+    f01_assignment = copy_source("assignments/F01.qmd")
+    testing = copy_source("guides/testing.qmd")
+    f02_assignment = copy_source("assignments/F02.qmd")
+
+    @test occursin(
+        "ページ下部の［次へ］から「テストと数値検証」へ進んでください。",
+        f01_assignment,
+    )
+    @test !occursin("scripts/course.jl start F02", f01_assignment)
+    @test occursin(
+        "ページ下部の［次へ］から第3回授業「配列・関数・loop・テスト」へ進んでください。",
+        testing,
+    )
+    @test !occursin("scripts/course.jl start F02", testing)
+    @test occursin("julia --project=. scripts/course.jl start F02", f02_assignment)
+end
+
 @testset "guides publish the concrete workflow and N01 baseline" begin
     workflow = copy_source("guides/workflow.qmd")
     recovery_link = "[mainブランチで作業してしまったら](troubleshooting.qmd#mainブランチで作業してしまったら)"
