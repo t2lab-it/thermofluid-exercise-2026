@@ -554,7 +554,23 @@ end
         @test occursin(syntax, lesson)
     end
 
+    for source in (lesson, copy_source("assignments/N01.qmd"))
+        for core in (
+            raw"\Delta x=\frac{x_{\max}-x_{\min}}{n_x-1}",
+            raw"x_i=x_{\min}+(i-1)\Delta x",
+            "(u[i] - u[i - 1]) / dx",
+            "(u[i + 1] - u[i - 1]) / (2 * dx)",
+        )
+            @test occursin(core, source)
+        end
+    end
+    @test occursin("i = 2, ..., length(u)", lesson)
+    @test occursin("i = 2, ..., length(u)-1", lesson)
+
     assignment = copy_source("assignments/N01.qmd")
+    @test occursin("## 座標・添字・差分の確認", assignment)
+    @test occursin("ベクトル解析課題（課題ID: F03）", assignment)
+    @test !occursin("前の座標・添字・差分課題", assignment)
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
     for source in (lesson, assignment)
