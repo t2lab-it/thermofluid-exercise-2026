@@ -18,7 +18,7 @@ title: "熱流体力学演習 2026"
 | 1 | [ガイダンス、アカウント、環境診断](lessons/F00.qmd) | [環境診断](assignments/F00.qmd) |
 | 2 | [Julia・Git・GitHubの最小操作](lessons/F01.qmd) | [最初のbranchとpull request](assignments/F01.qmd) |
 | 3 | [配列・関数・ループ、テスト](lessons/F02.qmd) | [Juliaの配列・関数・テスト](assignments/F02.qmd) |
-| 4 | [ベクトル解析、伝熱、差分と添字](lessons/F03.qmd) | [座標・添字・差分の数値計算入門](assignments/F03.qmd) |
+| 4 | [ベクトル解析](lessons/F03.qmd) | [ベクトル解析の公式の数値的検証](assignments/F03.qmd) |
 | 5 | [一次元線形・非線形移流](lessons/N01.qmd) | [1次元線形移流方程式](assignments/N01.qmd) |
 | 6 | 一次元拡散・移流拡散 | 一次元拡散方程式・移流拡散方程式（予定） |
 | 7 | Git、テスト、Agentic coding、共通化 | Git・テスト・Agentic coding・共通化（予定） |
