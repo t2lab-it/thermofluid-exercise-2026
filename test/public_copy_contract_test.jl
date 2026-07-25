@@ -615,6 +615,31 @@ end
         @test occursin(identity, f03_lesson)
         @test occursin(identity, f03_assignment)
     end
+    for reference_marker in (
+        "ForwardDiff",
+        "automatic_reference",
+        "gradient",
+        "jacobian",
+        "hessian",
+        "自動微分",
+        "中心差分",
+        "解析式との誤差",
+    )
+        @test occursin(reference_marker, f03_pages)
+    end
+    @test occursin("automatic_reference", f03_assignment)
+    @test !occursin("automatic_reference` を実装", f03_assignment)
+
+    lesson_outcomes = section_body(f03_lesson, "この回の到達点")
+    completion_conditions = section_body(f03_assignment, "完了条件")
+    @test !isnothing(lesson_outcomes)
+    @test !isnothing(completion_conditions)
+    if !isnothing(lesson_outcomes) && !isnothing(completion_conditions)
+        for evidence in ("手計算", "ForwardDiff", "解析式との誤差", "中心差分", "格子収束")
+            @test occursin(evidence, lesson_outcomes)
+            @test occursin(evidence, completion_conditions)
+        end
+    end
     for requirement in ("手計算", "途中式", "混合偏微分", "学習ログ")
         @test occursin(requirement, f03_assignment)
     end
