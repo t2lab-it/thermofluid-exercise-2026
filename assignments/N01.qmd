@@ -25,11 +25,27 @@ Julia以外のプログラミング経験はあるものの構文を忘れてい
 
 ## 開始
 
-前の座標・添字・差分課題（課題ID: F03）をmergeし、更新済みでcleanな`main`から始めます。
+前のベクトル解析課題（課題ID: F03）をmergeし、更新済みでcleanな`main`から始めます。
 
 ```bash
 julia --project=. scripts/course.jl start N01
 ```
+
+## 座標・添字・差分の確認
+
+区間$[x_{\min},x_{\max}]$の`nx`点について
+
+$$
+\Delta x=\frac{x_{\max}-x_{\min}}{n_x-1},\qquad x_i=x_{\min}+(i-1)\Delta x.
+$$
+
+です。添字`i`と物理座標$x_i$を区別してください。空間微分の後退差分と中心差分は
+
+$$
+\frac{u_i-u_{i-1}}{\Delta x},\qquad \frac{u_{i+1}-u_{i-1}}{2\Delta x}
+$$
+
+であり、Juliaでは `(u[i] - u[i - 1]) / dx` と `(u[i + 1] - u[i - 1]) / (2 * dx)` に対応します。この課題では、これらを移流方程式の1step更新へ組み込みます。
 
 ## 実装範囲
 

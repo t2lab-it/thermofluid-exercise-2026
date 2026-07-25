@@ -36,8 +36,8 @@ const NO_ID_TITLE = Dict(
     "assignments/F01.qmd" => "最初のbranchとpull request",
     "lessons/F02.qmd" => "配列・関数・loop・テスト",
     "assignments/F02.qmd" => "Juliaの配列・関数・テスト",
-    "lessons/F03.qmd" => "ベクトル解析・熱伝導・差分と添字",
-    "assignments/F03.qmd" => "座標・添字・差分の数値計算入門",
+    "lessons/F03.qmd" => "ベクトル解析",
+    "assignments/F03.qmd" => "ベクトル解析の公式の数値的検証",
     "lessons/N01.qmd" => "移流方程式と安定性",
     "assignments/N01.qmd" => "1次元線形移流方程式",
     "advanced/github-ssh.qmd" => "SSHでGitHubへ接続する",
@@ -575,36 +575,35 @@ end
 
     f03_lesson = copy_source("lessons/F03.qmd")
     f03_assignment = copy_source("assignments/F03.qmd")
-    f03_repl_sequence = (
-        "julia> x = [0.0, 0.5, 1.0]\n3-element Vector{Float64}:\n 0.0\n 0.5\n 1.0",
-        "julia> u = [1.0, 2.0, 4.0]\n3-element Vector{Float64}:\n 1.0\n 2.0\n 4.0",
-        "julia> (x[2], u[2])\n(0.5, 2.0)",
+    f03_pages = f03_lesson * "\n" * f03_assignment
+    for identity in (
+        raw"\nabla\times(\nabla\phi)=\boldsymbol{0}",
+        raw"\nabla\cdot(\nabla\times\boldsymbol{A})=0",
+        raw"\nabla\cdot(\nabla\phi)=\nabla^2\phi",
     )
-    @test section_has_ordered_snippets(
-        f03_lesson, "最初に動かす座標と値", f03_repl_sequence,
+        @test occursin(identity, f03_lesson)
+        @test occursin(identity, f03_assignment)
+    end
+    for requirement in ("手計算", "途中式", "混合偏微分", "学習ログ")
+        @test occursin(requirement, f03_assignment)
+    end
+    for api in (
+        "centered_partial",
+        "curl_gradient_residual",
+        "divergence_curl_residual",
+        "laplacian_identity_residual",
+        "verify_identities",
     )
-
-    mapping = section_body(f03_lesson, "1次元線形移流方程式のコードとの対応")
-    @test !isnothing(mapping)
-    accurate_boundary_row =
-        "| 有効添字 | 内部点loopと、左端固定・右端ゼロ勾配の境界処理 |"
-    accurate_mapping(source) =
-        occursin(accurate_boundary_row, source) && !occursin("周期境界", source)
-    if !isnothing(mapping)
-        @test accurate_mapping(mapping)
-        for row in (
-            "| `uniform_grid` | `x`、`dx`、`u[i]`の対応 |",
-            "| 後退差分 | 正の速度でのupwind更新 |",
-            "| 中心差分 | 意図的なcentered + Euler比較 |",
-        )
-            @test occursin(row, mapping)
-        end
-        @test occursin("import", mapping)
+        @test occursin(api, f03_assignment)
     end
-    for source in (f03_lesson, f03_assignment)
-        @test occursin("主要な数値計算の流れ", source)
-        @test occursin("provided_support.jl", source)
-    end
+    @test occursin("n=9", f03_assignment)
+    @test occursin("n=17", f03_assignment)
+    @test occursin("3.0", f03_assignment)
+    @test occursin("4.8", f03_assignment)
+    @test occursin("exercises/F03_vector_calculus/run.jl", f03_assignment)
+    @test !occursin("Fourier", f03_pages)
+    @test !occursin("熱伝導", f03_pages)
+    @test !occursin("proof-and-rubric", f03_pages)
 
     n01_lesson = copy_source("lessons/N01.qmd")
     n01_assignment = copy_source("assignments/N01.qmd")
@@ -665,7 +664,23 @@ end
         @test occursin(syntax, lesson)
     end
 
+    for source in (lesson, copy_source("assignments/N01.qmd"))
+        for core in (
+            raw"\Delta x=\frac{x_{\max}-x_{\min}}{n_x-1}",
+            raw"x_i=x_{\min}+(i-1)\Delta x",
+            "(u[i] - u[i - 1]) / dx",
+            "(u[i + 1] - u[i - 1]) / (2 * dx)",
+        )
+            @test occursin(core, source)
+        end
+    end
+    @test occursin("i = 2, ..., length(u)", lesson)
+    @test occursin("i = 2, ..., length(u)-1", lesson)
+
     assignment = copy_source("assignments/N01.qmd")
+    @test occursin("## 座標・添字・差分の確認", assignment)
+    @test occursin("ベクトル解析課題（課題ID: F03）", assignment)
+    @test !occursin("前の座標・添字・差分課題", assignment)
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
     for source in (lesson, assignment)
@@ -856,8 +871,8 @@ end
     @test occursin("Hello, name!", pages["F01"])
     @test occursin("空白だけの名前", pages["F01"])
     @test occursin("test/student/F02.jl", pages["F02"])
-    @test occursin("(u[i] - u[i - 1]) / dx", pages["F03"])
-    @test occursin("(u[i + 1] - u[i - 1]) / (2 * dx)", pages["F03"])
+    @test occursin("centered_partial", pages["F03"])
+    @test occursin("verify_identities", pages["F03"])
     @test occursin("results/N01/summary.toml", pages["N01"])
 end
 

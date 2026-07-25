@@ -73,9 +73,9 @@ website:
               href: lessons/F02.qmd
             - text: "第3回 課題: Juliaの配列・関数・テスト"
               href: assignments/F02.qmd
-            - text: "第4回 授業: ベクトル解析、伝熱、差分と添字"
+            - text: "第4回 授業: ベクトル解析"
               href: lessons/F03.qmd
-            - text: "第4回 課題: 座標・添字・差分の数値計算入門"
+            - text: "第4回 課題: ベクトル解析の公式の数値的検証"
               href: assignments/F03.qmd
             - text: "第5回 授業: 一次元線形・非線形移流"
               href: lessons/N01.qmd

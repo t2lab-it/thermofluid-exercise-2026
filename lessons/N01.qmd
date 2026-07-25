@@ -67,15 +67,29 @@ $$
 
 ## 格子と添字
 
-領域$0\le x\le2$に`nx`個の格子点を置きます。Juliaの添字`i`と座標$x_i$は別のものです。
+領域$x_{\min}\le x\le x_{\max}$に`nx`個の等間隔格子点を置きます。格子間隔と座標は
+
+$$
+\Delta x=\frac{x_{\max}-x_{\min}}{n_x-1},\qquad x_i=x_{\min}+(i-1)\Delta x.
+$$
+
+です。Juliaの添字`i`は1から始まり、座標$x_i$は長さを持つ物理量です。`i=2`なら、配列の2番目の値`u[2]`が座標$x_2=x_{\min}+\Delta x$に対応します。
 
 ```text
 index:       1        2        3              nx
-coordinate:  0       dx       2dx      ...    2
+coordinate: xmin   xmin+dx  xmin+2dx  ...   xmax
               o--------o--------o------- ... ---o
 ```
 
-内部点のloopは`2:(length(u_old) - 1)`です。両端を除くのは、左端と右端を境界条件として別に扱うためです。
+## 後退差分と中心差分
+
+正の速度で使う後退差分と、比較に使う中心差分は
+
+$$
+\left.\frac{\partial u}{\partial x}\right|_i\approx\frac{u_i-u_{i-1}}{\Delta x},\qquad\left.\frac{\partial u}{\partial x}\right|_i\approx\frac{u_{i+1}-u_{i-1}}{2\Delta x}
+$$
+
+です。Juliaではそれぞれ `(u[i] - u[i - 1]) / dx` と `(u[i + 1] - u[i - 1]) / (2 * dx)` です。後退差分の有効添字は `i = 2, ..., length(u)`、中心差分は `i = 2, ..., length(u)-1` です。この課題の内部点loopは`2:(length(u_old) - 1)`とし、両端は境界条件として別に扱います。
 
 ## 初期条件
 

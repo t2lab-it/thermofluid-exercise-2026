@@ -21,7 +21,7 @@ canonical_url = "https://t2lab-it.github.io/thermofluid-exercise-2026/assignment
 
 [assignments.F03]
 site_path = "assignments/F03.qmd"
-run_path = "exercises/F03_numerical_primer/run.jl"
+run_path = "exercises/F03_vector_calculus/run.jl"
 start_command = "julia --project=. scripts/course.jl start F03"
 canonical_url = "https://t2lab-it.github.io/thermofluid-exercise-2026/assignments/F03.html"
 
