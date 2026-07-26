@@ -53,6 +53,27 @@ function section_body(source, heading)
     matched = match(Regex("(?ms)^## " * heading * "\\n\\n?(.*?)(?=^## |\\z)"), source)
     return isnothing(matched) ? nothing : matched.captures[1]
 end
+
+@testset "normal GitHub course repository onboarding" begin
+    required_paths = [
+        "setup/git-github.qmd", "setup/index.qmd", "setup/julia.qmd", "setup/agents.qmd",
+        "lessons/F00.qmd", "assignments/F00.qmd", "advanced/index.qmd",
+        "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
+    ]
+    sources = Dict(path => read(joinpath(COPY_ROOT, path), String) for path in required_paths)
+    setup = sources["setup/git-github.qmd"]
+    for marker in (
+        "第1回", "GitHubアカウント", "repository招待", "GitHubの通知またはメール",
+        "private course repository", "YOUR_COURSE_REPOSITORY_URL", "第2回まで",
+        "減点対象にしません",
+    )
+        @test occursin(marker, setup)
+    end
+    for (path, source) in sources
+        @test !occursin("Classroom", source)
+        @test !occursin("group assignment", lowercase(source))
+    end
+end
 function frontmatter_title(source)
     lines = split(source, '\n'; keepempty=true)
     first(lines) == "---" || return nothing
@@ -358,7 +379,7 @@ end
 
 @testset "setup follows one forward sequence" begin
     julia_setup = copy_source("setup/julia.qmd")
-    @test occursin("[Git・GitHub・Classroom リポジトリ](git-github.qmd)", julia_setup)
+    @test occursin("[Git・GitHub・割り当てられた個人用course repository](git-github.qmd)", julia_setup)
     for required in (
         "LinearAlgebra",
         "ForwardDiff",
@@ -403,9 +424,9 @@ end
     @test !isnothing(account_setup)
     if !isnothing(account_setup)
         for required_copy in (
-            "授業日より前",
-            "授業中に一斉登録しないでください",
-            "不正利用と判定され",
+            "第1回授業",
+            "時間を分け",
+            "登録を制限される場合",
             "本人が継続して管理できるメールアドレス",
             "メールアドレスを確認",
             "ログインできることを確認",
@@ -421,7 +442,7 @@ end
     end
 
     @test occursin("## 最初の環境診断で確認する範囲", git_setup)
-    clone = findfirst("git clone YOUR_CLASSROOM_REPOSITORY_URL", git_setup)
+    clone = findfirst("git clone YOUR_COURSE_REPOSITORY_URL", git_setup)
     instantiate = findfirst("Pkg.instantiate", git_setup)
     preflight = findfirst("scripts/course.jl preflight", git_setup)
     @test all(!isnothing, (clone, instantiate, preflight))
@@ -474,7 +495,7 @@ end
     @test snippets_in_order(
         setup,
         (
-            "git clone YOUR_CLASSROOM_REPOSITORY_URL",
+            "git clone YOUR_COURSE_REPOSITORY_URL",
             "[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)",
         ),
     )
@@ -572,7 +593,7 @@ end
         @test occursin("Julia 1.12.6", progression)
         @test occursin("Git", progression)
         @test occursin("GitHub", progression)
-        @test occursin("Classroom", progression)
+        @test occursin("course repository", progression)
         @test occursin("Coding Agent", progression)
         @test occursin("scripts/course.jl preflight", progression)
         @test occursin("ページ下部の［次へ］から環境診断課題へ進み", progression)

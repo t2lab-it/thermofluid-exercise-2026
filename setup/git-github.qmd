@@ -1,5 +1,5 @@
 ---
-title: "Git・GitHub・Classroom リポジトリ"
+title: "Git・GitHub・割り当てられた個人用course repository"
 ---
 ::: {.course-position}
 準備 3/5
@@ -42,10 +42,10 @@ git --version
 
 ## GitHub アカウントを作成する
 
-GitHub アカウントをすでに持っている場合は、新しく作成せず、GitHub にログインできることを確認してください。持っていない場合は、授業日より前に次の手順を各自で完了してください。
+GitHubアカウントをすでに持っている場合は、新しく作成せず、GitHubにログインできることを確認してください。持っていない場合は、第1回授業で教員の案内に従って作成します。
 
 ::: {.callout-warning title="教室で一斉に作成しない"}
-教室で学生全員が同時にアカウントを作成すると、不正利用と判定され、登録を制限される可能性があります。授業中に一斉登録しないでください。授業日より前に、各自で時間を分けて作成してください。
+同じネットワークから全員が同時に登録すると、GitHub側で登録を制限される場合があります。第1回はグループごとに時間を分け、待機中はJulia、Git、VS Codeの診断を進めます。登録を繰り返すよう指示された場合は操作を止め、教員・TAへ相談してください。
 :::
 
 1. [GitHub](https://github.com/)を開き、**Sign up**を選ぶ。
@@ -53,7 +53,7 @@ GitHub アカウントをすでに持っている場合は、新しく作成せ�
 3. GitHub から届く案内に従ってメールアドレスを確認する。
 4. GitHub にログインできることを確認する。
 
-画面や登録項目がこの説明と異なる場合は、[GitHub 公式のアカウント作成手順](https://docs.github.com/ja/get-started/start-your-journey/creating-an-account-on-github)を確認してください。パスワードや確認コードは、教員・TAを含む他人へ共有しないでください。
+作成後はusernameを指定された方法で提出します。画面や登録項目がこの説明と異なる場合は、[GitHub 公式のアカウント作成手順](https://docs.github.com/ja/get-started/start-your-journey/creating-an-account-on-github)を確認してください。パスワードや確認コードは、教員・TAを含む他人へ共有しないでください。登録制限、メール未着、本人確認による遅れは減点対象にしません。
 
 ## 最初の設定
 
@@ -66,30 +66,32 @@ git config --global user.email "YOUR_GITHUB_EMAIL"
 
 共有 PC では `--global` を使わず教員・TAへ相談してください。
 
-## Classroom リポジトリを clone する
+## 割り当てられた個人用course repositoryを clone する
 
-1. 授業で案内された Classroom の招待リンクを開く。
-2. 課題を受け取り、自分の非公開リポジトリが表示されるまで待つ。
+1. 教員がusernameを確認した後、GitHubの通知またはメールで届くrepository招待を開く。招待は第1回授業後に届く場合がある。
+2. 招待先が`t2lab-it/thermofluid-exercise-2026-<自分のusername>`であることを確認し、**Accept invitation**を選ぶ。
 3. GitHub で自分のリポジトリを閲覧できることを手動で確認する。
 4. リポジトリの Code メニューから clone URL を取得する。
 5. 作業用ディレクトリで次を実行する。
    clone 後はそのリポジトリへ移動し、配布された Julia 環境を復元してから preflight を実行します。
 
 ```bash
-git clone YOUR_CLASSROOM_REPOSITORY_URL
-cd YOUR_CLASSROOM_REPOSITORY
+git clone YOUR_COURSE_REPOSITORY_URL
+cd YOUR_COURSE_REPOSITORY
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. scripts/course.jl preflight
 ```
 
-`YOUR_CLASSROOM_REPOSITORY_URL` と `YOUR_CLASSROOM_REPOSITORY` は、自分の URL と clone 後のディレクトリ名に置き換えます。URL をそのまま公開チャットや提出物へ貼らないでください。`Pkg.instantiate()` は配布された `Project.toml` と `Manifest.toml` から課題用環境を復元し、`preflight` はその環境を診断します。
+`YOUR_COURSE_REPOSITORY_URL` と `YOUR_COURSE_REPOSITORY` は、自分のprivate course repositoryのHTTPS URLとclone後のディレクトリ名に置き換えます。URLをそのまま公開チャットや提出物へ貼らないでください。`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元し、`preflight`はその環境を診断します。
 
-標準のHTTPS接続と最初のpull requestを完了した後は、任意で[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)へ進み、既存のClassroomリポジトリをSSH接続へ切り替えられます。初回セットアップではこの発展手順を先に実行しないでください。
+第2回までに招待受諾、HTTPSでのclone、`Pkg.instantiate()`、F00 preflightを完了します。招待が届かない、受諾できない、cloneできない場合は減点対象にせず、教員・TAの支援を受けます。
+
+標準のHTTPS接続と最初のpull requestを完了した後は、任意で[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)へ進み、既存の割り当てられた個人用course repositoryをSSH接続へ切り替えられます。初回セットアップではこの発展手順を先に実行しないでください。
 
 ## 最初の環境診断で確認する範囲
 
 最初の環境診断（課題ID: F00）では clone とローカル環境の診断までを行います。branch の作成、commit、push、pull request、merge は次の課題で一つずつ学びます。診断のためにこれらを先回りして実行しないでください。
 
-GitHub へログインできない、Classroom リポジトリが作られない、または clone の認証に失敗する場合は、画面に表示された文面を秘密情報を除いて教員・TAへ伝えてください。
+GitHub へログインできない、割り当てられた個人用course repositoryが作られない、または clone の認証に失敗する場合は、画面に表示された文面を秘密情報を除いて教員・TAへ伝えてください。
 
 ここまで確認できたら、[Coding Agent](agents.qmd)へ進みます。

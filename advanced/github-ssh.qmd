@@ -16,7 +16,7 @@ title: "SSHでGitHubへ接続する"
 
 ## このページの到達点
 
-すでにcloneした自分の非公開Classroomリポジトリについて、GitHubへのSSH認証を確認し、`origin`をHTTPS URLからSSH URLへ安全に切り替えます。新しい練習commitやpushは作りません。
+すでにcloneした自分の非公開割り当てられた個人用course repositoryについて、GitHubへのSSH認証を確認し、`origin`をHTTPS URLからSSH URLへ安全に切り替えます。新しい練習commitやpushは作りません。
 
 ## 実行前の安全確認
 
@@ -30,7 +30,7 @@ title: "SSHでGitHubへ接続する"
 
 ## 現在の接続方法を記録する
 
-Classroomリポジトリのrootで、未commitの変更と現在のremote URLを確認します。
+割り当てられた個人用course repositoryのrootで、未commitの変更と現在のremote URLを確認します。
 
 ```bash
 git status --short
@@ -137,7 +137,7 @@ ssh -T git@github.com
 
 ## 既存のoriginをSSHへ切り替える
 
-GitHubで自分の非公開Classroomリポジトリを開き、**Code** → **SSH**からURLを取得します。`OWNER/REPOSITORY`を推測せず、画面に表示された自分のURLと一致させます。
+GitHubで自分の非公開割り当てられた個人用course repositoryを開き、**Code** → **SSH**からURLを取得します。`OWNER/REPOSITORY`を推測せず、画面に表示された自分のURLと一致させます。
 
 ```bash
 git remote -v
@@ -161,7 +161,7 @@ git fetch origin
 ## 完了条件
 
 - `ssh -T git@github.com`で、意図した自分のGitHubユーザーとして認証される。
-- `git remote -v`で、`origin`のfetch・push URLが自分のClassroomリポジトリのSSH URLになっている。
+- `git remote -v`で、`origin`のfetch・push URLが自分の割り当てられた個人用course repositoryのSSH URLになっている。
 - `git fetch origin`が成功する。
 - 秘密鍵、パスフレーズ、確認コードを記録・共有していない。
 

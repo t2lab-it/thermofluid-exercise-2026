@@ -72,7 +72,7 @@ gh --version
 
 ## GitHub CLIを認証する
 
-SSHページで鍵の作成・登録を完了しているため、`gh`には新しい鍵を生成・uploadさせません。Classroomリポジトリのrootで次を実行します。
+SSHページで鍵の作成・登録を完了しているため、`gh`には新しい鍵を生成・uploadさせません。割り当てられた個人用course repositoryのrootで次を実行します。
 
 ```bash
 gh auth login --hostname github.com --git-protocol ssh --web --skip-ssh-key
@@ -82,7 +82,7 @@ gh repo view
 
 `--web`はブラウザ認証を開き、`--skip-ssh-key`はSSH鍵の生成・upload確認を飛ばします。ブラウザに表示される確認コードやtokenを記録・共有しません。
 
-`gh auth status`でhostが`github.com`、ユーザー名が意図した自分のアカウント、Git protocolがSSHであることを確認します。`gh repo view`では、現在のdirectoryが自分のClassroomリポジトリとして認識されることを確認します。別のユーザーやrepositoryが表示されたら、以降のPR操作を実行しません。
+`gh auth status`でhostが`github.com`、ユーザー名が意図した自分のアカウント、Git protocolがSSHであることを確認します。`gh repo view`では、現在のdirectoryが自分の割り当てられた個人用course repositoryとして認識されることを確認します。別のユーザーやrepositoryが表示されたら、以降のPR操作を実行しません。
 
 ## 既存のF01 pull requestをCLIで読む
 
