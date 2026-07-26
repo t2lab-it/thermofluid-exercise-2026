@@ -13,7 +13,7 @@ title: "環境診断"
 
 - [受講環境の準備](../setup/index.qmd)
 - [Julia 1.12.6 と VS Code](../setup/julia.qmd)
-- [Git・GitHub・Classroom リポジトリ](../setup/git-github.qmd)
+- [Git・GitHub・割り当てられた個人用course repository](../setup/git-github.qmd)
 - [Coding Agent の準備](../setup/agents.qmd)
 
 ## 課題リポジトリ内の場所
@@ -25,7 +25,7 @@ title: "環境診断"
 
 ## Julia 1.12.6を固定する
 
-Juliaupをインストールした後、Classroomリポジトリのrootで次を実行します。
+Juliaupをインストールした後、割り当てられた個人用course repositoryのrootで次を実行します。
 
 ```bash
 juliaup add 1.12.6
@@ -37,7 +37,7 @@ julia --version
 
 ## 実行
 
-Classroom リポジトリのルートで、まず配布環境を復元します。
+割り当てられた個人用course repositoryのルートで、まず配布環境を復元します。
 
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -48,13 +48,13 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 診断は次の二群を分けて表示します。
 
 1. **機械観測**: Julia が正確に 1.12.6 であること、Git が呼び出せること、VS Code と Julia 拡張機能の準備状況。
-2. **手動確認**: GitHub で自分の Classroom リポジトリを閲覧できること、および[対応 Agent の一つ](../setup/agents.qmd)でファイル編集とコマンド実行ができること。
+2. **手動確認**: GitHub で自分の 割り当てられた個人用course repositoryを閲覧できること、および[対応 Agent の一つ](../setup/agents.qmd)でファイル編集とコマンド実行ができること。
 
 手動確認は、実際に自分で確かめてからプロンプトへ回答してください。すべての必須項目が通るまで進捗ファイルは更新されません。
 
 ## 手動確認を付けて完了する
 
-GitHubへサインインして自分のClassroomリポジトリを開けることを確認します。次に、正式対応Agentを一つ選び、`scratch/F00-agent-check.txt`の作成と短い確認文の追記、安全なローカルコマンドの実行を依頼します。結果を確認したら一時ファイルを削除し、追跡対象のファイルは編集しません。
+GitHubへサインインして自分の割り当てられた個人用course repositoryを開けることを確認します。次に、正式対応Agentを一つ選び、`scratch/F00-agent-check.txt`の作成と短い確認文の追記、安全なローカルコマンドの実行を依頼します。結果を確認したら一時ファイルを削除し、追跡対象のファイルは編集しません。
 
 選んだAgentに対応する次のコマンドを一つだけ実行します。
 
@@ -73,7 +73,7 @@ julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent a
 - `julia --version` が `julia version 1.12.6` を返す。
 - `git --version` が成功する。
 - VS Code と Julia 拡張機能を使える。
-- 自分の GitHub Classroom リポジトリをブラウザで閲覧できる。
+- 割り当てられた自分のprivate course repositoryをブラウザで閲覧できる。
 - 標準または指定された一つの代替 Agent で、ファイル編集とコマンド実行を確認した。
 - `preflight` が成功し、進捗の完了済み課題が `F00`、現在課題が `F01` になる。
 

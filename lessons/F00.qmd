@@ -22,7 +22,7 @@ title: "ガイダンスと環境診断"
 | Julia | 機械観測 | 正確に 1.12.6 |
 | Git | 機械観測 | コマンド呼び出し成功 |
 | VS Code・Julia 拡張 | 機械観測と学生の確認 | 起動と Julia 実行 |
-| GitHub | 手動確認 | 自分の Classroom リポジトリを閲覧 |
+| GitHub | 手動確認 | 自分の 割り当てられた個人用course repositoryを閲覧 |
 | Coding Agent | 手動確認 | 一つで編集とコマンド実行 |
 
 ## トラブルの切り分け
@@ -30,7 +30,7 @@ title: "ガイダンスと環境診断"
 1. `julia` が見つからない: [Julia の導入とターミナルの再起動](../setup/julia.qmd)を確認する。
 2. Julia の版が違う: `juliaup default 1.12.6` の後、ターミナルと VS Code を開き直す。
 3. `git` が見つからない: [OS 別の Git 導入](../setup/git-github.qmd)を確認する。
-4. clone できない: GitHub ログイン、Classroom 受け取り、clone URL、認証の順に確認する。
+4. clone できない: GitHubログイン、repository招待の受諾、clone URL、認証の順に確認する。
 5. Agent を利用できない: [標準と一つの代替手順](../setup/agents.qmd)を確認し、解決しなければ教員・TAへ相談する。
 
 Windows、macOS、Linux で画面やパスの表記は異なりますが、合格条件は共通です。エラー全文を理解できなくても、どのコマンドがどの段階で失敗したかを残せば支援できます。
@@ -40,7 +40,7 @@ Windows、macOS、Linux で画面やパスの表記は異なりますが、合�
 次の3項目がそろったら、ページ下部の［次へ］から環境診断課題へ進み、完了条件を確認します。
 
 - 機械確認でJulia 1.12.6とGitが利用可能だと分かる。
-- GitHubで自分のClassroomリポジトリを閲覧でき、一つのCoding Agentで編集とコマンド実行を手動確認した。
+- GitHubで自分の割り当てられた個人用course repositoryを閲覧でき、一つのCoding Agentで編集とコマンド実行を手動確認した。
 - `julia --project=. scripts/course.jl preflight`が環境診断の完了を進捗へ記録した。
 
 この最初の課題は環境診断だけです。branch、commit、push、pull request、Actions、diff、セルフレビュー、mergeは次の「最初のbranchとpull request」課題（課題ID: F01）で順に学びます。
