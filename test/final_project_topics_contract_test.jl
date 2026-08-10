@@ -3,6 +3,9 @@ const BUILD_SOLVER_TOPICS = [
     "quasi-1d-nozzle", "stefan-problem", "shallow-water-dam-break",
     "natural-convection-cavity", "inverse-heat-source", "incompressible-navier-stokes",
 ]
+const REUSE_SOLVER_TOPICS = [
+    "profiling-and-optimization", "gpu-porting", "iterative-solvers",
+]
 const TOPIC_HEADINGS = [
     "## 現象と問題", "## 問いを決める", "## 比較軸", "## 推奨する最小scope",
     "## 評価指標", "## 二層検証", "## 過大scope", "## 手法・package",
@@ -16,6 +19,18 @@ const TOPIC_HEADINGS = [
         source = isfile(path) ? read(path, String) : ""
         @test all(heading -> occursin(heading, source), TOPIC_HEADINGS)
         @test !occursin("このテーマの詳細を見る", source)
+        @test !occursin("完成solver", source)
+    end
+end
+
+@testset "solver-reuse topic pages" begin
+    for slug in REUSE_SOLVER_TOPICS
+        path = joinpath(TOPIC_ROOT, "$slug.qmd")
+        @test isfile(path)
+        source = isfile(path) ? read(path, String) : ""
+        @test all(heading -> occursin(heading, source), TOPIC_HEADINGS)
+        @test occursin("自分のsolver", source)
+        @test occursin("回帰検証", source)
         @test !occursin("完成solver", source)
     end
 end

@@ -1,0 +1,43 @@
+---
+title: "GPU移植と性能測定"
+---
+
+## 現象と問題
+
+正しさを確認した自分のsolverをNVIDIA GPUへ移植し、CPUとGPUの性能・精度・memory特性を同じ問題で比較します。資源の大きさではなく、crossoverと移植判断を調べます。
+
+## 問いを決める
+
+どのproblem sizeからGPUが有効か、転送とkernelのどちらが支配的か、精度選択が結果へどう影響するかを問います。使用できるhardwareとCPU fallbackも先に決めます。
+
+## 比較軸
+
+CPU・GPU、小・中・大の3 size以上、kernel時間・転送込みend-to-end時間を比較します。方程式、境界、algorithm、入力、停止条件を揃えます。
+
+## 推奨する最小scope
+
+同じcode pathのCPU smoke testを維持し、主要kernelを`CUDA.jl`でGPU化します。各sizeでwarm-up後の時間を測り、同期を明示してCPUとの正しさの回帰検証を行います。
+
+## 評価指標
+
+CPU時間、GPU kernel時間、end-to-end時間、crossover、speedup、GPU memory使用量を使います。CPU・GPU場の差と測定分散も示します。
+
+## 二層検証
+
+外部基準として元の解析解、benchmark、参照値を維持します。自己整合性としてCPU・GPU場の差、保存則、residual、格子収束、同期後の正しさの回帰検証を行います。
+
+## 過大scope
+
+algorithm変更、複数GPU、分散計算、solver全体の全面書換えを同時に行いません。H200は大規模格子やmemory比較など必要性が明確な発展caseに限ります。
+
+## 手法・package
+
+`CUDA.jl`を用い、solver本体は自分のsolverを使います。scalar indexing、allocation、転送、同期を局所testと測定で確認し、必須の共通GPU APIは設けません。
+
+## 計算負荷
+
+CPUで常時実行できる縮小caseを残し、GPUでは3 size以上の代表時間とmemoryを測ります。RTX A2000、RTX 2000 Ada、H200等の利用条件はfeedbackで具体化します。
+
+## 相談事項
+
+研究室資源、account、実行環境、memory limit、job回収、CPU fallbackを相談できます。相談は審査・選抜ではなく、件数の固定上限を設けません。speedupが得られなくても、測定と原因説明が妥当なら成果になります。

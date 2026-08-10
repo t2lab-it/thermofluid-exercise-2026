@@ -1,0 +1,43 @@
+---
+title: "Profilingと性能最適化"
+---
+
+## 現象と問題
+
+N09までに作成し、正しさを確認した自分のsolverを対象に、実行時間とallocationの支配要因を測定します。単なる書き換えではなく、測定とprofileに基づく改善過程を扱います。
+
+## 問いを決める
+
+どのworkloadのどの処理が支配的か、一つの変更が時間・allocation・scalingへどう影響するかを問います。高速化率を先に約束せず、測定可能な仮説を立てます。
+
+## 比較軸
+
+baseline commit・入力・workloadを固定し、baseline、改善1、再profile後の改善2を比較します。格子、反復数、thread数、測定範囲を比較間で揃えます。
+
+## 推奨する最小scope
+
+warm-upとcompile時間を分離し、測定→profile→単一変更→正しさの回帰検証→再測定→再profileを一巡します。複数変更を同時に入れず、各diffと効果を対応づけます。
+
+## 評価指標
+
+warm-up後の時間、allocations、throughput、格子に対するscaling、speedupを使います。kernel時間とend-to-end時間を区別し、測定分散も示します。
+
+## 二層検証
+
+外部基準として元の解析解、benchmark、参照値を維持します。自己整合性として改善前後の場の差、保存則、residual、既存testによる正しさの回帰検証を行います。
+
+## 過大scope
+
+algorithm、離散化、並列化、data構造を同時に変えません。solverの正しさが未確認のまま性能測定へ進まず、GPU移植や大規模分散計算は別の問いに分けます。
+
+## 手法・package
+
+Juliaの`Profile`、`BenchmarkTools.jl`、`@time`等を目的に応じて使います。測定・検証templateだけを利用し、solver本体は自分のsolverを使います。
+
+## 計算負荷
+
+数秒で反復できるCPU workloadをsmoke testにし、安定した測定に必要な試行数を記録します。長時間caseは代表値だけを測り、環境、commit、入力を固定します。
+
+## 相談事項
+
+測定範囲、warm-up、profileの読み方、単一変更の切り方、改善しない場合の分析を相談できます。speedupが得られなくても、測定と原因説明が妥当なら成果になります。
