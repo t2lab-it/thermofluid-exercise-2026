@@ -94,7 +94,8 @@ end
     for path in (
         "index.qmd", "lessons/N01.qmd", "assignments/N01.qmd",
         "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
-        "advanced/cairomakie.qmd", "LICENSE-CC-BY-4.0.txt", "LICENSE-MIT.txt",
+        "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
+        "LICENSE-CC-BY-4.0.txt", "LICENSE-MIT.txt",
     )
         @test isfile(joinpath(SITE_ROOT, path))
     end

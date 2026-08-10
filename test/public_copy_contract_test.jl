@@ -29,6 +29,7 @@ const POSITION_LABELS = Dict(
     "advanced/github-ssh.qmd" => "任意・発展資料",
     "advanced/github-cli.qmd" => "任意・発展資料",
     "advanced/cairomakie.qmd" => "任意・発展資料",
+    "advanced/package-built-solvers.qmd" => "任意・発展資料",
 )
 
 const NO_ID_TITLE = Dict(
@@ -47,6 +48,7 @@ const NO_ID_TITLE = Dict(
     "advanced/github-ssh.qmd" => "SSHでGitHubへ接続する",
     "advanced/github-cli.qmd" => "GitHub CLIでpull requestを操作する",
     "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
+    "advanced/package-built-solvers.qmd" => "パッケージを使ってPDEソルバを構築する",
 )
 
 function section_body(source, heading)
@@ -480,6 +482,7 @@ end
             "[SSHでGitHubへ接続する](github-ssh.qmd)",
             "[GitHub CLIでpull requestを操作する](github-cli.qmd)",
             "[CairoMakieによる可視化](cairomakie.qmd)",
+            "[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)",
         ),
     )
 end
