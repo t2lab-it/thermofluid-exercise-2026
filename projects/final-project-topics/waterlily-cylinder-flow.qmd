@@ -1,0 +1,43 @@
+---
+title: "WaterLily.jlによる円柱まわり流れ"
+---
+
+## 現象と問題
+
+二次元一様流中の円柱まわりに生じる剥離と渦放出を、`WaterLily.jl`の公式exampleから調べます。packageの設定を読み、流れの変化を力と周波数で説明します。
+
+## 問いを決める
+
+Reynolds数が抗力、揚力振動、渦放出へどう影響するかを問い、`Re=40,100`を候補にします。候補値は断定せず、公開前の実測で安定性と代表時間を確認して確定します。
+
+## 比較軸
+
+Reynolds数を主軸にし、円柱径、流入、domain、格子、時間刻み、過渡を除く時間窓を揃えます。公式exampleから変えた設定と理由を明示します。
+
+## 推奨する最小scope
+
+固定versionのcircle公式exampleを再現し、その後にReynolds数だけを変えた二条件を比較します。solver本体の改造は必須ではありません。
+
+## 評価指標
+
+平均抗力、揚力の振幅、Strouhal数、wakeの速度・渦度を使います。過渡除外、sampling間隔、周波数抽出方法を記録します。
+
+## 二層検証
+
+外部基準として公式example、既知の抗力・Strouhal範囲を用います。自己整合性として格子・domain・時間刻み依存性、力の収束、周波数窓への感度を確認します。
+
+## 過大scope
+
+三次元、乱流model、複雑物体、多体干渉、流体構造連成を最初から加えません。公式exampleを再現しないまま設定を多数変更しません。
+
+## 手法・package
+
+`WaterLily.jl`を固定versionで使い、公式exampleの入力・出力と変更点を説明します。packageをblack boxにせず、境界、格子、時間scale、force評価を確認します。
+
+## 計算負荷
+
+小domain・短時間のCPU smoke testを残し、本解析のdomain、格子、過渡時間、sampling時間は検証済みlaunch kitの実測値を参照します。
+
+## 相談事項
+
+version、公式example、候補Re、force取得、Strouhal評価、domain依存性、実行時間を相談できます。問い、最終比較、図、結論は学生自身が決めます。

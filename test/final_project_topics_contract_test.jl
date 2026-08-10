@@ -6,10 +6,17 @@ const BUILD_SOLVER_TOPICS = [
 const REUSE_SOLVER_TOPICS = [
     "profiling-and-optimization", "gpu-porting", "iterative-solvers",
 ]
+const GUIDED_TOPICS = [
+    "waterlily-cylinder-flow", "trixi-shock-tube", "oceananigans-horizontal-convection",
+]
 const TOPIC_HEADINGS = [
     "## 現象と問題", "## 問いを決める", "## 比較軸", "## 推奨する最小scope",
     "## 評価指標", "## 二層検証", "## 過大scope", "## 手法・package",
     "## 計算負荷", "## 相談事項",
+]
+const OPEN_PROPOSAL_HEADINGS = [
+    "## 対象", "## 計画へのフィードバック", "## 共有する内容",
+    "## 教員・TAの支援", "## 日程", "## fallback", "## 評価原則",
 ]
 
 @testset "build-a-solver topic pages" begin
@@ -33,4 +40,25 @@ end
         @test occursin("回帰検証", source)
         @test !occursin("完成solver", source)
     end
+end
+
+@testset "package-guided topic pages" begin
+    for slug in GUIDED_TOPICS
+        path = joinpath(TOPIC_ROOT, "$slug.qmd")
+        @test isfile(path)
+        source = isfile(path) ? read(path, String) : ""
+        @test all(heading -> occursin(heading, source), TOPIC_HEADINGS)
+        for phrase in ("公式example", "固定version", "二層検証", "solver本体の改造は必須ではありません")
+            @test occursin(phrase, source)
+        end
+    end
+end
+
+@testset "open proposal page" begin
+    path = joinpath(TOPIC_ROOT, "open-proposal.qmd")
+    @test isfile(path)
+    source = isfile(path) ? read(path, String) : ""
+    @test all(heading -> occursin(heading, source), OPEN_PROPOSAL_HEADINGS)
+    @test occursin("審査・選抜ではありません", source)
+    @test occursin("固定上限を設けません", source)
 end
