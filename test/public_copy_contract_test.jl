@@ -101,6 +101,10 @@ const EXPECTED_IMPLEMENTED_COURSE_LINKS = Dict(
     4 => ["lessons/F03.qmd", "assignments/F03.qmd"],
     5 => ["lessons/F04.qmd", "assignments/F04.qmd"],
     6 => ["lessons/N01.qmd", "assignments/N01.qmd"],
+    11 => ["assignments/final-project.qmd"],
+    12 => ["assignments/final-project.qmd"],
+    13 => ["assignments/final-project.qmd"],
+    14 => ["assignments/final-project.qmd"],
 )
 
 const EXPECTED_COURSE_DATES = [
@@ -369,6 +373,26 @@ end
     @test all(!isnothing, positions)
     all(!isnothing, positions) && @test issorted(something.(positions))
     @test isempty(visible_course_map_machine_ids(home))
+    @test occursin("| — | 11/20（金） | 授業なし | 最終プロジェクト予備計算 |", home)
+    @test occursin("| 11 | 11/27（金） | [最終プロジェクト・スタジオ1]", home)
+    @test occursin("| 12 | 12/4（金） | [最終プロジェクト・スタジオ2]", home)
+    @test !occursin("| 11 | 11/27（金） | PDE分類、Laplace方程式", home)
+    @test !occursin("| 12 | 12/4（金） | Poisson方程式", home)
+
+    final_project_path = joinpath(COPY_ROOT, "assignments", "final-project.qmd")
+    @test isfile(final_project_path)
+    final_project = isfile(final_project_path) ? read(final_project_path, String) : ""
+    expected_project_headings = [
+        "目的", "チームと進行方法", "全テーマ共通の必須要件", "テーマの選び方",
+        "提出物", "第11回：計画・成立性レビュー", "第12回：結果・再現性レビュー",
+        "最終発表", "完了条件",
+    ]
+    project_headings = [matched.captures[1] for matched in eachmatch(r"(?m)^## (.+)$", final_project)]
+    @test project_headings == expected_project_headings
+    for private_marker in ("90分の流れ", "口頭質問", "復帰コード", "配点")
+        @test !occursin(private_marker, final_project)
+    end
+
 
     for path in ("lessons/index.qmd", "assignments/index.qmd", "guides/index.qmd", "advanced/index.qmd")
         hub = copy_source(path)
