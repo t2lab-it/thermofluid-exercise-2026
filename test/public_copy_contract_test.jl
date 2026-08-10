@@ -482,6 +482,7 @@ end
             "[SSHでGitHubへ接続する](github-ssh.qmd)",
             "[GitHub CLIでpull requestを操作する](github-cli.qmd)",
             "[CairoMakieによる可視化](cairomakie.qmd)",
+            "[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)",
         ),
     )
 end

@@ -366,6 +366,7 @@ end
                     ("advanced/github-ssh.qmd", "SSHでGitHubへ接続する"),
                     ("advanced/github-cli.qmd", "GitHub CLIでpull requestを操作する"),
                     ("advanced/cairomakie.qmd", "CairoMakieによる可視化"),
+                    ("advanced/package-built-solvers.qmd", "パッケージを使ってPDEソルバを構築する"),
                 ],
             ),
         )
@@ -418,6 +419,7 @@ end
                     ("SSHでGitHubへ接続する", "advanced/github-ssh.qmd"),
                     ("GitHub CLIでpull requestを操作する", "advanced/github-cli.qmd"),
                     ("CairoMakieによる可視化", "advanced/cairomakie.qmd"),
+                    ("パッケージを使ってPDEソルバを構築する", "advanced/package-built-solvers.qmd"),
                 ]
             end
         end

@@ -39,6 +39,8 @@ website:
             text: GitHub CLIでpull requestを操作する
           - href: advanced/cairomakie.qmd
             text: CairoMakieによる可視化
+          - href: advanced/package-built-solvers.qmd
+            text: パッケージを使ってPDEソルバを構築する
   sidebar:
     - id: course
       title: "熱流体力学演習 2026"
@@ -120,6 +122,8 @@ website:
           text: "GitHub CLIでpull requestを操作する"
         - href: advanced/cairomakie.qmd
           text: "CairoMakieによる可視化"
+        - href: advanced/package-built-solvers.qmd
+          text: "パッケージを使ってPDEソルバを構築する"
   page-footer:
     left: "Copyright © 2026 荒木 亮（ARAKI, Ryo）"
     right: "教材・図: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) / コード: [MIT](LICENSE-MIT.txt)"
