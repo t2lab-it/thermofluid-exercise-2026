@@ -88,13 +88,17 @@ website:
             - text: "第6回 課題: 1次元線形移流方程式"
               href: assignments/N01.qmd
             - text: "第7回 一次元拡散・移流拡散"
-            - text: "第8回 Git、テスト、Agentic coding、共通化"
-            - text: "第9回 二次元移流、配列軸、可視化、メモリ"
-            - text: "第10回 二次元拡散・移流拡散"
-            - text: "第11回 PDE分類、Laplace方程式"
-            - text: "第12回 Poisson方程式"
+            - text: "第8回 授業: 共通化から二次元移流へ"
+            - text: "第9回 授業: 二次元拡散・移流拡散"
+            - text: "第10回 授業: Laplace／Poissonと反復法"
+            - text: "第11回 最終プロジェクト: 計画・成立性レビュー"
+              href: assignments/final-project.qmd
+            - text: "第12回 最終プロジェクト: 結果・再現性レビュー"
+              href: assignments/final-project.qmd
             - text: "第13回 最終プレゼンテーション 1"
+              href: assignments/final-project.qmd
             - text: "第14回 最終プレゼンテーション 2・試験案内"
+              href: assignments/final-project.qmd
             - text: "第15回 到達度確認試験"
     - id: guides
       title: "ガイド"

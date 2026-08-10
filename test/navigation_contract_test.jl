@@ -35,13 +35,13 @@ const EXPECTED_SESSION_ENTRIES = [
     ("第6回 授業: 一次元線形・非線形移流", "lessons/N01.qmd"),
     ("第6回 課題: 1次元線形移流方程式", "assignments/N01.qmd"),
     ("第7回 一次元拡散・移流拡散", nothing),
-    ("第8回 Git、テスト、Agentic coding、共通化", nothing),
-    ("第9回 二次元移流、配列軸、可視化、メモリ", nothing),
-    ("第10回 二次元拡散・移流拡散", nothing),
-    ("第11回 PDE分類、Laplace方程式", nothing),
-    ("第12回 Poisson方程式", nothing),
-    ("第13回 最終プレゼンテーション 1", nothing),
-    ("第14回 最終プレゼンテーション 2・試験案内", nothing),
+    ("第8回 授業: 共通化から二次元移流へ", nothing),
+    ("第9回 授業: 二次元拡散・移流拡散", nothing),
+    ("第10回 授業: Laplace／Poissonと反復法", nothing),
+    ("第11回 最終プロジェクト: 計画・成立性レビュー", "assignments/final-project.qmd"),
+    ("第12回 最終プロジェクト: 結果・再現性レビュー", "assignments/final-project.qmd"),
+    ("第13回 最終プレゼンテーション 1", "assignments/final-project.qmd"),
+    ("第14回 最終プレゼンテーション 2・試験案内", "assignments/final-project.qmd"),
     ("第15回 到達度確認試験", nothing),
 ]
 
@@ -446,7 +446,7 @@ end
             ]
             @test sidebar_section_entries(yaml, course, "全15回") == EXPECTED_SESSION_ENTRIES
             course_lines = yaml[course.line:course.last]
-            @test count(occursin("assignments/", line.text) for line in course_lines) == 6
+            @test count(occursin("assignments/", line.text) for line in course_lines) == 10
             @test count(occursin("guides/testing.qmd", line.text) for line in course_lines) == 0
             @test !any(occursin("advanced/cairomakie.qmd", line.text) for line in course_lines)
         end
