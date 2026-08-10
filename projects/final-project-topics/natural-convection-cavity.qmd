@@ -1,0 +1,43 @@
+---
+title: "二次元自然対流キャビティ"
+---
+
+## 現象と問題
+
+左右に温度差を与えた正方形容器で、浮力が流れと熱輸送を生むBoussinesq連成問題を扱います。温度、速度、streamfunction、渦度の関係を調べます。
+
+## 問いを決める
+
+Rayleigh数、Prandtl数、格子、初期場、定常判定のうち、何が熱輸送と循環へ与える影響を調べるか決めます。伝導支配から対流支配への変化を二条件以上で問えます。
+
+## 比較軸
+
+`Ra=10^3,10^4`を候補とし、一つの物理parameterを主軸にします。正方形、左右定温、上下断熱、no-slip、Prandtl数を比較間で揃えます。
+
+## 推奨する最小scope
+
+streamfunction–vorticity形式の二次元starterを用い、正方形・左右定温・上下断熱・no-slip・Boussinesq近似で定常解を求めます。まず二つの低いRayleigh数を比較します。
+
+## 評価指標
+
+壁面平均・局所Nusselt数、最大速度、主渦中心、温度・streamfunction contour、熱収支を使います。定常判定量とresidualも数値で記録します。
+
+## 二層検証
+
+外部基準としてde Vahl Davis benchmarkのNusselt数、速度、渦中心を用います。自己整合性として熱収支、divergence、Poisson residual、定常判定、格子・時間刻み依存性を確認します。
+
+## 過大scope
+
+三次元、乱流、温度依存物性、放射、相変化、複雑形状を最初から加えません。高Rayleigh数へ進む場合も低Rayleigh数の回帰caseを残します。
+
+## 手法・package
+
+streamfunction–vorticity法、Poisson solve、温度・渦度輸送を分けて検証します。線形solverや可視化packageは選べますが、共通solver APIや関数名は固定しません。
+
+## 計算負荷
+
+低Rayleigh数・小格子のCPU smoke testから開始し、格子と定常到達時間を測定します。具体的な安定時間刻み、格子、代表時間、memoryはtheme validation後に精密化します。
+
+## 相談事項
+
+境界渦度、Poisson接続、benchmark量、安定時間刻み、高Rayleigh数へ進む条件を相談できます。問い、最終比較、solver分割、完成図、結論は学生自身が決めます。
