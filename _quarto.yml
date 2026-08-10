@@ -9,6 +9,7 @@ project:
     - assignments/*.qmd
     - guides/*.qmd
     - advanced/*.qmd
+    - projects/final-project-topics/*.qmd
 
 engines: ['julia']
 lang: ja
