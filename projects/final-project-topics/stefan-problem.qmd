@@ -16,7 +16,9 @@ title: "一次元Stefan問題"
 
 ## 推奨する最小scope
 
-一次元一相問題を固定格子enthalpy法で解きます。単純な境界条件と既知の相似解を選び、温度場、界面位置、熱収支を再現できる範囲に絞ります。
+一次元一相問題を固定格子enthalpy法で解きます。確認済みの最小caseは、$\rho=1000\ \mathrm{kg\,m^{-3}}$、$c_p=1000\ \mathrm{J\,kg^{-1}\,K^{-1}}$、$k=1\ \mathrm{W\,m^{-1}\,K^{-1}}$、$L=100000\ \mathrm{J\,kg^{-1}}$、domain $0\le x\le0.1\ \mathrm{m}$、初期温度・相変化温度・右境界 $0\ ^\circ\mathrm{C}$、左境界 $10\ ^\circ\mathrm{C}$ です。このとき $\alpha=10^{-6}\ \mathrm{m^2\,s^{-1}}$、$\mathrm{Ste}=0.1$ です。
+
+学生向けの[thin launch kit](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/stefan-problem)には、[相似解CSV](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/similarity-reference.csv)と、CSV・物性・無次元parameterの整合だけを確認するCPU preflightがあります。enthalpy solver、時間積分、界面抽出実装、完成実験は含まれません。
 
 ## 評価指標
 
@@ -24,7 +26,9 @@ title: "一次元Stefan問題"
 
 ## 二層検証
 
-外部基準として一相Stefan問題の相似解を用います。自己整合性としてenergy balance、格子・時間刻み依存性、enthalpyと温度の対応、界面位置の単調性を確認します。
+外部基準として一相Stefan問題の相似解を用います。$s(t)=2\lambda\sqrt{\alpha t}$ と $\sqrt{\pi}\lambda e^{\lambda^2}\operatorname{erf}(\lambda)=\mathrm{Ste}$ から、このcaseでは $\lambda=0.2200162727429379$ です。固定格子enthalpy法の出発点は[Voller et al.](https://doi.org/10.1002/nme.1620240119)を参照します。
+
+教員referenceでは51、101、201点とtimestep factor 0.4、0.2の6 caseを計算しました。factor 0.2のinterface errorは51点の $1.2273\times10^{-4}\ \mathrm{m}$ から201点の $2.2175\times10^{-5}\ \mathrm{m}$ へ減少し、201点のnormalized energy imbalanceは $2.99\times10^{-15}$（許容上限0.02）でした。全temperatureとliquid fractionはfiniteで、liquid fractionは $[0,1]$ に収まりました。
 
 ## 過大scope
 
@@ -36,7 +40,11 @@ title: "一次元Stefan問題"
 
 ## 計算負荷
 
-小格子・短時間のCPU smoke testから始め、格子数と時間刻みを独立に変えます。具体的な安定設定、代表時間、memoryはtheme validationと自分の測定で確定します。
+小格子・短時間のCPU smoke testから始め、格子数と時間刻みを独立に変えます。配布assetと教員referenceをJulia 1.12.6、Ubuntu 24.04.4 LTS x86_64で3回測定した結果、warm runの中央値はfast preflight $2.07\ \mathrm{s}$、6-case reference run $2.11\ \mathrm{s}$、数値contractを含むreference test $3.46\ \mathrm{s}$ でした。warm reference testのpeak memoryは3回の最大で $363.93\ \mathrm{MiB}$、empty depotからの初回compileを含むreference testは $27.53\ \mathrm{s}$、$592.20\ \mathrm{MiB}$ でした。
+
+教員referenceの相変化温度幅は $0.1\ ^\circ\mathrm{C}$、interfaceはliquid fraction 0.5の位置です。温度幅を変えるとsharp-interface相似解に対するinterface位置が変わるため、少なくとも二つの温度幅で感度を確認し、物理parameterの影響と数値的regularizationの影響を分けてください。
+
+WindowsとmacOSではまだ実行していないため、このthemeは3 OS確認済み・公開可能とは扱いません。両platformでfast preflightとreference testを各3回以上実測し、初回compile、時間、peak memory、同じ数値contractを確認するまでvalidation statusは `blocked`、readinessは `publishable=no` です。学生自身のsolver性能やplatform supportをLinuxの値から保証するものではありません。
 
 ## 相談事項
 
