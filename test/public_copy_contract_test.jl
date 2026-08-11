@@ -385,9 +385,10 @@ end
     @test isfile(final_project_path)
     final_project = isfile(final_project_path) ? read(final_project_path, String) : ""
     expected_project_headings = [
-        "目的", "チームと進行方法", "全テーマ共通の必須要件", "テーマの選び方",
-        "提出物", "第11回：計画・成立性レビュー", "第12回：結果・再現性レビュー",
-        "最終発表", "完了条件",
+        "目的", "個人とペア", "全テーマ共通要件", "テーマの選び方", "通常課題",
+        "公開solverを用いた数値実験", "自由提案", "project repositoryと成果物",
+        "11月27日：計画へのフィードバック",
+        "12月4日：結果・再現性へのフィードバック", "最終発表", "完了条件",
     ]
     project_headings = [matched.captures[1] for matched in eachmatch(r"(?m)^## (.+)$", final_project)]
     @test project_headings == expected_project_headings

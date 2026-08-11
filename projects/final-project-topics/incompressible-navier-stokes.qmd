@@ -1,0 +1,43 @@
+---
+title: "二次元非圧縮性Navier–Stokes"
+---
+
+## 現象と問題
+
+渦度、streamfunction、速度で表す二次元非圧縮性流れを扱います。標準経路はlid-driven cavity、feedbackを受ける代替経路は周期領域の減衰性二次元乱流です。
+
+## 問いを決める
+
+標準経路ではReynolds数が渦構造へ与える影響を問い、`Re=100,400`を候補にします。乱流経路では粘性によるenergy・enstrophy減衰を問い、cavityのpreflightとfallbackを先に決めます。
+
+## 比較軸
+
+Reynolds数または粘性を主軸にし、格子、時間刻み、Poisson tolerance、定常判定を比較間で揃えます。周期経路では初期場とspectrum正規化も固定します。
+
+## 推奨する最小scope
+
+標準経路ではN09 Poisson solverを再利用可能な核として、渦度–streamfunction形式、Arakawa Jacobian、RK2で正方形cavityの`Re=100,400`を比較します。乱流経路はcavity `Re=100`とTaylor–Green vortexを縮小caseとして成立させてから置き換えます。
+
+## 評価指標
+
+cavityではcenterline velocity、主渦中心、streamfunction極値、二次渦、Poisson residualを使います。乱流経路ではenergy、enstrophy、その収支、energy spectrumを使います。
+
+## 二層検証
+
+外部基準としてGhia benchmarkとTaylor–Green vortexの既知減衰を用います。自己整合性として格子・時間刻み依存性、Poisson residual、定常判定、周期場の零平均条件、energy・enstrophy収支を確認します。
+
+## 過大scope
+
+三次元、乱流model、複雑形状、非構造格子、流入出境界、高解像度DNSを必須にしません。`Re=1000` cavityや`256^2`以上の乱流、慣性領域の主張は発展です。
+
+## 手法・package
+
+N09の資産は再利用できますが、共通solver APIやNavier–Stokesの関数名は固定しません。標準経路と周期経路で境界条件、Poisson solve、診断を局所testに分けます。
+
+## 計算負荷
+
+小格子のcavity `Re=100`をCPU smoke testにし、格子、代表時間、memoryを測ります。周期経路は`64^2,128^2`を候補とし、具体値と24時間以内の成立性はtheme validationで確認します。
+
+## 相談事項
+
+壁面渦度、corner、Arakawa保存性、周期Poisson、Taylor–Green、乱流へ進む条件、cavityへ戻る期限をfeedbackで確認できます。これは選抜ではありません。問い、最終比較、solver分割、完成図、結論は学生自身が決めます。

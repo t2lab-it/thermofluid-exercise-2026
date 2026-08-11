@@ -1,0 +1,43 @@
+---
+title: "反復解法と前処理"
+---
+
+## 現象と問題
+
+自分のsolverに現れるDirichlet Laplace／Poisson線形系を対象に、反復解法と前処理が収束・時間・memoryへ与える影響を比較します。
+
+## 問いを決める
+
+行列構造と格子sizeに対して、基準反復法、CG、前処理付きCGのどれが有効かを問います。速さだけでなく、収束判定と前処理の構築costを含めます。
+
+## 比較軸
+
+同じ離散化、右辺、Dirichlet境界、初期値、toleranceで、基準反復法、CG、前処理付きCGを比較します。assembled・matrix-freeは主比較と混ぜず発展に分けます。
+
+## 推奨する最小scope
+
+manufactured solutionを持つ一つのPoisson problemで3手法を比較します。小格子のCPU smoke testから始め、true residualと正しさの回帰検証を通してから格子を増やします。
+
+## 評価指標
+
+反復回数、true residual、solver時間、前処理構築時間、総時間、memory、格子に対するscalingを使います。初期residualと停止理由も記録します。
+
+## 二層検証
+
+外部基準としてmanufactured solutionまたは直接法の解を用います。自己整合性としてtrue residual、SPD条件、境界値、格子依存性、元の自分のsolverとの正しさの回帰検証を確認します。
+
+## 過大scope
+
+離散化、境界条件、tolerance、線形解法を同時に変えません。非対称・不定値問題、複雑なmultigrid、分散並列は基準3手法の成立後の発展です。
+
+## 手法・package
+
+`LinearSolve.jl`を候補とし、Julia 1.12.6で確認できた場合は`IterativeSolvers.jl`も比較できます。packageへ渡す行列・operatorと停止条件を説明します。
+
+## 計算負荷
+
+小格子のCPU smoke testから開始し、複数格子で反復回数、時間、memoryを測ります。direct solveとの比較はmemoryが安全なsizeに限ります。
+
+## 相談事項
+
+Dirichlet処理、SPD条件、共通tolerance、preconditioner、非収束診断を相談できます。前処理が速くしなくても、構築costと行列構造から原因を説明できれば成果になります。
