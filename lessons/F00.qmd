@@ -25,15 +25,7 @@ title: "ガイダンスと環境診断"
 | GitHub | 手動確認 | 自分の 割り当てられた個人用course repositoryを閲覧 |
 | Coding Agent | 手動確認 | 一つで編集とコマンド実行 |
 
-## トラブルの切り分け
-
-1. `julia` が見つからない: [Julia の導入とターミナルの再起動](../setup/julia.qmd)を確認する。
-2. Julia の版が違う: `juliaup default 1.12.6` の後、ターミナルと VS Code を開き直す。
-3. `git` が見つからない: [OS 別の Git 導入](../setup/git-github.qmd)を確認する。
-4. clone できない: GitHubログイン、repository招待の受諾、clone URL、認証の順に確認する。
-5. Agent を利用できない: [標準と一つの代替手順](../setup/agents.qmd)を確認し、解決しなければ教員・TAへ相談する。
-
-Windows、macOS、Linux で画面やパスの表記は異なりますが、合格条件は共通です。エラー全文を理解できなくても、どのコマンドがどの段階で失敗したかを残せば支援できます。
+診断で問題が見つかった場合は、[トラブル対応](../guides/troubleshooting.qmd)で停止した段階に対応する項目を確認してください。
 
 ## 課題へ進む条件
 
