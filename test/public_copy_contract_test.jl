@@ -30,6 +30,7 @@ const POSITION_LABELS = Dict(
     "advanced/github-cli.qmd" => "任意・発展資料",
     "advanced/cairomakie.qmd" => "任意・発展資料",
     "advanced/package-built-solvers.qmd" => "任意・発展資料",
+    "advanced/public-solver-methods.qmd" => "任意・発展資料",
 )
 
 const NO_ID_TITLE = Dict(
@@ -49,6 +50,7 @@ const NO_ID_TITLE = Dict(
     "advanced/github-cli.qmd" => "GitHub CLIでpull requestを操作する",
     "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
     "advanced/package-built-solvers.qmd" => "パッケージを使ってPDEソルバを構築する",
+    "advanced/public-solver-methods.qmd" => "公開Solverの数値手法を読み解く",
 )
 
 function section_body(source, heading)
@@ -508,8 +510,109 @@ end
             "[GitHub CLIでpull requestを操作する](github-cli.qmd)",
             "[CairoMakieによる可視化](cairomakie.qmd)",
             "[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)",
+            "[公開Solverの数値手法を読み解く](public-solver-methods.qmd)",
         ),
     )
+end
+
+@testset "public solver methods guide is linked from both project routes" begin
+    package_built = copy_source("advanced/package-built-solvers.qmd")
+    final_project = copy_source("assignments/final-project.qmd")
+    @test occursin(
+        "[公開Solverの数値手法を読み解く](public-solver-methods.qmd)",
+        package_built,
+    )
+    @test occursin(
+        "[公開Solverの数値手法を読み解く](../advanced/public-solver-methods.qmd)",
+        final_project,
+    )
+end
+
+@testset "public solver methods guide has a bounded learner-facing scope" begin
+    source = copy_source("advanced/public-solver-methods.qmd")
+
+    for package in (
+        "WaterLily.jl", "Trixi.jl", "Oceananigans.jl", "GeophysicalFlows.jl",
+        "DispersiveShallowWater.jl", "TrixiShallowWater.jl",
+    )
+        @test occursin(package, source)
+    end
+    for marker in (
+        "標準guided route",
+        "相談・発展route",
+        "埋め込み境界法と非圧縮性流れ",
+        "高次不連続Galerkin法と双曲型保存則",
+        "有限体積法とBoussinesq流体",
+        "Fourier擬スペクトル法と地球流体",
+        "SBP法と分散性浅水波",
+    )
+        @test occursin(marker, source)
+    end
+    @test !occursin("```", source)
+
+    project = TOML.parsefile(joinpath(COPY_ROOT, "Project.toml"))
+    manifest = copy_source("Manifest.toml")
+    for package in (
+        "WaterLily", "Trixi", "Oceananigans", "GeophysicalFlows",
+        "DispersiveShallowWater", "TrixiShallowWater",
+    )
+        @test !haskey(project["deps"], package)
+        @test !occursin("[[deps.$package]]", manifest)
+    end
+end
+
+@testset "public solver guide explains immersed-boundary and DG evidence" begin
+    source = copy_source("advanced/public-solver-methods.qmd")
+    for marker in (
+        "Boundary Data Immersion Method",
+        "pressure Poisson",
+        "Strouhal数",
+        "DGSEM",
+        "numerical flux",
+        "Riemann解析解",
+        "hydrostatic reconstruction",
+        "well-balanced性",
+        "positivity",
+        "lake-at-rest",
+    )
+        @test occursin(marker, source)
+    end
+    for link in (
+        "https://github.com/WaterLily-jl/WaterLily.jl",
+        "https://trixi-framework.org/TrixiDocumentation/stable/overview/",
+        "https://trixi-framework.org/TrixiShallowWater.jl/",
+        "../projects/final-project-topics/waterlily-cylinder-flow.qmd",
+        "../projects/final-project-topics/trixi-shock-tube.qmd",
+    )
+        @test occursin(link, source)
+    end
+end
+
+@testset "public solver guide connects methods to distinct verification evidence" begin
+    source = copy_source("advanced/public-solver-methods.qmd")
+    for marker in (
+        "fractional-step法",
+        "Nusselt数",
+        "energy・enstrophy収支",
+        "spectral flux",
+        "線形分散関係",
+        "structure-preserving",
+        "WaterLily.jlとOceananigans.jl",
+        "Trixi.jlとTrixiShallowWater.jl",
+        "TrixiShallowWater.jlとDispersiveShallowWater.jl",
+        "外部参照",
+        "自己整合性確認",
+    )
+        @test occursin(marker, source)
+    end
+    for link in (
+        "https://clima.github.io/OceananigansDocumentation/stable/",
+        "https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/",
+        "https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/",
+        "../projects/final-project-topics/oceananigans-horizontal-convection.qmd",
+    )
+        @test occursin(link, source)
+    end
 end
 
 @testset "advanced SSH guide preserves existing keys and the standard path" begin
@@ -796,6 +899,21 @@ end
     @test !occursin("前の座標・添字・差分課題", assignment)
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
+    for source in (lesson, assignment)
+        for main_contract in (
+            "apply_boundary! → simulate → main",
+            "`main`は`run.jl`にあり",
+            "読む対象ですが、編集対象ではありません",
+            "`write_summary`",
+            "`make_plots`",
+        )
+            @test occursin(main_contract, source)
+        end
+    end
+    @test !occursin(
+        "`provided_support.jl`にある`TOML`、`Plots`、詳細な入力検証、TOML出力、作図処理と`main`",
+        lesson,
+    )
     for source in (lesson, assignment)
         for required_boundary in (
             "provided_support.jl",
