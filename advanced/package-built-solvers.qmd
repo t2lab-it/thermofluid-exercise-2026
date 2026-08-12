@@ -5,21 +5,17 @@ title: "パッケージを使ってPDEソルバを構築する"
 任意・発展資料
 :::
 
-このページは、一次元の数値計算コードから共通パッケージを抽出し、その部品を二次元問題へ再利用した後に読む任意資料です。最終プロジェクトで、Juliaの数値計算パッケージを部品として使いながら、自分でPDEソルバを構築する方法を選ぶ入口にします。
-
-このページで紹介するパッケージは、必修のpublic環境と学生環境には追加しません。各パッケージの導入、API調査、実行環境の準備は、最終プロジェクトの計画に含めてください。
+このページでは、PDEソルバを実装する基礎になるパッケージを紹介します。最終プロジェクトで、Juliaの数値計算パッケージを部品として使いながら、自分でPDEソルバを構築する方法を選ぶ入口にします。
 
 ## このページの目的
 
-パッケージを使うことは、数値計算全体を任せることではありません。格子や自由度の管理、離散方程式の組立て、CPU/GPUでの実行などを既存の部品に任せることで、より複雑な問題へ進めます。一方で、次の判断は利用者に残ります。
+このページで紹介するパッケージを使って格子や自由度の管理、離散方程式の組立て、CPU/GPUでの実行などを既存の部品に任せることで、より複雑な問題に注力することができます。一方で、次の判断は利用者に残ります。
 
 - どの方程式を、どの仮定のもとで解くか。
 - 有限差分法、有限体積法、有限要素法のどれを使うか。
 - 初期条件・境界条件・物性値をどう定めるか。
 - 時間刻み、収束判定、線形・非線形解法をどう選ぶか。
 - 得られた結果が正しいことをどう検証し、限界をどう説明するか。
-
-パッケージがエラーを出さずに値を返したことは、数値結果が正しい証拠にはなりません。
 
 ## ソルバ構築を構成する層
 
@@ -34,16 +30,16 @@ PDEソルバは、単一のアルゴリズムではなく、複数の判断と�
 | 計算基盤 | CPU/GPU、並列化、メモリ配置 |
 | 検証 | 既知解・製造解、格子収束、保存則、残差 |
 
-各パッケージが支援する層は異なります。パッケージ名から選ぶのではなく、自分で制御したい層と任せたい層を先に決めます。
+各パッケージが支援する層は異なります。自分で制御したい層と任せたい層を決めたうえで、適切なパッケージを選ぶ必要があります。
 
 ## 何を基準に選ぶか
 
-- **構造格子上の差分式をCPU/GPUへ発展させたい**：`Chmy.jl`または`ParallelStencil.jl`を調べます。
-- **保存則を有限体積法で扱いたい**：`VoronoiFVM.jl`または`FiniteVolumeMethod.jl`を調べます。
-- **弱形式と有限要素法を使いたい**：`Gridap.jl`、`Ferrite.jl`、`ExtendableFEM.jl`を調べます。
+- **構造格子上の差分式をCPU/GPUへ発展させたい**：`Chmy.jl`または`ParallelStencil.jl`
+- **保存則を有限体積法で扱いたい**：`VoronoiFVM.jl`または`FiniteVolumeMethod.jl`
+- **弱形式と有限要素法を使いたい**：`Gridap.jl`、`Ferrite.jl`、`ExtendableFEM.jl`
 - **同じ数値手法の中で迷う**：高水準に問題を記述したいか、要素loopや組立てを自分で制御したいかを比べます。
 
-ここで候補を一つに決める必要はありません。同じPoisson問題など、小さく検証できる問題を二つの候補で試すと、APIだけでなく、自分が説明できる範囲も比較できます。
+ここで候補を一つに決める必要はありません。例えば小さな問題を複数の候補で試せば、APIや自分が説明できる範囲も比較できます。
 
 ## 7パッケージの比較
 
@@ -59,11 +55,9 @@ PDEソルバは、単一のアルゴリズムではなく、複数の判断と�
 | `ExtendableFEM.jl` | 有限要素法、演算子による問題記述 | 有限要素空間、演算子、組立て、求解、誤差評価 | 未知変数、演算子kernel、境界条件、要素選択 | Poissonから非線形・連成問題、適合格子へ |
 :::
 
-この表は優劣や性能の順位ではありません。対応する方程式、格子、境界条件、backendは更新されるため、プロジェクト開始時に公式資料で確認してください。
-
 ## 有限差分系
 
-### Chmy.jl
+### [Chmy.jl](https://github.com/PTsolvers/Chmy.jl) （[Documentation](https://ptsolvers.github.io/Chmy.jl/)）
 
 **向いている問い**
 
@@ -81,9 +75,7 @@ backendに依存しない格子・演算の道具と、taskに基づく分散並
 
 二次元拡散の差分kernelをまずCPUで再現し、格子収束を確認します。その後、利用できるGPU環境がある場合だけbackendを変更し、CPUとGPUの数値結果が一致することを速度とは別に確認します。
 
-[Chmy.jl documentation](https://ptsolvers.github.io/Chmy.jl/) · [Chmy.jl repository](https://github.com/PTsolvers/Chmy.jl)
-
-### ParallelStencil.jl
+### [ParallelStencil.jl](https://github.com/omlins/ParallelStencil.jl)
 
 **向いている問い**
 
@@ -101,11 +93,9 @@ backendに依存しない格子・演算の道具と、taskに基づく分散並
 
 二次元拡散またはPoisson反復の局所更新を一つのkernelとして移し、自作版と同じ初期・境界条件で結果を比較します。速度を測る場合は初回compileを計測から分離します。
 
-[ParallelStencil.jl repository and documentation](https://github.com/omlins/ParallelStencil.jl)
-
 ## 有限体積系
 
-### VoronoiFVM.jl
+### [VoronoiFVM.jl](https://github.com/WIAS-PDELib/VoronoiFVM.jl)（[Documentation](https://wias-pdelib.github.io/VoronoiFVM.jl/stable/)）
 
 **向いている問い**
 
@@ -123,9 +113,7 @@ Voronoi有限体積法による離散化、疎な系の組立て、非線形求�
 
 既知解を持つPoisson問題を解き、自作した5点差分・Jacobi法と誤差、残差、格子収束を比較します。解が近いかだけでなく、離散化と停止条件の違いを説明します。
 
-[VoronoiFVM.jl documentation](https://wias-pdelib.github.io/VoronoiFVM.jl/stable/) · [VoronoiFVM.jl repository](https://github.com/WIAS-PDELib/VoronoiFVM.jl)
-
-### FiniteVolumeMethod.jl
+### [FiniteVolumeMethod.jl](https://github.com/SciML/FiniteVolumeMethod.jl)（[Documentation](https://docs.sciml.ai/FiniteVolumeMethod/)）
 
 **向いている問い**
 
@@ -143,11 +131,9 @@ flux、source、境界条件、初期値を定め、問題の性質に合う時�
 
 移流拡散問題を三角形格子で解き、授業の規則格子版と保存量、誤差、格子依存性を比較します。格子が異なるため、配列要素を直接比較するのではなく共通の評価量を先に決めます。
 
-[FiniteVolumeMethod.jl documentation](https://docs.sciml.ai/FiniteVolumeMethod/) · [FiniteVolumeMethod.jl repository](https://github.com/SciML/FiniteVolumeMethod.jl)
-
 ## 有限要素系
 
-### Gridap.jl
+### [Gridap.jl](https://github.com/gridap/Gridap.jl)（[Documentation](https://gridap.github.io/Gridap.jl/stable/)）
 
 **向いている問い**
 
@@ -165,9 +151,7 @@ flux、source、境界条件、初期値を定め、問題の性質に合う時�
 
 既知解を持つPoisson問題の弱形式を導出して実装し、$L^2$誤差などのnormで格子収束を確認します。自作差分法との比較では、未知数の数と誤差の定義を明記します。
 
-[Gridap.jl documentation](https://gridap.github.io/Gridap.jl/stable/) · [Gridap.jl repository](https://github.com/gridap/Gridap.jl)
-
-### Ferrite.jl
+### [Ferrite.jl](https://github.com/Ferrite-FEM/Ferrite.jl)（[Documentation](https://ferrite-fem.github.io/Ferrite.jl/stable/)）
 
 **向いている問い**
 
@@ -185,9 +169,7 @@ flux、source、境界条件、初期値を定め、問題の性質に合う時�
 
 Poisson問題の局所剛性行列が全体行列へ組み立てられる過程を追い、Dirichlet境界条件を適用する前後の系を説明します。そのうえで既知解との誤差を測ります。
 
-[Ferrite.jl documentation](https://ferrite-fem.github.io/Ferrite.jl/stable/) · [Ferrite.jl repository](https://github.com/Ferrite-FEM/Ferrite.jl)
-
-### ExtendableFEM.jl
+### [ExtendableFEM.jl](https://github.com/WIAS-PDELib/ExtendableFEM.jl)（[Documentation](https://wias-pdelib.github.io/ExtendableFEM.jl/stable/)）
 
 **向いている問い**
 
@@ -205,8 +187,6 @@ Poisson問題の局所剛性行列が全体行列へ組み立てられる過程�
 
 Poisson問題から始め、同じ既知解に対する誤差を確認します。次に非線形項を一つ追加するか、L字領域で誤差指標による格子改善を調べ、何を基準に格子を細かくしたかを説明します。
 
-[ExtendableFEM.jl documentation](https://wias-pdelib.github.io/ExtendableFEM.jl/stable/) · [ExtendableFEM.jl repository](https://github.com/WIAS-PDELib/ExtendableFEM.jl)
-
 ## 最終プロジェクトで使う場合
 
 - パッケージに任せた部分と、自分で実装・設定した部分を区別して説明する。
@@ -219,6 +199,6 @@ Poisson問題から始め、同じ既知解に対する誤差を確認します�
 
 完成済みの公開solverを使って数値実験を設計する方式は、[公開Solverの数値手法を読み解く](public-solver-methods.qmd)で扱います。このページでは、離散化や組立ての部品を使いながら自分でsolverを構築する方式だけを扱います。
 
-## 公式資料
-
-APIと対応機能は変化します。プロジェクト開始時には、各節からリンクした公式documentationと公式repositoryで、対象方程式、格子、境界条件、backend、必要な追加packageを確認してください。第三者のpackage一覧、人気指標、Coding Agentの説明だけで利用可否を判断しないでください。
+::: {.callout-warning title="公式資料を確認する"}
+APIと対応機能は変化します。プロジェクト開始時には、各節からリンクした公式documentationと公式repositoryで、対象方程式、格子、境界条件、backend、必要な追加packageを確認してください。
+:::
