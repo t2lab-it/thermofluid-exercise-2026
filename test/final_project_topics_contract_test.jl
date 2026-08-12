@@ -30,6 +30,30 @@ const OPEN_PROPOSAL_HEADINGS = [
     end
 end
 
+@testset "natural-convection page reports only measured validation" begin
+    source = read(joinpath(TOPIC_ROOT, "natural-convection-cavity.qmd"), String)
+    for phrase in (
+        "Pr=0.71",
+        "65×65",
+        "129×129",
+        "2×10^-8",
+        "de-vahl-davis-reference.csv",
+        "Linux",
+        "506.57",
+        "公開可能",
+        "platform waiver",
+        "status=ready",
+        "publishable=yes",
+        "互換性を主張しません",
+        "2026-08-12",
+    )
+        @test occursin(phrase, source)
+    end
+    @test occursin("macOS", source)
+    @test occursin("Windows", source)
+    @test !occursin("公開準備中", source)
+end
+
 @testset "quasi-1d nozzle Linux-only publication waiver" begin
     source = read(joinpath(TOPIC_ROOT, "quasi-1d-nozzle.qmd"), String)
     for phrase in (

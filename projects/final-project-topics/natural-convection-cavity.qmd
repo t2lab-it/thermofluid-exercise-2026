@@ -2,6 +2,14 @@
 title: "二次元自然対流キャビティ"
 ---
 
+::: {.callout-note}
+## Linux実測で公開可能
+
+2026-08-12にcourse ownerがTask 4固有のLinux-only platform waiverを承認しました。
+validationは `status=ready`、readinessは `publishable=yes` です。実測済みplatformは
+Linuxだけで、macOSとWindowsは未実測です。これら未実測OSの互換性を主張しません。
+:::
+
 ## 現象と問題
 
 左右に温度差を与えた正方形容器で、浮力が流れと熱輸送を生むBoussinesq連成問題を扱います。温度、速度、streamfunction、渦度の関係を調べます。
@@ -12,19 +20,21 @@ Rayleigh数、Prandtl数、格子、初期場、定常判定のうち、何が�
 
 ## 比較軸
 
-`Ra=10^3,10^4`を候補とし、一つの物理parameterを主軸にします。正方形、左右定温、上下断熱、no-slip、Prandtl数を比較間で揃えます。
+検証済みの `Ra=10^3,10^4` を比較し、`Pr=0.71`、正方形、左右定温、上下断熱、no-slipを比較間で揃えます。一つの物理parameterを主軸にしてください。
 
 ## 推奨する最小scope
 
-streamfunction–vorticity形式の二次元starterを用い、正方形・左右定温・上下断熱・no-slip・Boussinesq近似で定常解を求めます。まず二つの低いRayleigh数を比較します。
+正方形・左右定温・上下断熱・no-slip・Boussinesq近似で定常解を求めます。境界を含む `65×65` と `129×129` の二格子（格子幅 `h=1/(N-1)`）を必ず比較してください。
+
+学生向けlaunch kitには、[問題・境界・格子の定義](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/natural-convection-cavity)と[de Vahl Davis benchmark表](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/de-vahl-davis-reference.csv)だけを提供します。完成済みsolver、境界渦度実装、Poisson実装、数値fluxは含みません。
 
 ## 評価指標
 
-壁面平均・局所Nusselt数、最大速度、主渦中心、温度・streamfunction contour、熱収支を使います。定常判定量とresidualも数値で記録します。
+壁面平均・局所Nusselt数、最大速度、主渦中心、温度・streamfunction contour、熱収支を使います。定常判定は、正規化した渦度更新量または温度の絶対更新量の最大値が `2×10^-8` 以下になることとし、residualも数値で記録します。
 
 ## 二層検証
 
-外部基準としてde Vahl Davis benchmarkのNusselt数、速度、渦中心を用います。自己整合性として熱収支、divergence、Poisson residual、定常判定、格子・時間刻み依存性を確認します。
+外部基準として[de Vahl Davis (1983)](https://doi.org/10.1002/fld.1650030305)のNusselt数、速度、速度最大位置を用います。Linux referenceでは、平均Nusselt数の絶対誤差が `Ra=10^3` で `7.28×10^-4` から `2.66×10^-5`、`Ra=10^4` で `1.32×10^-2` から `4.50×10^-3` へ格子細分化で減少しました。四case中の最大値はPoisson residual `4.85×10^-9`、discrete divergence `1.14×10^-13`、hot/cold壁熱流束imbalance `1.11×10^-4` です。
 
 ## 過大scope
 
@@ -32,12 +42,12 @@ streamfunction–vorticity形式の二次元starterを用い、正方形・左�
 
 ## 手法・package
 
-streamfunction–vorticity法、Poisson solve、温度・渦度輸送を分けて検証します。線形solverや可視化packageは選べますが、共通solver APIや関数名は固定しません。
+instructor referenceはstreamfunction–vorticity法でPoisson solve、温度・渦度輸送を分けて検証しましたが、学生の手法は固定しません。線形solverや可視化packageは選べ、共通solver APIや関数名も固定しません。
 
 ## 計算負荷
 
-低Rayleigh数・小格子のCPU smoke testから開始し、格子と定常到達時間を測定します。具体的な安定時間刻み、格子、代表時間、memoryはtheme validation後に精密化します。
+Linuxでの二格子比較の実測は `Ra=10^3` が241.85秒・peak 310.20 MiB、`Ra=10^4` が246.57秒・peak 309.42 MiBでした。四case一括実行は3回で494.46、596.83、506.57秒（中央値506.57秒、peak 316.02 MiB）、preflightは1.78、1.85、2.26秒（中央値1.85秒、peak 338.37 MiB）でした。macOS・Windowsでは未実測です。
 
 ## 相談事項
 
-境界渦度、Poisson接続、benchmark量、安定時間刻み、高Rayleigh数へ進む条件を相談できます。問い、最終比較、solver分割、完成図、結論は学生自身が決めます。
+境界渦度、Poisson接続、benchmark量、安定時間刻み、高Rayleigh数へ進む条件、未実測platformでのpreflightを相談できます。問い、最終比較、solver分割、完成図、結論は学生自身が決めます。
