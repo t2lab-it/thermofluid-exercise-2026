@@ -400,6 +400,7 @@ end
                     ("advanced/github-cli.qmd", "GitHub CLIでpull requestを操作する"),
                     ("advanced/cairomakie.qmd", "CairoMakieによる可視化"),
                     ("advanced/package-built-solvers.qmd", "パッケージを使ってPDEソルバを構築する"),
+                    ("advanced/public-solver-methods.qmd", "公開Solverの数値手法を読み解く"),
                 ],
             ),
         )
@@ -511,6 +512,7 @@ end
                     ("GitHub CLIでpull requestを操作する", "advanced/github-cli.qmd"),
                     ("CairoMakieによる可視化", "advanced/cairomakie.qmd"),
                     ("パッケージを使ってPDEソルバを構築する", "advanced/package-built-solvers.qmd"),
+                    ("公開Solverの数値手法を読み解く", "advanced/public-solver-methods.qmd"),
                 ]
             end
         end

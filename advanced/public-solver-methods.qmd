@@ -1,0 +1,428 @@
+---
+title: "公開Solverの数値手法を読み解く"
+---
+::: {.course-position}
+任意・発展資料
+:::
+
+このページでは、完成した公開solverをblack boxとして使うのではなく、内部で使われる数理モデル、空間離散化、保存・安定化の考え方、結果を信用するためのdiagnosticsを比較します。
+
+::: {.callout-note}
+## 二つの発展経路
+
+[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)では、パッケージを部品として自分でsolverを組み立てます。このページでは、分野特化solverが採用する数値手法を理解し、問い、比較条件、検証、限界を設計します。
+:::
+
+::: {.callout-important}
+## 2026年度の支援範囲
+
+`WaterLily.jl`、`Trixi.jl`、`Oceananigans.jl`は標準guided routeです。`GeophysicalFlows.jl`、`DispersiveShallowWater.jl`、`TrixiShallowWater.jl`は相談・発展routeであり、採用前に縮小case、version、計算負荷、検証、fallback、支援範囲を確認します。この区分は数値手法の優劣ではありません。
+:::
+
+## 6つのsolverを数値手法で見渡す
+
+::: {.table-responsive .course-map}
+| Solver | 主な方程式・現象 | 空間離散化 | 格子・境界 | 時間発展 | 重視する性質 | 主なdiagnostics | 2026年度のroute |
+|---|---|---|---|---|---|---|---|
+| `WaterLily.jl` | 非圧縮性Navier–Stokes、物体まわり流れ | Cartesian格子上の有限体積的離散化とBDIM | 埋め込み物体 | solver内のtime steppingとpressure projection | 非圧縮拘束、物体境界 | divergence、流体力、渦放出周波数 | 標準guided route |
+| `Trixi.jl` | 圧縮性Euler等の保存則 | 高次DGSEM | elementとnumerical flux | 半離散ODEとSciML integrator | 保存、entropy、shock安定化 | 波位置、誤差、保存量 | 標準guided route |
+| `Oceananigans.jl` | Boussinesq流れ、tracer輸送 | staggered finite volume | box・球殻領域のtopology | explicit stepperとfractional step | 非圧縮拘束、収支 | divergence、熱・浮力flux | 標準guided route |
+| `GeophysicalFlows.jl` | 二次元乱流、準地衡流 | Fourier擬スペクトル法 | 周期領域 | FourierFlows.jlのtime stepper | energy・enstrophy transfer | spectrum、spectral flux、収支 | 相談・発展route |
+| `DispersiveShallowWater.jl` | 分散性浅水波 | SBP operatorによる半離散化 | 一次元領域とbathymetry | 半離散ODEとSciML integrator | 保存、entropy、分散関係 | mass、energy、位相速度 | 相談・発展route |
+| `TrixiShallowWater.jl` | 非分散浅水balance law | 高次DGとflux differencing | line・quad、地形、wet/dry | 半離散ODEとSciML integrator | well-balanced性、positivity | lake-at-rest、総水量、水深 | 相談・発展route |
+:::
+
+## 埋め込み境界法と非圧縮性流れ
+
+### WaterLily.jl
+
+#### どの方程式・現象を扱うか
+
+`WaterLily.jl`は、Cartesian格子上で二次元または三次元の非定常・非圧縮性粘性流れを解き、格子に適合しない物体のまわりの流れを扱います。代表的な支配方程式は
+
+::: {.table-responsive}
+$$
+\frac{\partial \boldsymbol{u}}{\partial t}
++ (\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
+= -\nabla p + \nu\nabla^2\boldsymbol{u},
+\qquad
+\nabla\cdot\boldsymbol{u}=0
+$$
+:::
+
+です。$\boldsymbol{u}$は速度、$p$は密度で規格化した圧力、$\nu$は動粘性係数です。後半の式は、各時刻で満たすべき非圧縮拘束です。
+
+#### 数値手法の中心
+
+圧力はcell center、速度成分は対応するcell faceに置くstaggered配置を使います。時間発展で得た速度を、pressure Poisson方程式の解を用いて発散のない場へ補正します。このPoisson方程式にはgeometric multigridが用いられます。
+
+物体表面にはbody-fitted meshを作らず、符号付き距離などで与えた形状をBoundary Data Immersion Method（BDIM）でCartesian格子へ埋め込みます。複雑な形状でも直交格子を保てることが利点ですが、境界条件を満たす精度は物体表面近傍の格子解像度に依存します。
+
+#### Solverが担当する部分と利用者が決める部分
+
+solverは、staggered格子上の流れ場、時間発展、pressure Poisson solve、埋め込み物体の幾何情報、圧力による物体力などの指標を扱います。利用者はdomainと外側境界、物体形状と運動、Reynolds数、格子解像度、初期過渡を除外する時刻、統計を取るsampling区間を決めます。
+
+#### 数値的な長所と代償
+
+物体に沿うmesh生成を避けながら移動物体を含む非圧縮性流れを調べられる一方、物体曲率、外側境界までの距離、圧力・流体力評価を独立に確認する必要があります。Cartesian格子で計算できることと、物体境界が十分に解像されていることは同じではありません。
+
+::: {.callout-warning}
+## 信用できない条件
+
+物体直径に対する格子点が少ない、wakeが外側境界へ近すぎる、初期過渡を含めて平均する、渦放出周期に比べてsampling区間が短い場合、計算が停止せず完走しても抗力・揚力・周波数を信用できません。
+:::
+
+#### 何を測って信用するか
+
+- **外部参照**：円柱wakeなどについて、同じReynolds数と同等の境界条件を持つbenchmarkの抗力、揚力振幅、Strouhal数と比較します。
+- **自己整合性確認**：$\nabla\cdot\boldsymbol{u}$、格子依存性、domain依存性、初期過渡の除外時刻、sampling区間依存性を調べます。渦放出がある場合は、時系列から得た周波数とStrouhal数がsampling条件に対して安定かも確認します。
+
+#### この授業の課題にするなら
+
+[WaterLily.jlによる円柱まわり流れ](../projects/final-project-topics/waterlily-cylinder-flow.qmd)を標準guided routeとします。変更するparameterをReynolds数または格子解像度の一つに絞り、少なくとも二条件で流体力と渦放出周波数を比較します。複雑形状・移動境界・三次元化を同時に導入するscopeは避けます。
+
+[WaterLily.jl official repository](https://github.com/WaterLily-jl/WaterLily.jl)
+
+## 高次不連続Galerkin法と双曲型保存則
+
+双曲型保存則とbalance lawは、まとめて
+
+::: {.table-responsive}
+$$
+\frac{\partial \boldsymbol{U}}{\partial t}
++ \nabla\cdot\boldsymbol{F}(\boldsymbol{U})
+= \boldsymbol{S}(\boldsymbol{U}, \boldsymbol{x}, t)
+$$
+:::
+
+と書けます。$\boldsymbol{U}$は保存変数、$\boldsymbol{F}$はflux、$\boldsymbol{S}$は地形などに由来するsourceです。sourceがある場合は、fluxだけでなく両者の離散的な釣合いも数値手法の一部になります。
+
+### Trixi.jl
+
+#### どの方程式・現象を扱うか
+
+`Trixi.jl`は双曲型保存則を空間半離散化するためのframeworkです。標準guided routeでは一次元圧縮性Euler方程式のshock tubeを扱います。保存変数とfluxは
+
+::: {.table-responsive}
+$$
+\boldsymbol{U}=
+\begin{pmatrix}\rho\\ \rho u\\ E\end{pmatrix},
+\qquad
+\boldsymbol{F}(\boldsymbol{U})=
+\begin{pmatrix}\rho u\\ \rho u^2+p\\ u(E+p)\end{pmatrix}
+$$
+:::
+
+です。$\rho$は密度、$u$は速度、$E$は全energy、$p$は圧力です。
+
+#### 数値手法の中心
+
+代表的なDGSEMでは、domainをelementへ分割し、各element内の解を高次多項式で表します。element内部では微分行列またはflux differencingを使い、element境界では左右状態から作るnumerical fluxを通して情報を交換します。これにより、elementごとの局所表現と保存則のflux形式を結び付けます。
+
+空間半離散化の後はmethod of linesによりODE系とし、SciMLの時間積分へ接続します。したがって、高次精度は空間多項式だけでは決まらず、時間積分と時間刻みも含めて評価する必要があります。
+
+#### Solverが担当する部分と利用者が決める部分
+
+frameworkはmesh、方程式、DGSEMなどのsolver、半離散化、解析callback、SciML時間積分への接続を構成します。利用者はmesh、polynomial degree、surface fluxとvolume flux、shock capturingまたはlimiter、時間積分法、CFLまたは許容誤差、出力・解析callbackを選びます。
+
+#### 数値的な長所と代償
+
+smooth領域では高次多項式による小さな誤差を得やすく、element単位の離散化は局所的な解像度変更にもつながります。一方、shockでは高次多項式がGibbs型の振動を起こし得るため、形式次数だけでなくnumerical flux、shock capturing、limitingによる散逸と非物理状態の回避を管理します。
+
+::: {.callout-warning}
+## 信用できない条件
+
+shock近傍にovershootや負の密度・圧力がある、波の位置が参照解とずれる、limiterを強めると結論が変わる、保存量の誤差が時間とともに系統的に増える場合、高次の設定であっても結果を信用できません。
+:::
+
+#### 何を測って信用するか
+
+- **外部参照**：同じ初期左右状態のRiemann解析解または十分に解像した参照解と、shock・contact discontinuity・rarefactionの位置と形を比較します。
+- **自己整合性確認**：`L1`誤差、質量・運動量・全energy、overshoot、mesh依存性、polynomial degree依存性を調べます。次数を上げる比較とelementを細かくする比較を区別します。
+
+#### この授業の課題にするなら
+
+[Trixi.jlによる一次元shock tube](../projects/final-project-topics/trixi-shock-tube.qmd)を標準guided routeとします。numerical fluxまたは解像度の一つだけを変え、波位置、`L1`誤差、保存量、overshootを同じ時刻で比較します。多次元化、AMR、複数limiterの同時比較は最小scopeを越えます。
+
+[Trixi.jl overview](https://trixi-framework.org/TrixiDocumentation/stable/overview/)
+
+### TrixiShallowWater.jl
+
+#### どの方程式・現象を扱うか
+
+`TrixiShallowWater.jl`は`Trixi.jl`の数値基盤を使い、浅水方程式固有のbalance lawを扱う専門packageです。現行のstable資料では浅水方程式型は`Trixi.jl`本体ではなく、このpackageから提供されます。一次元の代表式は
+
+::: {.table-responsive}
+$$
+\frac{\partial h}{\partial t}+\frac{\partial (hu)}{\partial x}=0,
+\qquad
+\frac{\partial (hu)}{\partial t}
++\frac{\partial}{\partial x}\left(hu^2+\frac{g}{2}h^2\right)
+=-gh\frac{\partial b}{\partial x}
+$$
+:::
+
+です。`h`は水深、`u`は水深平均速度、`b`は河床・海底地形です。静水状態ではpressure fluxの勾配と地形sourceが釣り合います。
+
+#### 数値手法の中心
+
+高次DGSEMとflux differencingを基盤としつつ、地形を含むsurface fluxにはhydrostatic reconstructionを使えます。これによりlake-at-restのwell-balanced性を目指します。wet/dryを含む計算では水深のpositivityを保つlimiterやthresholdが必要で、shockにはentropy-stableなshock capturingを組み合わせます。
+
+#### Solverが担当する部分と利用者が決める部分
+
+packageは浅水方程式と地形source、浅水向けflux・hydrostatic reconstruction・positivity処理を`Trixi.jl`のmesh、DG、callback、SciML時間積分基盤へ接続します。利用者は地形、初期・境界条件、mesh、次数、surface・volume flux、well-balancedとpositivityの構成、wet/dry threshold、時間積分を決めます。
+
+#### 数値的な長所と代償
+
+shock、地形、wet/dryを同じ高次DG基盤で調べられる一方、保存だけでは不十分です。地形sourceとfluxがずれると本来静止するlake-at-restに偽の流れが生じ、正値性だけを満たしても過度なlimitingで波形を失うことがあります。
+
+::: {.callout-warning}
+## 信用できない条件
+
+lake-at-restから流れが自発的に生じる、水深が負になる、dry thresholdを変えると濡れた領域が大きく変わる、または非分散浅水モデルを波長依存の分散が重要な条件へ使う場合、計算の安定性だけでは結果を信用できません。
+:::
+
+#### 何を測って信用するか
+
+- **外部参照**：lake-at-rest、dam-breakの解析解またはbenchmarkと、水面・shock位置を比較します。
+- **自己整合性確認**：総水量、最小水深、静水保持誤差、mesh・次数依存性、wet/dry threshold依存性を調べます。
+
+#### この授業の課題にするなら
+
+相談・発展routeです。[Wet-bed dam break](../projects/final-project-topics/shallow-water-dam-break.qmd)を非分散浅水balance lawの比較対象として使い、地形またはfluxの一条件だけを変える縮小caseから相談します。well-balanced性、positivity、dam-breakをすべて別々の大規模caseで扱うことは避けます。
+
+[TrixiShallowWater.jl official documentation](https://trixi-framework.org/TrixiShallowWater.jl/)
+
+## 有限体積法とBoussinesq流体
+
+### Oceananigans.jl
+
+#### どの方程式・現象を扱うか
+
+`Oceananigans.jl`は、nonhydrostaticまたはhydrostatic Boussinesq系の有限体積simulationを扱います。標準guided routeのhorizontal convectionでは、浮力を運ぶ二次元nonhydrostatic流れを代表例とします。
+
+::: {.table-responsive}
+$$
+\frac{\partial\boldsymbol{u}}{\partial t}
++(\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
++f\,\hat{\boldsymbol{z}}\times\boldsymbol{u}
+=-\nabla p+b\hat{\boldsymbol{z}}+\boldsymbol{D}_u,
+\qquad \nabla\cdot\boldsymbol{u}=0,
+$$
+
+$$
+\frac{\partial b}{\partial t}
++\boldsymbol{u}\cdot\nabla b=D_b.
+$$
+:::
+
+ここで$\boldsymbol{u}$は速度、$p$は非圧縮拘束に対応する圧力、$b$は浮力、$f$は回転の効果、$\boldsymbol{D}_u$と$D_b$は拡散・closureなどの寄与をまとめた項です。
+
+#### 数値手法の中心
+
+tracerのようなscalarと圧力はcontrol volumeのcenter、速度成分は対応するfaceに置くstaggered finite volumeを使います。nonhydrostatic modelでは、fractional-step法により圧力を除いた中間速度を進め、pressure Poisson型の楕円問題を解いてdivergence-freeな速度へ射影します。
+
+時間発展はmodelの空間離散化と分けて考えられ、利用するmodelに対応するexplicit time stepperでprognostic fieldを進めます。圧力射影を使うことは、advection scheme、closure、境界flux、時間刻みの選択を自動的に正しくすることを意味しません。
+
+#### Solverが担当する部分と利用者が決める部分
+
+solverはgridとtopology、finite-volume operator、圧力拘束、buoyancy・tracer・Coriolis・closureの組合せ、時間発展、outputを構成します。利用者はdomainとgrid topology、解像度、buoyancy model、boundary flux、advection scheme、closure、time stepperと時間刻み、停止条件、統計定常の判定、保存するdiagnosticsを決めます。
+
+#### 数値的な長所と代償
+
+浮力、成層、回転、tracer輸送を同じframeworkで扱い、Cartesianまたはspherical-shell domainをCPU/GPUで計算できる一方、物理結果はadvection、closure、境界flux、integration horizonに強く依存します。高い計算性能や長いsimulationは、選んだclosureと境界条件の妥当性を保証しません。
+
+::: {.callout-warning}
+## 信用できない条件
+
+divergenceが十分に小さくない、境界から入る熱・浮力fluxとdomain内の収支が合わない、格子や時間刻みでNusselt数が変わり続ける、または統計定常へ達する前の区間を平均した場合、循環が見えていても結果を信用できません。
+:::
+
+#### 何を測って信用するか
+
+- **外部参照**：horizontal-convectionの参照値や既報のscalingと、同じboundary forcing・無次元parameterで循環とNusselt数を比較します。
+- **自己整合性確認**：divergence、熱・浮力収支、boundary flux、循環、格子・時間刻み依存性、平均値の時間窓依存性、定常または統計定常性を確認します。
+
+#### この授業の課題にするなら
+
+[Oceananigans.jlによるhorizontal convection](../projects/final-project-topics/oceananigans-horizontal-convection.qmd)を標準guided routeとします。boundary forcingまたは解像度の一つだけを変え、循環とNusselt数を同じ定義・sampling区間で比較します。三次元化、複数closure、GPU性能比較を同時に行うscopeは避けます。
+
+[Oceananigans.jl official documentation](https://clima.github.io/OceananigansDocumentation/stable/)
+
+## Fourier擬スペクトル法と地球流体
+
+### GeophysicalFlows.jl
+
+#### どの方程式・現象を扱うか
+
+`GeophysicalFlows.jl`は、周期domain上で地球流体力学のmodelを解くmodule collectionです。代表として`SingleLayerQG`のpotential-vorticity方程式を、公式資料のconstant background flowを$U=0$へ特殊化して示します。
+
+::: {.table-responsive}
+$$
+\frac{\partial q}{\partial t}
++J(\psi,q+\eta)+\beta\frac{\partial\psi}{\partial x}
+=-\left[\mu+\nu(-1)^{n_\nu}\nabla^{2n_\nu}\right]q+F,
+\qquad
+q=\nabla^2\psi-\frac{\psi}{\ell^2},
+\qquad
+\eta=\frac{f_0h}{H}.
+$$
+:::
+
+$\psi$はstreamfunction、$q$はrelative vorticityとvortex stretchingを合わせたprognostic potential vorticity、$\ell$はRossby deformation radius、$\beta$はplanetary vorticity gradient、$\eta$はtopographic PVです。$J(a,b)=a_xb_y-a_yb_x$は二次元Jacobianです。
+
+#### 数値手法の中心
+
+Fourier-based pseudospectral methodでは場をFourier modeで表し、空間微分をwavenumber空間で評価します。`SingleLayerQG`は$q$をFourier空間で時間発展させ、非線形Jacobianを保存形で計算します。周期・単純domainでは高精度な微分とenergy spectrumなどのspectral diagnosticsを直接結び付けられます。
+
+#### Solverが担当する部分と利用者が決める部分
+
+`FourierFlows.jl`基盤がperiodic grid、FFT、spectral differentiation、time stepperとの接続を担い、各moduleが方程式、forcing、dissipation、diagnosticsを構成します。利用者はdomain、解像度、初期spectrum、forcing、drag、viscosityまたはhyperviscosity、time stepper、sampling区間、Fourier transformとspectrumの正規化を決めます。
+
+#### 数値的な長所と代償
+
+周期domainでは微分とscale別解析の整合を取りやすい一方、非周期境界や複雑形状をそのまま表す手法ではありません。FFTで計算できた高wavenumber成分が解像されているとは限らず、aliasing対策や人工散逸の選択がenergy transferの解釈へ入り込みます。
+
+::: {.callout-warning}
+## 信用できない条件
+
+energy spectrumが最高wavenumber付近で持ち上がる、forcing・dissipation・filterの収支が閉じない、dealiasingやhyperviscosityを変えると結論が逆転する、または非周期境界を周期domainとして接続した不連続が支配する場合、渦構造が滑らかに見えても結果を信用できません。
+:::
+
+#### 何を測って信用するか
+
+- **外部参照**：既知解、既報の統計量、または選んだQG regimeのenergy spectrum・cascadeの特徴と比較します。
+- **自己整合性確認**：energy・enstrophy収支、energy spectrum、spectral flux、解像されたwavenumber範囲、time-step・filter・dissipation依存性、spectrum normalizationを確認します。
+
+#### この授業の課題にするなら
+
+相談・発展routeです。forcing、deformation radius、またはdissipationの一つだけを変え、energy・enstrophy収支とspectral fluxを少なくとも二条件で比較する縮小caseから相談します。乱流regime、forcing、resolution、dissipationを同時に変える設計は因果を分離できません。
+
+[GeophysicalFlows.jl official documentation](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/)
+
+## SBP法と分散性浅水波
+
+### DispersiveShallowWater.jl
+
+#### どの方程式・現象を扱うか
+
+`DispersiveShallowWater.jl`は、波長によって位相速度が変わる一次元の分散性浅水modelを扱います。KdV、BBM、BBM-BBM、Svärd–Kalisch、Serre–Green–Naghdiなど複数の近似方程式があり、modelごとに保持する分散と非線形性が異なります。variable bathymetryを含むBBM-BBMの代表式は
+
+::: {.table-responsive}
+$$
+\eta_t+\bigl((\eta+D)v\bigr)_x
+-\frac{1}{6}\bigl(D^2\eta_{xt}\bigr)_x=0,
+$$
+
+$$
+v_t+g\eta_x+\left(\frac{v^2}{2}\right)_x
+-\frac{1}{6}\bigl(D^2v_t\bigr)_{xx}=0
+$$
+:::
+
+です。$\eta$はtotal water height、$v$はvelocity、$D$はstill-water depth、$g$は重力加速度です。時間微分を含む高階空間項が非分散浅水方程式との主要な違いです。
+
+#### 数値手法の中心
+
+空間半離散化にはsummation-by-parts（SBP）operatorを用い、離散的な部分積分に相当する構造を使ってmass、energy、entropyなどmodel固有の不変量を扱います。半離散ODEはSciMLのtime integratorで進めます。fully discreteでもentropy-conservativeな方法を選ぶ場合は、各stepを調整するrelaxationを用います。
+
+structure-preservingであることは、選んだ近似方程式の分散関係がfull water-wave systemと一致することを意味しません。離散化誤差とmodeling errorを分けて評価します。
+
+#### Solverが担当する部分と利用者が決める部分
+
+packageは複数の分散性浅水model、mesh、SBP operatorによる半離散化、SciML ODE problem、analysis callback、relaxationを接続します。利用者はequation model、bathymetry、boundary condition、SBP operatorとaccuracy order、time integratorとtolerance、波長・振幅・水深のregimeを決めます。operatorとboundary conditionの互換性も利用者が確認します。
+
+#### 数値的な長所と代償
+
+保存量と分散関係を数値実験の中心にできる一方、同じ波でもmodelによって位相速度と非線形効果が異なります。高精度operatorやrelaxationで離散不変量を保っても、長波近似の範囲外にある波を物理的に正しくすることはできません。
+
+::: {.callout-warning}
+## 信用できない条件
+
+mass・energy・entropyが期待する精度で保たれない、観測した位相速度が選んだmodelの線形分散関係と一致しない、operatorとboundary conditionが不整合、またはfull water-wave dispersionとの差が大きい波長・振幅・水深regimeでは、波形が滑らかでも結果を信用できません。
+:::
+
+#### 何を測って信用するか
+
+- **外部参照**：選んだmodelとfull water-wave systemの線形分散関係、traveling wave・solitary waveの既知解、shoaling benchmarkと比較します。
+- **自己整合性確認**：mass、energyまたはentropy、収束次数、位相速度、time-integrator tolerance依存性、SBP order・格子依存性を確認します。
+
+#### この授業の課題にするなら
+
+相談・発展routeです。equation modelまたは波長の一つだけを変え、少なくとも二条件で位相速度と保存量を比較するCPU縮小caseから相談します。複数model、variable bathymetry、shoaling、solitary-wave衝突を同時に扱うscopeは避けます。
+
+[DispersiveShallowWater.jl official documentation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)
+
+## 数値手法を横断して比較する
+
+### WaterLily.jlとOceananigans.jl
+
+どちらもCartesian系のstaggered配置と非圧縮拘束を使いますが、同じsolverではありません。`WaterLily.jl`は埋め込み物体、物体まわり流れ、流体力を中心にし、`Oceananigans.jl`は浮力、成層、回転、tracer収支を含む地球流体的な設定を中心にします。したがって、前者では物体境界の解像とforce、後者ではboundary flux・熱収支・統計定常性が主要な証拠です。
+
+### Trixi.jlとTrixiShallowWater.jl
+
+`Trixi.jl`はmesh・equation・DGSEM・time integrationを組み合わせる保存則frameworkです。`TrixiShallowWater.jl`はその基盤上で、bathymetry source、hydrostatic reconstruction、well-balanced性、positivity、wet/dryなど浅水方程式固有の構造を提供します。一般の保存則で使えるDGという共通点だけでは、flux-source balanceや水深非負性の検証を置き換えられません。
+
+### TrixiShallowWater.jlとDispersiveShallowWater.jl
+
+`TrixiShallowWater.jl`はshockやdam breakを含む非分散のhyperbolic shallow-water balance lawを主対象とします。`DispersiveShallowWater.jl`は波長依存の位相速度を持つ近似modelを扱います。前者では保存、well-balanced性、positivityが主要な証拠であり、後者では線形分散関係、structure preservation、近似modelの有効範囲が主要な証拠です。
+
+::: {.table-responsive .course-map}
+| 比較する問い | `WaterLily.jl` | `Trixi.jl` / `TrixiShallowWater.jl` | `Oceananigans.jl` | `GeophysicalFlows.jl` | `DispersiveShallowWater.jl` |
+|---|---|---|---|---|---|
+| Unknown placement | cell-center pressureとface velocity | element内の高次多項式・境界flux | cell-center tracer・pressureとface velocity | periodic grid上のfieldとFourier coefficient | 一次元grid上のwater height・velocity |
+| Conservation or constraint enforcement | pressure projectionで非圧縮拘束 | numerical flux、flux differencing、sourceとの釣合い | fractional stepとelliptic pressure solve | Fourier-space evolutionと保存形Jacobian | SBP identity、保存形半離散化、必要時のrelaxation |
+| Geometry and boundary restrictions | Cartesian gridへ物体を埋め込む | mesh・boundary flux、浅水ではbathymetry | Cartesian・spherical-shell topologyとboundary flux | 周期domainが前提 | operatorとperiodic・reflecting boundaryの互換性 |
+| Shock、wet/dry、dispersion、未解像高wavenumber | 境界近傍とwakeの格子解像 | shock capturing、limiter、positivity、wet/dry threshold | advection schemeとclosure | aliasing、filter、viscosity・hyperviscosity | modelの分散項、SBP order、time tolerance |
+| External reference | 円柱wake benchmark | Riemann解、lake-at-rest、dam-break | horizontal-convection参照値 | 既知解または既報の乱流統計 | 線形分散関係、traveling wave、shoaling |
+| Self-consistency evidence | divergence、格子・domain・sampling依存性 | 保存量、非負水深、mesh・次数依存性 | divergence、熱・浮力収支、時間窓依存性 | energy・enstrophy収支、resolved spectrum | mass・energy・entropy、収束次数、位相速度 |
+| Conditions that invalidate trust | 物体・外側境界・samplingが未解像 | 非物理状態、flux-source imbalance | 収支不一致、未到達の統計定常 | spectral pile-up、人工散逸支配 | modelの有効範囲外、operator・境界不整合 |
+:::
+
+格子を細かくする確認は全手法に有用ですが、それだけでは不十分です。各手法が満たそうとする拘束、保存量、分散関係と、各物理modelの外部参照を対応させます。
+
+## 公開Solver型課題へ接続する
+
+::: {.table-responsive .course-map}
+| 調べたい数値的性質 | 主な候補 | 外部参照 | 自己整合性確認 |
+|---|---|---|---|
+| 埋め込み境界と流体力 | `WaterLily.jl` | 円柱wakeのbenchmark | 格子・domain・sampling依存性 |
+| shock、numerical flux、高次DG | `Trixi.jl` | Riemann解析解 | 保存量、格子・次数依存性 |
+| 圧力拘束、浮力・tracer収支 | `Oceananigans.jl` | horizontal-convection参照値 | divergence、熱収支、格子・時間刻み依存性 |
+| energy・enstrophyのscale transfer | `GeophysicalFlows.jl` | 既知解または既報の統計量 | energy・enstrophy収支、spectrumの解像範囲 |
+| 分散関係とstructure-preserving法 | `DispersiveShallowWater.jl` | 線形分散関係、波動benchmark | mass・energy・entropy、収束次数 |
+| well-balanced性、positivity、地形源項 | `TrixiShallowWater.jl` | lake-at-rest、dam-break参照解 | 総水量、水深非負、格子・次数依存性 |
+:::
+
+課題案では、次を事前に固定します。
+
+- 変更するparameterを一つに絞る。
+- そのparameterについて少なくとも二条件を比較する。
+- 主要diagnosticを計算前に宣言する。
+- 公式資料とは別に、既知解・benchmark・既報値から外部参照を一つ置く。
+- 保存量、収支、格子・時間刻み・次数・sampling依存性から自己整合性確認を一つ置く。
+- laptop CPUで短時間に再計算できるreduced caseを用意する。
+- project repositoryでJulia・package環境を固定する。
+- どの観測が出たら結論を無効とするかを先に書く。
+
+公式exampleの再現は環境と観測手順の確認であり、それだけではproject resultではありません。再現後に問いに必要な設定だけを変え、外部参照と自己整合性確認の二層で比較します。
+
+## 公式資料
+
+### 公式home
+
+- [WaterLily.jl official repository](https://github.com/WaterLily-jl/WaterLily.jl)
+- [Trixi.jl stable documentation](https://trixi-framework.org/TrixiDocumentation/stable/)
+- [Oceananigans.jl stable documentation](https://clima.github.io/OceananigansDocumentation/stable/)
+- [GeophysicalFlows.jl stable documentation](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/)
+- [DispersiveShallowWater.jl stable documentation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)
+- [TrixiShallowWater.jl official documentation](https://trixi-framework.org/TrixiShallowWater.jl/)
+
+### 数値手法を確認した公式ページ
+
+- WaterLily.jl: [stable API documentation](https://waterlily-jl.github.io/WaterLily.jl/stable/)
+- Trixi.jl: [overview](https://trixi-framework.org/TrixiDocumentation/stable/overview/)、[time integration](https://trixi-framework.org/TrixiDocumentation/stable/time_integration/)
+- TrixiShallowWater.jl: [stable reference](https://trixi-framework.org/TrixiShallowWater.jl/stable/reference/)
+- Oceananigans.jl: [finite volume method](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/finite_volume)、[time stepping](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/time_stepping)、[fractional step method](https://clima.github.io/OceananigansDocumentation/stable/appendix/fractional_step)
+- GeophysicalFlows.jl: [SingleLayerQG](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/modules/singlelayerqg/)、[aliasing](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/aliasing/)
+- DispersiveShallowWater.jl: [model overview](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/overview/)、[dispersion](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/dispersion/)、[solvers](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/solvers/)、[callbacks and relaxation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/callbacks/)
