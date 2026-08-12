@@ -44,8 +44,6 @@ website:
             text: パッケージを使ってPDEソルバを構築する
           - href: advanced/public-solver-methods.qmd
             text: 公開Solverの数値手法を読み解く
-          - href: advanced/juliacon-2026-pde-cfd.qmd
-            text: JuliaCon 2026から学ぶPDE・CFD計算
   sidebar:
     - id: course
       title: "熱流体力学演習 2026"
@@ -135,8 +133,6 @@ website:
           text: "パッケージを使ってPDEソルバを構築する"
         - href: advanced/public-solver-methods.qmd
           text: "公開Solverの数値手法を読み解く"
-        - href: advanced/juliacon-2026-pde-cfd.qmd
-          text: "JuliaCon 2026から学ぶPDE・CFD計算"
     - id: final-project-topics
       title: "最終プロジェクト課題案"
       style: docked

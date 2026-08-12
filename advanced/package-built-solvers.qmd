@@ -209,12 +209,48 @@ Poisson問題から始め、同じ既知解に対する誤差を確認します�
 
 ## JuliaCon 2026の関連セッション
 
-[JuliaCon 2026から学ぶPDE・CFD計算](juliacon-2026-pde-cfd.qmd)では、教材内で実行できるCahn–Hilliard方程式を出発点に、CPU実装、KernelAbstractions.jl、Chmy.jl、PETSc.jlへ進む段階的な見方を整理しています。パッケージ構築型solverとの対応を読むときは、次の公式セッションが参考になります。
+JuliaCon 2026には、このページで扱うpackageを使ってPDE solverを構築する発表があります。
 
 - [Chmy.jlによるportable PDE simulation](https://pretalx.com/juliacon-2026/talk/LHPDZM/)
 - [ParallelStencil.jlによるmulti-XPU stencil計算](https://pretalx.com/juliacon-2026/talk/PGGCJK/)
 - [WIAS-PDELibの有限要素ecosystem](https://pretalx.com/juliacon-2026/talk/UX3K8A/)
 - [Ferrite.jlによる熱伝導問題](https://pretalx.com/juliacon-2026/talk/T79F7F/)
+
+### Cahn–Hilliard方程式をplain JuliaからGPUへ
+
+[Hands-on with Julia for HPC on GPUs](https://pretalx.com/juliacon-2026/talk/MRFYNN/)では、二次元Cahn–Hilliard方程式をplain Julia、`KernelAbstractions.jl`、`Chmy.jl`、`PETSc.jl`で扱います。公式教材は[JuliaCon26-GPUs-for-HPC repository](https://github.com/PTsolvers/JuliaCon26-GPUs-for-HPC)で公開されています。
+
+代表的な無次元形は
+
+::: {.table-responsive}
+$$
+\frac{\partial C}{\partial t}=D\nabla^2\mu,
+\qquad
+\mu=C^3-C-\gamma\nabla^2C
+$$
+:::
+
+です。$C$は濃度、$D$はmobilityに対応する係数、$\mu$はchemical potential、$\gamma$は界面幅に関係する係数です。四階の空間微分を含むため、格子を細かくすると陽解法の時間刻み制約が急速に厳しくなります。
+
+速度を比較する前に、no-flux境界で**平均濃度**が保存されることと、**自由energy**
+
+::: {.table-responsive}
+$$
+F=\int\left[\frac{(C^2-1)^2}{4}+\frac{\gamma}{2}|\nabla C|^2\right]d\Omega
+$$
+:::
+
+が時間とともに増加しないことを確認します。CPU版とGPU版では、最終場だけでなく平均濃度と自由energyの履歴も比較します。
+
+この授業では次の順で進めます。
+
+1. plain JuliaのCPU二重loopでLaplacianと二段階更新を書き、小格子で二つの検証量を確認する。
+2. 同じ更新を`KernelAbstractions.jl`へ移し、CPU backendでplain版との数値一致を確認する。
+3. 利用できる場合だけGPU backendへ移し、数値一致を確認してから初回compileを除いて計測する。
+4. `Chmy.jl`でgridと差分演算を表し、自作差分式と境界処理の対応を説明する。
+5. implicitまたはCPU並列解法が必要な場合に`PETSc.jl`を比較し、許容誤差と停止条件を説明する。
+
+H100向けの巨大格子や複数GPUは授業要件にしません。まずCPU縮小caseを成立させ、検証量を満たしてから計算基盤を変更します。
 
 ### PDE solverを構成する周辺部品
 

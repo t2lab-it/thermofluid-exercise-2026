@@ -31,7 +31,6 @@ const POSITION_LABELS = Dict(
     "advanced/cairomakie.qmd" => "任意・発展資料",
     "advanced/package-built-solvers.qmd" => "任意・発展資料",
     "advanced/public-solver-methods.qmd" => "任意・発展資料",
-    "advanced/juliacon-2026-pde-cfd.qmd" => "任意・発展資料",
 )
 
 const NO_ID_TITLE = Dict(
@@ -52,7 +51,6 @@ const NO_ID_TITLE = Dict(
     "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
     "advanced/package-built-solvers.qmd" => "パッケージを使ってPDEソルバを構築する",
     "advanced/public-solver-methods.qmd" => "公開Solverの数値手法を読み解く",
-    "advanced/juliacon-2026-pde-cfd.qmd" => "JuliaCon 2026から学ぶPDE・CFD計算",
 )
 
 function section_body(source, heading)
@@ -519,26 +517,28 @@ end
             "[CairoMakieによる可視化](cairomakie.qmd)",
             "[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)",
             "[公開Solverの数値手法を読み解く](public-solver-methods.qmd)",
-            "[JuliaCon 2026から学ぶPDE・CFD計算](juliacon-2026-pde-cfd.qmd)",
         ),
     )
 end
 
-@testset "JuliaCon PDE and CFD guide separates three adoption routes" begin
-    source = copy_source("advanced/juliacon-2026-pde-cfd.qmd")
+@testset "JuliaCon PDE and CFD candidates extend the existing solver guides" begin
+    package_built = copy_source("advanced/package-built-solvers.qmd")
+    public_solver = copy_source("advanced/public-solver-methods.qmd")
     for marker in (
-        "solverを構築する",
-        "完成solverで数値実験を設計する",
-        "紹介・watch list",
         "Cahn–Hilliard",
         "平均濃度",
         "自由energy",
         "CPU縮小case",
-        "XCALibre.jl",
-        "TrixiAtmo.jl",
-        "TrixiParticles.jl",
     )
-        @test occursin(marker, source)
+        @test occursin(marker, package_built)
+    end
+    for marker in (
+        "紹介・watch list",
+        "PinCFlow.jl",
+        "Macchiato.jl",
+        "InterfacialWaves.jl",
+    )
+        @test occursin(marker, public_solver)
     end
 end
 
@@ -617,7 +617,6 @@ end
 @testset "JuliaCon solver extensions stay outside standard guided routes" begin
     public_solver = copy_source("advanced/public-solver-methods.qmd")
     package_built = copy_source("advanced/package-built-solvers.qmd")
-    final_project = copy_source("assignments/final-project.qmd")
 
     for marker in (
         "TrixiAtmo.jl",
@@ -637,19 +636,10 @@ end
         @test occursin(link, public_solver)
     end
 
-    @test occursin(
-        "[JuliaCon 2026から学ぶPDE・CFD計算](juliacon-2026-pde-cfd.qmd)",
-        package_built,
-    )
     for talk_id in ("LHPDZM", "PGGCJK", "UX3K8A", "T79F7F")
         @test occursin("https://pretalx.com/juliacon-2026/talk/$talk_id/", package_built)
     end
     @test occursin("PDE solverを構成する周辺部品", package_built)
-
-    @test occursin("固定starterのない相談route", final_project)
-    for package in ("XCALibre.jl", "TrixiAtmo.jl", "TrixiParticles.jl")
-        @test occursin(package, final_project)
-    end
 
     project = TOML.parsefile(joinpath(COPY_ROOT, "Project.toml"))
     manifest = copy_source("Manifest.toml")

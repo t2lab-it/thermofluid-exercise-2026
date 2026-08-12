@@ -412,6 +412,22 @@ mass・energy・entropyが期待する精度で保たれない、観測した位
 
 [JuliaCon 2026: TrixiParticles.jl](https://pretalx.com/juliacon-2026/talk/Y7LGHP/) · [TrixiParticles.jl repository](https://github.com/trixi-framework/TrixiParticles.jl)
 
+## JuliaCon 2026の紹介・watch list
+
+次の候補は数値手法や応用の紹介に使えますが、2026年度の固定starter、共通`Manifest.toml`、動作保証は用意しません。完成solver、solver framework、時間積分部品を区別し、採用前に支配方程式と検証可能なCPU縮小caseを確認します。
+
+::: {.table-responsive}
+| Package | JuliaCon 2026で扱う内容 | この授業で読む観点 |
+|---|---|---|
+| `PinCFlow.jl` | 地形上のBoussinesq・pseudo-incompressible・compressible大気flowと重力波 | 方程式の近似、地形座標、semi-implicit時間積分 |
+| `Macchiato.jl` | RBF-FDによるEulerian meshless PDE framework | meshを使わない代わりに必要なpoint cloudと近傍近似 |
+| `InterfacialWaves.jl` | 非線形進行波・定在波と線形安定性 | 界面波の境界値問題、平衡解と時間発展の違い |
+| `GeothermalWells.jl` | operator splittingとGPUによる三次元地中熱交換器array | 異なる時間・空間scaleを分割する理由 |
+| `OrdinaryDiffEqOperatorSplitting.jl` | PDE半離散系を複数のODE/DAE subproblemへ分ける時間積分部品 | 移流と拡散を分ける利点とsplitting error |
+:::
+
+[PinCFlow.jl talk](https://pretalx.com/juliacon-2026/talk/VB7AEV/) · [Macchiato.jl talk](https://pretalx.com/juliacon-2026/talk/YU8ZKN/) · [InterfacialWaves.jl talk](https://pretalx.com/juliacon-2026/talk/ELF3HR/) · [GeothermalWells.jl talk](https://pretalx.com/juliacon-2026/talk/QQ37LB/) · [OrdinaryDiffEqOperatorSplitting.jl talk](https://pretalx.com/juliacon-2026/talk/WFVNXT/)
+
 ## 数値手法を横断して比較する
 
 ### WaterLily.jlとOceananigans.jl

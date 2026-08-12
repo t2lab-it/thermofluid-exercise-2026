@@ -58,8 +58,6 @@ projectは1人または2人で行います。どちらも`thermofluid-project-ba
 - [Trixi.jlによる一次元shock tube](../projects/final-project-topics/trixi-shock-tube.qmd)
 - [Oceananigans.jlによるhorizontal convection](../projects/final-project-topics/oceananigans-horizontal-convection.qmd)
 
-`XCALibre.jl`、`TrixiAtmo.jl`、`TrixiParticles.jl`は、[JuliaCon 2026から学ぶPDE・CFD計算](../advanced/juliacon-2026-pde-cfd.qmd)で紹介する**固定starterのない相談route**です。自由提案として採用する前に、reduced case、package version、外部参照と自己整合性確認、必要資源、授業内で支援する範囲、標準routeへ戻すfallbackを担当者と確認します。共通`Manifest.toml`での動作保証はありません。
-
 ## 自由提案
 
 [自由提案](../projects/final-project-topics/open-proposal.qmd)では、問い、比較条件、評価指標、二層検証、最小case、必要資源、reviewer、fallbackを共有し、実行可能な計画へfeedbackを受けます。支援条件と評価原則は通常テーマと同じです。
