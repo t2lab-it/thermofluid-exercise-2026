@@ -2,6 +2,14 @@
 title: "一次元Stefan問題"
 ---
 
+::: {.callout-note}
+## Linux実測で公開可能
+
+2026-08-12にcourse ownerがTask 2固有のLinux-only platform waiverを承認しました。
+validationは `status=ready`、readinessは `publishable=yes` です。実測済みplatformは
+Linuxだけで、macOSとWindowsは未実測です。これら未実測OSの互換性を主張しません。
+:::
+
 ## 現象と問題
 
 潜熱を伴う加熱・冷却で、温度場と固液界面が時間とともに移動する問題を扱います。一次元一相Stefan問題を基準に、熱拡散と相変化の結合を調べます。
@@ -44,7 +52,7 @@ title: "一次元Stefan問題"
 
 教員referenceの相変化温度幅は $0.1\ ^\circ\mathrm{C}$、interfaceはliquid fraction 0.5の位置です。温度幅を変えるとsharp-interface相似解に対するinterface位置が変わるため、少なくとも二つの温度幅で感度を確認し、物理parameterの影響と数値的regularizationの影響を分けてください。
 
-WindowsとmacOSではまだ実行していないため、このthemeは3 OS確認済み・公開可能とは扱いません。両platformでfast preflightとreference testを各3回以上実測し、初回compile、時間、peak memory、同じ数値contractを確認するまでvalidation statusは `blocked`、readinessは `publishable=no` です。学生自身のsolver性能やplatform supportをLinuxの値から保証するものではありません。
+このLinux測定値は配布assetと教員referenceの再実行目安であり、学生自身のsolver性能を保証しません。macOSまたはWindowsで利用する場合は、同じpreflightとreference testを実行して数値contractを確認してください。
 
 ## 相談事項
 
