@@ -30,6 +30,25 @@ const OPEN_PROPOSAL_HEADINGS = [
     end
 end
 
+@testset "natural-convection page reports only measured validation" begin
+    source = read(joinpath(TOPIC_ROOT, "natural-convection-cavity.qmd"), String)
+    for phrase in (
+        "Pr=0.71",
+        "65×65",
+        "129×129",
+        "2×10^-8",
+        "de-vahl-davis-reference.csv",
+        "Linux",
+        "506.57",
+        "公開準備中",
+        "publishable=no",
+    )
+        @test occursin(phrase, source)
+    end
+    @test occursin("macOS", source)
+    @test occursin("Windows", source)
+end
+
 @testset "solver-reuse topic pages" begin
     for slug in REUSE_SOLVER_TOPICS
         path = joinpath(TOPIC_ROOT, "$slug.qmd")
