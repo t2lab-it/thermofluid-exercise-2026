@@ -4,8 +4,8 @@ title: "発展資料"
 
 このセクションの項目はすべて任意です。必修課題の合否や標準の学生環境には影響しません。
 
-- [SSHでGitHubへ接続する](github-ssh.qmd) — F01完了後に、既存の個人用course repositoryをHTTPS接続からSSH接続へ安全に切り替えます。
+- [SSHでGitHubへ接続する](github-ssh.qmd) — F01完了後に、既存の個人用授業repositoryをHTTPS接続からSSH接続へ安全に切り替えます。
 - [GitHub CLIでpull requestを操作する](github-cli.qmd) — SSH接続後に、既存PRの確認と次の実課題でのPR作成・確認をCLIで行います。
 - [CairoMakieによる可視化](cairomakie.qmd) — 1次元線形移流課題（課題ID: N01）の結果を隔離した一時環境で可視化します。CairoMakieは必修環境へ追加しません。
-- [パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd) — 有限差分・有限体積・有限要素のパッケージが提供する部品を比較し、最終プロジェクトで使う方法を選びます。
-- [公開Solverの数値手法を読み解く](public-solver-methods.qmd) — 埋め込み境界法、高次DG法、staggered finite volume、Fourier擬スペクトル法、SBP法を比較し、公開solver型課題の検証を設計します。
+- [パッケージを使って偏微分方程式ソルバを構築する](package-built-solvers.qmd) — 有限差分・有限体積・有限要素のパッケージが提供する部品を比較し、最終プロジェクトで使う方法を選びます。
+- [公開ソルバの数値手法を読み解く](public-solver-methods.qmd) — 埋め込み境界法、高次DG法、スタッガード有限体積法、Fourier擬スペクトル法、SBP法を比較し、公開ソルバ型課題の検証を設計します。

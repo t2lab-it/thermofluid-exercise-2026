@@ -22,7 +22,7 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
 JuliaとQuartoの表示がそれぞれ`1.12.6`、`1.9.31`であることを確認します。
 
-## render
+## レンダリング
 
 macOS・Linux（bash/zsh）では次を実行します。
 
@@ -37,7 +37,7 @@ $env:QUARTO_JULIA_PROJECT = "."
 quarto render
 ```
 
-生成物は`_site/`へ出力されます。`_quarto.yml`はJulia engineを明示します。Julia実行確認用のsmoke cellは公開ページに置かず、教員用のrelease rehearsalが一時Quarto projectで検証します。
+生成物は`_site/`へ出力されます。`_quarto.yml`はJuliaエンジンを明示します。Julia実行確認用の簡易セルは公開ページに置かず、教員用のリリース予行演習が一時Quartoプロジェクトで検証します。
 
 ## テスト
 
@@ -49,7 +49,7 @@ julia --project=. scripts/verify_contracts.jl \
   /absolute/path/to/thermofluid-exercise-student-2026
 ```
 
-契約検証にはpublic rootとstudent rootを明示的に渡します。既存のprivateリポジトリを参照しません。
+契約検証には公開教材側と学生側のルートディレクトリを明示的に渡します。既存の非公開リポジトリを参照しません。
 
 ## ライセンス
 

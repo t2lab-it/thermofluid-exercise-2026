@@ -1,43 +1,43 @@
 ---
-title: "Oceananigans.jlによるhorizontal convection"
+title: "Oceananigans.jlによる水平対流"
 ---
 
 ## 現象と問題
 
-上面の水平温度差で駆動される二次元horizontal convectionを、`Oceananigans.jl`の公式exampleに基づいて調べます。循環と熱輸送のRayleigh数依存性を扱います。
+上面の水平温度差で駆動される二次元水平対流を、`Oceananigans.jl`の公式例に基づいて調べます。循環と熱輸送のRayleigh数依存性を扱います。
 
 ## 問いを決める
 
-Rayleigh数が循環強度、境界層、熱流束へどう影響するかを問い、比較する二条件以上を検証済みlaunch kitから選びます。
+Rayleigh数が循環強度、境界層、熱流束へどう影響するかを問い、比較する二条件以上を検証済み導入キットから選びます。
 
 ## 比較軸
 
-Rayleigh数を主軸にし、Prandtl数、domain、境界条件、格子、時間刻み、平均区間を揃えます。定常または統計的定常の判定を先に決めます。
+Rayleigh数を主軸にし、Prandtl数、計算領域、境界条件、格子、時間刻み、平均区間を揃えます。定常または統計的定常の判定を先に決めます。
 
-## 推奨する最小scope
+## 推奨する最小範囲
 
-固定versionの二次元horizontal convection公式exampleを再現し、Rayleigh数だけを変えて比較します。solver本体の改造は必須ではありません。
+固定バージョンの二次元水平対流公式例を再現し、Rayleigh数だけを変えて比較します。ソルバ本体の改造は必須ではありません。
 
 ## 評価指標
 
-circulation、streamfunction極値、温度場、上面熱流束・Nusselt数、kinetic energyを使います。時系列と平均値を分けて示します。
+循環、流れ関数の極値、温度場、上面熱流束・Nusselt数、運動エネルギーを使います。時系列と平均値を分けて示します。
 
 ## 二層検証
 
-外部基準として公式exampleとlaunch kitの参照値を用います。自己整合性として熱・運動量収支、格子・時間刻み依存性、定常判定、平均区間への感度を確認します。
+外部基準として公式例と導入キットの参照値を用います。自己整合性として熱・運動量収支、格子・時間刻み依存性、定常判定、平均区間への感度を確認します。
 
-## 過大scope
+## 範囲が広すぎる課題
 
-三次元、回転、成層の多重化、乱流model、複雑地形を最初から加えません。package設定を多数同時に変えず、Rayleigh数比較を中心にします。
+三次元、回転、成層の多重化、乱流モデル、複雑地形を最初から加えません。パッケージ設定を多数同時に変えず、Rayleigh数比較を中心にします。
 
-## 手法・package
+## 手法・パッケージ
 
-`Oceananigans.jl`を固定versionで使い、公式exampleのmodel、advection、closure、boundary condition、output設定を説明します。
+`Oceananigans.jl`を固定バージョンで使い、公式例のモデル、移流、クロージャ、境界条件、出力設定を説明します。
 
 ## 計算負荷
 
-小格子・短積分のCPU smoke testを残し、本解析の具体的なRayleigh数、格子、積分時間、代表時間は検証済みlaunch kitから参照します。
+小格子・短積分のCPUでの簡易テストを残し、本解析の具体的なRayleigh数、格子、積分時間、代表時間は検証済み導入キットから参照します。
 
 ## 相談事項
 
-公式example、境界条件、定常判定、収支、Rayleigh数、CPU/GPU実行、fallbackを相談できます。問い、最終比較、図、結論は学生自身が決めます。
+公式例、境界条件、定常判定、収支、Rayleigh数、CPU/GPU実行、代替案を相談できます。問い、最終比較、図、結論は学生自身が決めます。

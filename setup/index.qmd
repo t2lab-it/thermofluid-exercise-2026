@@ -15,14 +15,14 @@ title: "受講環境の準備"
 | Git | コマンドラインから実行可能 | `git --version` |
 | VS Code | 起動できる | アプリケーションを起動 |
 | Julia 拡張機能 | VS Code から Julia を実行できる | Julia ファイルを開いて実行 |
-| GitHub | 割り当てられた自分のprivate course repositoryを閲覧できる | ブラウザで手動確認 |
+| GitHub | 割り当てられた自分の非公開授業repositoryを閲覧できる | ブラウザで手動確認 |
 | Coding Agent | 標準または代替の一つで編集とコマンド実行ができる | [Agent の確認](agents.qmd) |
 
 ## 推奨する準備順
 
 1. このページで、準備するものと支援を依頼するときの情報を確認する。
 2. [Julia と VS Code](julia.qmd)を準備する。
-3. [Git と GitHub](git-github.qmd)を準備し、割り当てられた個人用course repositoryを clone する。
+3. [Git と GitHub](git-github.qmd)を準備し、割り当てられた個人用授業repositoryを clone する。
 4. [Coding Agent](agents.qmd)を一つ確認する。
 5. [課題ワークフロー](../guides/workflow.qmd)で、最初の課題以降のbranch・PR手順を確認する。
 6. 5ページの準備を終えてから、[最初の環境診断](../assignments/F00.qmd)（課題ID: F00）を実行する。
@@ -31,4 +31,4 @@ title: "受講環境の準備"
 
 ## 支援を依頼するとき
 
-教員・TA へ、OS、`julia --version`、`git --version`、失敗したコマンド、エラーメッセージを伝えてください。アクセストークン、API key、パスワード、個人情報は共有しないでください。
+教員・TA へ、OS、`julia --version`、`git --version`、失敗したコマンド、エラーメッセージを伝えてください。アクセストークン、APIキー、パスワード、個人情報は共有しないでください。

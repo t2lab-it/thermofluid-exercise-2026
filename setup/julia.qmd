@@ -45,7 +45,7 @@ julia --version
 
 ## パッケージ環境を復元する
 
-割り当てられた個人用course repositoryをcloneした後は、リポジトリrootへ移動し、授業で固定したパッケージ環境を復元します。Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します。`Project.toml`は直接使う依存関係と互換条件、`Manifest.toml`は実際に解決された依存関係全体の版を記録します。
+割り当てられた個人用授業repositoryをcloneした後は、リポジトリのルートディレクトリへ移動し、授業で固定したパッケージ環境を復元します。Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します。`Project.toml`は直接使う依存関係と互換条件、`Manifest.toml`は実際に解決された依存関係全体の版を記録します。
 
 授業で扱うパッケージは次のように分類します。
 
@@ -64,11 +64,11 @@ clone直後は、授業側が用意した2ファイルから次のコマンド�
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
-学生がその場しのぎで`Pkg.add`を実行すると、授業で共有する`Project.toml`や`Manifest.toml`から外れます。必要な依存関係が不足していると思った場合は、まず現在のbranch、リポジトリroot、上の`Pkg.instantiate()`の結果を確認してください。
+学生がその場しのぎで`Pkg.add`を実行すると、授業で共有する`Project.toml`や`Manifest.toml`から外れます。必要な依存関係が不足していると思った場合は、まず現在のbranch、リポジトリのルートディレクトリ、上の`Pkg.instantiate()`の結果を確認してください。
 
 ## Juliaコードを実行する
 
-リポジトリrootで`--project=.`を付けると、授業用のパッケージ環境を選んでJuliaを起動できます。
+リポジトリのルートディレクトリで`--project=.`を付けると、授業用のパッケージ環境を選んでJuliaを起動できます。
 
 ```bash
 julia --project=.
@@ -76,7 +76,7 @@ julia --project=. exercises/F03_vector_calculus/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-1行目は対話的なREPL、2行目はスクリプトを新しいプロセスで実行する例、3行目は授業用の`tests`をcleanなテストプロセスで実行する例です。REPLでは`exit()`またはCtrl+Dで終了できます。
+1行目は対話的なREPL、2行目はスクリプトを新しいプロセスで実行する例、3行目は授業用の`tests`を初期状態のテストプロセスで実行する例です。REPLでは`exit()`またはCtrl+Dで終了できます。
 
 VS CodeのCommand Paletteでは、`Julia: Start REPL`で授業用REPLを開始し、`Julia: Execute Code in REPL`で選択範囲や現在行を試せます。ファイル全体を独立した状態で確認するときは`Julia: Run File in New Process`を使います。
 
@@ -86,7 +86,7 @@ REPLに残っている変数や過去の実行結果だけを提出の証拠に�
 
 VS Codeをインストールしたら、拡張機能`julialang.language-julia`を必ず導入します。表示言語を日本語にしたい場合の`MS-CEINTL.vscode-language-pack-ja`は任意です。
 
-学生用リポジトリの`.vscode/`には、Juliaファイルの4-spaceインデント、bracket colors、末尾空白の除去、format-on-save、`linter`を有効にする授業用設定があります。cloneしたリポジトリをfolderとして開くと、この設定と`formatter`が適用されます。
+学生用リポジトリの`.vscode/`には、Juliaファイルの4空白インデント、括弧の色分け、末尾空白の除去、保存時の自動整形、`linter`を有効にする授業用設定があります。cloneしたリポジトリをフォルダーとして開くと、この設定と`formatter`が適用されます。
 
 VS Code上の操作は公式資料も参照してください。
 
@@ -98,7 +98,7 @@ VS Codeのターミナルでも`julia version 1.12.6`が表示される必要が
 
 ## pull request前に整形とテストを行う
 
-pull requestを作る前に、リポジトリrootで次の順に実行します。
+pull requestを作る前に、リポジトリのルートディレクトリで次の順に実行します。
 
 ```bash
 julia --project=. scripts/format.jl
@@ -113,8 +113,8 @@ GitHub ActionsのCIは`julia --project=. scripts/format.jl --check`で整形状�
 ## 問題が起きたとき
 
 - `julia --version`が異なる: ターミナルやVS Codeを開き直し、`juliaup status`と`juliaup default 1.12.6`を確認する。
-- パッケージを読み込めない: リポジトリrootと現在のbranchを確認し、`Pkg.instantiate()`を再実行する。`Pkg.add`で穴埋めしない。
-- REPLでは動くがscriptやtestsが失敗する: `Julia: Run File in New Process`または上のCLIで、残ったREPL状態に依存していないか確認する。
-- 保存時整形や警告表示が動かない: リポジトリをfolderとして開いたか、Julia拡張と`.vscode/settings.json`が有効か確認する。
+- パッケージを読み込めない: リポジトリのルートディレクトリと現在のbranchを確認し、`Pkg.instantiate()`を再実行する。`Pkg.add`で穴埋めしない。
+- REPLでは動くがスクリプトやテストが失敗する: `Julia: Run File in New Process`または上のCLIで、残ったREPL状態に依存していないか確認する。
+- 保存時整形や警告表示が動かない: リポジトリをフォルダーとして開いたか、Julia拡張と`.vscode/settings.json`が有効か確認する。
 
-Juliaの導入まで確認できたら、[Git・GitHub・割り当てられた個人用course repository](git-github.qmd)へ進みます。
+Juliaの導入まで確認できたら、[Git・GitHub・割り当てられた個人用授業repository](git-github.qmd)へ進みます。

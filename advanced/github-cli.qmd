@@ -10,7 +10,7 @@ title: "GitHub CLIでpull requestを操作する"
 
 ## GitHub CLIを使えると何が嬉しいか
 
-- branchのpushからpull requestの作成・確認までをterminal上で進められ、ブラウザとの行き来を減らせる。
+- branchのpushからpull requestの作成・確認までをターミナル上で進められ、ブラウザとの行き来を減らせる。
 - 実行するコマンドと結果が明確になるため、人が確認しながらCoding Agentへ作業を依頼しやすくなる。
 
 ## このページの到達点
@@ -18,7 +18,7 @@ title: "GitHub CLIでpull requestを操作する"
 GitHub CLI（`gh`）を導入・認証し、既存のPRをCLIで読み、新しいPRをCLIで作成する。
 
 ::: {.callout-warning title="認証情報を共有しない"}
-GitHub token、ブラウザに表示される確認コード、SSH秘密鍵を、他人、pull request、公開チャット、Coding Agentへ貼り付けないでください。
+GitHubトークン、ブラウザに表示される確認コード、SSH秘密鍵を、他人、pull request、公開チャット、Coding Agentへ貼り付けないでください。
 :::
 
 ## GitHub CLIを導入する
@@ -32,7 +32,7 @@ PowerShellを利用してGitHub CLIを導入します。
 winget install --id GitHub.cli --source winget
 ```
 
-PATHの変更を反映するため、windowを閉じて開き直したうえで以下を確認してください。
+PATHの変更を反映するため、ウィンドウを閉じて開き直したうえで以下を確認してください。
 
 ```powershell
 gh --version
@@ -52,7 +52,7 @@ gh --version
 
 ディストリビューションごとに導入方法が異なるため、[GitHub CLI公式Linux手順](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)から自分の環境に対応する手順を選びます。
 
-導入後は新しいterminalで確認します。
+導入後は新しいターミナルで確認します。
 
 ```bash
 gh --version
@@ -60,7 +60,7 @@ gh --version
 
 ## GitHub CLIを認証する
 
-すでに作成したSSH鍵を再利用します。個人用course repositoryのrootで次を実行します。
+すでに作成したSSH鍵を再利用します。個人用授業repositoryのルートディレクトリで次を実行します。
 
 ```bash
 gh auth login --hostname github.com --git-protocol ssh --web --skip-ssh-key
@@ -68,9 +68,9 @@ gh auth status
 gh repo view
 ```
 
-`--web`はブラウザ認証を開き、`--skip-ssh-key`はSSH鍵の生成・upload確認を飛ばします。ブラウザに表示される確認コードやtokenを記録・共有してはいけません。
+`--web`はブラウザ認証を開き、`--skip-ssh-key`はSSH鍵の生成・アップロード確認を飛ばします。ブラウザに表示される確認コードやトークンを記録・共有してはいけません。
 
-`gh auth status`でhostが`github.com`、ユーザー名が意図した自分のアカウント、Git protocolがSSHであることを確認します。`gh repo view`では、現在のdirectoryが自分の個人用course repositoryとして認識されることを確認します。
+`gh auth status`でホストが`github.com`、ユーザー名が意図した自分のアカウント、GitプロトコルがSSHであることを確認します。`gh repo view`では、現在のディレクトリが自分の個人用授業repositoryとして認識されることを確認します。
 
 ## 既存のpull requestをCLIで読む
 
@@ -96,7 +96,7 @@ git branch --show-current
 git diff main...HEAD
 ```
 
-未commitの変更、想定外のファイル、token・API key・パスワード・秘密鍵・不要な個人情報がないことを、人間がdiffを読んで確認します。
+未commitの変更、想定外のファイル、トークン・APIキー・パスワード・秘密鍵・不要な個人情報がないことを、人間がdiffを読んで確認します。
 
 ## pushを独立して実行する
 
@@ -110,7 +110,7 @@ pushの出力とupstream設定を確認してから次へ進みます。
 
 ## pull request本文を準備する
 
-VS Codeで、student repository内のignored領域に`scratch/pr-body.md`を作ります。
+VS Codeで、学生repository内のignore対象領域に`scratch/pr-body.md`を作ります。
 
 ```markdown
 ## 課題
@@ -161,7 +161,7 @@ gh pr create `
   --body-file scratch/pr-body.md
 ```
 
-`YOUR PR TITLE`は課題IDと変更内容が分かるtitleへ置き換えます。成功すると作成されたPR URLが表示されるので記録します。続けて次を実行し、baseが`main`、headが現在の課題branchであることを確認します。
+`YOUR PR TITLE`は課題IDと変更内容が分かるタイトルへ置き換えます。成功すると作成されたPR URLが表示されるので記録します。続けて次を実行し、baseが`main`、headが現在の課題branchであることを確認します。
 
 ```bash
 gh pr view
@@ -200,7 +200,7 @@ gh pr view --web
 
 | 状況 | 読み取り中心の確認 |
 |---|---|
-| `gh auth status`が失敗する | host、表示されたユーザー名、ブラウザ認証が完了したかを確認する |
+| `gh auth status`が失敗する | ホスト、表示されたユーザー名、ブラウザ認証が完了したかを確認する |
 | repositoryを認識しない | `git status --short`、`git remote -v`、`gh repo view`で現在地とremoteを確認する |
 | 最初のbranch課題のPRが見つからない | `gh pr list --state all`とブラウザ上のPR番号を確認する |
 | baseまたはheadが違う | `gh pr view`で`baseRefName`と`headRefName`に相当する表示を確認する |
@@ -212,5 +212,5 @@ gh pr view --web
 - 任意のPRを`gh pr view PR_NUMBER`、`gh pr diff PR_NUMBER`、`gh pr checks PR_NUMBER`で確認できる。
 - 任意の実課題で、確認済みbranchを明示的にpushしてからPRを作成できる。
 - 作成したPRのbase、head、本文、全diff、checksを人間がCLIで確認できる。
-- token、確認コード、秘密鍵を記録・共有していない。
+- トークン、確認コード、秘密鍵を記録・共有していない。
 - mergeは標準課題手順へ戻り、この資料では実行していない。

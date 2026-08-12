@@ -1,24 +1,24 @@
 ---
-title: "Wet-bed dam break"
+title: "湿潤床ダム崩壊"
 ---
 
 ## 現象と問題
 
-一次元浅水方程式で、段差状の初期水深が波として伝わる過程を扱います。下流にも有限水深があるwet-bed caseを基準に、水深と流速の時空間変化を調べます。
+一次元浅水方程式で、段差状の初期水深が波として伝わる過程を扱います。下流にも有限水深がある湿潤床条件を基準に、水深と流速の時空間変化を調べます。
 
 ## 問いを決める
 
-初期水深比、格子、CFL、数値fluxのどれが波の位置や形へ与える影響を調べるか決めます。水平・摩擦なしを基準に、二条件以上で答えられる問いにします。
+初期水深比、格子、CFL、数値流束のどれが波の位置や形へ与える影響を調べるか決めます。水平・摩擦なしを基準に、二条件以上で答えられる問いにします。
 
 ## 比較軸
 
-初期水深比または一つの数値parameterを主軸にします。比較間で水路長、重力、境界条件、観測時刻、誤差の計算領域を揃えます。
+初期水深比または一つの数値パラメータを主軸にします。比較間で水路長、重力、境界条件、観測時刻、誤差の計算領域を揃えます。
 
-## 推奨する最小scope
+## 推奨する最小範囲
 
-水平・摩擦なし・下流有限水深の一次元problemを有限体積法で解き、二条件以上を比較します。確認済みの縮小caseは、重力加速度 $g=9.81\ \mathrm{m\,s^{-2}}$、domain $-5\le x\le5\ \mathrm{m}$、dam位置 $x_0=0$、上流水深 $h_L=1.0\ \mathrm{m}$、下流水深 $h_R=0.1\ \mathrm{m}$、初期流速0、終了時刻 $t=0.5\ \mathrm{s}$ です。初期水深比は10で、教員referenceは200 cellsと400 cellsを比較しました。
+水平・摩擦なし・下流有限水深の一次元問題を有限体積法で解き、二条件以上を比較します。確認済みの縮小例は、重力加速度 $g=9.81\ \mathrm{m\,s^{-2}}$、計算領域 $-5\le x\le5\ \mathrm{m}$、ダム位置 $x_0=0$、上流水深 $h_L=1.0\ \mathrm{m}$、下流水深 $h_R=0.1\ \mathrm{m}$、初期流速0、終了時刻 $t=0.5\ \mathrm{s}$ です。初期水深比は10で、教員の参照計算は200セルと400セルを比較しました。
 
-学生向けの[thin launch kit](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/shallow-water-dam-break)には、[Stoker reference CSV](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/stoker-reference.csv)と、CSV読込・positive depth・wave orderingだけを確認するCPU preflightがあります。有限体積solver、numerical flux、reconstruction、時間積分、完成実験は含まれません。
+学生向けの[簡易導入キット](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/shallow-water-dam-break)には、[Stoker参照CSV](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/stoker-reference.csv)と、CSV読込・正水深・波の順序だけを確認するCPU事前確認があります。有限体積ソルバ、数値流束、再構成、時間積分、完成実験は含まれません。
 
 ## 評価指標
 
@@ -26,26 +26,26 @@ title: "Wet-bed dam break"
 
 ## 二層検証
 
-外部基準としてStoker解と[SWASHES](https://arxiv.org/abs/1110.0288)を用います。固定caseのmiddle stateは $h_m=0.3961748167994429\ \mathrm{m}$、$u_m=2.3213549956407444\ \mathrm{m\,s^{-1}}$ です。自己整合性として総水量保存、positivity、CFL、格子依存性、境界からの反射前であることを確認します。
+外部基準としてStoker解と[SWASHES](https://arxiv.org/abs/1110.0288)を用います。固定条件の中間状態は $h_m=0.3961748167994429\ \mathrm{m}$、$u_m=2.3213549956407444\ \mathrm{m\,s^{-1}}$ です。自己整合性として総水量保存、正値性、CFL、格子依存性、境界からの反射前であることを確認します。
 
-教員のfirst-order HLL referenceでは、総水量relative errorは200 cellsで0、400 cellsで $1.61\times10^{-16}$、minimum depthはいずれも $0.1\ \mathrm{m}$、maximum CFLはいずれも0.8000000000000003でした。Stoker水深に対する空間平均 $L^1$ errorは $5.4051\times10^{-3}\ \mathrm{m}$ から $3.0741\times10^{-3}\ \mathrm{m}$ へ減少しました。
+教員の一次精度HLL参照計算では、総水量相対誤差は200 cellsで0、400 cellsで $1.61\times10^{-16}$、最小水深はいずれも $0.1\ \mathrm{m}$、最大CFLはいずれも0.8000000000000003でした。Stoker水深に対する空間平均 $L^1$ errorは $5.4051\times10^{-3}\ \mathrm{m}$ から $3.0741\times10^{-3}\ \mathrm{m}$ へ減少しました。
 
-## 過大scope
+## 範囲が広すぎる課題
 
-dry-bed、実地形、二次元、降雨、浸透、摩擦を同時に導入しません。dry-bedではwetting frontとdry-state fluxに別のpositivity検証が必要であり、このlaunch kitの確認範囲外です。発展caseでもwet-bed benchmarkを回帰testとして維持します。
+乾床、実地形、二次元、降雨、浸透、摩擦を同時に導入しません。乾床では濡れ前線と乾燥状態の流束に別の正値性検証が必要であり、この導入キットの確認範囲外です。発展例でも湿潤床ベンチマークを回帰テストとして維持します。
 
-## 手法・package
+## 手法・パッケージ
 
-有限体積法と保存的な数値fluxを用い、reconstructionと時間積分を選んだ理由を説明します。発展比較では`TrixiShallowWater.jl`を候補にできますが、必須packageや共通APIは固定しません。
+有限体積法と保存的な数値流束を用い、reconstructionと時間積分を選んだ理由を説明します。発展比較では`TrixiShallowWater.jl`を候補にできますが、必須パッケージや共通APIは固定しません。
 
 ## 計算負荷
 
-小格子・短水路のCPU smoke testで保存とpositivityを確認してから格子を増やします。学生の候補はまず200 cellsと400 cellsとし、問いに応じて格子を追加します。
+小格子・短水路のCPUでの簡易テストで保存と正値性を確認してから格子を増やします。学生の候補はまず200セルと400セルとし、問いに応じて格子を追加します。
 
-Julia 1.12.6、Ubuntu 24.04.4 LTS x86_64で3回測定したwarm runの中央値は、fast preflight $1.54\ \mathrm{s}$、200/400-cell reference run $0.63\ \mathrm{s}$、数値contractを含むreference test $1.75\ \mathrm{s}$ でした。warm reference testのpeak memoryは3回の最大で $356.95\ \mathrm{MiB}$、empty depotからの初回compileを含むreference testは $19.51\ \mathrm{s}$、$600.81\ \mathrm{MiB}$ でした。これらは教員referenceの測定値であり、学生が選ぶsolverの性能を保証しません。
+Julia 1.12.6、Ubuntu 24.04.4 LTS x86_64で3回測定した事前実行後の中央値は、高速な事前確認 $1.54\ \mathrm{s}$、200/400-cell 参照計算 $0.63\ \mathrm{s}$、数値契約を含む参照テスト $1.75\ \mathrm{s}$ でした。事前実行後の参照テストの最大メモリは3回の最大で $356.95\ \mathrm{MiB}$、空のパッケージ保管領域からの初回コンパイルを含む参照テストは $19.51\ \mathrm{s}$、$600.81\ \mathrm{MiB}$ でした。これらは教員の参照計算の測定値であり、学生が選ぶソルバの性能を保証しません。
 
-WindowsとmacOSの実行はcourse ownerの判断でskipし、Linux-onlyのplatform waiverを明示してvalidation statusを `ready` としています。実測済みplatformはLinuxだけであり、Windows/macOS互換性は確認済みとも保証済みとも扱いません。これらのOSで利用する場合は、同じpreflightとreference testを実行して保存・positive depth・Stoker $L^1$ refinement・CFL contractを確認してください。
+WindowsとmacOSの実行は授業責任者の判断で省略し、Linux限定運用を明示して検証状態を `ready` としています。実測済みの環境はLinuxだけであり、Windows/macOS互換性は確認済みとも保証済みとも扱いません。これらのOSで利用する場合は、同じ事前確認と参照テストを実行して保存・正水深・Stoker $L^1$ 格子細分化・CFL契約を確認してください。
 
 ## 相談事項
 
-数値flux、境界条件、Stoker解の評価領域、dry-bedへ進む条件、fallbackを相談できます。問い、最終比較、solver分割、完成図、結論は学生自身が決めます。
+数値流束、境界条件、Stoker解の評価領域、乾床へ進む条件、代替案を相談できます。問い、最終比較、ソルバの分割、完成図、結論は学生自身が決めます。

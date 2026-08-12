@@ -24,7 +24,7 @@ title: "数値微分によるベクトル公式の検証"
 
 ## 開始
 
-前のベクトル解析課題（課題ID: F03）をmergeし、cleanな`main`から開始します。
+前のベクトル解析課題（課題ID: F03）をmergeし、変更のない`main`から開始します。
 
 ```bash
 julia --project=. scripts/course.jl start F04
@@ -32,7 +32,7 @@ julia --project=. scripts/course.jl start F04
 
 ## 実装範囲
 
-学生TODOは`forward_difference(f, x, h)`、`backward_difference(f, x, h)`、`centered_difference(f, x, h)`の3つだけです。3D座標adapter `centered_partial`、残差関数、格子走査、集計は提供済みです。adapterは学生の`centered_difference`を再利用します。
+学生TODOは`forward_difference(f, x, h)`、`backward_difference(f, x, h)`、`centered_difference(f, x, h)`の3つだけです。3次元座標アダプター`centered_partial`、残差関数、格子走査、集計は提供済みです。アダプターは学生の`centered_difference`を再利用します。
 
 ## 一次元収束
 
@@ -57,7 +57,7 @@ julia --project=. test/runtests.jl
 
 ## 次へ進む条件
 
-- 3つのTODOと提供済みadapter・残差処理を区別した。
+- 3つのTODOと提供済みアダプター・残差処理を区別した。
 - 一次元と格子の比の範囲を確認した。
 - 自分のテストと学習ログの要件を確認した。
 

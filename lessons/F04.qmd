@@ -9,7 +9,7 @@ title: "数値微分と格子収束"
 
 - 前進・後退・中心差分を近傍点と打切り誤差から説明する。
 - 一次元の誤差比から一次・二次の収束次数を確認する。
-- 学生の`centered_difference`を3D adapterから再利用し、F03の三公式の格子収束を調べる。
+- 学生の`centered_difference`を3次元アダプターから再利用し、F03の三公式の格子収束を調べる。
 
 ## このページの進め方
 
@@ -41,7 +41,7 @@ $h$を半分にしたとき、一次精度の誤差比は約2、二次精度で�
 
 ## 前回の三公式へ再利用する
 
-提供済み`centered_partial`は座標軸に沿う一次元sliceを作り、学生の`centered_difference`を呼びます。前回実装した`gradient_scalar`、`curl_vector`、`laplacian_scalar`を固定相対pathから読み、解析式を複製しません。
+提供済み`centered_partial`は座標軸に沿う一次元スライスを作り、学生の`centered_difference`を呼びます。前回実装した`gradient_scalar`、`curl_vector`、`laplacian_scalar`を固定相対パスから読み、解析式を複製しません。
 
 ## 連続公式と有限差分残差
 
@@ -50,7 +50,7 @@ $h$を半分にしたとき、一次精度の誤差比は約2、二次精度で�
 ## 授業内チェックポイント
 
 - 3差分が使う点と期待する誤差比を説明できる。
-- adapterが`centered_difference`を再利用する理由を説明できる。
+- アダプターが`centered_difference`を再利用する理由を説明できる。
 - 手計算、ForwardDiff、有限差分の役割を区別できる。
 
 ## 次へ進む条件

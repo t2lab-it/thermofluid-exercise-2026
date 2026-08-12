@@ -16,7 +16,7 @@ title: "CairoMakieによる可視化"
 ## 分離した環境を作る
 
 授業リポジトリの`Project.toml`を変更しないよう、一時的な別環境を作ります。
-`Pkg.add`には大きな通信量と初回compile時間を要します。
+`Pkg.add`には大きな通信量と初回コンパイル時間を要します。
 
 ```bash
 julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(env); Pkg.add("CairoMakie"); println(env)'
@@ -44,7 +44,7 @@ end
 println(output_path)
 ~~~
 
-学生リポジトリのrootで実行します。
+学生リポジトリのルートディレクトリで実行します。
 
 ~~~bash
 julia --project=. scratch/export_n01.jl

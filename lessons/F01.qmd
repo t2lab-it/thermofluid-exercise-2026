@@ -42,7 +42,7 @@ clean main
 git switch -c exercise/F01-first-pull-request
 ```
 
-次の配列・関数・テスト課題（課題ID: F02）以降は`julia --project=. scripts/course.jl start <ID>`が、cleanなmain、課題順序、ローカルテスト、結果サイズを確認してからbranchを作ります。このコマンドはpull、push、PR、mergeを自動化しません。ネットワークへ送る内容は、学生自身がdiffを確認して決めます。
+次の配列・関数・テスト課題（課題ID: F02）以降は`julia --project=. scripts/course.jl start <ID>`が、変更のないmain、課題順序、ローカルテスト、結果サイズを確認してからbranchを作ります。このコマンドはpull、push、PR、mergeを自動化しません。ネットワークへ送る内容は、学生自身がdiffを確認して決めます。
 
 ## 状態を確認する基本コマンド
 
@@ -63,12 +63,12 @@ git log --oneline -5
 2. **diff**: 何を追加・削除したかを人間が確認する。
 3. **学習ログ**: なぜ変更し、テストをどう解釈したかを説明する。
 
-GitHub Freeのprivateリポジトリではbranch protectionに依存しません。そのため、仕組みだけに任せず、PRテンプレート、Git履歴、学習ログ、セルフレビューで手順を確認します。
+GitHub Freeの非公開リポジトリではbranch protectionに依存しません。そのため、仕組みだけに任せず、PRテンプレート、Git履歴、学習ログ、セルフレビューで手順を確認します。
 
 ## AI利用の境界
 
 この最初のbranch課題では、概念の説明、エラーメッセージの解説、課題とは別の小さな練習問題に利用できます。課題の完成コード作成は依頼しません。提案を利用した場合も、実行前に対象を予想し、実行後にdiffとテストを自分で確認します。
 
-token、API key、パスワード、秘密鍵、個人情報をAgentやPRへ貼り付けません。誤って表示した場合はcommitやpushをせず、教員・TAへ相談してください。
+トークン、APIキー、パスワード、秘密鍵、個人情報をAgentやPRへ貼り付けません。誤って表示した場合はcommitやpushをせず、教員・TAへ相談してください。
 
 実作業はページ下部の［次へ］から進む「最初のbranchとpull request課題」（課題ID: F01）で行い、以後の共通手順は[課題ワークフロー](../guides/workflow.qmd)を参照してください。

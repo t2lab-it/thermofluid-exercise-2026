@@ -128,7 +128,7 @@ git status --short
 
 この課題のbranch、PR、学習ログがそれぞれ一つあり、`test/student/F01.jl`を代表例へ変更し、テスト、Actions、diff確認が完了していれば「最初のbranchとpull request」は完了です。
 
-ページ下部の［次へ］から第3回授業「配列・関数・loop・テスト」へ進んでください。授業ページを読んだ後、その次の配列・関数・テスト課題（課題ID: F02）で、案内されるコマンドを使ってcleanなmainから課題branchを作成します。
+ページ下部の［次へ］から第3回授業「配列・関数・ループ・テスト」へ進んでください。授業ページを読んだ後、その次の配列・関数・テスト課題（課題ID: F02）で、案内されるコマンドを使って変更のないmainから課題branchを作成します。
 
 ## 任意のCLI発展資料
 
@@ -141,4 +141,4 @@ git status --short
 - まだpushしていない場合は、現在のcommitを失わないよう課題branchを作ってから、mainを`origin/main`へ戻す手順を教員・TAと行います。
 - すでにmainへpushした場合は、自分だけで履歴を書き換えません。教員・TAと安全な復旧方法を決め、課題branchとPRを作り直して正しい流れを再実行します。
 
-privateリポジトリを使うGitHub Freeの授業運用では、branch protectionだけに依存して直接pushを防ぎません。操作ミスはGit履歴、PR、学習ログから確認し、手順を作り直すことで修正します。
+GitHub Freeの非公開リポジトリの授業運用では、branch protectionだけに依存して直接pushを防ぎません。操作ミスはGit履歴、PR、学習ログから確認し、手順を作り直すことで修正します。
