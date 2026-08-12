@@ -30,6 +30,7 @@ const POSITION_LABELS = Dict(
     "advanced/github-cli.qmd" => "任意・発展資料",
     "advanced/cairomakie.qmd" => "任意・発展資料",
     "advanced/package-built-solvers.qmd" => "任意・発展資料",
+    "advanced/public-solver-methods.qmd" => "任意・発展資料",
 )
 
 const NO_ID_TITLE = Dict(
@@ -49,6 +50,7 @@ const NO_ID_TITLE = Dict(
     "advanced/github-cli.qmd" => "GitHub CLIでpull requestを操作する",
     "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
     "advanced/package-built-solvers.qmd" => "パッケージを使ってPDEソルバを構築する",
+    "advanced/public-solver-methods.qmd" => "公開Solverの数値手法を読み解く",
 )
 
 function section_body(source, heading)
@@ -510,6 +512,39 @@ end
             "[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)",
         ),
     )
+end
+
+@testset "public solver methods guide has a bounded learner-facing scope" begin
+    source = copy_source("advanced/public-solver-methods.qmd")
+
+    for package in (
+        "WaterLily.jl", "Trixi.jl", "Oceananigans.jl", "GeophysicalFlows.jl",
+        "DispersiveShallowWater.jl", "TrixiShallowWater.jl",
+    )
+        @test occursin(package, source)
+    end
+    for marker in (
+        "標準guided route",
+        "相談・発展route",
+        "埋め込み境界法と非圧縮性流れ",
+        "高次不連続Galerkin法と双曲型保存則",
+        "有限体積法とBoussinesq流体",
+        "Fourier擬スペクトル法と地球流体",
+        "SBP法と分散性浅水波",
+    )
+        @test occursin(marker, source)
+    end
+    @test !occursin("```", source)
+
+    project = TOML.parsefile(joinpath(COPY_ROOT, "Project.toml"))
+    manifest = copy_source("Manifest.toml")
+    for package in (
+        "WaterLily", "Trixi", "Oceananigans", "GeophysicalFlows",
+        "DispersiveShallowWater", "TrixiShallowWater",
+    )
+        @test !haskey(project["deps"], package)
+        @test !occursin("[[deps.$package]]", manifest)
+    end
 end
 
 @testset "advanced SSH guide preserves existing keys and the standard path" begin
