@@ -582,6 +582,32 @@ end
     end
 end
 
+@testset "public solver guide bounds the XCALibre consultation route" begin
+    source = copy_source("advanced/public-solver-methods.qmd")
+    for marker in (
+        "XCALibre.jl",
+        "SIMPLE",
+        "PISO",
+        "UNV",
+        "mesh生成",
+        "二次元非定常円柱",
+        "WaterLily.jlとXCALibre.jl",
+        "相談・発展route",
+    )
+        @test occursin(marker, source)
+    end
+    for link in (
+        "https://mberto79.github.io/XCALibre.jl/stable/",
+        "https://pretalx.com/juliacon-2026/talk/PG9DLH/",
+    )
+        @test occursin(link, source)
+    end
+    project = TOML.parsefile(joinpath(COPY_ROOT, "Project.toml"))
+    manifest = copy_source("Manifest.toml")
+    @test !haskey(project["deps"], "XCALibre")
+    @test !occursin("[[deps.XCALibre]]", manifest)
+end
+
 @testset "public solver guide explains immersed-boundary and DG evidence" begin
     source = copy_source("advanced/public-solver-methods.qmd")
     for marker in (

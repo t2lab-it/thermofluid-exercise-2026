@@ -83,6 +83,49 @@ solverは、staggered格子上の流れ場、時間発展、pressure Poisson sol
 
 [WaterLily.jl official repository](https://github.com/WaterLily-jl/WaterLily.jl)
 
+### XCALibre.jl：meshに沿う有限体積法
+
+#### どの方程式・現象を扱うか
+
+`XCALibre.jl`は、二次元・三次元のstructuredまたはunstructured grid上で有限体積法を使う汎用CFD frameworkです。現行の公式資料では、定常・非定常の非圧縮flowと弱圧縮flowを扱い、pressure–velocity couplingにSIMPLEまたはPISOを使います。
+
+この授業で入口にする二次元非定常円柱flowは、`WaterLily.jl`と同じ非圧縮性Navier–Stokes方程式を比較対象にできます。ただし、境界を表す方法と離散化の実装は同じではありません。
+
+#### 数値手法の中心
+
+control volumeごとに保存則を積分し、cell faceを通るfluxから離散方程式を組み立てます。非圧縮flowでは、運動量方程式と圧力補正をSIMPLEまたはPISOで連成し、速度場と圧力場を更新します。空間離散化にはupwind、linear、LUSTなど、時間離散化にはEulerなどの選択肢があります。
+
+`WaterLily.jl`がCartesian gridへ物体境界を埋め込むのに対し、`XCALibre.jl`はmeshのboundary patchで物体表面を表します。`WaterLily.jlとXCALibre.jl`を比較する場合は、同じReynolds数だけでなく、物体表面の解像、外側境界までの距離、流体力の定義を揃える必要があります。
+
+#### Solverが担当する部分と利用者が決める部分
+
+frameworkはfield、有限体積operator、SIMPLE・PISO、線形solver、CPU threadまたはGPU backend、outputを構成します。利用者はmesh、boundary patchと境界条件、物性値、離散化scheme、線形solverとpreconditioner、許容誤差、時間刻み、停止条件、sampling区間を決めます。
+
+二次元meshはUNV、三次元meshはUNVまたはOpenFOAM形式から読み込めます。`XCALibre.jl`自体はmesh生成toolを提供しないため、mesh作成・変換とboundary名の確認も再現手順へ含めます。
+
+#### 数値的な長所と代償
+
+複雑形状とunstructured grid、定常・非定常solver、CPU/GPUを一つのJulia frameworkで扱える一方、mesh品質、非直交性、境界patch、pressure–velocity coupling、線形solverの収束が結果へ入り込みます。solver residualが下がったことだけでは、離散化誤差やdomain依存性を示せません。
+
+公式資料ではGPU backendを主にNVIDIAで確認しており、Apple GPUは未対応です。したがって、2026年度の入口はCPU smoke testとし、GPUは利用できる環境で数値一致を確認した後だけ扱います。
+
+::: {.callout-warning}
+## 信用できない条件
+
+mesh品質が悪い、boundary patchが意図と異なる、mass balanceが閉じない、pressureまたはvelocity residualが停滞する、時間刻みやmeshを変えると抗力・渦放出周波数が変わり続ける場合、流線や渦度図が滑らかでも結果を信用できません。
+:::
+
+#### 何を測って信用するか
+
+- **外部参照**：公式の二次元非定常円柱verificationと、同じReynolds数・boundary条件を持つ円柱wake benchmarkを使い、抗力、揚力、Strouhal数を比較します。
+- **自己整合性確認**：mass balance、solver residual、mesh依存性、時間刻み依存性、domain依存性、初期過渡とsampling区間依存性を確認します。
+
+#### この授業の課題にするなら
+
+`XCALibre.jl`は相談・発展routeです。固定したUNV meshとCPU設定で公式の二次元非定常円柱caseを再現し、`WaterLily.jl`と同じ一条件だけを変えて、流体力、Strouhal数、格子・domain依存性を比較します。mesh作成、GPU、乱流modelを同時に研究対象へ加えません。
+
+[XCALibre.jl official documentation](https://mberto79.github.io/XCALibre.jl/stable/) · [JuliaCon 2026 talk](https://pretalx.com/juliacon-2026/talk/PG9DLH/)
+
 ## 高次不連続Galerkin法と双曲型保存則
 
 双曲型保存則とbalance lawは、まとめて
