@@ -7,68 +7,32 @@ title: "Julia・Git・GitHubの最小操作"
 
 ## この回の到達点
 
-- 作業中の変更、commit、branch、pull request、mainの違いを説明できる。
-- この課題用のbranchを作り、変更前後の`git diff`を確認できる。
+- 基本的なgit用語を説明できる。
+- この課題用のfeature branchを作り、変更前後の`git diff`を確認できる。
 - ローカルテスト、push、Actions、セルフレビューを正しい順で実行できる。
-- 一つのbranchと一つのPRでこの課題を完了できる。
 
+## git/GitHubを使った開発手順
 
-## 一つの変更が進む経路
+GitHubで管理されているプログラムを編集する際は次の手順を踏みます：
 
-```text
-clean main
-  → exercise/F01-first-pull-request
-  → 実装
-  → ローカルテスト
-  → 公式出力の確認（この課題はなし）
-  → 学習ログ
-  → commit
-  → push
-  → pull request
-  → Actions
-  → diff確認
-  → セルフレビュー
-  → merge
-  → 更新されたclean main
-```
++ リモートリポジトリをforkする
++ forkしたリモートリポジトリをローカルにcloneする
++ リモートリポジトリの最新状態をローカルにpullする
++ ローカルリポジトリでfeature branchを切る
++ 実装する
++ ローカルテストを通す
++ ローカルリポジトリにcommitする
++ forkしたリモートリポジトリにpushする
++ リモートリポジトリにpull requestを出す
++ GitHub Actionsを通す
++ リモートリポジトリにmergeしてもらう
 
-順番には意味があります。ローカルテストを先に通すことで、push後に初めて単純な失敗へ気づく時間を減らせます。diffを読んでからmergeすることで、テスト対象外の意図しない変更も検出できます。
+本課題では、上記の流れを自分の操作で確かめます。
 
-## 最初のbranchだけ手動で作る理由
+## gitコマンド
 
-この最初のbranch課題では、現在branchと新しいbranchの関係を自分の操作で確かめます（課題ID: F01）。
+_TBA_
 
-```bash
-git switch -c exercise/F01-first-pull-request
-```
+## GitHubコマンド
 
-次の配列・関数・テスト課題（課題ID: F02）以降は`julia --project=. scripts/course.jl start <ID>`が、変更のないmain、課題順序、ローカルテスト、結果サイズを確認してからbranchを作ります。このコマンドはpull、push、PR、mergeを自動化しません。ネットワークへ送る内容は、学生自身がdiffを確認して決めます。
-
-## 状態を確認する基本コマンド
-
-次のコマンドはWindowsのPowerShell、macOSとLinuxのターミナルで共通して使えます。リポジトリのルートで実行します。
-
-```bash
-git status --short
-git branch --show-current
-git diff
-git log --oneline -5
-```
-
-画面表示やパス区切りが違っても、課題branch名とGitの状態契約は同じです。
-
-## PRで見る三つの証拠
-
-1. **Actions**: 公開テストが新しいcheckout相当の環境でも成功する。
-2. **diff**: 何を追加・削除したかを人間が確認する。
-3. **学習ログ**: なぜ変更し、テストをどう解釈したかを説明する。
-
-GitHub Freeの非公開リポジトリではbranch protectionに依存しません。そのため、仕組みだけに任せず、PRテンプレート、Git履歴、学習ログ、セルフレビューで手順を確認します。
-
-## AI利用の境界
-
-この最初のbranch課題では、概念の説明、エラーメッセージの解説、課題とは別の小さな練習問題に利用できます。課題の完成コード作成は依頼しません。提案を利用した場合も、実行前に対象を予想し、実行後にdiffとテストを自分で確認します。
-
-トークン、APIキー、パスワード、秘密鍵、個人情報をAgentやPRへ貼り付けません。誤って表示した場合はcommitやpushをせず、教員・TAへ相談してください。
-
-実作業はページ下部の［次へ］から進む「最初のbranchとpull request課題」（課題ID: F01）で行い、以後の共通手順は[課題ワークフロー](../guides/workflow.qmd)を参照してください。
+_TBA_
