@@ -797,6 +797,21 @@ end
     @test occursin("3つのTODOだけ", assignment)
     @test occursin("学習対象ではありません", assignment)
     for source in (lesson, assignment)
+        for main_contract in (
+            "apply_boundary! → simulate → main",
+            "`main`は`run.jl`にあり",
+            "読む対象ですが、編集対象ではありません",
+            "`write_summary`",
+            "`make_plots`",
+        )
+            @test occursin(main_contract, source)
+        end
+    end
+    @test !occursin(
+        "`provided_support.jl`にある`TOML`、`Plots`、詳細な入力検証、TOML出力、作図処理と`main`",
+        lesson,
+    )
+    for source in (lesson, assignment)
         for required_boundary in (
             "provided_support.jl",
             "おまじない",
