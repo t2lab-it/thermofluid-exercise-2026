@@ -16,6 +16,12 @@ title: "ベクトル解析の公式"
 - 自分のテスト: `test/student/F03.jl`
 - 学習ログ: `learning_logs/F03.md`
 
+## 開始
+
+```bash
+julia --project=. scripts/course.jl start F03
+```
+
 ## 証明課題
 
 $$
