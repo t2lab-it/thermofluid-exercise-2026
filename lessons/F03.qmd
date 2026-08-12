@@ -7,28 +7,15 @@ title: "ベクトル解析"
 
 ## この回の到達点
 
-- gradient、curl、Laplacianを成分で計算し、ベクトル解析の三公式を説明する。
-- 解析式をJuliaの3関数へ移し、ForwardDiffを独立参照として照合する。
-- 完全証明、供給された骨格の完成、成分展開という異なる深さで根拠を残す。
-
-## このページの進め方
-
-1. この授業ページで定義と三公式を確認する。
-2. ページ下部の［次へ］から課題ページへ進む。
-3. 学生リポジトリの`run.jl`、提供テスト、自分のテストの順に読む。
-
-## 場と四つの微分演算子
-
-スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し、gradient、divergence、curl、Laplacianを成分で定義します。この回では指定された場について解析式を手で導きます。
-
-## 添字記法と証明の道具
-
-Kronecker delta、Levi-Civita記号、混合偏微分の交換を使い、同じ項が反対符号で現れる構造を追います。途中式と、どこで滑らかさを仮定したかを明記します。
+- gradient、curl、Laplacianを成分で計算し、ベクトル解析の三公式を証明する。
 
 ## 三つの公式
 
 $$
-\nabla\times(\nabla\phi)=\boldsymbol{0},\qquad
+\nabla\times(\nabla\phi)=\boldsymbol{0},
+$$
+
+$$
 \nabla\cdot(\nabla\times\boldsymbol{A})=0,
 $$
 
@@ -36,24 +23,49 @@ $$
 \nabla\cdot(\nabla\phi)=\nabla^2\phi.
 $$
 
-`curl grad`は完全証明、`div curl`は供給された証明骨格の完成、`div grad`は成分和の展開として確認します。
+## 微分演算子と添字記法
 
-## 解析式をJuliaへ移す
+スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し、gradient
 
-学生が実装するAPIは`gradient_scalar(point)`、`curl_vector(point)`、`laplacian_scalar(point)`の3つです。式の各成分とTupleの位置を一対一に対応させます。
+$$
+TBA,
+$$
 
-## ForwardDiffを独立参照にする
+divergence
 
-提供済み`automatic_reference(point)`はForwardDiffの`gradient`、`jacobian`、`hessian`から参照値を作ります。学生の解析関数を参照値の生成に使わないため、同じ誤りを共有しません。解析式との誤差を第2の点でも確認します。
+$$
+TBA,
+$$
 
-## 授業内チェックポイント
+curl
 
-- 三公式それぞれで、使った定義と結論を説明できる。
-- 3つのJulia関数と解析成分の対応を示せる。
-- 手計算と自動微分の役割の違いを説明できる。
+$$
+TBA,
+$$
 
-## 次へ進む条件
+Laplacian
 
-- この授業ページ、課題ページ、学生リポジトリの読む順を確認した。
-- 完全証明、構造確認、成分確認の提出範囲を区別できる。
-- この回では有限差分や格子収束を扱わないことを確認した。
+$$
+TBA,
+$$
+
+を定義します。
+このとき，Kroneckerのデルタ$\delta_{ij}$は
+
+$$
+TBA
+$$
+
+といった性質をもち、Levi-Civita記号$\epsilon_{ijk}$は
+
+$$
+TBA
+$$
+
+で定義され、$\delta_{ij}$と
+
+$$
+TBA
+$$
+
+の関係をもちます。

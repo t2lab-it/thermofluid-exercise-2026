@@ -1,5 +1,5 @@
 ---
-title: "ベクトル解析の公式と自動微分"
+title: "ベクトル解析の公式"
 ---
 ::: {.course-position}
 第4回・課題 2/2 · 課題ID: F03
@@ -7,72 +7,18 @@ title: "ベクトル解析の公式と自動微分"
 
 ## 目的
 
-ベクトル解析の三公式を途中式つきで確認し、解析微分をJuliaへ実装してForwardDiffの独立参照と比較します。
-
-## このページの進め方
-
-1. ページ下部の［前へ］から授業ページの定義と証明道具を確認する。
-2. この課題ページで提出範囲と3つのTODOを確認する。
-3. 学生リポジトリで`run.jl`、提供テスト、自分のテストを順に読む。
-
-## 学生リポジトリ内の場所
-
-- 実装・実行: `exercises/F03_vector_calculus/run.jl`
-- 提供テスト: `test/provided/F03.jl`
-- 自分のテスト: `test/student/F03.jl`
-- 学習ログ: `learning_logs/F03.md`
-
-## 開始
-
-```bash
-julia --project=. scripts/course.jl start F03
-```
+ベクトル解析の三公式を証明します。
 
 ## 証明課題
 
 $$
-\nabla\times(\nabla\phi)=\boldsymbol{0},\qquad
+\nabla\times(\nabla\phi)=\boldsymbol{0},
+$$
+
+$$
 \nabla\cdot(\nabla\times\boldsymbol{A})=0,
 $$
 
 $$
 \nabla\cdot(\nabla\phi)=\nabla^2\phi.
 $$
-
-1. `curl grad`は使用した定義、添字の交換・縮約、混合偏微分、結論を含む完全な手計算証明を書く。
-2. `div curl`は供給された証明骨格の空欄と途中式を完成する。
-3. `div grad`は成分和を展開し、Laplacianとの対応を書く。
-
-## 実装範囲
-
-学生TODOは`gradient_scalar(point)`、`curl_vector(point)`、`laplacian_scalar(point)`の3関数だけです。提供済み`automatic_reference(point)`はForwardDiffによる独立参照であり、実装対象ではありません。
-
-## ForwardDiffとの比較
-
-基準点で3つの解析量を`automatic_reference`と比較し、解析式との誤差を記録します。さらに基準点と異なる第2の点で、gradient、curl、Laplacianをすべて比較する自分のテストを1件書きます。
-
-## 実行とテスト
-
-```bash
-julia --project=. exercises/F03_vector_calculus/run.jl
-julia --project=. test/runtests.jl
-```
-
-この課題は公式出力を作りません。証拠は証明、コード、テスト、学習ログです。
-
-## 自分のテストと学習ログ
-
-学習ログには手計算の途中式、3関数の解析式、ForwardDiff比較、自分のテスト、AI利用、diff・テスト・結果を記録します。
-
-## 次へ進む条件
-
-- 3つの証明負荷の違いを確認した。
-- 編集する3つのTODOと提供済み参照を区別した。
-- 第2の点で3量を比較するテスト条件を確認した。
-
-## 完了条件
-
-- 三公式について完全証明、骨格完成、成分展開を提出した。
-- `gradient_scalar`、`curl_vector`、`laplacian_scalar`を解析式で実装した。
-- ForwardDiffとの解析式の誤差と、第2の点での自分のテストを確認した。
-- 学習ログ、diff、テスト、PRの判断を記録した。
