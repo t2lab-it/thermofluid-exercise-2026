@@ -35,7 +35,7 @@ git branch --show-current
 
 ## mainブランチで作業してしまったら
 
-GitHub Freeの非公開repositoryではbranch protectionに依存しないため、操作ミスを完全には遮断しません。mainでの作業、commit、直接pushに気づいたら、強制push、reset、履歴削除を自己判断で行わないでください。
+GitHub Freeの非公開リポジトリではbranch protectionに依存しないため、操作ミスを完全には遮断しません。mainでの作業、commit、直接pushに気づいたら、強制push、reset、履歴削除を自己判断で行わないでください。
 
 1. `git status --short`、`git log --oneline -5`、GitHubのmain画面を保存する。
 2. どのcommitをどのコマンドでpushしたか記録する。まだpushしていない場合は、そのことも記録する。

@@ -60,7 +60,7 @@ gh --version
 
 ## GitHub CLIを認証する
 
-すでに作成したSSH鍵を再利用します。個人用授業repositoryのルートディレクトリで次を実行します。
+すでに作成したSSH鍵を再利用します。学生リポジトリのルートディレクトリで次を実行します。
 
 ```bash
 gh auth login --hostname github.com --git-protocol ssh --web --skip-ssh-key
@@ -70,7 +70,7 @@ gh repo view
 
 `--web`はブラウザ認証を開き、`--skip-ssh-key`はSSH鍵の生成・アップロード確認を飛ばします。ブラウザに表示される確認コードやトークンを記録・共有してはいけません。
 
-`gh auth status`でホストが`github.com`、ユーザー名が意図した自分のアカウント、GitプロトコルがSSHであることを確認します。`gh repo view`では、現在のディレクトリが自分の個人用授業repositoryとして認識されることを確認します。
+`gh auth status`でホストが`github.com`、ユーザー名が意図した自分のアカウント、GitプロトコルがSSHであることを確認します。`gh repo view`では、現在のディレクトリが学生リポジトリとして認識されることを確認します。
 
 ## 既存のpull requestをCLIで読む
 
@@ -110,7 +110,7 @@ pushの出力とupstream設定を確認してから次へ進みます。
 
 ## pull request本文を準備する
 
-VS Codeで、学生repository内のignore対象領域に`scratch/pr-body.md`を作ります。
+VS Codeで、学生リポジトリ内のignore対象領域に`scratch/pr-body.md`を作ります。
 
 ```markdown
 ## 課題
@@ -201,7 +201,7 @@ gh pr view --web
 | 状況 | 読み取り中心の確認 |
 |---|---|
 | `gh auth status`が失敗する | ホスト、表示されたユーザー名、ブラウザ認証が完了したかを確認する |
-| repositoryを認識しない | `git status --short`、`git remote -v`、`gh repo view`で現在地とremoteを確認する |
+| リポジトリを認識しない | `git status --short`、`git remote -v`、`gh repo view`で現在地とremoteを確認する |
 | 最初のbranch課題のPRが見つからない | `gh pr list --state all`とブラウザ上のPR番号を確認する |
 | baseまたはheadが違う | `gh pr view`で`baseRefName`と`headRefName`に相当する表示を確認する |
 | checksがpending | 時間を置いて`gh pr checks`を再実行する |

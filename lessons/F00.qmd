@@ -22,7 +22,7 @@ title: "ガイダンスと環境診断"
 | Julia | 機械観測 | 正確に 1.12.6 |
 | Git | 機械観測 | コマンド呼び出し成功 |
 | VS Code・Julia 拡張 | 機械観測と学生の確認 | 起動と Julia 実行 |
-| GitHub | 手動確認 | 自分の 割り当てられた個人用授業repositoryを閲覧 |
+| GitHub | 手動確認 | 学生リポジトリを閲覧 |
 | Coding Agent | 手動確認 | 一つで編集とコマンド実行 |
 
 診断で問題が見つかった場合は、[トラブル対応](../guides/troubleshooting.qmd)で停止した段階に対応する項目を確認してください。
@@ -32,7 +32,7 @@ title: "ガイダンスと環境診断"
 次の3項目がそろったら、ページ下部の［次へ］から環境診断課題へ進み、完了条件を確認します。
 
 - 機械確認でJulia 1.12.6とGitが利用可能だと分かる。
-- GitHubで自分の割り当てられた個人用授業repositoryを閲覧でき、一つのCoding Agentで編集とコマンド実行を手動確認した。
+- GitHubで学生リポジトリを閲覧でき、一つのCoding Agentで編集とコマンド実行を手動確認した。
 - `julia --project=. scripts/course.jl preflight`が環境診断の完了を進捗へ記録した。
 
 この最初の課題は環境診断だけです。branch、commit、push、pull request、Actions、diff、セルフレビュー、mergeは次の「最初のbranchとpull request」課題（課題ID: F01）で順に学びます。

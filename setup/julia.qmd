@@ -45,7 +45,7 @@ julia --version
 
 ## パッケージ環境を復元する
 
-割り当てられた個人用授業repositoryをcloneした後は、リポジトリのルートディレクトリへ移動し、授業で固定したパッケージ環境を復元します。Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します。`Project.toml`は直接使う依存関係と互換条件、`Manifest.toml`は実際に解決された依存関係全体の版を記録します。
+学生リポジトリをcloneした後は、リポジトリのルートディレクトリへ移動し、授業で固定したパッケージ環境を復元します。Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します。`Project.toml`は直接使う依存関係と互換条件、`Manifest.toml`は実際に解決された依存関係全体の版を記録します。
 
 授業で扱うパッケージは次のように分類します。
 
@@ -86,7 +86,7 @@ REPLに残っている変数や過去の実行結果だけを提出の証拠に�
 
 VS Codeをインストールしたら、拡張機能`julialang.language-julia`を必ず導入します。表示言語を日本語にしたい場合の`MS-CEINTL.vscode-language-pack-ja`は任意です。
 
-学生用リポジトリの`.vscode/`には、Juliaファイルの4空白インデント、括弧の色分け、末尾空白の除去、保存時の自動整形、`linter`を有効にする授業用設定があります。cloneしたリポジトリをフォルダーとして開くと、この設定と`formatter`が適用されます。
+学生リポジトリの`.vscode/`には、Juliaファイルの4空白インデント、括弧の色分け、末尾空白の除去、保存時の自動整形、`linter`を有効にする授業用設定があります。cloneしたリポジトリをフォルダーとして開くと、この設定と`formatter`が適用されます。
 
 VS Code上の操作は公式資料も参照してください。
 
@@ -117,4 +117,4 @@ GitHub ActionsのCIは`julia --project=. scripts/format.jl --check`で整形状�
 - REPLでは動くがスクリプトやテストが失敗する: `Julia: Run File in New Process`または上のCLIで、残ったREPL状態に依存していないか確認する。
 - 保存時整形や警告表示が動かない: リポジトリをフォルダーとして開いたか、Julia拡張と`.vscode/settings.json`が有効か確認する。
 
-Juliaの導入まで確認できたら、[Git・GitHub・割り当てられた個人用授業repository](git-github.qmd)へ進みます。
+Juliaの導入まで確認できたら、[Git・GitHub・学生リポジトリ](git-github.qmd)へ進みます。

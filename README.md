@@ -49,7 +49,7 @@ julia --project=. scripts/verify_contracts.jl \
   /absolute/path/to/thermofluid-exercise-student-2026
 ```
 
-契約検証には公開教材側と学生側のルートディレクトリを明示的に渡します。既存の非公開リポジトリを参照しません。
+契約検証には公開教材リポジトリと学生リポジトリのルートディレクトリを明示的に渡します。既存の非公開リポジトリを参照しません。
 
 ## ライセンス
 

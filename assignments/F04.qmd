@@ -15,7 +15,7 @@ title: "数値微分によるベクトル公式の検証"
 2. この課題ページで3つのTODOと提供済み処理を確認する。
 3. 学生リポジトリで`run.jl`、提供テスト、自分のテストを読む。
 
-## 課題リポジトリ内の場所
+## 学生リポジトリ内の場所
 
 - 実装・実行: `exercises/F04_numerical_differentiation/run.jl`
 - 提供テスト: `test/provided/F04.jl`

@@ -11,7 +11,7 @@ title: "最初のbranchとpull request"
 
 次の配列・関数・テスト課題（課題ID: F02）以降は、各課題ページで案内する補助コマンドが同じ事前確認とbranch作成を行います。補助コマンドもpush、PR作成、mergeなどのネットワーク操作は実行しません。
 
-## 課題リポジトリ内の場所
+## 学生リポジトリ内の場所
 
 - 編集するコード: `exercises/F01_first_pull_request/run.jl`
 - 提供テスト: `test/provided/F01.jl`

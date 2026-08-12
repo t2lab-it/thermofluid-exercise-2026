@@ -15,7 +15,7 @@ Julia以外のプログラミング経験はあるものの構文を忘れてい
 2. この課題ページで、3つのTODO、実行・テスト、公式出力、完了条件を確認する。
 3. 最後に学生リポジトリの`run.jl`の冒頭説明、提供テスト、自分のテストの順に読み、`run.jl`の3つの実装箇所だけを実装する。
 
-## 課題リポジトリ内の場所
+## 学生リポジトリ内の場所
 
 - 実装・実行: `exercises/N01_linear_advection/run.jl`
 - 提供済みsupport: `exercises/N01_linear_advection/provided_support.jl`
