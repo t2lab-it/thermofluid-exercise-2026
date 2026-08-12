@@ -7,14 +7,11 @@ title: "環境診断"
 
 ## 目的
 
-授業で使うローカル環境を機械診断し、機械からは判定できない GitHub と Coding Agent の利用可否を自分で確認します。この環境診断は後続課題の前提をそろえるための事前診断です。
+授業で使うローカル開発環境を診断し、必要な手動確認を完了します。
 
 ## 先に読むページ
 
-- [受講環境の準備](../setup/index.qmd)
-- [Julia 1.12.6 と VS Code](../setup/julia.qmd)
-- [Git・GitHub・学生リポジトリ](../setup/git-github.qmd)
-- [Coding Agent の準備](../setup/agents.qmd)
+[受講環境の準備](../setup/index.qmd)
 
 ## 学生リポジトリ内の場所
 
@@ -22,18 +19,6 @@ title: "環境診断"
 
 - 診断コード: `exercises/F00_environment/run.jl`
 - 提供テスト: `test/provided/F00.jl`
-
-## Julia 1.12.6を固定する
-
-Juliaupをインストールした後、学生リポジトリのルートディレクトリで次を実行します。
-
-```bash
-juliaup add 1.12.6
-juliaup override set 1.12.6
-julia --version
-```
-
-最後の出力が `julia version 1.12.6` と完全に一致することを確認します。VS CodeのJulia拡張IDは `julialang.language-julia` です。
 
 ## 実行
 
@@ -54,7 +39,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 ## 手動確認を付けて完了する
 
-GitHubへサインインして学生リポジトリを開けることを確認します。次に、正式対応Agentを一つ選び、`scratch/F00-agent-check.txt`の作成と短い確認文の追記、安全なローカルコマンドの実行を依頼します。結果を確認したら一時ファイルを削除し、追跡対象のファイルは編集しません。
+GitHubへサインインして学生リポジトリを開けることを確認します。次に、正式対応Agentを一つ選び、`scratch/F00-agent-check.txt`の作成と短い確認文の追記、安全なローカルコマンドの実行を依頼します。
 
 選んだAgentに対応する次のコマンドを一つだけ実行します。
 
@@ -64,9 +49,7 @@ julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent c
 julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent amazon-q
 ```
 
-成功すると `F00 is complete` と `Current exercise is now F01` が表示されます。公式生成物はありません。この環境診断ではbranch、commit、push、PR、学習ログを作りません。
-
-アクセストークン、パスワード、秘密鍵、個人情報をAgentへの依頼、ターミナル出力、スクリーンショット、リポジトリへ含めません。誤って表示した場合はcommitせず、教員・TAへ相談します。
+成功すると `F00 is complete` と `Current exercise is now F01` が表示されます。公式生成物はありません。
 
 ## 完了条件
 
@@ -77,12 +60,6 @@ julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent a
 - 標準または指定された一つの代替 Agent で、ファイル編集とコマンド実行を確認した。
 - `preflight` が成功し、進捗の完了済み課題が `F00`、現在課題が `F01` になる。
 
-## この環境診断で作らないもの
-
-この環境診断では課題 branch、pull request、学習ログを作りません。ネットワーク Git 操作も診断コマンドから自動実行しません。最初の branch と pull request は次の課題（課題ID: F01）で手動作成します。
-
 ## 失敗したとき
 
-表示された修正案を確認し、[トラブル対応](../guides/troubleshooting.qmd)で停止した段階に対応する項目を確認してください。必要に応じて該当するセットアップページへ戻ります。支援を依頼するときは OS、バージョン出力、実行したコマンド、秘密情報を除いたエラーを伝えてください。
-
-授業での位置づけと診断の読み方を見直す場合は、ページ下部の［前へ］から授業ページへ戻ります。
+表示された修正案と、対応する[トラブル対応](../guides/troubleshooting.qmd)項目を確認してください。支援を依頼するときは OS、バージョン出力、実行したコマンド、秘密情報を除いたエラーを伝えてください。
