@@ -105,10 +105,10 @@ const EXPECTED_IMPLEMENTED_COURSE_LINKS = Dict(
     4 => ["lessons/F03.qmd", "assignments/F03.qmd"],
     5 => ["lessons/F04.qmd", "assignments/F04.qmd"],
     6 => ["lessons/N01.qmd", "assignments/N01.qmd"],
-    11 => ["assignments/final-project.qmd"],
-    12 => ["assignments/final-project.qmd"],
-    13 => ["assignments/final-project.qmd"],
-    14 => ["assignments/final-project.qmd"],
+    11 => ["assignments/final-project.qmd#月27日計画へのフィードバック"],
+    12 => ["assignments/final-project.qmd#月4日結果再現性へのフィードバック"],
+    13 => ["assignments/final-project.qmd#最終発表"],
+    14 => ["assignments/final-project.qmd#最終発表"],
 )
 
 const EXPECTED_COURSE_DATES = [
@@ -378,8 +378,14 @@ end
     all(!isnothing, positions) && @test issorted(something.(positions))
     @test isempty(visible_course_map_machine_ids(home))
     @test occursin("| — | 11/20（金） | 授業なし | 最終プロジェクト予備計算 |", home)
-    @test occursin("| 11 | 11/27（金） | [最終プロジェクト・スタジオ1]", home)
-    @test occursin("| 12 | 12/4（金） | [最終プロジェクト・スタジオ2]", home)
+    @test occursin(
+        "| 11 | 11/27（金） | [最終プロジェクト](assignments/final-project.qmd#月27日計画へのフィードバック)",
+        home,
+    )
+    @test occursin(
+        "| 12 | 12/4（金） | [最終プロジェクト](assignments/final-project.qmd#月4日結果再現性へのフィードバック)",
+        home,
+    )
     @test !occursin("| 11 | 11/27（金） | PDE分類、Laplace方程式", home)
     @test !occursin("| 12 | 12/4（金） | Poisson方程式", home)
 
