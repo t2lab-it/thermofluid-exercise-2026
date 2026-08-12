@@ -18,7 +18,7 @@ title: "熱流体力学演習 2026"
 | 1 | 9/11（金） | [ガイダンス、アカウント、環境診断](lessons/F00.qmd) | [環境診断](assignments/F00.qmd) |
 | 2 | 9/18（金） | [Julia・Git・GitHubの最小操作](lessons/F01.qmd) | [最初のbranchとpull request](assignments/F01.qmd) |
 | 3 | 9/25（金） | [配列・関数・ループ、テスト](lessons/F02.qmd) | [Juliaの配列・関数・テスト](assignments/F02.qmd) |
-| 4 | 10/2（金） | [ベクトル解析](lessons/F03.qmd) | [ベクトル解析の公式と自動微分](assignments/F03.qmd) |
+| 4 | 10/2（金） | [ベクトル解析](lessons/F03.qmd) | [ベクトル解析の公式](assignments/F03.qmd) |
 | 5 | 10/9（金） | [数値微分と格子収束](lessons/F04.qmd) | [数値微分によるベクトル公式の検証](assignments/F04.qmd) |
 | 6 | 10/16（金） | [一次元線形・非線形移流](lessons/N01.qmd) | [1次元線形移流方程式](assignments/N01.qmd) |
 | 7 | 10/23（金） | 一次元拡散・移流拡散 | 一次元拡散方程式・移流拡散方程式（予定） |

@@ -7,7 +7,7 @@ title: "トラブル対応"
 
 ## まず止めること
 
-同じ失敗コマンドを意味なく繰り返したり、履歴を書き換えたり、依存関係を自己判断で追加したりしません。token、API key、パスワード、秘密鍵、個人情報は画面共有・チャット・pull requestへ貼りません。
+同じ失敗コマンドを意味なく繰り返したり、履歴を書き換えたり、依存関係を自己判断で追加したりしません。トークン、APIキー、パスワード、秘密鍵、個人情報は画面共有・チャット・pull requestへ貼りません。
 
 ## 最初の証拠を残す
 
@@ -35,7 +35,7 @@ git branch --show-current
 
 ## mainブランチで作業してしまったら
 
-private GitHub Freeではbranch protectionに依存しないため、操作ミスを完全には遮断しません。mainでの作業、commit、直接pushに気づいたら、force push、reset、履歴削除を自己判断で行わないでください。
+GitHub Freeの非公開リポジトリではbranch protectionに依存しないため、操作ミスを完全には遮断しません。mainでの作業、commit、直接pushに気づいたら、強制push、reset、履歴削除を自己判断で行わないでください。
 
 1. `git status --short`、`git log --oneline -5`、GitHubのmain画面を保存する。
 2. どのcommitをどのコマンドでpushしたか記録する。まだpushしていない場合は、そのことも記録する。

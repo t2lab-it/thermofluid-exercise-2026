@@ -41,11 +41,11 @@ juliaup default 1.12.6
 julia --version
 ```
 
-最後の出力が `julia version 1.12.6` であることを確認します。別のバージョンが表示された場合は、ターミナルを開き直して `juliaup status` と `juliaup default 1.12.6` を再実行してください。
+最後の出力が `julia version 1.12.6` であることを確認します。
 
 ## パッケージ環境を復元する
 
-割り当てられた個人用course repositoryをcloneした後は、リポジトリrootへ移動し、授業で固定したパッケージ環境を復元します。Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します。`Project.toml`は直接使う依存関係と互換条件、`Manifest.toml`は実際に解決された依存関係全体の版を記録します。
+学生リポジトリをcloneした後は、リポジトリのルートディレクトリへ移動し、授業で固定したパッケージ環境を復元します。Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します。`Project.toml`は直接使う依存関係と互換条件、`Manifest.toml`は実際に解決された依存関係全体の版を記録します。
 
 授業で扱うパッケージは次のように分類します。
 
@@ -54,21 +54,15 @@ julia --version
 - `JuliaFormatter`は授業側が版を固定する開発ツールです。
 - `OrdinaryDiffEqLowOrderRK`、`BenchmarkTools`、`SparseArrays`、`IterativeSolvers`は、それぞれを使う後続課題が追加された時点でだけ授業用環境へ加えます。
 
-`FiniteDiff`、`Symbolics`、`CairoMakie`、`CSV`、`DataFrames`、`FFTW`は発展課題または別環境の候補であり、現在の学生用環境へ先回りして追加しません。
-
-役割やAPIを確認するときは、[LinearAlgebra標準ライブラリ](https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/)、[ForwardDiff公式資料](https://juliadiff.org/ForwardDiff.jl/)、[OrdinaryDiffEqLowOrderRK公式資料](https://docs.sciml.ai/OrdinaryDiffEq/stable/explicit/LowOrderRK/)を参照してください。
-
 clone直後は、授業側が用意した2ファイルから次のコマンドで環境を復元します。
 
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
-学生がその場しのぎで`Pkg.add`を実行すると、授業で共有する`Project.toml`や`Manifest.toml`から外れます。必要な依存関係が不足していると思った場合は、まず現在のbranch、リポジトリroot、上の`Pkg.instantiate()`の結果を確認してください。
-
 ## Juliaコードを実行する
 
-リポジトリrootで`--project=.`を付けると、授業用のパッケージ環境を選んでJuliaを起動できます。
+リポジトリのルートディレクトリで`--project=.`を付けると、授業用のパッケージ環境を選んでJuliaを起動できます。
 
 ```bash
 julia --project=.
@@ -76,17 +70,14 @@ julia --project=. exercises/F03_vector_calculus/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-1行目は対話的なREPL、2行目はスクリプトを新しいプロセスで実行する例、3行目は授業用の`tests`をcleanなテストプロセスで実行する例です。REPLでは`exit()`またはCtrl+Dで終了できます。
+1行目は対話的なREPL、2行目はスクリプトを新しいプロセスで実行する例、3行目は授業用の`tests`を初期状態のテストプロセスで実行する例です。REPLでは`exit()`またはCtrl+Dで終了できます。
 
 VS CodeのCommand Paletteでは、`Julia: Start REPL`で授業用REPLを開始し、`Julia: Execute Code in REPL`で選択範囲や現在行を試せます。ファイル全体を独立した状態で確認するときは`Julia: Run File in New Process`を使います。
 
-REPLに残っている変数や過去の実行結果だけを提出の証拠にはしません。公式`run.jl`、テスト、生成物、学習ログを新しいプロセスでも再現できることを確認します。
-
 ## VS Codeを授業用に整える
 
-VS Codeをインストールしたら、拡張機能`julialang.language-julia`を必ず導入します。表示言語を日本語にしたい場合の`MS-CEINTL.vscode-language-pack-ja`は任意です。
-
-学生用リポジトリの`.vscode/`には、Juliaファイルの4-spaceインデント、bracket colors、末尾空白の除去、format-on-save、`linter`を有効にする授業用設定があります。cloneしたリポジトリをfolderとして開くと、この設定と`formatter`が適用されます。
+VS Codeをインストールしたら、拡張機能`julialang.language-julia`を必ず導入します。
+学生リポジトリの`.vscode/`には、Juliaファイルの4空白インデント、括弧の色分け、末尾空白の除去、保存時の自動整形、`linter`を有効にする授業用設定があります。cloneしたリポジトリをフォルダーとして開くと、この設定と`formatter`が適用されます。
 
 VS Code上の操作は公式資料も参照してください。
 
@@ -98,7 +89,7 @@ VS Codeのターミナルでも`julia version 1.12.6`が表示される必要が
 
 ## pull request前に整形とテストを行う
 
-pull requestを作る前に、リポジトリrootで次の順に実行します。
+pull requestを作る前に、リポジトリのルートディレクトリで次の順に実行します。
 
 ```bash
 julia --project=. scripts/format.jl
@@ -108,13 +99,11 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 1行目は学生が編集するJuliaコードを整形します。2行目でformatterが加えた変更を自分で読み、意図した変更だけか確認します。3行目で全テストを新しいプロセスから実行します。
 
-GitHub ActionsのCIは`julia --project=. scripts/format.jl --check`で整形状態を検査するだけです。CIが修正をcommitしたりpushしたりすることはありません。
-
 ## 問題が起きたとき
 
 - `julia --version`が異なる: ターミナルやVS Codeを開き直し、`juliaup status`と`juliaup default 1.12.6`を確認する。
-- パッケージを読み込めない: リポジトリrootと現在のbranchを確認し、`Pkg.instantiate()`を再実行する。`Pkg.add`で穴埋めしない。
-- REPLでは動くがscriptやtestsが失敗する: `Julia: Run File in New Process`または上のCLIで、残ったREPL状態に依存していないか確認する。
-- 保存時整形や警告表示が動かない: リポジトリをfolderとして開いたか、Julia拡張と`.vscode/settings.json`が有効か確認する。
+- パッケージを読み込めない: リポジトリのルートディレクトリと現在のbranchを確認し、`Pkg.instantiate()`を再実行する。`Pkg.add`で穴埋めしない。
+- REPLでは動くがスクリプトやテストが失敗する: `Julia: Run File in New Process`または上のCLIで、残ったREPL状態に依存していないか確認する。
+- 保存時整形や警告表示が動かない: リポジトリをフォルダーとして開いたか、Julia拡張と`.vscode/settings.json`が有効か確認する。
 
-Juliaの導入まで確認できたら、[Git・GitHub・割り当てられた個人用course repository](git-github.qmd)へ進みます。
+Juliaの導入まで確認できたら、[Git・GitHub・学生リポジトリ](git-github.qmd)へ進みます。

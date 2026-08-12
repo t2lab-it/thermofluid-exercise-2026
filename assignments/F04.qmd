@@ -9,13 +9,7 @@ title: "数値微分によるベクトル公式の検証"
 
 3つの一次元差分を実装し、一次元の収束次数とF03のベクトル解析三公式の格子収束を同じ`centered_difference`で検証します。
 
-## このページの進め方
-
-1. ページ下部の［前へ］から授業ページへ戻る。
-2. この課題ページで3つのTODOと提供済み処理を確認する。
-3. 学生リポジトリで`run.jl`、提供テスト、自分のテストを読む。
-
-## 課題リポジトリ内の場所
+## 学生リポジトリ内の場所
 
 - 実装・実行: `exercises/F04_numerical_differentiation/run.jl`
 - 提供テスト: `test/provided/F04.jl`
@@ -24,7 +18,7 @@ title: "数値微分によるベクトル公式の検証"
 
 ## 開始
 
-前のベクトル解析課題（課題ID: F03）をmergeし、cleanな`main`から開始します。
+前のベクトル解析課題（課題ID: F03）をmergeし、変更のない`main`から開始します。
 
 ```bash
 julia --project=. scripts/course.jl start F04
@@ -32,7 +26,7 @@ julia --project=. scripts/course.jl start F04
 
 ## 実装範囲
 
-学生TODOは`forward_difference(f, x, h)`、`backward_difference(f, x, h)`、`centered_difference(f, x, h)`の3つだけです。3D座標adapter `centered_partial`、残差関数、格子走査、集計は提供済みです。adapterは学生の`centered_difference`を再利用します。
+学生TODOは`forward_difference(f, x, h)`、`backward_difference(f, x, h)`、`centered_difference(f, x, h)`の3つだけです。3次元座標アダプター`centered_partial`、残差関数、格子走査、集計は提供済みです。アダプターは学生の`centered_difference`を再利用します。
 
 ## 一次元収束
 
@@ -49,17 +43,9 @@ julia --project=. exercises/F04_numerical_differentiation/run.jl
 julia --project=. test/runtests.jl
 ```
 
-この課題は公式出力を作りません。`results/F04`を提出物にしません。
-
 ## 自分のテストと学習ログ
 
-手計算できる独立な差分例を1件テストし、どの実装誤りを検出するか説明します。学習ログには一次元誤差、三公式残差、手計算・ForwardDiff・有限差分の役割、AI利用、diff・テスト・結果を記録します。
-
-## 次へ進む条件
-
-- 3つのTODOと提供済みadapter・残差処理を区別した。
-- 一次元と格子の比の範囲を確認した。
-- 自分のテストと学習ログの要件を確認した。
+学習ログには一次元誤差、三公式残差、手計算・ForwardDiff・有限差分の役割、AI利用、diff・テスト・結果を記録します。
 
 ## 完了条件
 

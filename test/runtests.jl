@@ -6,13 +6,12 @@ const VERIFY = joinpath(SITE_ROOT, "scripts", "verify_contracts.jl")
 
 include(VERIFY)
 
-include(joinpath(@__DIR__, "f01_workflow_contract_test.jl"))
-include(joinpath(@__DIR__, "public_copy_contract_test.jl"))
+include(joinpath(@__DIR__, "public_structure_contract_test.jl"))
+include(joinpath(@__DIR__, "assignment_interface_contract_test.jl"))
+include(joinpath(@__DIR__, "reference_artifact_contract_test.jl"))
 include(joinpath(@__DIR__, "navigation_contract_test.jl"))
 include(joinpath(@__DIR__, "path_contract_test.jl"))
 include(joinpath(@__DIR__, "pages_deployment_contract_test.jl"))
-include(joinpath(@__DIR__, "final_project_topics_contract_test.jl"))
-include(joinpath(@__DIR__, "final_project_hub_contract_test.jl"))
 
 function write_fixture(root::AbstractString; run_path_present::Bool, canonical::AbstractString)
     public = joinpath(root, "public")

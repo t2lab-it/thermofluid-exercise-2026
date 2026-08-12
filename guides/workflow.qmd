@@ -40,7 +40,7 @@ git switch -c exercise/F01-first-pull-request
 
 最初の環境診断からbranchとpull request課題へ進んだ直後は、`course_progress.toml`だけが変更済みであることを確認します。環境診断ではcommitしないため、この進捗変更は最初のbranch課題で初めてcommitします。ほかの変更があればbranchを作らず、教員・TAへ相談します。
 
-次の配列・関数・テスト課題（課題ID: F02）以降はcleanなmainから開始します。
+次の配列・関数・テスト課題（課題ID: F02）以降は変更のないmainから開始します。
 
 ```bash
 git status --short

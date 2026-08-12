@@ -7,11 +7,9 @@ title: "最初のbranchとpull request"
 
 ## 目的
 
-小さなJuliaコードを変更し、ローカルテストで確かめ、その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します。この課題では仕組みを見える形で学ぶため、課題branchを手動で作ります。
+小さなJuliaコードを変更し、ローカルテストで確かめ、その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します。
 
-次の配列・関数・テスト課題（課題ID: F02）以降は、各課題ページで案内する補助コマンドが同じ事前確認とbranch作成を行います。補助コマンドもpush、PR作成、mergeなどのネットワーク操作は実行しません。
-
-## 課題リポジトリ内の場所
+## 学生リポジトリ内の場所
 
 - 編集するコード: `exercises/F01_first_pull_request/run.jl`
 - 提供テスト: `test/provided/F01.jl`
@@ -31,7 +29,7 @@ git status --short
 git branch --show-current
 ```
 
-`Current: F01`、現在branchが`main`であることを確認してください。最初の環境診断からこの課題へ進んだ直後は、`course_progress.toml`だけが変更済みと表示されるのが正常です。環境診断ではGit commitを作らないため、この進捗変更は最初のbranch課題で初めてcommitします。それ以外の変更が表示された場合は削除せず、branchを作る前に教員・TAへ相談します。
+`Current: F01`、現在branchが`main`であることを確認してください。最初の環境診断からこの課題へ進んだ直後は、`course_progress.toml`だけが変更済みと表示されるのが正常です。それ以外の変更が表示された場合は、branchを作る前に教員・TAへ相談します。
 
 ## 1. branchを手動で作る
 
@@ -40,11 +38,11 @@ git switch -c exercise/F01-first-pull-request
 git branch --show-current
 ```
 
-二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認します。最初のbranch課題だけはこの操作を手動で行います。1課題につきbranchは一つです。
+二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認します。
 
 ## 2. 実装する
 
-`exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装します。`strip`で名前の前後の空白を除き、空白だけの名前は既存の処理で拒否します。それ以外は、空白を除いた名前を使う`Hello, name!`という`String`を返します。空白だけの名前を拒否する処理は変更・弱体化しません。実行入口は次です。
+`exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装します。`strip`で名前の前後の空白を除き、空白だけの名前は既存の処理で拒否します。それ以外は、空白を除いた名前を使う`Hello, name!`という`String`を返します。以下のコマンドで実行します。
 
 ```bash
 julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
@@ -58,11 +56,11 @@ julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-提供テストを弱めたり削除したりしません。`test/student/F01.jl`のsmoke TODOを、自分で選んだ名前を使う代表的な挨拶のテストへ置き換えます。テストが何を保証し、何を保証しないかを学習ログに一文ずつ書きます。
+`test/student/F01.jl`のsmoke TODOを、自分で選んだ名前を使う代表的な挨拶のテストへ置き換えます。テストが何を保証し、何を保証しないかを学習ログに一文ずつ書きます。
 
 ## 4. 公式出力を確認する
 
-この最初のbranch課題に公式生成物はありません。`results/F01/`へファイルを作る必要はありません。ターミナルの実行結果とテスト成功が、この課題の実行確認です。
+この最初のbranch課題に公式生成物はありません。ターミナルの実行結果とテスト成功が、この課題の実行確認です。
 
 ## 5. 学習ログを書く
 
@@ -74,8 +72,6 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 - つまずきと解決方法
 - AIを利用した場合は依頼内容、重要な提案、採用・修正・却下とその理由
 
-この最初のbranch課題でのAI利用は、説明、エラー解説、練習問題に限ります。課題の完成コードを生成させないでください。
-
 ## 6. commitする
 
 ```bash
@@ -86,27 +82,19 @@ git diff --cached
 git commit -m "feat: complete F01 first pull request"
 ```
 
-`git add`には、実際に変更した課題ファイルだけを指定します。アクセストークン、API key、パスワード、秘密鍵、個人情報、私的な会話がdiffへ入っていないことをcommit前に確認してください。
+`git add`には、実際に変更した課題ファイルだけを指定します。公開すべきでない情報（アクセストークン、API key、パスワード、秘密鍵、個人情報など）がdiffへ入っていないことをcommit前に確認してください。
 
 ## 7. pushしてPRを作る
-
-ここからは自分が明示的に行うネットワーク操作です。
 
 ```bash
 git push -u origin exercise/F01-first-pull-request
 ```
 
-GitHubで`exercise/F01-first-pull-request`から`main`へのPRを一つ作ります。PR本文に課題ID、テスト結果、学習ログ、diffで確認した内容を記載します。
+リモートに`push`した後、GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作ります。PR本文に課題ID、テスト結果、学習ログ、diffで確認した内容を記載します。
 
 ## 8. Actionsとdiffを確認する
 
-PRのChecksで軽量CIが成功したことを確認します。次にFiles changedを上から下まで読み、ローカルでも比較します。
-
-```bash
-git diff main...HEAD
-```
-
-Actions成功だけで完了ではありません。次をセルフレビューします。
+PRのCIが成功したことと差分を確認します。特に、以下の項目を自身で確認してください：
 
 - 課題と無関係なファイルがない。
 - 提供テストを削除・弱体化していない。
@@ -114,7 +102,7 @@ Actions成功だけで完了ではありません。次をセルフレビュー�
 - 秘密情報や不要な個人情報がない。
 - AI提案を使った場合、採否と理由を説明している。
 
-修正が必要なら同じbranchで修正、テスト、commit、pushを行い、同じPRを更新します。
+修正が必要なら同じbranchで修正、テスト、commit、pushを繰り返してPRを更新します。
 
 ## 9. mergeしてmainへ戻る
 
@@ -126,19 +114,8 @@ git pull --ff-only origin main
 git status --short
 ```
 
-この課題のbranch、PR、学習ログがそれぞれ一つあり、`test/student/F01.jl`を代表例へ変更し、テスト、Actions、diff確認が完了していれば「最初のbranchとpull request」は完了です。
-
-ページ下部の［次へ］から第3回授業「配列・関数・loop・テスト」へ進んでください。授業ページを読んだ後、その次の配列・関数・テスト課題（課題ID: F02）で、案内されるコマンドを使ってcleanなmainから課題branchを作成します。
+これで「最初のbranchとpull request」は完了です。
 
 ## 任意のCLI発展資料
 
-この課題でHTTPS接続とブラウザ上のpull requestを一度経験した後は、任意で[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)へ進み、その後に[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)へ進めます。必修課題ではなく、標準手順を置き換えるものではありません。
-
-## mainへ直接pushしてしまった場合
-
-慌ててforce pushや履歴削除をしないでください。commit hash、実行したコマンド、GitHub上の状態を記録し、教員・TAへ連絡します。
-
-- まだpushしていない場合は、現在のcommitを失わないよう課題branchを作ってから、mainを`origin/main`へ戻す手順を教員・TAと行います。
-- すでにmainへpushした場合は、自分だけで履歴を書き換えません。教員・TAと安全な復旧方法を決め、課題branchとPRを作り直して正しい流れを再実行します。
-
-privateリポジトリを使うGitHub Freeの授業運用では、branch protectionだけに依存して直接pushを防ぎません。操作ミスはGit履歴、PR、学習ログから確認し、手順を作り直すことで修正します。
+[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)および[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)に取り組むと、さらにgit/GitHub操作が簡単になります。ただし、これらは必須ではありません。
