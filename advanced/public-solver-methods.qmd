@@ -21,7 +21,7 @@ title: "公開Solverの数値手法を読み解く"
 
 ## 6つのsolverを数値手法で見渡す
 
-::: {.table-responsive}
+::: {.table-responsive .course-map}
 | Solver | 主な方程式・現象 | 空間離散化 | 格子・境界 | 時間発展 | 重視する性質 | 主なdiagnostics | 2026年度のroute |
 |---|---|---|---|---|---|---|---|
 | `WaterLily.jl` | 非圧縮性Navier–Stokes、物体まわり流れ | Cartesian格子上の有限体積的離散化とBDIM | 埋め込み物体 | solver内のtime steppingとpressure projection | 非圧縮拘束、物体境界 | divergence、流体力、渦放出周波数 | 標準guided route |
@@ -40,6 +40,7 @@ title: "公開Solverの数値手法を読み解く"
 
 `WaterLily.jl`は、Cartesian格子上で二次元または三次元の非定常・非圧縮性粘性流れを解き、格子に適合しない物体のまわりの流れを扱います。代表的な支配方程式は
 
+::: {.table-responsive}
 $$
 \frac{\partial \boldsymbol{u}}{\partial t}
 + (\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
@@ -47,6 +48,7 @@ $$
 \qquad
 \nabla\cdot\boldsymbol{u}=0
 $$
+:::
 
 です。$\boldsymbol{u}$は速度、$p$は密度で規格化した圧力、$\nu$は動粘性係数です。後半の式は、各時刻で満たすべき非圧縮拘束です。
 
@@ -85,11 +87,13 @@ solverは、staggered格子上の流れ場、時間発展、pressure Poisson sol
 
 双曲型保存則とbalance lawは、まとめて
 
+::: {.table-responsive}
 $$
 \frac{\partial \boldsymbol{U}}{\partial t}
 + \nabla\cdot\boldsymbol{F}(\boldsymbol{U})
 = \boldsymbol{S}(\boldsymbol{U}, \boldsymbol{x}, t)
 $$
+:::
 
 と書けます。$\boldsymbol{U}$は保存変数、$\boldsymbol{F}$はflux、$\boldsymbol{S}$は地形などに由来するsourceです。sourceがある場合は、fluxだけでなく両者の離散的な釣合いも数値手法の一部になります。
 
@@ -99,6 +103,7 @@ $$
 
 `Trixi.jl`は双曲型保存則を空間半離散化するためのframeworkです。標準guided routeでは一次元圧縮性Euler方程式のshock tubeを扱います。保存変数とfluxは
 
+::: {.table-responsive}
 $$
 \boldsymbol{U}=
 \begin{pmatrix}\rho\\ \rho u\\ E\end{pmatrix},
@@ -106,6 +111,7 @@ $$
 \boldsymbol{F}(\boldsymbol{U})=
 \begin{pmatrix}\rho u\\ \rho u^2+p\\ u(E+p)\end{pmatrix}
 $$
+:::
 
 です。$\rho$は密度、$u$は速度、$E$は全energy、$p$は圧力です。
 
@@ -146,6 +152,7 @@ shock近傍にovershootや負の密度・圧力がある、波の位置が参照
 
 `TrixiShallowWater.jl`は`Trixi.jl`の数値基盤を使い、浅水方程式固有のbalance lawを扱う専門packageです。現行のstable資料では浅水方程式型は`Trixi.jl`本体ではなく、このpackageから提供されます。一次元の代表式は
 
+::: {.table-responsive}
 $$
 \frac{\partial h}{\partial t}+\frac{\partial (hu)}{\partial x}=0,
 \qquad
@@ -153,6 +160,7 @@ $$
 +\frac{\partial}{\partial x}\left(hu^2+\frac{g}{2}h^2\right)
 =-gh\frac{\partial b}{\partial x}
 $$
+:::
 
 です。`h`は水深、`u`は水深平均速度、`b`は河床・海底地形です。静水状態ではpressure fluxの勾配と地形sourceが釣り合います。
 
@@ -193,6 +201,7 @@ lake-at-restから流れが自発的に生じる、水深が負になる、dry t
 
 `Oceananigans.jl`は、nonhydrostaticまたはhydrostatic Boussinesq系の有限体積simulationを扱います。標準guided routeのhorizontal convectionでは、浮力を運ぶ二次元nonhydrostatic流れを代表例とします。
 
+::: {.table-responsive}
 $$
 \frac{\partial\boldsymbol{u}}{\partial t}
 +(\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
@@ -205,6 +214,7 @@ $$
 \frac{\partial b}{\partial t}
 +\boldsymbol{u}\cdot\nabla b=D_b.
 $$
+:::
 
 ここで$\boldsymbol{u}$は速度、$p$は非圧縮拘束に対応する圧力、$b$は浮力、$f$は回転の効果、$\boldsymbol{D}_u$と$D_b$は拡散・closureなどの寄与をまとめた項です。
 
@@ -247,6 +257,7 @@ divergenceが十分に小さくない、境界から入る熱・浮力fluxとdom
 
 `GeophysicalFlows.jl`は、周期domain上で地球流体力学のmodelを解くmodule collectionです。代表として`SingleLayerQG`のpotential-vorticity方程式を、公式資料のconstant background flowを$U=0$へ特殊化して示します。
 
+::: {.table-responsive}
 $$
 \frac{\partial q}{\partial t}
 +J(\psi,q+\eta)+\beta\frac{\partial\psi}{\partial x}
@@ -256,6 +267,7 @@ q=\nabla^2\psi-\frac{\psi}{\ell^2},
 \qquad
 \eta=\frac{f_0h}{H}.
 $$
+:::
 
 $\psi$はstreamfunction、$q$はrelative vorticityとvortex stretchingを合わせたprognostic potential vorticity、$\ell$はRossby deformation radius、$\beta$はplanetary vorticity gradient、$\eta$はtopographic PVです。$J(a,b)=a_xb_y-a_yb_x$は二次元Jacobianです。
 
@@ -296,6 +308,7 @@ energy spectrumが最高wavenumber付近で持ち上がる、forcing・dissipati
 
 `DispersiveShallowWater.jl`は、波長によって位相速度が変わる一次元の分散性浅水modelを扱います。KdV、BBM、BBM-BBM、Svärd–Kalisch、Serre–Green–Naghdiなど複数の近似方程式があり、modelごとに保持する分散と非線形性が異なります。variable bathymetryを含むBBM-BBMの代表式は
 
+::: {.table-responsive}
 $$
 \eta_t+\bigl((\eta+D)v\bigr)_x
 -\frac{1}{6}\bigl(D^2\eta_{xt}\bigr)_x=0,
@@ -305,6 +318,7 @@ $$
 v_t+g\eta_x+\left(\frac{v^2}{2}\right)_x
 -\frac{1}{6}\bigl(D^2v_t\bigr)_{xx}=0
 $$
+:::
 
 です。$\eta$はtotal water height、$v$はvelocity、$D$はstill-water depth、$g$は重力加速度です。時間微分を含む高階空間項が非分散浅水方程式との主要な違いです。
 
@@ -353,7 +367,7 @@ mass・energy・entropyが期待する精度で保たれない、観測した位
 
 `TrixiShallowWater.jl`はshockやdam breakを含む非分散のhyperbolic shallow-water balance lawを主対象とします。`DispersiveShallowWater.jl`は波長依存の位相速度を持つ近似modelを扱います。前者では保存、well-balanced性、positivityが主要な証拠であり、後者では線形分散関係、structure preservation、近似modelの有効範囲が主要な証拠です。
 
-::: {.table-responsive}
+::: {.table-responsive .course-map}
 | 比較する問い | `WaterLily.jl` | `Trixi.jl` / `TrixiShallowWater.jl` | `Oceananigans.jl` | `GeophysicalFlows.jl` | `DispersiveShallowWater.jl` |
 |---|---|---|---|---|---|
 | Unknown placement | cell-center pressureとface velocity | element内の高次多項式・境界flux | cell-center tracer・pressureとface velocity | periodic grid上のfieldとFourier coefficient | 一次元grid上のwater height・velocity |
@@ -369,7 +383,7 @@ mass・energy・entropyが期待する精度で保たれない、観測した位
 
 ## 公開Solver型課題へ接続する
 
-::: {.table-responsive}
+::: {.table-responsive .course-map}
 | 調べたい数値的性質 | 主な候補 | 外部参照 | 自己整合性確認 |
 |---|---|---|---|
 | 埋め込み境界と流体力 | `WaterLily.jl` | 円柱wakeのbenchmark | 格子・domain・sampling依存性 |
