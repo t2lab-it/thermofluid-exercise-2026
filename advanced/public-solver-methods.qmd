@@ -5,31 +5,19 @@ title: "公開Solverの数値手法を読み解く"
 任意・発展資料
 :::
 
-このページでは、完成した公開solverをblack boxとして使うのではなく、内部で使われる数理モデル、空間離散化、保存・安定化の考え方、結果を信用するためのdiagnosticsを比較します。
-
-::: {.callout-note}
-## 二つの発展経路
-
-[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)では、パッケージを部品として自分でsolverを組み立てます。このページでは、分野特化solverが採用する数値手法を理解し、問い、比較条件、検証、限界を設計します。
-:::
-
-::: {.callout-important}
-## 2026年度の支援範囲
-
-`WaterLily.jl`、`Trixi.jl`、`Oceananigans.jl`は標準guided routeです。`GeophysicalFlows.jl`、`DispersiveShallowWater.jl`、`TrixiShallowWater.jl`は相談・発展routeであり、採用前に縮小case、version、計算負荷、検証、fallback、支援範囲を確認します。この区分は数値手法の優劣ではありません。
-:::
+このページでは、Juliaで実装されたオープンソースのCFDソルバを紹介します。それらの内部で使われる数理モデル、空間離散化、保存・安定化の考え方を概観し、最終プロジェクトで自分の解きたい問題に適したソルバを選ぶ入口にします。
 
 ## 6つのsolverを数値手法で見渡す
 
 ::: {.table-responsive .course-map}
-| Solver | 主な方程式・現象 | 空間離散化 | 格子・境界 | 時間発展 | 重視する性質 | 主なdiagnostics | 2026年度のroute |
-|---|---|---|---|---|---|---|---|
-| `WaterLily.jl` | 非圧縮性Navier–Stokes、物体まわり流れ | Cartesian格子上の有限体積的離散化とBDIM | 埋め込み物体 | solver内のtime steppingとpressure projection | 非圧縮拘束、物体境界 | divergence、流体力、渦放出周波数 | 標準guided route |
-| `Trixi.jl` | 圧縮性Euler等の保存則 | 高次DGSEM | elementとnumerical flux | 半離散ODEとSciML integrator | 保存、entropy、shock安定化 | 波位置、誤差、保存量 | 標準guided route |
-| `Oceananigans.jl` | Boussinesq流れ、tracer輸送 | staggered finite volume | box・球殻領域のtopology | explicit stepperとfractional step | 非圧縮拘束、収支 | divergence、熱・浮力flux | 標準guided route |
-| `GeophysicalFlows.jl` | 二次元乱流、準地衡流 | Fourier擬スペクトル法 | 周期領域 | FourierFlows.jlのtime stepper | energy・enstrophy transfer | spectrum、spectral flux、収支 | 相談・発展route |
-| `DispersiveShallowWater.jl` | 分散性浅水波 | SBP operatorによる半離散化 | 一次元領域とbathymetry | 半離散ODEとSciML integrator | 保存、entropy、分散関係 | mass、energy、位相速度 | 相談・発展route |
-| `TrixiShallowWater.jl` | 非分散浅水balance law | 高次DGとflux differencing | line・quad、地形、wet/dry | 半離散ODEとSciML integrator | well-balanced性、positivity | lake-at-rest、総水量、水深 | 相談・発展route |
+| Solver | 主な方程式・現象 | 空間離散化 | 格子・境界 | 時間発展 | 重視する性質 |
+|---|---|---|---|---|---|
+| `WaterLily.jl` | 非圧縮性Navier–Stokes、物体まわり流れ | Cartesian格子上の有限体積的離散化とBDIM | 埋め込み物体 | solver内のtime steppingとpressure projection | 非圧縮拘束、物体境界 |
+| `Trixi.jl` | 圧縮性Euler等の保存則 | 高次DGSEM | elementとnumerical flux | 半離散ODEとSciML integrator | 保存、entropy、shock安定化 |
+| `Oceananigans.jl` | Boussinesq流れ、tracer輸送 | staggered finite volume | box・球殻領域のtopology | explicit stepperとfractional step | 非圧縮拘束、収支 |
+| `GeophysicalFlows.jl` | 二次元乱流、準地衡流 | Fourier擬スペクトル法 | 周期領域 | FourierFlows.jlのtime stepper | energy・enstrophy transfer |
+| `DispersiveShallowWater.jl` | 分散性浅水波 | SBP operatorによる半離散化 | 一次元領域とbathymetry | 半離散ODEとSciML integrator | 保存、entropy、分散関係 |
+| `TrixiShallowWater.jl` | 非分散浅水balance law | 高次DGとflux differencing | line・quad、地形、wet/dry | 半離散ODEとSciML integrator | well-balanced性、positivity |
 :::
 
 ## 埋め込み境界法と非圧縮性流れ
