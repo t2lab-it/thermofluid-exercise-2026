@@ -40,13 +40,18 @@ end
         "de-vahl-davis-reference.csv",
         "Linux",
         "506.57",
-        "公開準備中",
-        "publishable=no",
+        "公開可能",
+        "platform waiver",
+        "status=ready",
+        "publishable=yes",
+        "互換性を主張しません",
+        "2026-08-12",
     )
         @test occursin(phrase, source)
     end
     @test occursin("macOS", source)
     @test occursin("Windows", source)
+    @test !occursin("公開準備中", source)
 end
 
 @testset "solver-reuse topic pages" begin

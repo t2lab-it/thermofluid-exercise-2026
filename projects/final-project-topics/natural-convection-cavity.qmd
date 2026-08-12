@@ -2,13 +2,12 @@
 title: "二次元自然対流キャビティ"
 ---
 
-::: {.callout-warning}
-## 公開準備中
+::: {.callout-note}
+## Linux実測で公開可能
 
-Linuxでの数値検証は完了していますが、必須のmacOS・Windowsで学生向けassetと
-preflightをまだ実行していません。Task 4固有のwaiverもないため、readinessは
-`status=blocked`、`publishable=no` です。以下の値はLinux実測だけを示し、
-macOS・Windows互換性を主張しません。
+2026-08-12にcourse ownerがTask 4固有のLinux-only platform waiverを承認しました。
+validationは `status=ready`、readinessは `publishable=yes` です。実測済みplatformは
+Linuxだけで、macOSとWindowsは未実測です。これら未実測OSの互換性を主張しません。
 :::
 
 ## 現象と問題
@@ -51,4 +50,4 @@ Linuxでの二格子比較の実測は `Ra=10^3` が241.85秒・peak 310.20 MiB�
 
 ## 相談事項
 
-境界渦度、Poisson接続、benchmark量、安定時間刻み、高Rayleigh数へ進む条件、必須platformでのpreflightを相談できます。問い、最終比較、solver分割、完成図、結論は学生自身が決めます。
+境界渦度、Poisson接続、benchmark量、安定時間刻み、高Rayleigh数へ進む条件、未実測platformでのpreflightを相談できます。問い、最終比較、solver分割、完成図、結論は学生自身が決めます。
