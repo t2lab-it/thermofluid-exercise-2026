@@ -44,6 +44,39 @@ const EXPECTED_SESSION_ENTRIES = [
     ("第14回 最終プレゼンテーション 2・試験案内", "assignments/final-project.qmd"),
     ("第15回 到達度確認試験", nothing),
 ]
+const EXPECTED_FINAL_PROJECT_TOPIC_SECTIONS = [
+    (
+        "solverを構築する",
+        [
+            ("準一次元ノズル流れ", "projects/final-project-topics/quasi-1d-nozzle.qmd"),
+            ("一次元Stefan問題", "projects/final-project-topics/stefan-problem.qmd"),
+            ("Wet-bed dam break", "projects/final-project-topics/shallow-water-dam-break.qmd"),
+            ("二次元自然対流キャビティ", "projects/final-project-topics/natural-convection-cavity.qmd"),
+            ("温度場からの熱源位置・強度推定", "projects/final-project-topics/inverse-heat-source.qmd"),
+            ("二次元非圧縮性Navier–Stokes", "projects/final-project-topics/incompressible-navier-stokes.qmd"),
+        ],
+    ),
+    (
+        "自作solverを再利用する",
+        [
+            ("Profilingと性能最適化", "projects/final-project-topics/profiling-and-optimization.qmd"),
+            ("GPU移植と性能測定", "projects/final-project-topics/gpu-porting.qmd"),
+            ("反復解法と前処理", "projects/final-project-topics/iterative-solvers.qmd"),
+        ],
+    ),
+    (
+        "公開solverを利用する",
+        [
+            ("WaterLily.jlによる円柱まわり流れ", "projects/final-project-topics/waterlily-cylinder-flow.qmd"),
+            ("Trixi.jlによる一次元shock tube", "projects/final-project-topics/trixi-shock-tube.qmd"),
+            ("Oceananigans.jlによるhorizontal convection", "projects/final-project-topics/oceananigans-horizontal-convection.qmd"),
+        ],
+    ),
+    (
+        "自由提案",
+        [("自由提案", "projects/final-project-topics/open-proposal.qmd")],
+    ),
+]
 
 function yaml_source_lines(source::AbstractString)
     lines = NamedTuple{(:indent, :text),Tuple{Int,String}}[]
@@ -397,6 +430,64 @@ end
     @test !isnothing(sidebar)
     if !isnothing(sidebar)
         sidebar_items = yaml_sequence_items(yaml, sidebar)
+        final_project_matches = [
+            item for item in sidebar_items
+            if something(yaml_item_field(yaml, item, "id"), (value="",)).value ==
+               "final-project-topics"
+        ]
+        @test length(final_project_matches) == 1
+        if length(final_project_matches) == 1
+            final_project = only(final_project_matches)
+            @test yaml_item_field(yaml, final_project, "title").value == "最終プロジェクト課題案"
+            @test yaml_item_field(yaml, final_project, "style").value == "docked"
+            @test yaml_item_field(yaml, final_project, "collapse-level").value == "2"
+
+            contents = yaml_item_field(yaml, final_project, "contents")
+            @test !isnothing(contents)
+            if !isnothing(contents)
+                top_level = yaml_sequence_items(yaml, contents.node)
+                hub = first(top_level)
+                @test yaml_item_field(yaml, hub, "text").value == "最終プロジェクト"
+                @test yaml_item_field(yaml, hub, "href").value == "assignments/final-project.qmd"
+            end
+
+            listed_topics = Tuple{String,String}[]
+            for (section, expected_entries) in EXPECTED_FINAL_PROJECT_TOPIC_SECTIONS
+                actual_entries = sidebar_section_entries(yaml, final_project, section)
+                @test actual_entries == expected_entries
+                append!(listed_topics, actual_entries)
+            end
+            @test length(listed_topics) == 13
+            @test length(unique(last.(listed_topics))) == 13
+
+            hub_source = read(joinpath(public_root, "assignments", "final-project.qmd"), String)
+            hub_entries = [
+                (match.captures[1], "projects/final-project-topics/" * match.captures[2])
+                for match in eachmatch(
+                    r"(?m)^(?:- )?\[([^\]]+)\]\(\.\./projects/final-project-topics/([^)]+\.qmd)\)",
+                    hub_source,
+                )
+            ]
+            @test hub_entries == listed_topics
+        end
+
+        topic_metadata_path = joinpath(
+            public_root, "projects", "final-project-topics", "_metadata.yml",
+        )
+        @test isfile(topic_metadata_path)
+        if isfile(topic_metadata_path)
+            topic_metadata = yaml_source_lines(read(topic_metadata_path, String))
+            topic_sidebar = yaml_node(topic_metadata, ("sidebar",))
+            @test !isnothing(topic_sidebar)
+            !isnothing(topic_sidebar) &&
+                @test yaml_scalar(topic_metadata, topic_sidebar) == "final-project-topics"
+        end
+
+        hub_source = read(joinpath(public_root, "assignments", "final-project.qmd"), String)
+        hub_parts = split(hub_source, "---"; limit=3)
+        @test length(hub_parts) == 3
+        length(hub_parts) == 3 && @test occursin(r"(?m)^sidebar:\s*course\s*$", hub_parts[2])
+
         advanced_matches = [
             item for item in sidebar_items
             if something(yaml_item_field(yaml, item, "id"), (value="",)).value == "advanced"
