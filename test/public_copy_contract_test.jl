@@ -31,6 +31,7 @@ const POSITION_LABELS = Dict(
     "advanced/cairomakie.qmd" => "任意・発展資料",
     "advanced/package-built-solvers.qmd" => "任意・発展資料",
     "advanced/public-solver-methods.qmd" => "任意・発展資料",
+    "advanced/juliacon-2026-pde-cfd.qmd" => "任意・発展資料",
 )
 
 const NO_ID_TITLE = Dict(
@@ -51,6 +52,7 @@ const NO_ID_TITLE = Dict(
     "advanced/cairomakie.qmd" => "CairoMakieによる可視化",
     "advanced/package-built-solvers.qmd" => "パッケージを使ってPDEソルバを構築する",
     "advanced/public-solver-methods.qmd" => "公開Solverの数値手法を読み解く",
+    "advanced/juliacon-2026-pde-cfd.qmd" => "JuliaCon 2026から学ぶPDE・CFD計算",
 )
 
 function section_body(source, heading)
@@ -511,8 +513,27 @@ end
             "[CairoMakieによる可視化](cairomakie.qmd)",
             "[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)",
             "[公開Solverの数値手法を読み解く](public-solver-methods.qmd)",
+            "[JuliaCon 2026から学ぶPDE・CFD計算](juliacon-2026-pde-cfd.qmd)",
         ),
     )
+end
+
+@testset "JuliaCon PDE and CFD guide separates three adoption routes" begin
+    source = copy_source("advanced/juliacon-2026-pde-cfd.qmd")
+    for marker in (
+        "solverを構築する",
+        "完成solverで数値実験を設計する",
+        "紹介・watch list",
+        "Cahn–Hilliard",
+        "平均濃度",
+        "自由energy",
+        "CPU縮小case",
+        "XCALibre.jl",
+        "TrixiAtmo.jl",
+        "TrixiParticles.jl",
+    )
+        @test occursin(marker, source)
+    end
 end
 
 @testset "public solver methods guide is linked from both project routes" begin

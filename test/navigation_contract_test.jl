@@ -401,6 +401,7 @@ end
                     ("advanced/cairomakie.qmd", "CairoMakieによる可視化"),
                     ("advanced/package-built-solvers.qmd", "パッケージを使ってPDEソルバを構築する"),
                     ("advanced/public-solver-methods.qmd", "公開Solverの数値手法を読み解く"),
+                    ("advanced/juliacon-2026-pde-cfd.qmd", "JuliaCon 2026から学ぶPDE・CFD計算"),
                 ],
             ),
         )
@@ -513,6 +514,7 @@ end
                     ("CairoMakieによる可視化", "advanced/cairomakie.qmd"),
                     ("パッケージを使ってPDEソルバを構築する", "advanced/package-built-solvers.qmd"),
                     ("公開Solverの数値手法を読み解く", "advanced/public-solver-methods.qmd"),
+                    ("JuliaCon 2026から学ぶPDE・CFD計算", "advanced/juliacon-2026-pde-cfd.qmd"),
                 ]
             end
         end

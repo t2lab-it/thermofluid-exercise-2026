@@ -1,0 +1,142 @@
+---
+title: "JuliaCon 2026から学ぶPDE・CFD計算"
+---
+::: {.course-position}
+任意・発展資料
+:::
+
+このページでは、JuliaCon 2026の公式プログラムで紹介されたPDE・CFD関連packageを、この授業で何を学んだ後に、どこまで試せるかという観点で整理します。講演予定や公式exampleがあることと、この授業で動作確認済みであることは区別します。
+
+::: {.callout-important}
+## 2026年度の支援範囲
+
+このページのpackageは必修のpublic環境と学生環境へ追加しません。最終プロジェクトで利用する場合は、CPU縮小case、Juliaとpackageのversion、検証方法、計算負荷、fallbackを計画へのfeedbackで確認します。GPU、HPC、外部mesh、分野固有の大規模modelは、利用できる環境がある場合だけ扱います。
+:::
+
+## 三つの使い方
+
+::: {.table-responsive}
+| 経路 | 何をpackageへ任せるか | この授業での入口 | 2026年度の扱い |
+|---|---|---|---|
+| solverを構築する | 格子、離散化、assembly、CPU/GPU backendなどの部品 | `N05-N06`以降に、自作した差分・Poisson solverを置き換えて比較する | 任意資料・自由提案 |
+| 完成solverで数値実験を設計する | 支配方程式、離散化、時間発展を含むsolver本体 | 公式exampleを再現し、一条件だけ変えて二層検証する | 標準guided routeまたは相談route |
+| 紹介・watch list | 現行の研究用packageや新しい数値手法 | 数値手法、適用範囲、信用できない条件を読む | 2026年度の動作保証なし |
+:::
+
+solver構築用の選び方は[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)、完成solverの数値手法と検証は[公開Solverの数値手法を読み解く](public-solver-methods.qmd)で詳しく扱います。
+
+## solverを構築する
+
+JuliaCon 2026では、授業で実装する構造格子の差分、Poisson方程式、熱伝導を、そのまま次の数値計算基盤へ接続できる発表があります。
+
+::: {.table-responsive}
+| Package・発表 | 支援する部分 | 授業からの小さな接続 |
+|---|---|---|
+| `Chmy.jl` | 構造化staggered grid、差分・補間演算、境界条件、CPU/GPU kernel | `N07`の二次元拡散または`N09`のPoisson更新 |
+| `ParallelStencil.jl` | architectureに依存しないstencil記法、CPU/GPU実行 | 自作した局所更新を同じ初期・境界条件で再実装 |
+| `VoronoiFVM.jl`・`ExtendableFEM.jl` | 有限体積・有限要素の離散化、grid、assembly、SciML接続 | 同じPoisson問題を5点差分と比較 |
+| `Ferrite.jl`・`DifferentialEquations.jl` | FEMの自由度・quadrature・assemblyと時間積分 | 過渡熱伝導と非線形な放射境界条件 |
+:::
+
+ここで比較するのはpackageの人気ではありません。packageへ任せた層、自分で定義した方程式・境界条件・停止条件、結果を信用する検証を区別します。
+
+## Cahn–Hilliard方程式をplain JuliaからGPUへ
+
+JuliaCon 2026の[Hands-on with Julia for HPC on GPUs](https://pretalx.com/juliacon-2026/talk/MRFYNN/)では、二次元Cahn–Hilliard方程式をplain Julia、`KernelAbstractions.jl`、`Chmy.jl`、`PETSc.jl`で扱います。公式教材は[JuliaCon26-GPUs-for-HPC repository](https://github.com/PTsolvers/JuliaCon26-GPUs-for-HPC)で公開されています。
+
+代表的な無次元形は
+
+::: {.table-responsive}
+$$
+\frac{\partial C}{\partial t}=D\nabla^2\mu,
+\qquad
+\mu=C^3-C-\gamma\nabla^2C
+$$
+:::
+
+です。$C$は濃度、$D$はmobilityに対応する係数、$\mu$はchemical potential、$\gamma$は界面幅に関係する係数です。四階の空間微分を含むため、格子を細かくすると陽解法の時間刻み制約が急速に厳しくなります。
+
+### 速度より先に確認する二つの量
+
+1. **平均濃度**：no-flux境界では平均濃度が保存されることを確認します。
+2. **自由energy**：
+
+   ::: {.table-responsive}
+   $$
+   F=\int\left[\frac{(C^2-1)^2}{4}+\frac{\gamma}{2}|\nabla C|^2\right]d\Omega
+   $$
+   :::
+
+   が時間とともに増加しないことを確認します。
+
+符号、境界条件、時間刻み、kernel indexを誤ると、図がそれらしく見えても保存量または単調量が破れます。CPU版とGPU版では、速度とは別に最終場、平均濃度、自由energyの履歴を比較します。
+
+### この授業で進める順序
+
+::: {.table-responsive}
+| 段階 | すること | 完了条件 |
+|---|---|---|
+| 1. plain Julia | CPUの二重loopでLaplacianと二段階更新を書く | 小格子で平均濃度保存と自由energy減少を確認する |
+| 2. `KernelAbstractions.jl` | 同じ二つの更新をportable kernelへ移す | CPU backendでplain版と結果が一致する |
+| 3. GPU | 利用できる場合だけGPU backendへ移す | 数値一致を確認してから初回compileを除いて計測する |
+| 4. `Chmy.jl` | gridと差分演算を高水準のDSLで表す | 自作差分式との対応と境界処理を説明する |
+| 5. `PETSc.jl` | implicit・CPU並列解法を比較候補にする | 線形・非線形問題、許容誤差、停止条件を説明する |
+:::
+
+ワークショップのH100向け巨大格子、現地の一時account、特定hardwareでの性能値は授業要件にしません。CPU縮小caseが成立し、検証量が正しいことを先に示します。複数GPUへ進む場合は、`ParallelStencil.jl`と`ImplicitGlobalGrid.jl`を別の発展として調べます。
+
+## 完成solverで数値実験を設計する
+
+### XCALibre.jl
+
+`XCALibre.jl`は二次元・三次元のstructured/unstructured gridで有限体積法を使う汎用CFD frameworkです。定常・非定常の非圧縮・弱圧縮flow、SIMPLE・PISO、CPU multi-threading、GPU backendを扱います。
+
+この授業では、公式の二次元非定常円柱exampleを入口に、`WaterLily.jl`の円柱wakeと比較できます。ただし両者は同じsolverではありません。`WaterLily.jl`はCartesian gridへ物体を埋め込み、`XCALibre.jl`はmeshで境界を表すため、流体力、境界近傍の解像、domain依存性を同じ定義で比較する必要があります。
+
+`XCALibre.jl`は2026年度の相談・発展routeです。mesh generatorを内蔵せず、二次元caseにはUNV meshが必要です。GPUは主にNVIDIAで確認され、公式資料ではApple GPUは未対応です。固定meshとCPU smoke testを先に作り、GPU性能や乱流modelを同時に追加しません。
+
+[JuliaCon 2026 talk](https://pretalx.com/juliacon-2026/talk/PG9DLH/) · [XCALibre.jl documentation](https://mberto79.github.io/XCALibre.jl/stable/)
+
+### Trixi familyの大気flowへの発展
+
+`TrixiAtmo.jl`は`Trixi.jl`の高次DG基盤を大気flowへ発展させ、compressible Euler、entropyを考慮したsplit form、AMR、全球格子、湿潤大気・雨などを扱います。shock tubeから「高次DGが大気dynamical coreで何を保存・安定化するか」を読む発展例になります。
+
+全球大気、moist physics、AMRを同時に扱うことはこの授業の標準scopeを越えるため、固定starterのない相談・発展routeとします。
+
+[Earth system science talk](https://pretalx.com/juliacon-2026/talk/V337P8/) · [PDE minisymposium talk](https://pretalx.com/juliacon-2026/talk/YQF7AE/) · [TrixiAtmo.jl repository](https://github.com/trixi-framework/TrixiAtmo.jl)
+
+### TrixiParticles.jl
+
+`TrixiParticles.jl`はSPHなどの粒子法による流体、構造、剛体、fluid–structure interactionを扱うframeworkです。dam-break、自由表面、弾性体との連成を、meshではなく粒子で表す数値手法を紹介できます。
+
+授業のWet-bed dam breakは深さ平均浅水方程式を扱います。一方、粒子法exampleは異なる支配方程式と境界表現を使うため、同じ図が得られるかだけを比べません。modelの仮定、保存量、自由表面と壁面の表現、粒子間隔依存性を比較できる場合だけ相談routeで採用します。
+
+[JuliaCon 2026 talk](https://pretalx.com/juliacon-2026/talk/Y7LGHP/) · [TrixiParticles.jl repository](https://github.com/trixi-framework/TrixiParticles.jl)
+
+## 紹介・watch list
+
+次のpackageは数値手法や応用の紹介に使えますが、2026年度の固定starter、共通Manifest、動作保証は用意しません。
+
+::: {.table-responsive}
+| Package | JuliaCon 2026で扱う内容 | この授業で読む観点 |
+|---|---|---|
+| `PinCFlow.jl` | 地形上のBoussinesq・pseudo-incompressible・compressible大気flowと重力波 | 方程式の近似、地形座標、semi-implicit時間積分 |
+| `Macchiato.jl` | RBF-FDによるEulerian meshless PDE framework | meshを使わない代わりに必要なpoint cloudと近傍近似 |
+| `InterfacialWaves.jl` | 非線形進行波・定在波と線形安定性 | 界面波の境界値問題、平衡解と時間発展の違い |
+| `GeothermalWells.jl` | operator splittingとGPUによる三次元地中熱交換器array | 異なる時間・空間scaleを分割する理由 |
+| `OrdinaryDiffEqOperatorSplitting.jl` | PDE半離散系を複数のODE/DAE subproblemへ分ける時間積分部品 | `N04`の移流と拡散を分ける利点とsplitting error |
+:::
+
+[PinCFlow.jl talk](https://pretalx.com/juliacon-2026/talk/VB7AEV/) · [Macchiato.jl talk](https://pretalx.com/juliacon-2026/talk/YU8ZKN/) · [InterfacialWaves.jl talk](https://pretalx.com/juliacon-2026/talk/ELF3HR/) · [GeothermalWells.jl talk](https://pretalx.com/juliacon-2026/talk/QQ37LB/) · [OrdinaryDiffEqOperatorSplitting.jl talk](https://pretalx.com/juliacon-2026/talk/WFVNXT/)
+
+## 最終プロジェクトで候補を絞る
+
+候補を選ぶ前に、次を一文ずつ答えます。
+
+- packageに任せる層と、自分で設定・実装する層は何か。
+- 既習のどの問題をCPU縮小caseとして再現するか。
+- 外部参照と自己整合性確認を何にするか。
+- 一つだけ変える比較条件と、固定する条件は何か。
+- package、mesh、GPU、計算時間のどれが使えないときに、どこへ戻るか。
+
+この五つを決められない場合は、packageを増やす前に問題を小さくします。公式exampleの再実行だけ、複数packageの機能一覧、GPU速度だけを最終成果にはしません。
