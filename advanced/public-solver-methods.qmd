@@ -189,6 +189,14 @@ shock近傍にovershootや負の密度・圧力がある、波の位置が参照
 
 [Trixi.jl overview](https://trixi-framework.org/TrixiDocumentation/stable/overview/)
 
+#### 高次DGから大気flowへ
+
+`TrixiAtmo.jl`は`Trixi.jl`を基盤に、大気flow向けの方程式・mesh・数値fluxを組み合わせる研究用solverです。JuliaCon 2026の発表では、entropy-conservingまたはentropy-stableなsplit form、adaptive mesh refinement、圧縮性Euler方程式から湿潤大気・降雨過程までの拡張、全球格子での計算が紹介されます。
+
+この授業では標準starterを固定しません。大気model、全球geometry、AMR、安定化を一度に評価すると検証範囲が広すぎるため、採用する場合は**相談・発展route**として、乾燥大気の縮小case、version、参照解または保存量、計算負荷、fallbackを先に確認します。
+
+[JuliaCon 2026: TrixiAtmo.jl](https://pretalx.com/juliacon-2026/talk/V337P8/) · [TrixiAtmo.jl repository](https://github.com/trixi-framework/TrixiAtmo.jl)
+
 ### TrixiShallowWater.jl
 
 #### どの方程式・現象を扱うか
@@ -395,6 +403,14 @@ mass・energy・entropyが期待する精度で保たれない、観測した位
 相談・発展routeです。equation modelまたは波長の一つだけを変え、少なくとも二条件で位相速度と保存量を比較するCPU縮小caseから相談します。複数model、variable bathymetry、shoaling、solitary-wave衝突を同時に扱うscopeは避けます。
 
 [DispersiveShallowWater.jl official documentation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)
+
+## 粒子法による関連solver
+
+`TrixiParticles.jl`は、smoothed particle hydrodynamics（SPH）を中心に、流体、弾性体、剛体、それらの相互作用をLagrangian粒子で扱うframeworkです。JuliaCon 2026の発表では、弱圧縮SPH、EDAC、IISPHなどの流体modelと、dam breakを含む例が紹介されます。
+
+ここでのdam breakは、`TrixiShallowWater.jl`が解く水深平均の浅水方程式とは支配modelも自由度も異なります。同じ現象名だけで結果を比較せず、粒子間隔、kernel、境界処理、密度・圧力振動、保存量を含む検証を設計する必要があります。この授業では固定starterを設けず、**相談・発展route**としてreduced caseと必要資源を確認します。
+
+[JuliaCon 2026: TrixiParticles.jl](https://pretalx.com/juliacon-2026/talk/Y7LGHP/) · [TrixiParticles.jl repository](https://github.com/trixi-framework/TrixiParticles.jl)
 
 ## 数値手法を横断して比較する
 

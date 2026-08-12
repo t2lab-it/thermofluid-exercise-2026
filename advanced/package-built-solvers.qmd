@@ -207,6 +207,19 @@ Poisson問題から始め、同じ既知解に対する誤差を確認します�
 
 [ExtendableFEM.jl documentation](https://wias-pdelib.github.io/ExtendableFEM.jl/stable/) · [ExtendableFEM.jl repository](https://github.com/WIAS-PDELib/ExtendableFEM.jl)
 
+## JuliaCon 2026の関連セッション
+
+[JuliaCon 2026から学ぶPDE・CFD計算](juliacon-2026-pde-cfd.qmd)では、教材内で実行できるCahn–Hilliard方程式を出発点に、CPU実装、KernelAbstractions.jl、Chmy.jl、PETSc.jlへ進む段階的な見方を整理しています。パッケージ構築型solverとの対応を読むときは、次の公式セッションが参考になります。
+
+- [Chmy.jlによるportable PDE simulation](https://pretalx.com/juliacon-2026/talk/LHPDZM/)
+- [ParallelStencil.jlによるmulti-XPU stencil計算](https://pretalx.com/juliacon-2026/talk/PGGCJK/)
+- [WIAS-PDELibの有限要素ecosystem](https://pretalx.com/juliacon-2026/talk/UX3K8A/)
+- [Ferrite.jlによる熱伝導問題](https://pretalx.com/juliacon-2026/talk/T79F7F/)
+
+### PDE solverを構成する周辺部品
+
+JuliaCon 2026には、完成済みPDE solverではなく、その一部を担当するpackageの発表もあります。[PETSc.jlのGPU workshop](https://pretalx.com/juliacon-2026/talk/MRFYNN/)は分散疎行列・Krylov法・前処理を、[OrdinaryDiffEqOperatorSplitting.jl](https://pretalx.com/juliacon-2026/talk/WFVNXT/)は複数operatorの時間発展を組み合わせる方法を扱います。これらは空間離散化、境界条件、物理modelを自動的に定める完全なPDE solverではありません。自作離散化や他packageと接続し、各部品が担う責務を分けて検証します。
+
 ## 最終プロジェクトで使う場合
 
 - パッケージに任せた部分と、自分で実装・設定した部分を区別して説明する。
