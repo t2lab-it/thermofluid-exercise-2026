@@ -22,7 +22,7 @@ title: "公開Solverの数値手法を読み解く"
 
 ## 埋め込み境界法と非圧縮性流れ
 
-### WaterLily.jl
+### [WaterLily.jl](https://github.com/WaterLily-jl/WaterLily.jl)（[Documentation](https://waterlily-jl.github.io/WaterLily.jl/stable/)）
 
 #### 扱う方程式・現象
 
@@ -69,8 +69,6 @@ solverは、staggered格子上の流れ場、時間発展、pressure Poisson sol
 
 [WaterLily.jlによる円柱まわり流れ](../projects/final-project-topics/waterlily-cylinder-flow.qmd)を標準guided routeとします。変更するparameterをReynolds数または格子解像度の一つに絞り、少なくとも二条件で流体力と渦放出周波数を比較します。複雑形状・移動境界・三次元化を同時に導入するscopeは避けます。
 
-[WaterLily.jl official repository](https://github.com/WaterLily-jl/WaterLily.jl)
-
 ## 高次不連続Galerkin法と双曲型保存則
 
 双曲型保存則とbalance lawは、まとめて
@@ -85,7 +83,7 @@ $$
 
 と書けます。$\boldsymbol{U}$は保存変数、$\boldsymbol{F}$はflux、$\boldsymbol{S}$は地形などに由来するsourceです。sourceがある場合は、fluxだけでなく両者の離散的な釣合いも数値手法の一部になります。
 
-### Trixi.jl
+### [Trixi.jl](https://github.com/trixi-framework/Trixi.jl)（[Documentation](https://trixi-framework.org/TrixiDocumentation/stable/)）
 
 #### 扱う方程式・現象
 
@@ -132,9 +130,7 @@ shock近傍にovershootや負の密度・圧力がある、波の位置が参照
 
 [Trixi.jlによる一次元shock tube](../projects/final-project-topics/trixi-shock-tube.qmd)を標準guided routeとします。numerical fluxまたは解像度の一つだけを変え、波位置、`L1`誤差、保存量、overshootを同じ時刻で比較します。多次元化、AMR、複数limiterの同時比較は最小scopeを越えます。
 
-[Trixi.jl overview](https://trixi-framework.org/TrixiDocumentation/stable/overview/)
-
-### TrixiShallowWater.jl
+### [TrixiShallowWater.jl](https://github.com/trixi-framework/TrixiShallowWater.jl)（[Documentation](https://trixi-framework.org/TrixiShallowWater.jl/)）
 
 #### 扱う方程式・現象
 
@@ -179,11 +175,9 @@ lake-at-restから流れが自発的に生じる、水深が負になる、dry t
 
 相談・発展routeです。[Wet-bed dam break](../projects/final-project-topics/shallow-water-dam-break.qmd)を非分散浅水balance lawの比較対象として使い、地形またはfluxの一条件だけを変える縮小caseから相談します。well-balanced性、positivity、dam-breakをすべて別々の大規模caseで扱うことは避けます。
 
-[TrixiShallowWater.jl official documentation](https://trixi-framework.org/TrixiShallowWater.jl/)
-
 ## 有限体積法とBoussinesq流体
 
-### Oceananigans.jl
+### [Oceananigans.jl](https://github.com/CliMA/Oceananigans.jl)（[Documentation](https://clima.github.io/OceananigansDocumentation/stable/)）
 
 #### 扱う方程式・現象
 
@@ -235,11 +229,9 @@ divergenceが十分に小さくない、境界から入る熱・浮力fluxとdom
 
 [Oceananigans.jlによるhorizontal convection](../projects/final-project-topics/oceananigans-horizontal-convection.qmd)を標準guided routeとします。boundary forcingまたは解像度の一つだけを変え、循環とNusselt数を同じ定義・sampling区間で比較します。三次元化、複数closure、GPU性能比較を同時に行うscopeは避けます。
 
-[Oceananigans.jl official documentation](https://clima.github.io/OceananigansDocumentation/stable/)
-
 ## Fourier擬スペクトル法と地球流体
 
-### GeophysicalFlows.jl
+### [GeophysicalFlows.jl](https://github.com/FourierFlows/GeophysicalFlows.jl)（[Documentation](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/)）
 
 #### 扱う方程式・現象
 
@@ -286,11 +278,9 @@ energy spectrumが最高wavenumber付近で持ち上がる、forcing・dissipati
 
 相談・発展routeです。forcing、deformation radius、またはdissipationの一つだけを変え、energy・enstrophy収支とspectral fluxを少なくとも二条件で比較する縮小caseから相談します。乱流regime、forcing、resolution、dissipationを同時に変える設計は因果を分離できません。
 
-[GeophysicalFlows.jl official documentation](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/)
-
 ## SBP法と分散性浅水波
 
-### DispersiveShallowWater.jl
+### [DispersiveShallowWater.jl](https://github.com/NumericalMathematics/DispersiveShallowWater.jl)（[Documentation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)）
 
 #### 扱う方程式・現象
 
@@ -338,8 +328,6 @@ mass・energy・entropyが期待する精度で保たれない、観測した位
 #### この授業で試すなら
 
 相談・発展routeです。equation modelまたは波長の一つだけを変え、少なくとも二条件で位相速度と保存量を比較するCPU縮小caseから相談します。複数model、variable bathymetry、shoaling、solitary-wave衝突を同時に扱うscopeは避けます。
-
-[DispersiveShallowWater.jl official documentation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)
 
 ## 数値手法を横断して比較する
 
@@ -394,23 +382,3 @@ mass・energy・entropyが期待する精度で保たれない、観測した位
 - どの観測が出たら結論を無効とするかを先に書く。
 
 公式exampleの再現は環境と観測手順の確認であり、それだけではproject resultではありません。再現後に問いに必要な設定だけを変え、外部参照と自己整合性確認の二層で比較します。
-
-## 公式資料
-
-### 公式home
-
-- [WaterLily.jl official repository](https://github.com/WaterLily-jl/WaterLily.jl)
-- [Trixi.jl stable documentation](https://trixi-framework.org/TrixiDocumentation/stable/)
-- [Oceananigans.jl stable documentation](https://clima.github.io/OceananigansDocumentation/stable/)
-- [GeophysicalFlows.jl stable documentation](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/)
-- [DispersiveShallowWater.jl stable documentation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)
-- [TrixiShallowWater.jl official documentation](https://trixi-framework.org/TrixiShallowWater.jl/)
-
-### 数値手法を確認した公式ページ
-
-- WaterLily.jl: [stable API documentation](https://waterlily-jl.github.io/WaterLily.jl/stable/)
-- Trixi.jl: [overview](https://trixi-framework.org/TrixiDocumentation/stable/overview/)、[time integration](https://trixi-framework.org/TrixiDocumentation/stable/time_integration/)
-- TrixiShallowWater.jl: [stable reference](https://trixi-framework.org/TrixiShallowWater.jl/stable/reference/)
-- Oceananigans.jl: [finite volume method](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/finite_volume)、[time stepping](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/time_stepping)、[fractional step method](https://clima.github.io/OceananigansDocumentation/stable/appendix/fractional_step)
-- GeophysicalFlows.jl: [SingleLayerQG](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/modules/singlelayerqg/)、[aliasing](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/aliasing/)
-- DispersiveShallowWater.jl: [model overview](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/overview/)、[dispersion](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/dispersion/)、[solvers](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/solvers/)、[callbacks and relaxation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/callbacks/)
