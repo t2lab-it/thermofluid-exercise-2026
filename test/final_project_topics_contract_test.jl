@@ -30,6 +30,22 @@ const OPEN_PROPOSAL_HEADINGS = [
     end
 end
 
+@testset "quasi-1d nozzle Linux-only publication waiver" begin
+    source = read(joinpath(TOPIC_ROOT, "quasi-1d-nozzle.qmd"), String)
+    for phrase in (
+        "Linux",
+        "macOS",
+        "Windows",
+        "platform waiver",
+        "status=ready",
+        "publishable=yes",
+        "互換性を主張しません",
+        "2026-08-12",
+    )
+        @test occursin(phrase, source)
+    end
+end
+
 @testset "solver-reuse topic pages" begin
     for slug in REUSE_SOLVER_TOPICS
         path = joinpath(TOPIC_ROOT, "$slug.qmd")
