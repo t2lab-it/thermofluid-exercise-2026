@@ -574,6 +574,33 @@ end
     end
 end
 
+@testset "public solver guide connects methods to distinct verification evidence" begin
+    source = copy_source("advanced/public-solver-methods.qmd")
+    for marker in (
+        "fractional-step法",
+        "Nusselt数",
+        "energy・enstrophy収支",
+        "spectral flux",
+        "線形分散関係",
+        "structure-preserving",
+        "WaterLily.jlとOceananigans.jl",
+        "Trixi.jlとTrixiShallowWater.jl",
+        "TrixiShallowWater.jlとDispersiveShallowWater.jl",
+        "外部参照",
+        "自己整合性確認",
+    )
+        @test occursin(marker, source)
+    end
+    for link in (
+        "https://clima.github.io/OceananigansDocumentation/stable/",
+        "https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/",
+        "https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/",
+        "../projects/final-project-topics/oceananigans-horizontal-convection.qmd",
+    )
+        @test occursin(link, source)
+    end
+end
+
 @testset "advanced SSH guide preserves existing keys and the standard path" begin
     setup = copy_source("setup/git-github.qmd")
     ssh = copy_source("advanced/github-ssh.qmd")
