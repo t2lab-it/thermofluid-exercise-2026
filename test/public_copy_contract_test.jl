@@ -521,6 +521,27 @@ end
     )
 end
 
+@testset "JuliaCon PDE and CFD candidates extend the existing solver guides" begin
+    package_built = copy_source("advanced/package-built-solvers.qmd")
+    public_solver = copy_source("advanced/public-solver-methods.qmd")
+    for marker in (
+        "Cahn–Hilliard",
+        "平均濃度",
+        "自由energy",
+        "CPU縮小case",
+    )
+        @test occursin(marker, package_built)
+    end
+    for marker in (
+        "紹介・watch list",
+        "PinCFlow.jl",
+        "Macchiato.jl",
+        "InterfacialWaves.jl",
+    )
+        @test occursin(marker, public_solver)
+    end
+end
+
 @testset "public solver methods guide is linked from both project routes" begin
     package_built = copy_source("advanced/package-built-solvers.qmd")
     final_project = copy_source("assignments/final-project.qmd")
@@ -562,6 +583,67 @@ end
         "WaterLily", "Trixi", "Oceananigans", "GeophysicalFlows",
         "DispersiveShallowWater", "TrixiShallowWater",
     )
+        @test !haskey(project["deps"], package)
+        @test !occursin("[[deps.$package]]", manifest)
+    end
+end
+
+@testset "public solver guide bounds the XCALibre consultation route" begin
+    source = copy_source("advanced/public-solver-methods.qmd")
+    for marker in (
+        "XCALibre.jl",
+        "SIMPLE",
+        "PISO",
+        "UNV",
+        "mesh生成",
+        "二次元非定常円柱",
+        "WaterLily.jlとXCALibre.jl",
+        "相談・発展route",
+    )
+        @test occursin(marker, source)
+    end
+    for link in (
+        "https://mberto79.github.io/XCALibre.jl/stable/",
+        "https://pretalx.com/juliacon-2026/talk/PG9DLH/",
+    )
+        @test occursin(link, source)
+    end
+    project = TOML.parsefile(joinpath(COPY_ROOT, "Project.toml"))
+    manifest = copy_source("Manifest.toml")
+    @test !haskey(project["deps"], "XCALibre")
+    @test !occursin("[[deps.XCALibre]]", manifest)
+end
+
+@testset "JuliaCon solver extensions stay outside standard guided routes" begin
+    public_solver = copy_source("advanced/public-solver-methods.qmd")
+    package_built = copy_source("advanced/package-built-solvers.qmd")
+
+    for marker in (
+        "TrixiAtmo.jl",
+        "TrixiParticles.jl",
+        "高次DGから大気flowへ",
+        "粒子法による関連solver",
+        "相談・発展route",
+    )
+        @test occursin(marker, public_solver)
+    end
+    for link in (
+        "https://pretalx.com/juliacon-2026/talk/V337P8/",
+        "https://pretalx.com/juliacon-2026/talk/Y7LGHP/",
+        "https://github.com/trixi-framework/TrixiAtmo.jl",
+        "https://github.com/trixi-framework/TrixiParticles.jl",
+    )
+        @test occursin(link, public_solver)
+    end
+
+    for talk_id in ("LHPDZM", "PGGCJK", "UX3K8A", "T79F7F")
+        @test occursin("https://pretalx.com/juliacon-2026/talk/$talk_id/", package_built)
+    end
+    @test occursin("PDE solverを構成する周辺部品", package_built)
+
+    project = TOML.parsefile(joinpath(COPY_ROOT, "Project.toml"))
+    manifest = copy_source("Manifest.toml")
+    for package in ("TrixiAtmo", "TrixiParticles")
         @test !haskey(project["deps"], package)
         @test !occursin("[[deps.$package]]", manifest)
     end
