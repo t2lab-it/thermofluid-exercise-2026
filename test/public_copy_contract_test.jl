@@ -716,6 +716,25 @@ end
 
 @testset "prerequisite pages provide an executable reading order" begin
     f00_lesson = copy_source("lessons/F00.qmd")
+    troubleshooting_link = "[トラブル対応](../guides/troubleshooting.qmd)"
+
+    machine_checks = section_body(f00_lesson, "機械観測と手動確認")
+    @test !isnothing(machine_checks)
+    if !isnothing(machine_checks)
+        @test length(findall(troubleshooting_link, machine_checks)) == 1
+    end
+    @test !occursin("## トラブルの切り分け", f00_lesson)
+
+    f00_assignment = copy_source("assignments/F00.qmd")
+    failure_guidance = section_body(f00_assignment, "失敗したとき")
+    @test !isnothing(failure_guidance)
+    if !isnothing(failure_guidance)
+        @test length(findall(troubleshooting_link, failure_guidance)) == 1
+        @test occursin("セットアップページ", failure_guidance)
+        @test occursin("秘密情報を除いたエラー", failure_guidance)
+        @test occursin("ページ下部の［前へ］", failure_guidance)
+    end
+
     progression = section_body(f00_lesson, "課題へ進む条件")
     @test !isnothing(progression)
     if !isnothing(progression)
