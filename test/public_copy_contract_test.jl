@@ -510,7 +510,21 @@ end
             "[GitHub CLIでpull requestを操作する](github-cli.qmd)",
             "[CairoMakieによる可視化](cairomakie.qmd)",
             "[パッケージを使ってPDEソルバを構築する](package-built-solvers.qmd)",
+            "[公開Solverの数値手法を読み解く](public-solver-methods.qmd)",
         ),
+    )
+end
+
+@testset "public solver methods guide is linked from both project routes" begin
+    package_built = copy_source("advanced/package-built-solvers.qmd")
+    final_project = copy_source("assignments/final-project.qmd")
+    @test occursin(
+        "[公開Solverの数値手法を読み解く](public-solver-methods.qmd)",
+        package_built,
+    )
+    @test occursin(
+        "[公開Solverの数値手法を読み解く](../advanced/public-solver-methods.qmd)",
+        final_project,
     )
 end
 

@@ -52,6 +52,8 @@ projectは1人または2人で行います。どちらも`thermofluid-project-ba
 
 固定versionの公式exampleを再現してから問いに必要な設定だけを変更します。solver本体の改造は必須ではありませんが、設定、評価指標、二層検証、結果の限界を説明します。
 
+各solverの支配方程式、離散化、主要diagnostics、信用できない条件は、[公開Solverの数値手法を読み解く](../advanced/public-solver-methods.qmd)で比較します。
+
 - [WaterLily.jlによる円柱まわり流れ](../projects/final-project-topics/waterlily-cylinder-flow.qmd)
 - [Trixi.jlによる一次元shock tube](../projects/final-project-topics/trixi-shock-tube.qmd)
 - [Oceananigans.jlによるhorizontal convection](../projects/final-project-topics/oceananigans-horizontal-convection.qmd)
