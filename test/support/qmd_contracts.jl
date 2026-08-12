@@ -34,3 +34,7 @@ end
 function resolve_qmd_target(source_path::AbstractString, target::AbstractString)
     return normpath(joinpath(dirname(source_path), target))
 end
+
+function missing_required_identifiers(source::AbstractString, required)
+    return [identifier for identifier in required if !occursin(identifier, source)]
+end
