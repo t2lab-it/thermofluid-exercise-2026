@@ -171,7 +171,7 @@ end
 
 各stepでは、古い配列だけを参照して新しい配列の内部点を計算し、境界条件を適用してから次のstepへ進みます。このloopは編集対象ではありません。
 
-`run.jl`のheaderでは、`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate`の順に関数のつながりを示します。`include("provided_support.jl")`は、教材側が用意した入力検証と公式出力を読み込む「おまじない」として扱います。`provided_support.jl`を読解・編集する必要はありません。
+`run.jl`のheaderでは、`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に関数のつながりを示します。`main`は`run.jl`にあり、二つの`simulate`を実行して、提供済みの`write_summary`と`make_plots`へ結果を渡します。`main`は読む対象ですが、編集対象ではありません。`include("provided_support.jl")`は、教材側が用意した入力検証と出力の詳細を読み込む「おまじない」として扱います。`provided_support.jl`を読解・編集する必要はありません。
 
 ## buffer交換
 
@@ -202,7 +202,7 @@ $$
 
 各数値関数から呼ばれるvalidationは、実行時の入力条件を確認し、誤った配列や計算条件を早く知らせます。`test/provided/N01.jl`は教材側の包括的な確認として、数値式、入力条件、公式出力を保護します。`test/student/N01.jl`ではその網羅性を再現せず、自分で選んだ代表例を一件だけ、入力、関数呼び出し、期待値が分かる形で書きます。
 
-この1次元線形移流課題の完成要件は、`run.jl`の3つのTODOを実装し、時間loopと結果を説明することです。`provided_support.jl`にある`TOML`、`Plots`、詳細な入力検証、TOML出力、作図処理と`main`は提供済みであり、これらを自力で書けることは完成要件ではありません。`module`、`export`、`include`も変更しません。関数名、引数、scheme、出力ファイル名、summaryのキーは変更しません。
+この1次元線形移流課題の完成要件は、`run.jl`の3つのTODOを実装し、時間loopと結果を説明することです。`run.jl`にある`main`、`module`、`export`、`include`と、`provided_support.jl`にある`TOML`、`Plots`、詳細な入力検証、TOML出力、作図処理は提供済みであり、これらを自力で書けることは完成要件ではありません。`main`は二つの`simulate`から受け取った結果を`write_summary`と`make_plots`へ渡し、`results/N01`の公式出力を作ります。関数名、引数、scheme、出力ファイル名、summaryのキーは変更しません。
 
 ## 次へ進む条件
 

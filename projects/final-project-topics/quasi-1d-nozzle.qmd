@@ -2,6 +2,14 @@
 title: "準一次元ノズル流れ"
 ---
 
+::: {.callout-note}
+## Linux実測で公開可能
+
+2026-08-12にcourse ownerがTask 1固有のLinux-only platform waiverを承認しました。
+validationは `status=ready`、readinessは `publishable=yes` です。実測済みplatformは
+Linuxだけで、macOSとWindowsは未実測です。これら未実測OSの互換性を主張しません。
+:::
+
 ## 現象と問題
 
 断面積が変化するノズル内で、Mach数、圧力、温度、密度、速度が軸方向にどう変わるかを扱います。等エントロピー準一次元流れを基準に、断面積と境界条件が加速とchokingへ与える影響を調べます。
@@ -16,7 +24,9 @@ title: "準一次元ノズル流れ"
 
 ## 推奨する最小scope
 
-等エントロピー準一次元方程式を解き、滑らかな一つの面積関数について二条件以上を比較します。内部衝撃波は必須にせず、まず亜音速branch、超音速branch、chokingの関係を説明できる範囲に絞ります。
+等エントロピー準一次元方程式を解き、滑らかな一つの面積関数について二条件以上を比較します。最初の縮小caseには、NASA CDV nozzleの `x = 0...10 in`、throat `x = 5 in`、`A/A* = 2.5 -> 1.0 -> 1.5`、`gamma = 1.4` を使えます。まず `p_exit/p_t = 0.16` に対応するchoked isentropic caseで、亜音速branch、Mach 1、超音速branchを分けて確認します。
+
+学生向けの[thin launch kit](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/quasi-1d-nozzle)には、[area–Mach reference CSV](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/quasi-1d-nozzle/area-mach-reference.csv)と、その読込・residualだけを確認するCPU preflightがあります。root solver、field solver、境界条件実装、完成実験は含まれません。
 
 ## 評価指標
 
@@ -24,11 +34,11 @@ Mach数・圧力分布、流路に沿う質量流量のばらつき、throatで�
 
 ## 二層検証
 
-外部基準として面積–Mach関係とNASA CDV nozzleの参照値を用います。自己整合性として質量流量保存、格子依存性、root solve residual、亜音速・超音速branchの選択を確認します。
+外部基準として[NASA CDV nozzle](https://www.grc.nasa.gov/www/wind/valid/cdv/cdv.html)と[NASAの等エントロピー関係](https://www.grc.nasa.gov/www/k-12/airplane/isentrop.html)を用います。CSVは `A/A* = 2.5` の亜音速Mach数と `A/A* = 1.5` の超音速Mach数がNASA掲載値の桁に一致し、各rowのarea–Mach residualは `1e-10` 以下です。自己整合性として質量流量保存、格子依存性、root solve residual、亜音速・超音速branchの選択を確認します。
 
 ## 過大scope
 
-二・三次元、粘性、乱流、反応、実在気体を同時に導入しません。内部衝撃波を扱う場合も、等エントロピーcaseの検証を残して発展部分と分けます。
+二・三次元、粘性、乱流、反応、実在気体を同時に導入しません。背圧による内部衝撃波（NASA CDVの `p_exit/p_t = 0.75` caseを含む）はthin kitの検証範囲外です。扱う場合も、等エントロピーcaseの検証を残して発展部分と分けます。
 
 ## 手法・package
 
@@ -36,7 +46,9 @@ Mach数・圧力分布、流路に沿う質量流量のばらつき、throatで�
 
 ## 計算負荷
 
-まず小格子のCPU smoke testで同じcode pathを確認し、格子数と条件数を段階的に増やします。具体的な格子、代表時間、memoryはtheme validation後の公開値と自分の測定を記録します。
+まず小格子のCPU smoke testで同じcode pathを確認し、格子数と条件数を段階的に増やします。配布assetと教員referenceをJulia 1.12.6、Ubuntu 24.04.4 LTS x86_64で3回測定した結果、warm runの中央値はfast preflight `2.21 s`、51点のreference run `2.23 s`、数値contractを含むreference test `3.43 s` でした。warm reference testのpeak memoryは3回の最大で `359.53 MiB`、empty depotからの初回compileを含むreference testは `35.42 s`、`646.75 MiB` でした。
+
+このLinux測定値は配布assetと教員referenceの再実行目安であり、学生自身のsolver性能を保証しません。macOSまたはWindowsで利用する場合は、同じpreflightとreference testを実行して数値contractを確認してください。
 
 ## 相談事項
 

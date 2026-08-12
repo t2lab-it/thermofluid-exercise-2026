@@ -16,7 +16,9 @@ title: "Wet-bed dam break"
 
 ## 推奨する最小scope
 
-水平・摩擦なし・下流有限水深の一次元problemを有限体積法で解き、二条件以上を比較します。まずwet-bedを成立させ、dry-bedや実地形は発展に回します。
+水平・摩擦なし・下流有限水深の一次元problemを有限体積法で解き、二条件以上を比較します。確認済みの縮小caseは、重力加速度 $g=9.81\ \mathrm{m\,s^{-2}}$、domain $-5\le x\le5\ \mathrm{m}$、dam位置 $x_0=0$、上流水深 $h_L=1.0\ \mathrm{m}$、下流水深 $h_R=0.1\ \mathrm{m}$、初期流速0、終了時刻 $t=0.5\ \mathrm{s}$ です。初期水深比は10で、教員referenceは200 cellsと400 cellsを比較しました。
+
+学生向けの[thin launch kit](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/shallow-water-dam-break)には、[Stoker reference CSV](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/stoker-reference.csv)と、CSV読込・positive depth・wave orderingだけを確認するCPU preflightがあります。有限体積solver、numerical flux、reconstruction、時間積分、完成実験は含まれません。
 
 ## 評価指標
 
@@ -24,11 +26,13 @@ title: "Wet-bed dam break"
 
 ## 二層検証
 
-外部基準としてStoker解とSWASHES benchmarkを用います。自己整合性として総水量保存、positivity、CFL、格子依存性、境界からの反射前であることを確認します。
+外部基準としてStoker解と[SWASHES](https://arxiv.org/abs/1110.0288)を用います。固定caseのmiddle stateは $h_m=0.3961748167994429\ \mathrm{m}$、$u_m=2.3213549956407444\ \mathrm{m\,s^{-1}}$ です。自己整合性として総水量保存、positivity、CFL、格子依存性、境界からの反射前であることを確認します。
+
+教員のfirst-order HLL referenceでは、総水量relative errorは200 cellsで0、400 cellsで $1.61\times10^{-16}$、minimum depthはいずれも $0.1\ \mathrm{m}$、maximum CFLはいずれも0.8000000000000003でした。Stoker水深に対する空間平均 $L^1$ errorは $5.4051\times10^{-3}\ \mathrm{m}$ から $3.0741\times10^{-3}\ \mathrm{m}$ へ減少しました。
 
 ## 過大scope
 
-dry-bed、実地形、二次元、降雨、浸透、摩擦を同時に導入しません。発展caseでもwet-bed benchmarkを回帰testとして維持します。
+dry-bed、実地形、二次元、降雨、浸透、摩擦を同時に導入しません。dry-bedではwetting frontとdry-state fluxに別のpositivity検証が必要であり、このlaunch kitの確認範囲外です。発展caseでもwet-bed benchmarkを回帰testとして維持します。
 
 ## 手法・package
 
@@ -36,7 +40,11 @@ dry-bed、実地形、二次元、降雨、浸透、摩擦を同時に導入し�
 
 ## 計算負荷
 
-小格子・短水路のCPU smoke testで保存とpositivityを確認してから格子を増やします。具体的な格子、CFL、代表時間、memoryはtheme validation後の値と自分の測定を記録します。
+小格子・短水路のCPU smoke testで保存とpositivityを確認してから格子を増やします。学生の候補はまず200 cellsと400 cellsとし、問いに応じて格子を追加します。
+
+Julia 1.12.6、Ubuntu 24.04.4 LTS x86_64で3回測定したwarm runの中央値は、fast preflight $1.54\ \mathrm{s}$、200/400-cell reference run $0.63\ \mathrm{s}$、数値contractを含むreference test $1.75\ \mathrm{s}$ でした。warm reference testのpeak memoryは3回の最大で $356.95\ \mathrm{MiB}$、empty depotからの初回compileを含むreference testは $19.51\ \mathrm{s}$、$600.81\ \mathrm{MiB}$ でした。これらは教員referenceの測定値であり、学生が選ぶsolverの性能を保証しません。
+
+WindowsとmacOSの実行はcourse ownerの判断でskipし、Linux-onlyのplatform waiverを明示してvalidation statusを `ready` としています。実測済みplatformはLinuxだけであり、Windows/macOS互換性は確認済みとも保証済みとも扱いません。これらのOSで利用する場合は、同じpreflightとreference testを実行して保存・positive depth・Stoker $L^1$ refinement・CFL contractを確認してください。
 
 ## 相談事項
 
