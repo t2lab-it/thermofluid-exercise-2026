@@ -547,6 +547,33 @@ end
     end
 end
 
+@testset "public solver guide explains immersed-boundary and DG evidence" begin
+    source = copy_source("advanced/public-solver-methods.qmd")
+    for marker in (
+        "Boundary Data Immersion Method",
+        "pressure Poisson",
+        "Strouhal数",
+        "DGSEM",
+        "numerical flux",
+        "Riemann解析解",
+        "hydrostatic reconstruction",
+        "well-balanced性",
+        "positivity",
+        "lake-at-rest",
+    )
+        @test occursin(marker, source)
+    end
+    for link in (
+        "https://github.com/WaterLily-jl/WaterLily.jl",
+        "https://trixi-framework.org/TrixiDocumentation/stable/overview/",
+        "https://trixi-framework.org/TrixiShallowWater.jl/",
+        "../projects/final-project-topics/waterlily-cylinder-flow.qmd",
+        "../projects/final-project-topics/trixi-shock-tube.qmd",
+    )
+        @test occursin(link, source)
+    end
+end
+
 @testset "advanced SSH guide preserves existing keys and the standard path" begin
     setup = copy_source("setup/git-github.qmd")
     ssh = copy_source("advanced/github-ssh.qmd")
