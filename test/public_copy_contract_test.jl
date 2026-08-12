@@ -107,10 +107,10 @@ const EXPECTED_IMPLEMENTED_COURSE_LINKS = Dict(
     4 => ["lessons/F03.qmd", "assignments/F03.qmd"],
     5 => ["lessons/F04.qmd", "assignments/F04.qmd"],
     6 => ["lessons/N01.qmd", "assignments/N01.qmd"],
-    11 => ["assignments/final-project.qmd"],
-    12 => ["assignments/final-project.qmd"],
-    13 => ["assignments/final-project.qmd"],
-    14 => ["assignments/final-project.qmd"],
+    11 => ["assignments/final-project.qmd#月27日計画へのフィードバック"],
+    12 => ["assignments/final-project.qmd#月4日結果再現性へのフィードバック"],
+    13 => ["assignments/final-project.qmd#最終発表"],
+    14 => ["assignments/final-project.qmd#最終発表"],
 )
 
 const EXPECTED_COURSE_DATES = [
@@ -380,8 +380,14 @@ end
     all(!isnothing, positions) && @test issorted(something.(positions))
     @test isempty(visible_course_map_machine_ids(home))
     @test occursin("| — | 11/20（金） | 授業なし | 最終プロジェクト予備計算 |", home)
-    @test occursin("| 11 | 11/27（金） | [最終プロジェクト・スタジオ1]", home)
-    @test occursin("| 12 | 12/4（金） | [最終プロジェクト・スタジオ2]", home)
+    @test occursin(
+        "| 11 | 11/27（金） | [最終プロジェクト](assignments/final-project.qmd#月27日計画へのフィードバック)",
+        home,
+    )
+    @test occursin(
+        "| 12 | 12/4（金） | [最終プロジェクト](assignments/final-project.qmd#月4日結果再現性へのフィードバック)",
+        home,
+    )
     @test !occursin("| 11 | 11/27（金） | PDE分類、Laplace方程式", home)
     @test !occursin("| 12 | 12/4（金） | Poisson方程式", home)
 
@@ -808,6 +814,25 @@ end
 
 @testset "prerequisite pages provide an executable reading order" begin
     f00_lesson = copy_source("lessons/F00.qmd")
+    troubleshooting_link = "[トラブル対応](../guides/troubleshooting.qmd)"
+
+    machine_checks = section_body(f00_lesson, "機械観測と手動確認")
+    @test !isnothing(machine_checks)
+    if !isnothing(machine_checks)
+        @test length(findall(troubleshooting_link, machine_checks)) == 1
+    end
+    @test !occursin("## トラブルの切り分け", f00_lesson)
+
+    f00_assignment = copy_source("assignments/F00.qmd")
+    failure_guidance = section_body(f00_assignment, "失敗したとき")
+    @test !isnothing(failure_guidance)
+    if !isnothing(failure_guidance)
+        @test length(findall(troubleshooting_link, failure_guidance)) == 1
+        @test occursin("セットアップページ", failure_guidance)
+        @test occursin("秘密情報を除いたエラー", failure_guidance)
+        @test occursin("ページ下部の［前へ］", failure_guidance)
+    end
+
     progression = section_body(f00_lesson, "課題へ進む条件")
     @test !isnothing(progression)
     if !isnothing(progression)
