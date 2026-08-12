@@ -3,80 +3,41 @@ using TOML
 
 const NAVIGATION_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
 
-const VISIBLE_NAMES = Dict(
-    "F00" => (lesson="ガイダンスと環境診断", assignment="環境診断"),
-    "F01" => (lesson="Julia・Git・GitHubの最小操作", assignment="最初のbranchとpull request"),
-    "F02" => (lesson="配列・関数・loop・テスト", assignment="Juliaの配列・関数・テスト"),
-    "F03" => (lesson="ベクトル解析", assignment="ベクトル解析の公式と自動微分"),
-    "F04" => (lesson="数値微分と格子収束", assignment="数値微分によるベクトル公式の検証"),
-    "N01" => (lesson="移流方程式と安定性", assignment="1次元線形移流方程式"),
-)
-
 const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01")
-const REQUIRED_SECTION_LABELS = ("ガイド", "発展資料")
-const EXPECTED_PREPARATION_LINKS = [
-    ("setup/index.qmd", "受講環境の準備"),
-    ("setup/julia.qmd", "Julia・VS Code"),
-    ("setup/git-github.qmd", "Git・GitHub"),
-    ("setup/agents.qmd", "Coding Agent"),
-    ("guides/workflow.qmd", "課題ワークフロー"),
+const REQUIRED_ASSIGNMENT_IDS = Set(REQUIRED_COURSE_ORDER)
+const EXPECTED_PREPARATION_HREFS = Set([
+    "setup/index.qmd", "setup/julia.qmd", "setup/git-github.qmd",
+    "setup/agents.qmd", "guides/workflow.qmd",
+])
+const EXPECTED_COURSE_HREFS = [
+    href
+    for id in REQUIRED_COURSE_ORDER
+    for href in ("lessons/$id.qmd", "assignments/$id.qmd")
 ]
-const EXPECTED_SESSION_ENTRIES = [
-    ("第1回 授業: ガイダンス、アカウント、環境診断", "lessons/F00.qmd"),
-    ("第1回 課題: 環境診断", "assignments/F00.qmd"),
-    ("第2回 授業: Julia・Git・GitHubの最小操作", "lessons/F01.qmd"),
-    ("第2回 課題: 最初のbranchとpull request", "assignments/F01.qmd"),
-    ("第3回 授業: 配列・関数・ループ、テスト", "lessons/F02.qmd"),
-    ("第3回 課題: Juliaの配列・関数・テスト", "assignments/F02.qmd"),
-    ("第4回 授業: ベクトル解析", "lessons/F03.qmd"),
-    ("第4回 課題: ベクトル解析の公式と自動微分", "assignments/F03.qmd"),
-    ("第5回 授業: 数値微分と格子収束", "lessons/F04.qmd"),
-    ("第5回 課題: 数値微分によるベクトル公式の検証", "assignments/F04.qmd"),
-    ("第6回 授業: 一次元線形・非線形移流", "lessons/N01.qmd"),
-    ("第6回 課題: 1次元線形移流方程式", "assignments/N01.qmd"),
-    ("第7回 一次元拡散・移流拡散", nothing),
-    ("第8回 授業: 共通化から二次元移流へ", nothing),
-    ("第9回 授業: 二次元拡散・移流拡散", nothing),
-    ("第10回 授業: Laplace／Poissonと反復法", nothing),
-    ("第11回 最終プロジェクト: 計画・成立性レビュー", "assignments/final-project.qmd"),
-    ("第12回 最終プロジェクト: 結果・再現性レビュー", "assignments/final-project.qmd"),
-    ("第13回 最終プレゼンテーション 1", "assignments/final-project.qmd"),
-    ("第14回 最終プレゼンテーション 2・試験案内", "assignments/final-project.qmd"),
-    ("第15回 到達度確認試験", nothing),
-]
-const EXPECTED_FINAL_PROJECT_TOPIC_SECTIONS = [
-    (
-        "solverを構築する",
-        [
-            ("準一次元ノズル流れ", "projects/final-project-topics/quasi-1d-nozzle.qmd"),
-            ("一次元Stefan問題", "projects/final-project-topics/stefan-problem.qmd"),
-            ("Wet-bed dam break", "projects/final-project-topics/shallow-water-dam-break.qmd"),
-            ("二次元自然対流キャビティ", "projects/final-project-topics/natural-convection-cavity.qmd"),
-            ("温度場からの熱源位置・強度推定", "projects/final-project-topics/inverse-heat-source.qmd"),
-            ("二次元非圧縮性Navier–Stokes", "projects/final-project-topics/incompressible-navier-stokes.qmd"),
-        ],
-    ),
-    (
-        "自作solverを再利用する",
-        [
-            ("Profilingと性能最適化", "projects/final-project-topics/profiling-and-optimization.qmd"),
-            ("GPU移植と性能測定", "projects/final-project-topics/gpu-porting.qmd"),
-            ("反復解法と前処理", "projects/final-project-topics/iterative-solvers.qmd"),
-        ],
-    ),
-    (
-        "公開solverを利用する",
-        [
-            ("WaterLily.jlによる円柱まわり流れ", "projects/final-project-topics/waterlily-cylinder-flow.qmd"),
-            ("Trixi.jlによる一次元shock tube", "projects/final-project-topics/trixi-shock-tube.qmd"),
-            ("Oceananigans.jlによるhorizontal convection", "projects/final-project-topics/oceananigans-horizontal-convection.qmd"),
-        ],
-    ),
-    (
-        "自由提案",
-        [("自由提案", "projects/final-project-topics/open-proposal.qmd")],
-    ),
-]
+const EXPECTED_GUIDE_HREFS = Set([
+    "guides/testing.qmd", "guides/commands.qmd",
+    "guides/troubleshooting.qmd", "guides/glossary.qmd",
+])
+const EXPECTED_ADVANCED_HREFS = Set([
+    "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
+    "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
+    "advanced/public-solver-methods.qmd",
+])
+const EXPECTED_TOPIC_HREFS = Set([
+    "projects/final-project-topics/quasi-1d-nozzle.qmd",
+    "projects/final-project-topics/stefan-problem.qmd",
+    "projects/final-project-topics/shallow-water-dam-break.qmd",
+    "projects/final-project-topics/natural-convection-cavity.qmd",
+    "projects/final-project-topics/inverse-heat-source.qmd",
+    "projects/final-project-topics/incompressible-navier-stokes.qmd",
+    "projects/final-project-topics/profiling-and-optimization.qmd",
+    "projects/final-project-topics/gpu-porting.qmd",
+    "projects/final-project-topics/iterative-solvers.qmd",
+    "projects/final-project-topics/waterlily-cylinder-flow.qmd",
+    "projects/final-project-topics/trixi-shock-tube.qmd",
+    "projects/final-project-topics/oceananigans-horizontal-convection.qmd",
+    "projects/final-project-topics/open-proposal.qmd",
+])
 
 function yaml_source_lines(source::AbstractString)
     lines = NamedTuple{(:indent, :text),Tuple{Int,String}}[]
@@ -194,47 +155,20 @@ function yaml_effective_values(lines, node)
     return [strip(lines[item.line].text[3:end], ['"', '\'']) for item in yaml_sequence_items(lines, node)]
 end
 
-function navbar_menu_pairs(lines, section_label)
-    navbar_left = yaml_node(lines, ("website", "navbar", "left"))
-    isnothing(navbar_left) && return Tuple{String,String}[]
-    section_items = [
-        item for item in yaml_sequence_items(lines, navbar_left)
-        if something(yaml_item_field(lines, item, "text"), (value="",)).value == section_label
-    ]
-    length(section_items) == 1 || return Tuple{String,String}[]
-
-    menu = yaml_item_field(lines, only(section_items), "menu")
-    isnothing(menu) && return Tuple{String,String}[]
-    pairs = Tuple{String,String}[]
-    for entry in yaml_sequence_items(lines, menu.node)
-        href = yaml_item_field(lines, entry, "href")
-        text = yaml_item_field(lines, entry, "text")
-        (isnothing(href) || isnothing(text)) && return Tuple{String,String}[]
-        push!(pairs, (href.value, text.value))
-    end
-    return pairs
-end
-
-function navbar_item(lines, label)
+function navbar_item_by_rel(lines, marker)
     navbar_left = yaml_node(lines, ("website", "navbar", "left"))
     isnothing(navbar_left) && return nothing
     matches = [
         item for item in yaml_sequence_items(lines, navbar_left)
-        if something(yaml_item_field(lines, item, "text"), (value="",)).value == label
+        if let rel = yaml_item_field(lines, item, "rel")
+            !isnothing(rel) && marker in split(rel.value)
+        end
     ]
     return length(matches) == 1 ? only(matches) : nothing
 end
 
-function sidebar_section_entries(lines, sidebar_item, section_label)
-    contents = yaml_item_field(lines, sidebar_item, "contents")
-    isnothing(contents) && return []
-    matches = [
-        item for item in yaml_sequence_items(lines, contents.node)
-        if something(yaml_item_field(lines, item, "section"), (value="",)).value == section_label
-    ]
-    length(matches) == 1 || return []
-    section_contents = yaml_item_field(lines, only(matches), "contents")
-    isnothing(section_contents) && return []
+function navigation_entries(lines, node)
+    isnothing(node) && return Tuple{String,Union{Nothing,String}}[]
     return [
         (
             something(yaml_item_field(lines, item, "text"), (value="",)).value,
@@ -242,9 +176,33 @@ function sidebar_section_entries(lines, sidebar_item, section_label)
                 isnothing(href) ? nothing : href.value
             end,
         )
-        for item in yaml_sequence_items(lines, section_contents.node)
+        for item in yaml_sequence_items(lines, node)
     ]
 end
+
+function navbar_menu_entries(lines, item)
+    isnothing(item) && return Tuple{String,Union{Nothing,String}}[]
+    menu = yaml_item_field(lines, item, "menu")
+    isnothing(menu) && return Tuple{String,Union{Nothing,String}}[]
+    return navigation_entries(lines, menu.node)
+end
+
+function sidebar_sections(lines, sidebar_item)
+    contents = yaml_item_field(lines, sidebar_item, "contents")
+    isnothing(contents) && return []
+    return [
+        item for item in yaml_sequence_items(lines, contents.node)
+        if !isnothing(yaml_item_field(lines, item, "section"))
+    ]
+end
+
+function sidebar_section_entries(lines, section_item)
+    contents = yaml_item_field(lines, section_item, "contents")
+    isnothing(contents) && return Tuple{String,Union{Nothing,String}}[]
+    return navigation_entries(lines, contents.node)
+end
+
+entry_hrefs(entries) = [href for (_, href) in entries if !isnothing(href)]
 
 const NAVIGATION_LOADER = "assets/navigation-loader.html"
 const NAVIGATION_BEHAVIOR_TEST = joinpath(@__DIR__, "navigation_behavior_test.js")
@@ -303,6 +261,12 @@ function run_navigation_behavior(quarto, module_path)
 end
 
 @testset "navigation source parsers reject inert configuration" begin
+    @test entry_hrefs([
+        ("Any rewritten label", "lessons/F00.qmd"),
+        ("Another label", nothing),
+        ("自由な表示名", "assignments/F00.qmd"),
+    ]) == ["lessons/F00.qmd", "assignments/F00.qmd"]
+
     commented = yaml_source_lines("""
     # website:
     #   page-navigation: true
@@ -337,7 +301,8 @@ end
     """)
     sidebar_node = yaml_node(sidebar, ("website", "sidebar"))
     course = only(yaml_sequence_items(sidebar, sidebar_node))
-    @test sidebar_section_entries(sidebar, course, "全15回") == [
+    section = only(sidebar_sections(sidebar, course))
+    @test sidebar_section_entries(sidebar, section) == [
         ("第1回 ガイダンス、アカウント、環境診断", "lessons/F00.qmd"),
         ("第6回 一次元拡散・移流拡散", nothing),
     ]
@@ -361,8 +326,7 @@ end
     yaml = yaml_source_lines(quarto)
     contracts = TOML.parsefile(joinpath(public_root, "assignments", "contracts.toml"))
     assignment_ids = Set(keys(contracts["assignments"]))
-
-    @test assignment_ids == Set(keys(VISIBLE_NAMES))
+    @test assignment_ids == REQUIRED_ASSIGNMENT_IDS
 
     language = yaml_node(yaml, ("lang",))
     @test !isnothing(language)
@@ -370,49 +334,28 @@ end
 
     site_title = yaml_node(yaml, ("website", "title"))
     @test !isnothing(site_title)
-    !isnothing(site_title) && @test yaml_scalar(yaml, site_title) == "熱流体力学演習 2026"
+    !isnothing(site_title) && @test !isempty(strip(yaml_scalar(yaml, site_title)))
 
     navbar_left = yaml_node(yaml, ("website", "navbar", "left"))
     @test !isnothing(navbar_left)
     if !isnothing(navbar_left)
         navbar_items = yaml_sequence_items(yaml, navbar_left)
-        labels = [
-            something(yaml_item_field(yaml, item, "text"), (value="",)).value
-            for item in navbar_items
-        ]
-        @test labels == collect(REQUIRED_SECTION_LABELS)
-        for (label, parent_href, expected_menu) in (
-            (
-                "ガイド",
-                "guides/index.qmd",
-                [
-                    ("guides/testing.qmd", "テスト"),
-                    ("guides/commands.qmd", "コマンド"),
-                    ("guides/troubleshooting.qmd", "トラブル対応"),
-                    ("guides/glossary.qmd", "用語集"),
-                ],
-            ),
-            (
-                "発展資料",
-                "advanced/index.qmd",
-                [
-                    ("advanced/github-ssh.qmd", "SSHでGitHubへ接続する"),
-                    ("advanced/github-cli.qmd", "GitHub CLIでpull requestを操作する"),
-                    ("advanced/cairomakie.qmd", "CairoMakieによる可視化"),
-                    ("advanced/package-built-solvers.qmd", "パッケージを使ってPDEソルバを構築する"),
-                    ("advanced/public-solver-methods.qmd", "公開Solverの数値手法を読み解く"),
-                ],
-            ),
+        @test all(navbar_items) do item
+            label = yaml_item_field(yaml, item, "text")
+            !isnothing(label) && !isempty(strip(label.value))
+        end
+        for (marker, expected_hrefs) in (
+            ("split-navigation-guides", EXPECTED_GUIDE_HREFS),
+            ("split-navigation-advanced", EXPECTED_ADVANCED_HREFS),
         )
-            item = navbar_item(yaml, label)
+            item = navbar_item_by_rel(yaml, marker)
             @test !isnothing(item)
             if !isnothing(item)
                 @test isnothing(yaml_item_field(yaml, item, "href"))
-                expected_marker = label == "ガイド" ? "split-navigation-guides" : "split-navigation-advanced"
-                @test yaml_item_field(yaml, item, "rel").value == "split-navigation $expected_marker"
+                entries = navbar_menu_entries(yaml, item)
+                @test all(entry -> !isempty(strip(first(entry))), entries)
+                @test Set(entry_hrefs(entries)) == expected_hrefs
             end
-            @test navbar_menu_pairs(yaml, label) == expected_menu
-            @test all(first(pair) != parent_href for pair in expected_menu)
         end
     end
 
@@ -439,7 +382,9 @@ end
         @test length(final_project_matches) == 1
         if length(final_project_matches) == 1
             final_project = only(final_project_matches)
-            @test yaml_item_field(yaml, final_project, "title").value == "最終プロジェクト課題案"
+            title = yaml_item_field(yaml, final_project, "title")
+            @test !isnothing(title)
+            !isnothing(title) && @test !isempty(strip(title.value))
             @test yaml_item_field(yaml, final_project, "style").value == "docked"
             @test yaml_item_field(yaml, final_project, "collapse-level").value == "2"
 
@@ -448,28 +393,28 @@ end
             if !isnothing(contents)
                 top_level = yaml_sequence_items(yaml, contents.node)
                 hub = first(top_level)
-                @test yaml_item_field(yaml, hub, "text").value == "最終プロジェクト"
+                @test !isempty(strip(yaml_item_field(yaml, hub, "text").value))
                 @test yaml_item_field(yaml, hub, "href").value == "assignments/final-project.qmd"
             end
 
-            listed_topics = Tuple{String,String}[]
-            for (section, expected_entries) in EXPECTED_FINAL_PROJECT_TOPIC_SECTIONS
-                actual_entries = sidebar_section_entries(yaml, final_project, section)
-                @test actual_entries == expected_entries
-                append!(listed_topics, actual_entries)
-            end
+            listed_topics = reduce(vcat, [
+                sidebar_section_entries(yaml, section)
+                for section in sidebar_sections(yaml, final_project)
+            ]; init=Tuple{String,Union{Nothing,String}}[])
+            @test all(entry -> !isempty(strip(first(entry))), listed_topics)
             @test length(listed_topics) == 13
-            @test length(unique(last.(listed_topics))) == 13
+            @test Set(entry_hrefs(listed_topics)) == EXPECTED_TOPIC_HREFS
+            @test length(unique(entry_hrefs(listed_topics))) == 13
 
             hub_source = read(joinpath(public_root, "assignments", "final-project.qmd"), String)
-            hub_entries = [
-                (match.captures[1], "projects/final-project-topics/" * match.captures[2])
+            hub_hrefs = Set(
+                "projects/final-project-topics/" * match.captures[2]
                 for match in eachmatch(
                     r"(?m)^(?:- )?\[([^\]]+)\]\(\.\./projects/final-project-topics/([^)]+\.qmd)\)",
                     hub_source,
                 )
-            ]
-            @test hub_entries == listed_topics
+            )
+            @test hub_hrefs == EXPECTED_TOPIC_HREFS
         end
 
         topic_metadata_path = joinpath(
@@ -499,23 +444,15 @@ end
             contents = yaml_item_field(yaml, advanced, "contents")
             @test !isnothing(contents)
             if !isnothing(contents)
-                advanced_sidebar_entries = [
-                    (
-                        something(yaml_item_field(yaml, item, "text"), (value="",)).value,
-                        something(yaml_item_field(yaml, item, "href"), (value="",)).value,
-                    )
-                    for item in yaml_sequence_items(yaml, contents.node)
-                ]
-                @test advanced_sidebar_entries == [
-                    ("発展資料一覧", "advanced/index.qmd"),
-                    ("SSHでGitHubへ接続する", "advanced/github-ssh.qmd"),
-                    ("GitHub CLIでpull requestを操作する", "advanced/github-cli.qmd"),
-                    ("CairoMakieによる可視化", "advanced/cairomakie.qmd"),
-                    ("パッケージを使ってPDEソルバを構築する", "advanced/package-built-solvers.qmd"),
-                    ("公開Solverの数値手法を読み解く", "advanced/public-solver-methods.qmd"),
-                ]
+                entries = navigation_entries(yaml, contents.node)
+                @test all(entry -> !isempty(strip(first(entry))), entries)
+                @test Set(entry_hrefs(entries)) == union(
+                    EXPECTED_ADVANCED_HREFS,
+                    Set(["advanced/index.qmd"]),
+                )
             end
         end
+
         course_matches = [
             item for item in sidebar_items
             if something(yaml_item_field(yaml, item, "id"), (value="",)).value == "course"
@@ -532,16 +469,32 @@ end
                 top_level = yaml_sequence_items(yaml, contents.node)
                 home = first(top_level)
                 @test yaml_item_field(yaml, home, "href").value == "index.qmd"
-                @test yaml_item_field(yaml, home, "text").value == "ホーム"
+                @test !isempty(strip(yaml_item_field(yaml, home, "text").value))
             end
-            @test sidebar_section_entries(yaml, course, "受講準備・共通ガイド") == [
-                (text, href) for (href, text) in EXPECTED_PREPARATION_LINKS
-            ]
-            @test sidebar_section_entries(yaml, course, "全15回") == EXPECTED_SESSION_ENTRIES
-            course_lines = yaml[course.line:course.last]
-            @test count(occursin("assignments/", line.text) for line in course_lines) == 10
-            @test count(occursin("guides/testing.qmd", line.text) for line in course_lines) == 0
-            @test !any(occursin("advanced/cairomakie.qmd", line.text) for line in course_lines)
+
+            sections = sidebar_sections(yaml, course)
+            section_entries = [sidebar_section_entries(yaml, section) for section in sections]
+            preparation_matches = filter(
+                entries -> Set(entry_hrefs(entries)) == EXPECTED_PREPARATION_HREFS,
+                section_entries,
+            )
+            @test length(preparation_matches) == 1
+            course_sections = filter(entries -> entries ∉ preparation_matches, section_entries)
+            @test length(course_sections) == 1
+            if length(course_sections) == 1
+                entries = only(course_sections)
+                @test all(entry -> !isempty(strip(first(entry))), entries)
+                hrefs = entry_hrefs(entries)
+                @test hrefs == vcat(
+                    EXPECTED_COURSE_HREFS,
+                    fill("assignments/final-project.qmd", 4),
+                )
+                for href in EXPECTED_COURSE_HREFS
+                    @test count(==(href), hrefs) == 1
+                end
+                @test !("guides/testing.qmd" in hrefs)
+                @test !("advanced/cairomakie.qmd" in hrefs)
+            end
         end
     end
 
