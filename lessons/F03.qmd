@@ -5,67 +5,144 @@ title: "ベクトル解析"
 第4回・授業 1/2 · 課題ID: F03
 :::
 
+提出単位: `F03-F04`
+
 ## この回の到達点
 
-- gradient、curl、Laplacianを成分で計算し、ベクトル解析の三公式を証明する。
+- gradient、divergence、curl、Laplacianを直交座標の成分で定義する。
+- 混合偏微分を交換できる条件を明記し、ベクトル解析の三公式を成分展開で証明する。
+- [次回の数値微分](F04.qmd)で同じ三公式を数値的に確かめる準備をする。
 
-## 三つの公式
+## 直交座標での微分演算子
 
-$$
-\nabla\times(\nabla\phi)=\boldsymbol{0},
-$$
-
-$$
-\nabla\cdot(\nabla\times\boldsymbol{A})=0,
-$$
+スカラー場 \(\phi(x,y,z)\) とベクトル場
+\(\boldsymbol{A}(x,y,z)=(A_x,A_y,A_z)\) に対し、勾配（gradient）を
 
 $$
-\nabla\cdot(\nabla\phi)=\nabla^2\phi.
+\nabla\phi=
+\left(
+\frac{\partial\phi}{\partial x},
+\frac{\partial\phi}{\partial y},
+\frac{\partial\phi}{\partial z}
+\right),
 $$
 
-## 微分演算子と添字記法
-
-スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し、勾配
+divergenceを
 
 $$
-TBA,
+\nabla\cdot\boldsymbol{A}=
+\frac{\partial A_x}{\partial x}
++\frac{\partial A_y}{\partial y}
++\frac{\partial A_z}{\partial z},
 $$
 
-divergence
+curlを
 
 $$
-TBA,
+\nabla\times\boldsymbol{A}=
+\left(
+\frac{\partial A_z}{\partial y}-\frac{\partial A_y}{\partial z},
+\frac{\partial A_x}{\partial z}-\frac{\partial A_z}{\partial x},
+\frac{\partial A_y}{\partial x}-\frac{\partial A_x}{\partial y}
+\right),
 $$
 
-curl
+Laplacianを
 
 $$
-TBA,
+\nabla^2\phi=
+\frac{\partial^2\phi}{\partial x^2}
++\frac{\partial^2\phi}{\partial y^2}
++\frac{\partial^2\phi}{\partial z^2}
 $$
 
-Laplacian
+と定義します。以下では、現れる二階偏微分が連続、すなわち場が対象領域で少なくとも \(C^2\) 級であると仮定します。この条件により
+\(\partial^2 f/(\partial x\partial y)=\partial^2 f/(\partial y\partial x)\)
+のように混合偏微分の順序を交換できます。
+
+## 証明1: curl grad = 0
+
+定義を順に代入すると
 
 $$
-TBA,
+\nabla\times(\nabla\phi)=
+\left(
+\frac{\partial^2\phi}{\partial y\partial z}
+-\frac{\partial^2\phi}{\partial z\partial y},
+\frac{\partial^2\phi}{\partial z\partial x}
+-\frac{\partial^2\phi}{\partial x\partial z},
+\frac{\partial^2\phi}{\partial x\partial y}
+-\frac{\partial^2\phi}{\partial y\partial x}
+\right).
 $$
 
-を定義します。
-このとき，Kroneckerのデルタ$\delta_{ij}$は
+各成分の二項は混合偏微分の交換により等しいので、
 
 $$
-TBA
+\nabla\times(\nabla\phi)=\boldsymbol{0}.
 $$
 
-といった性質をもち、Levi-Civita記号$\epsilon_{ijk}$は
+## 証明2: div curl = 0
+
+curlの三成分をdivergenceへ代入すると
 
 $$
-TBA
+\begin{aligned}
+\nabla\cdot(\nabla\times\boldsymbol{A})
+={}&
+\frac{\partial^2 A_z}{\partial x\partial y}
+-\frac{\partial^2 A_y}{\partial x\partial z}
++\frac{\partial^2 A_x}{\partial y\partial z}
+-\frac{\partial^2 A_z}{\partial y\partial x}\\
+&+
+\frac{\partial^2 A_y}{\partial z\partial x}
+-\frac{\partial^2 A_x}{\partial z\partial y}.
+\end{aligned}
 $$
 
-で定義され、$\delta_{ij}$と
+\(A_z\)、\(A_y\)、\(A_x\) それぞれの混合偏微分が二項ずつ相殺するため、
 
 $$
-TBA
+\nabla\cdot(\nabla\times\boldsymbol{A})=0.
 $$
 
-の関係をもちます。
+## 証明3: div grad = Laplacian
+
+gradientの各成分をdivergenceへ代入すると
+
+$$
+\begin{aligned}
+\nabla\cdot(\nabla\phi)
+&=
+\frac{\partial}{\partial x}\left(\frac{\partial\phi}{\partial x}\right)
++\frac{\partial}{\partial y}\left(\frac{\partial\phi}{\partial y}\right)
++\frac{\partial}{\partial z}\left(\frac{\partial\phi}{\partial z}\right)\\
+&=
+\frac{\partial^2\phi}{\partial x^2}
++\frac{\partial^2\phi}{\partial y^2}
++\frac{\partial^2\phi}{\partial z^2}
+=\nabla^2\phi.
+\end{aligned}
+$$
+
+これはLaplacianの定義そのものです。
+
+## 数値微分への接続
+
+刻み幅 \(h>0\) に対し、一変数関数 \(f\) の前進差分、後退差分、中心差分を
+
+$$
+D_+f(x)=\frac{f(x+h)-f(x)}{h},\qquad
+D_-f(x)=\frac{f(x)-f(x-h)}{h},
+$$
+
+$$
+D_0f(x)=\frac{f(x+h)-f(x-h)}{2h}
+$$
+
+と定義します。授業の最後の20分では
+`exercises/F04_numerical_differentiation/run.jl`を開き、`forward_difference`、`backward_difference`、`centered_difference`の三つを実装して、一次関数の提供テストを通してください。第4回ではbranchをmergeせず、PRも完了扱いにしません。続きは[数値微分と格子収束](F04.qmd)です。
+
+## 第4回の最低到達点
+
+第4回の終わりまでに、`forward_difference`、`backward_difference`、`centered_difference`の3つの差分関数をすべて完成し、一次関数の提供テストを通します。この時点ではbranchをmergeせず、PRも完了扱いにしません。第5回で同じ`F03-F04`提出単位を完成させます。

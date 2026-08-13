@@ -50,7 +50,7 @@ julia --version
 授業で扱うパッケージは次のように分類します。
 
 - `LinearAlgebra`、`TOML`、`Test`はJuliaに付属する標準ライブラリです。
-- `Plots`と`ForwardDiff`は現在の授業用プロジェクトが直接使う外部依存です。
+- `Plots`は現在の授業用プロジェクトが直接使う外部runtime依存です。
 - `JuliaFormatter`は授業側が版を固定する開発ツールです。
 - `OrdinaryDiffEqLowOrderRK`、`BenchmarkTools`、`SparseArrays`、`IterativeSolvers`は、それぞれを使う後続課題が追加された時点でだけ授業用環境へ加えます。
 
@@ -66,7 +66,7 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
 ```bash
 julia --project=.
-julia --project=. exercises/F03_vector_calculus/run.jl
+julia --project=. exercises/F04_numerical_differentiation/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
