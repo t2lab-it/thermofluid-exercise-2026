@@ -10,7 +10,7 @@ const ASSIGNMENT_IDENTIFIERS = Dict(
     "F01" => ["student_greeting", "test/student/F01.jl"],
     "F02" => ["mean_temperature", "temperature_anomaly", "test/student/F02.jl"],
     "F03" => [
-        "gradient_scalar", "curl_vector", "laplacian_scalar", "test/student/F03.jl",
+        "gradient_scalar", "curl_vector", "laplacian_scalar",
     ],
     "F04" => [
         "forward_difference", "backward_difference", "centered_difference",

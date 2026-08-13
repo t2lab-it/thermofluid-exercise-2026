@@ -9,6 +9,16 @@ const EXPECTED_PUBLISHED_DATES = [
     "10/16（金）", "10/23（金）", "10/30（金）", "11/6（金）", "11/13（金）",
     "11/27（金）", "12/4（金）", "12/11（金）", "12/18（金）", "2027/1/8（金）",
 ]
+const F03_F04_PUBLIC_PAGES = [
+    "lessons/F03.qmd", "assignments/F03.qmd",
+    "lessons/F04.qmd", "assignments/F04.qmd",
+]
+const F03_F04_FORBIDDEN_PUBLIC_TERMS = (
+    "Forward" * "Diff",
+    "自動" * "微分",
+    "automatic" * "_reference",
+    "T" * "BA",
+)
 
 function tracked_public_qmd_paths()
     paths = readlines(`git -C $(PUBLIC_STRUCTURE_ROOT) ls-files -- lessons assignments projects/final-project-topics`)
@@ -117,4 +127,11 @@ end
 @testset "course map preserves published dates" begin
     index_source = read(joinpath(PUBLIC_STRUCTURE_ROOT, "index.qmd"), String)
     @test published_course_dates(index_source) == EXPECTED_PUBLISHED_DATES
+end
+
+@testset "F03-F04 public pages exclude retired implementation vocabulary" begin
+    for relative_path in F03_F04_PUBLIC_PAGES
+        source = read(joinpath(PUBLIC_STRUCTURE_ROOT, relative_path), String)
+        @test all(term -> !occursin(term, source), F03_F04_FORBIDDEN_PUBLIC_TERMS)
+    end
 end

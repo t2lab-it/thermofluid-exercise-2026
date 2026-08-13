@@ -2,6 +2,13 @@ using Test
 using TOML
 
 const NAVIGATION_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
+const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
+const F03_F04_FORBIDDEN_TERMS = (
+    "Forward" * "Diff",
+    "自動" * "微分",
+    "automatic" * "_reference",
+    "T" * "BA",
+)
 
 const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01")
 const REQUIRED_ASSIGNMENT_IDS = Set(REQUIRED_COURSE_ORDER)
@@ -584,5 +591,35 @@ end
         assignment = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
         @test !occursin("../assignments/", lesson)
         @test !occursin("../lessons/", assignment)
+    end
+end
+
+@testset "F03 and F04 retain the combined submission navigation contract" begin
+    contracts = TOML.parsefile(
+        joinpath(NAVIGATION_SITE_ROOT, "assignments", "contracts.toml"),
+    )["assignments"]
+    @test contracts["F03"]["start_command"] == F03_F04_START_COMMAND
+    @test contracts["F04"]["start_command"] == F03_F04_START_COMMAND
+    @test contracts["F03"]["run_path"] == "exercises/F03_vector_calculus/run.jl"
+    @test contracts["F04"]["run_path"] == "exercises/F04_numerical_differentiation/run.jl"
+
+    quarto_source = read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String)
+    @test occursin("ベクトル解析の証明と数値微分", quarto_source)
+
+    for (directory, id, paired_id) in (
+        ("lessons", "F03", "F04"),
+        ("assignments", "F03", "F04"),
+        ("lessons", "F04", "F03"),
+        ("assignments", "F04", "F03"),
+    )
+        source = read(joinpath(NAVIGATION_SITE_ROOT, directory, "$id.qmd"), String)
+        @test occursin("提出単位: `F03-F04`", source)
+        @test occursin("$paired_id.qmd", source)
+        @test all(term -> !occursin(term, source), F03_F04_FORBIDDEN_TERMS)
+    end
+
+    for id in ("F03", "F04")
+        source = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
+        @test occursin(F03_F04_START_COMMAND, source)
     end
 end

@@ -2,6 +2,7 @@ using TOML
 
 const CANONICAL_BASE = "https://t2lab-it.github.io/thermofluid-exercise-2026/"
 const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01"])
+const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
 
 function fail(message::AbstractString)
     println(stderr, "contract error: ", message)
@@ -56,10 +57,23 @@ function verify_contracts(contracts_path, public_root, student_root)
         )
     end
 
+    combined_entries_are_tables = all(
+        id -> haskey(assignments, id) && assignments[id] isa AbstractDict,
+        ("F03", "F04"),
+    )
+    if combined_entries_are_tables
+        f03_command = get(assignments["F03"], "start_command", nothing)
+        f04_command = get(assignments["F04"], "start_command", nothing)
+        if f03_command != F03_F04_START_COMMAND || f04_command != F03_F04_START_COMMAND
+            ok &= fail("F03 and F04 must share the combined start command")
+        end
+    end
+
     required = ("site_path", "run_path", "start_command", "canonical_url")
     seen_site = Set{String}()
     seen_run = Set{String}()
     seen_url = Set{String}()
+    seen_start = Dict{String,String}()
 
     for id in sort!(collect(keys(assignments)))
         entry = assignments[id]
@@ -72,6 +86,16 @@ function verify_contracts(contracts_path, public_root, student_root)
         command = string(entry["start_command"])
         canonical = string(entry["canonical_url"])
         lesson_path = joinpath("lessons", "$id.qmd")
+
+        if haskey(seen_start, command)
+            first_id = seen_start[command]
+            combined_pair = Set((first_id, String(id))) == Set(("F03", "F04"))
+            if !(combined_pair && command == F03_F04_START_COMMAND)
+                ok &= fail("duplicate start command at assignment ID $id (already used by $first_id)")
+            end
+        else
+            seen_start[command] = String(id)
+        end
 
         if site_path in seen_site || run_path in seen_run || canonical in seen_url
             ok &= fail("duplicate IDs or paths at assignment ID $id")

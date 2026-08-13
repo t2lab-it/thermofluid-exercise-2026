@@ -148,3 +148,38 @@ end
         @test occursin("assignment contracts verified", String(take!(output)))
     end
 end
+
+@testset "only F03 and F04 may share their combined start command" begin
+    mktempdir() do parent
+        contracts_path, public, student = write_verifier_fixture(parent)
+        contracts_source = read(contracts_path, String)
+        assignments = TOML.parse(contracts_source)["assignments"]
+        f03_command = assignments["F03"]["start_command"]
+        f02_command = assignments["F02"]["start_command"]
+        write(contracts_path, replace(contracts_source, f02_command => f03_command))
+
+        f02_page = joinpath(public, "assignments", "F02.qmd")
+        write(f02_page, replace(read(f02_page, String), f02_command => f03_command))
+
+        passed, output = run_contract_verifier(contracts_path, public, student)
+        @test !passed
+        @test occursin("duplicate start command", output)
+    end
+end
+
+@testset "malformed combined assignment entry is reported" begin
+    mktempdir() do parent
+        contracts_path, public, student = write_verifier_fixture(parent)
+        source = read(contracts_path, String)
+        malformed = replace(
+            source,
+            r"(?ms)^\[assignments\.F03\]\n.*?(?=^\[assignments\.F04\])" =>
+                "[assignments]\nF03 = \"invalid\"\n\n",
+        )
+        write(contracts_path, malformed)
+
+        passed, output = run_contract_verifier(contracts_path, public, student)
+        @test !passed
+        @test occursin("missing fields for assignment ID F03", output)
+    end
+end
