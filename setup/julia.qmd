@@ -45,7 +45,7 @@ julia --version
 
 ## パッケージ環境を復元する
 
-学生リポジトリをcloneした後は、リポジトリのルートディレクトリへ移動し、授業で固定したパッケージ環境を復元します。Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します。`Project.toml`は直接使う依存関係と互換条件、`Manifest.toml`は実際に解決された依存関係全体の版を記録します。
+学生リポジトリを複製した後は、リポジトリのルートディレクトリへ移動し、授業で固定したパッケージ環境を復元します。Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します。`Project.toml`は直接使う依存関係と互換条件、`Manifest.toml`は実際に解決された依存関係全体の版を記録します。
 
 授業で扱うパッケージは次のように分類します。
 
@@ -54,7 +54,7 @@ julia --version
 - `JuliaFormatter`は授業側が版を固定する開発ツールです。
 - `OrdinaryDiffEqLowOrderRK`、`BenchmarkTools`、`SparseArrays`、`IterativeSolvers`は、それぞれを使う後続課題が追加された時点でだけ授業用環境へ加えます。
 
-clone直後は、授業側が用意した2ファイルから次のコマンドで環境を復元します。
+複製直後は、授業側が用意した2ファイルから次のコマンドで環境を復元します。
 
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -70,14 +70,14 @@ julia --project=. exercises/F03_vector_calculus/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-1行目は対話的なREPL、2行目はスクリプトを新しいプロセスで実行する例、3行目は授業用の`tests`を初期状態のテストプロセスで実行する例です。REPLでは`exit()`またはCtrl+Dで終了できます。
+1行目は対話的なREPL、2行目はスクリプトを新しいプロセスで実行する例、3行目は授業用のテストを初期状態のテストプロセスで実行する例です。REPLでは`exit()`またはCtrl+Dで終了できます。
 
 VS CodeのCommand Paletteでは、`Julia: Start REPL`で授業用REPLを開始し、`Julia: Execute Code in REPL`で選択範囲や現在行を試せます。ファイル全体を独立した状態で確認するときは`Julia: Run File in New Process`を使います。
 
 ## VS Codeを授業用に整える
 
 VS Codeをインストールしたら、拡張機能`julialang.language-julia`を必ず導入します。
-学生リポジトリの`.vscode/`には、Juliaファイルの4空白インデント、括弧の色分け、末尾空白の除去、保存時の自動整形、`linter`を有効にする授業用設定があります。cloneしたリポジトリをフォルダーとして開くと、この設定と`formatter`が適用されます。
+学生リポジトリの`.vscode/`には、Juliaファイルの4空白インデント、括弧の色分け、末尾空白の除去、保存時の自動整形、`linter`を有効にする授業用設定があります。複製したリポジトリをフォルダーとして開くと、この設定と`formatter`が適用されます。
 
 VS Code上の操作は公式資料も参照してください。
 

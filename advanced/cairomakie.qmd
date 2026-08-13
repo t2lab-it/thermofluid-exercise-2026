@@ -52,7 +52,7 @@ julia --project=. scratch/export_n01.jl
 
 ## 1次元線形移流データを描く
 
-次のコードを scratch/plot_n01_cairomakie.jl として保存します。交換ファイルの4列を読み、安定例と意図的な不安定例を同じ図で比較します。
+次のコードを`scratch/plot_n01_cairomakie.jl`として保存します。交換ファイルの4列を読み、安定例と意図的な不安定例を同じ図で比較します。
 
 ~~~julia
 using CairoMakie
