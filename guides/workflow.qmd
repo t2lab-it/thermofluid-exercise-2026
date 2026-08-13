@@ -21,7 +21,7 @@ title: "課題のbranch・PRワークフロー"
 6. commitする。
 7. 自分でpushする。
 8. PRを作る。
-9. Actionsを確認する。
+9. GitHub Actionsを確認する。
 10. diffを読む。
 11. セルフレビューする。
 12. mergeする。
@@ -58,13 +58,13 @@ julia --project=. scripts/course.jl start F02
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-Actionsだけを先に頼らず、ローカルで実行します。公式`run.jl`が`results/<課題ID>/`へ生成するファイルは再生成してcommitし、自由試行は`scratch/`へ置きます。公式出力がない課題では、不要な結果ファイルを作りません。
+GitHub Actionsだけを先に頼らず、ローカルで実行します。公式`run.jl`が`results/<課題ID>/`へ生成するファイルは再生成してcommitし、自由試行は`scratch/`へ置きます。公式出力がない課題では、不要な結果ファイルを作りません。
 
 ## 学習ログ
 
-学習ログには、実装、テストの意味、結果、diff確認、つまずき、判断を簡潔に残します。AI利用時は、実行前予想、依頼内容、重要な提案、採用・修正・却下、diff、テスト、結果、理由を要約します。
+学習ログには、実装、テストの意味、結果、diff確認、つまずき、判断を簡潔に残します。AI利用時は、依頼内容、重要な提案、採用・修正・却下した内容、その判断理由を要約します。
 
-秘密情報、不要な個人情報、私的な会話を含めません。最初のbranch課題（課題ID: F01）でのAI利用は説明、エラー解説、練習問題に限られます。課題ごとの許可範囲を超えて利用しません。
+[AI利用と安全](ai-usage.qmd)で、AI利用の範囲、禁止事項、自分で確認することを確認してください。
 
 ## commit前の確認
 
@@ -78,7 +78,7 @@ git commit -m "feat: complete TASK_ID"
 
 `PATHS_YOU_INTEND_TO_SUBMIT`と`TASK_ID`は課題に合わせて置き換えます。`git add .`で無関係なファイルまでまとめず、提出するパスを指定します。
 
-## push・PR・Actions
+## push・PR・GitHub Actions
 
 branch名を確認してから、自分でpushします。
 
@@ -87,9 +87,9 @@ git branch --show-current
 git push -u origin YOUR_EXERCISE_BRANCH
 ```
 
-GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを一つ作り、PRテンプレートを埋めます。Actionsが失敗した場合はログから最初の原因を探し、ローカルで再現して修正し、同じPRへpushします。
+GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを一つ作り、PRテンプレートを埋めます。GitHub Actionsが失敗した場合はログから最初の原因を探し、ローカルで再現して修正し、同じPRへpushします。
 
-Actions枠切れやGitHub障害時は学生の減点理由にしません。ローカルの`Pkg.test()`結果を学習ログへ記録して暫定確認を受け、復旧後の主要チェックポイントで再実行します。
+GitHub Actions枠切れやGitHub障害時は学生の減点理由にしません。ローカルの`Pkg.test()`結果を学習ログへ記録して暫定確認を受け、復旧後の主要チェックポイントで再実行します。
 
 ## diffとセルフレビュー
 
@@ -97,7 +97,7 @@ Actions枠切れやGitHub障害時は学生の減点理由にしません。ロ�
 git diff main...HEAD
 ```
 
-GitHubのFiles changedとローカルdiffの両方で確認します。
+GitHubの`Files changed`とローカルdiffの両方で確認します。
 
 - 課題の必須ファイルだけが含まれる。
 - 提供テストを削除・弱体化していない。

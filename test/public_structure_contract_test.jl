@@ -84,6 +84,18 @@ end
     @test !has_level2_heading("Paragraph without a section heading.")
 end
 
+@testset "AI guidance has one canonical public page" begin
+    guide_path = normpath(joinpath(PUBLIC_STRUCTURE_ROOT, "guides", "ai-usage.qmd"))
+    @test isfile(guide_path)
+    for relative in ("setup/agents.qmd", "guides/workflow.qmd")
+        source_path = joinpath(PUBLIC_STRUCTURE_ROOT, relative)
+        targets = qmd_link_targets(read(source_path, String))
+        @test any(targets) do target
+            normpath(resolve_qmd_target(source_path, target)) == guide_path
+        end
+    end
+end
+
 @testset "tracked public QMD pages preserve machine structure" begin
     paths = tracked_public_qmd_paths()
     @test !isempty(paths)

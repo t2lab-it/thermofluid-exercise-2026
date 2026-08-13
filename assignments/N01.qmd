@@ -12,7 +12,7 @@ title: "1次元線形移流方程式"
 ## 学生リポジトリ内の場所
 
 - 実装・実行: `exercises/N01_linear_advection/run.jl`
-- 提供済みsupport: `exercises/N01_linear_advection/provided_support.jl`
+- 提供済みの補助ファイル: `exercises/N01_linear_advection/provided_support.jl`
 - 提供テスト: `test/provided/N01.jl`
 - 自分のテスト: `test/student/N01.jl`
 - 学習ログ: `learning_logs/N01.md`
@@ -45,7 +45,7 @@ $$
 
 ## 実装範囲
 
-`run.jl`はheaderにある`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に読みます。学生が実装するのは、次の3つのTODOだけです。
+`run.jl`は冒頭にある`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に読みます。学生が実装するのは、次の3つのTODOだけです。
 
 1. 背景1、`0.5 <= x <= 1.0`で2となる矩形初期条件
 2. 正の速度に対する上流差分 + Euler法による更新
@@ -85,4 +85,4 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 - 実効CFLと最終時刻を確認した。
 - 上流差分法の有界性と中心差分法 + Euler法のオーバーシュートまたはアンダーシュートを確認した。
 - 公式出力、提供テスト、自分の代表テスト、学習ログを確認した。
-- diff、commit、push、PR、Actions、セルフレビュー、mergeを確認した。
+- diff、commit、push、PR、GitHub Actions、セルフレビュー、mergeを確認した。

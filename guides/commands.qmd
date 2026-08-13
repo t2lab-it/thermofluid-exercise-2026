@@ -10,11 +10,11 @@ title: "コマンド一覧"
 ## 環境と復元
 
 ```bash
-# Juliaのversionを確認する
+# Juliaのバージョンを確認する
 julia --version
-# Gitのversionを確認する
+# Gitのバージョンを確認する
 git --version
-# 課題で固定されたJulia packageを復元する
+# 課題で固定されたJuliaパッケージを復元する
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
@@ -27,7 +27,7 @@ julia --project=. scripts/course.jl preflight
 julia --project=. scripts/course.jl status
 # F02の課題branchを作って開始する
 julia --project=. scripts/course.jl start F02
-# 現在課題と前提課題のtestを実行する
+# 現在課題と前提課題のテストを実行する
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
@@ -36,13 +36,13 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ## Gitで変更を確認する
 
 ```bash
-# 変更済み・staged・untracked fileを一覧する
+# 変更済み・commit対象に追加済み・未追跡のファイルを一覧する
 git status --short
 # 現在のbranch名を確認する
 git branch --show-current
 # まだstageしていない変更内容を確認する
 git diff
-# stage済みで次のcommitに入る変更を確認する
+# 次のcommit対象に追加済みの変更を確認する
 git diff --cached
 # 直近5件のcommitを確認する
 git log --oneline -5

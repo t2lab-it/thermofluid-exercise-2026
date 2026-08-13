@@ -1,18 +1,18 @@
 ---
-title: "Coding Agent の準備"
+title: "コーディングエージェントの準備"
 ---
 ::: {.course-position}
 準備 4/5
 :::
 
-最初の環境診断（課題ID: F00）では、授業で使う Coding Agent を一つだけ確認します。
+最初の環境診断（課題ID: F00）では、授業で使うコーディングエージェントを一つだけ確認します。
 
 ## 標準: GitHub Copilot
 
 1. VS Code の Extensions で `GitHub Copilot` をインストールする。
 2. GitHub アカウントでサインインする。
 3. 学生リポジトリを VS Code で開く。
-4. Agent に `julia --version` の実行を依頼し、`1.12.6` が表示されることを確認する。
+4. エージェントに `julia --version` の実行を依頼し、`1.12.6` が表示されることを確認する。
 5. `scratch/F00-agent-check.txt` に一行追加するよう依頼し、diff を確認してからファイルを削除する。
 
 学生向けプランの審査待ち、利用資格、または利用上限により使えない場合は、次の正式対応製品のどちらか一つを代替として選びます。
@@ -21,20 +21,18 @@ title: "Coding Agent の準備"
 
 VS Code拡張機能またはCLIを利用できます。授業アカウントで利用可能な方法を一つ選び、学生リポジトリを作業ディレクトリとして開いてください。その後、標準手順と同じ二点を確認します。
 
-- Agent が `julia --version` を実行できる。
-- Agent による `scratch/F00-agent-check.txt` の変更を自分で diff 確認し、削除できる。
+- エージェントが `julia --version` を実行できる。
+- エージェントによる `scratch/F00-agent-check.txt` の変更を自分で diff 確認し、削除できる。
 
 ## 代替2: Amazon Q Developer
 
 VS Code の Extensions で `Amazon Q` を検索し、Amazon Q DeveloperのVS Code拡張機能をインストールしてサインインします。学生リポジトリを開き、次の二点を確認します。
 
-- Agent が `julia --version` を実行できる。
-- Agent による `scratch/F00-agent-check.txt` の変更を自分で diff 確認し、削除できる。
+- エージェントが `julia --version` を実行できる。
+- エージェントによる `scratch/F00-agent-check.txt` の変更を自分で diff 確認し、削除できる。
 
 Copilot、Codex、Amazon Q Developer のすべてが利用できない場合は、別の製品を自己判断で契約せず、教員・TAへ相談してください。最初の環境診断（課題ID: F00）の手動確認では、実際に使えた一つだけを回答します。
 
-## 秘密情報とプライバシー
+## AI利用と安全
 
-Agent の入力へ、GitHubトークン、APIキー、パスワード、秘密鍵、個人情報、成績情報、私的な会話を貼り付けないでください。`.env`、認証設定、ブラウザの保存情報も読ませません。
-
-Agent の提案は自動的に正しいとは限りません。実行前に変更対象と期待結果を確認し、実行後に diff、コマンド出力、テスト結果を自分で読みます。最初の環境診断では Agent の会話ログを提出しません。
+[AI利用と安全](../guides/ai-usage.qmd)で、利用できる範囲、禁止事項、自分で確認すること、学習ログへの記録を確認してください。最初の環境診断ではエージェントの会話ログを提出しません。

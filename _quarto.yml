@@ -62,6 +62,8 @@ website:
               text: "Git・GitHub"
             - href: setup/agents.qmd
               text: "Coding Agent"
+            - href: guides/ai-usage.qmd
+              text: "AI利用と安全"
             - href: guides/workflow.qmd
               text: "課題ワークフロー"
         - section: "全15回"

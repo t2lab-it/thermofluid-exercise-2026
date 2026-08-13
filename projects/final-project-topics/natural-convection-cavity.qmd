@@ -26,7 +26,7 @@ Rayleigh数、Prandtl数、格子、初期場、定常判定のうち、何が�
 
 正方形・左右定温・上下断熱・滑りなし・Boussinesq近似で定常解を求めます。境界を含む `65×65` と `129×129` の二格子（格子幅 `h=1/(N-1)`）を必ず比較してください。
 
-学生向け導入キットには、[問題・境界・格子の定義](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/natural-convection-cavity)と[de Vahl Davisベンチマーク表](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/de-vahl-davis-reference.csv)だけを提供します。完成済みソルバ、境界渦度実装、Poisson実装、数値流束は含みません。
+学生向け簡易導入キットには、[問題・境界・格子の定義](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/natural-convection-cavity)と[de Vahl Davisベンチマーク表](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/de-vahl-davis-reference.csv)だけを提供します。完成済みソルバ、境界渦度実装、Poisson実装、数値流束は含みません。
 
 ## 評価指標
 

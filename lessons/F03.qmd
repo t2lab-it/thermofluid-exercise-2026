@@ -16,7 +16,7 @@ title: "ベクトル解析"
 ## 直交座標での微分演算子
 
 スカラー場 \(\phi(x,y,z)\) とベクトル場
-\(\boldsymbol{A}(x,y,z)=(A_x,A_y,A_z)\) に対し、gradientを
+\(\boldsymbol{A}(x,y,z)=(A_x,A_y,A_z)\) に対し、勾配（gradient）を
 
 $$
 \nabla\phi=

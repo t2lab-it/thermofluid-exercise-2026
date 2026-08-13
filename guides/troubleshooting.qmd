@@ -29,19 +29,19 @@ git branch --show-current
 
 - `julia`や`git`が見つからない: [受講環境の準備](../setup/index.qmd)へ戻る。
 - Juliaの版が違う: [Julia 1.12.6とVS Code](../setup/julia.qmd)を確認する。
-- clone・認証で止まる: [Git・GitHub](../setup/git-github.qmd)の順序を確認する。
+- 複製・認証で止まる: [Git・GitHub](../setup/git-github.qmd)の順序を確認する。
 - テストが失敗する: 最初の失敗、対象ファイル、期待値と実値を[テストガイド](testing.qmd)に沿って読む。
 - branchやmainを誤操作した: commitやpushを追加せず、現在の状態を残す。
 
-## mainブランチで作業してしまったら
+## mainで作業してしまったら
 
-GitHub Freeの非公開リポジトリではbranch protectionに依存しないため、操作ミスを完全には遮断しません。mainでの作業、commit、直接pushに気づいたら、強制push、reset、履歴削除を自己判断で行わないでください。
+GitHub Freeの非公開リポジトリではbranch保護に依存しないため、操作ミスを完全には遮断しません。mainでの作業、commit、直接pushに気づいたら、強制push、`reset`、履歴削除を自己判断で行わないでください。
 
 1. `git status --short`、`git log --oneline -5`、GitHubのmain画面を保存する。
 2. どのcommitをどのコマンドでpushしたか記録する。まだpushしていない場合は、そのことも記録する。
 3. 教員・TAへ連絡する。
 4. 指示のもとでmainを安全な状態へ戻し、課題branchとPRを作り直す。
-5. Actions、diff、セルフレビュー、mergeを正しい順で再実行する。
+5. GitHub Actions、diff、セルフレビュー、mergeを正しい順で再実行する。
 
 初学者の操作ミスと意図的な手順違反は区別します。大切なのは変更を隠すことではなく、履歴を保ったまま原因と復旧手順を説明できることです。
 
