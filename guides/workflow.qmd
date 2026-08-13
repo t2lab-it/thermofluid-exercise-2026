@@ -97,7 +97,7 @@ GitHub Actions枠切れやGitHub障害時は学生の減点理由にしません
 git diff main...HEAD
 ```
 
-GitHubのFiles changedとローカルdiffの両方で確認します。
+GitHubの`Files changed`とローカルdiffの両方で確認します。
 
 - 課題の必須ファイルだけが含まれる。
 - 提供テストを削除・弱体化していない。

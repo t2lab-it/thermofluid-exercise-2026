@@ -6,17 +6,17 @@ title: "SSHでGitHubへ接続する"
 任意・発展資料
 :::
 
-このページは、標準のHTTPS cloneと最初のpull requestを完了した学生向けの任意資料です。
+このページは、標準のHTTPSによる複製と最初のpull requestを完了した学生向けの任意資料です。
 
 ## SSHを使えると何が嬉しいか
 
-- GitHubへの接続方法を一度整えると、fetchやpushのたびに認証方法を選び直さずに済む。
+- GitHubへの接続方法を一度整えると、取得やpushのたびに認証方法を選び直さずに済む。
 - 公開鍵をGitHubへ登録し、秘密鍵を自分のPCから出さない形で認証できる。
 - ターミナル中心のGit操作を続けやすくなり、後続のGitHub CLIやコーディングエージェントとの協働へ進みやすくなる。
 
 ## このページの到達点
 
-すでにcloneした学生リポジトリの`origin`をHTTPS URLからSSH URLへ安全に切り替えます。
+すでに複製した学生リポジトリの`origin`をHTTPS URLからSSH URLへ安全に切り替えます。
 
 ## 実行前の安全確認
 
@@ -28,14 +28,14 @@ title: "SSHでGitHubへ接続する"
 
 ## 現在の接続方法を記録する
 
-学生リポジトリのルートディレクトリで、未commitの変更と現在のremote URLを確認します。
+学生リポジトリのルートディレクトリで、未commitの変更と現在のリモートURLを確認します。
 
 ```bash
 git status --short
 git remote -v
 ```
 
-`origin`のfetchとpushが`https://github.com/...`なら、現在はHTTPS接続です。すでに`git@github.com:...`ならSSH接続を利用できており、以降の内容を実行する必要はありません。
+`origin`の取得先とpush先が`https://github.com/...`なら、現在はHTTPS接続です。すでに`git@github.com:...`ならSSH接続を利用できており、以降の内容を実行する必要はありません。
 
 ## 既存のSSH接続を先に確認する
 
@@ -144,7 +144,7 @@ git remote -v
 git fetch origin
 ```
 
-最終行の`git fetch origin`でfetchとpushの両方が同じSSH URLであることを確認してください。
+最終行の`git fetch origin`で取得先とpush先の両方が同じSSH URLであることを確認してください。
 
 ## トラブルを切り分ける
 
@@ -159,7 +159,7 @@ git fetch origin
 ## 完了条件
 
 - `ssh -T git@github.com`で、意図した自分のGitHubユーザーとして認証される。
-- `git remote -v`で、`origin`のfetch・push URLが学生リポジトリのSSH URLになっている。
+- `git remote -v`で、`origin`の取得先・push先URLが学生リポジトリのSSH URLになっている。
 - `git fetch origin`が成功する。
 - 秘密鍵、パスフレーズ、確認コードを記録・共有していない。
 

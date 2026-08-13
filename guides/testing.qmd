@@ -24,7 +24,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 2. **性質**: 定数保存、有界性、入力不変、最終時刻など複数入力に共通する意味を確認する。
 3. **失敗条件**: `NaN`、空配列、不正なCFLなど、契約外の入力が明示的に拒否されることを確認する。
 
-テストがpassしただけで物理的に正しいとは限りません。図、単位、符号、最小・最大、CFLと併せて判断します。
+テストが成功しただけで物理的に正しいとは限りません。図、単位、符号、最小・最大、CFLと併せて判断します。
 
 ## 学生テスト
 
@@ -32,13 +32,13 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 ## 1次元線形移流課題の公式出力
 
-この1次元線形移流課題（課題ID: N01）の`main`はPNG二つとTOML summaryを生成します。ファイル名だけでなく、次を確認します。
+この1次元線形移流課題（課題ID: N01）の`main`はPNG二つとTOML形式の要約を生成します。ファイル名だけでなく、次を確認します。
 
 - 上流差分法の最小・最大が初期範囲内か
 - 中心差分法 + Euler法にオーバーシュートまたはアンダーシュートがあるか
 - `isapprox(steps * dt, t_final; atol=100eps())`で、丸め誤差の範囲内で最終時刻へ到達するか
 - 実効CFLが`c * dt / dx`か
-- PNGが開け、summaryの値が実行結果と一致するか
+- PNGが開け、要約の値が実行結果と一致するか
 
 ### 公開基準値と比べる
 
@@ -46,10 +46,10 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 次の値は、公開基準値の`nx=81`、`dx=0.025`、`cfl=0.5`、`dt=0.0125`、`steps=40`に対応する値です。別のパラメータで実行した結果に、この小数をそのまま要求しません。
 
-| Method | minimum | maximum | overshoot | undershoot |
+| 手法 | `minimum` | `maximum` | `overshoot` | `undershoot` |
 |---|---:|---:|---:|---:|
 | upwind + Euler | 1.0 | 1.9993204517450067 | 0.0 | 0.0 |
-| centered + Euler | -10.420010468371677 | 13.492726642559711 | 11.492726642559711 | 11.420010468371677 |
+| 中心差分 + Euler | -10.420010468371677 | 13.492726642559711 | 11.492726642559711 | 11.420010468371677 |
 
 ![上流差分法 + Euler法の公開基準値](../assets/n01-reference/upwind.png){fig-alt="初期値と上流差分法 + Euler法の最終値を比較したグラフ"}
 
@@ -59,7 +59,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 ## 失敗時の切り分け
 
-最初のfailureまたはerrorから読みます。次を秘密情報を除いて記録してください。
+最初の失敗またはエラーから読みます。次を秘密情報を除いて記録してください。
 
 - 実行した完全なコマンド
 - JuliaとOS
@@ -78,4 +78,4 @@ julia --project=. scripts/verify_contracts.jl assignments/contracts.toml PUBLIC_
 QUARTO_JULIA_PROJECT=. quarto render
 ```
 
-`PUBLIC_ROOT`と`STUDENT_ROOT`には対象checkoutの絶対パスを渡します。検証器は5つの課題ID、パス、開始コマンド、canonical backlink、navigationを照合します。
+`PUBLIC_ROOT`と`STUDENT_ROOT`には対象作業コピーの絶対パスを渡します。検証器は5つの課題ID、パス、開始コマンド、正規の逆リンク、ナビゲーションを照合します。

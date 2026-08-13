@@ -39,9 +39,9 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 ## 手動確認を付けて完了する
 
-GitHubへサインインして学生リポジトリを開けることを確認します。次に、正式対応Agentを一つ選び、`scratch/F00-agent-check.txt`の作成と短い確認文の追記、安全なローカルコマンドの実行を依頼します。
+GitHubへサインインして学生リポジトリを開けることを確認します。次に、正式対応エージェントを一つ選び、`scratch/F00-agent-check.txt`の作成と短い確認文の追記、安全なローカルコマンドの実行を依頼します。
 
-選んだAgentに対応する次のコマンドを一つだけ実行します。
+選んだエージェントに対応する次のコマンドを一つだけ実行します。
 
 ```bash
 julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent copilot
