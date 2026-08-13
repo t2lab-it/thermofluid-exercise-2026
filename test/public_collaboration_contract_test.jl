@@ -15,6 +15,9 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
     for term in ("GitHubユーザー名", "活動", "減点")
         @test occursin(term, combined)
     end
+    @test occursin("合理的配慮", combined)
+    @test occursin(r"AIとの全対話ログ[^。\n]*(?:commitしません|commitせず)", combined)
+    @test occursin("判断理由", workflow) && occursin("要約", workflow)
     @test occursin("個人課題用", glossary)
     @test !occursin("個人課題用の非公開", glossary)
 end

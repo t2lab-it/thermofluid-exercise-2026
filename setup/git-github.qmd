@@ -70,7 +70,7 @@ git config --global user.email "YOUR_GITHUB_EMAIL"
 git config --global user.email "YOUR_GITHUB_USERNAME@users.noreply.github.com"
 ```
 
-教材本文・図は`CC BY 4.0`、コードは`MIT`です。教材や外部資料を使うときは、ライセンスを守り、出典を学習ログやREADMEに記録します。成績、出欠、連絡先、個別フィードバックなどのLMS上の情報はGitに入れず、LMSとGitHubを分けて扱います。
+教材本文・図は`CC BY 4.0`、コードは`MIT`です。教材や外部資料を使うときは、ライセンスを守り、出典を学習ログやREADMEに記録します。成績、出欠、連絡先、合理的配慮、個別フィードバックなどのLMS上の情報はGitに入れず、LMSとGitHubを分けて扱います。AIとの全対話ログ（プロンプトと回答を含む未加工の生の会話記録）も個人課題用リポジトリへcommitしません。
 
 事情があり公開できない場合は、発行前に教員・TAへ**非公開の例外**を相談してください。非公開であること自体を理由に減点せず、課題の進め方、レビュー、提出時期、評価は公開の場合と同じです。
 
