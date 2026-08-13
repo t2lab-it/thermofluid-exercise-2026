@@ -7,7 +7,7 @@ const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01")
 const REQUIRED_ASSIGNMENT_IDS = Set(REQUIRED_COURSE_ORDER)
 const EXPECTED_PREPARATION_HREFS = Set([
     "setup/index.qmd", "setup/julia.qmd", "setup/git-github.qmd",
-    "setup/agents.qmd", "guides/workflow.qmd",
+    "setup/agents.qmd", "guides/ai-usage.qmd", "guides/workflow.qmd",
 ])
 const EXPECTED_COURSE_HREFS = [
     href
@@ -513,6 +513,7 @@ end
         "lessons/index.qmd",
         "assignments/index.qmd",
         "guides/index.qmd",
+        "guides/ai-usage.qmd",
         "guides/commands.qmd",
         "guides/troubleshooting.qmd",
         "guides/glossary.qmd",
