@@ -55,7 +55,7 @@ PDEソルバは、単一のアルゴリズムではなく、複数の判断と�
 
 ## 有限差分系
 
-### [Chmy.jl](https://github.com/PTsolvers/Chmy.jl) （[Documentation](https://ptsolvers.github.io/Chmy.jl/)）
+### [Chmy.jl](https://github.com/PTsolvers/Chmy.jl) （[公式資料](https://ptsolvers.github.io/Chmy.jl/)）
 
 ##### 向いている問い
 
@@ -93,7 +93,7 @@ PDEソルバは、単一のアルゴリズムではなく、複数の判断と�
 
 ## 有限体積系
 
-### [VoronoiFVM.jl](https://github.com/WIAS-PDELib/VoronoiFVM.jl)（[Documentation](https://wias-pdelib.github.io/VoronoiFVM.jl/stable/)）
+### [VoronoiFVM.jl](https://github.com/WIAS-PDELib/VoronoiFVM.jl)（[公式資料](https://wias-pdelib.github.io/VoronoiFVM.jl/stable/)）
 
 ##### 向いている問い
 
@@ -111,7 +111,7 @@ Voronoi有限体積法による離散化、疎な系の組立て、非線形求�
 
 既知解を持つPoisson問題を解き、自作した5点差分・Jacobi法と誤差、残差、格子収束を比較します。解が近いかだけでなく、離散化と停止条件の違いを説明します。
 
-### [FiniteVolumeMethod.jl](https://github.com/SciML/FiniteVolumeMethod.jl)（[Documentation](https://docs.sciml.ai/FiniteVolumeMethod/)）
+### [FiniteVolumeMethod.jl](https://github.com/SciML/FiniteVolumeMethod.jl)（[公式資料](https://docs.sciml.ai/FiniteVolumeMethod/)）
 
 ##### 向いている問い
 
@@ -131,7 +131,7 @@ Voronoi有限体積法による離散化、疎な系の組立て、非線形求�
 
 ## 有限要素系
 
-### [Gridap.jl](https://github.com/gridap/Gridap.jl)（[Documentation](https://gridap.github.io/Gridap.jl/stable/)）
+### [Gridap.jl](https://github.com/gridap/Gridap.jl)（[公式資料](https://gridap.github.io/Gridap.jl/stable/)）
 
 ##### 向いている問い
 
@@ -149,7 +149,7 @@ Voronoi有限体積法による離散化、疎な系の組立て、非線形求�
 
 既知解を持つPoisson問題の弱形式を導出して実装し、$L^2$誤差などのノルムで格子収束を確認します。自作差分法との比較では、未知数の数と誤差の定義を明記します。
 
-### [Ferrite.jl](https://github.com/Ferrite-FEM/Ferrite.jl)（[Documentation](https://ferrite-fem.github.io/Ferrite.jl/stable/)）
+### [Ferrite.jl](https://github.com/Ferrite-FEM/Ferrite.jl)（[公式資料](https://ferrite-fem.github.io/Ferrite.jl/stable/)）
 
 ##### 向いている問い
 
@@ -167,7 +167,7 @@ Voronoi有限体積法による離散化、疎な系の組立て、非線形求�
 
 Poisson問題の局所剛性行列が全体行列へ組み立てられる過程を追い、Dirichlet境界条件を適用する前後の系を説明します。そのうえで既知解との誤差を測ります。
 
-### [ExtendableFEM.jl](https://github.com/WIAS-PDELib/ExtendableFEM.jl)（[Documentation](https://wias-pdelib.github.io/ExtendableFEM.jl/stable/)）
+### [ExtendableFEM.jl](https://github.com/WIAS-PDELib/ExtendableFEM.jl)（[公式資料](https://wias-pdelib.github.io/ExtendableFEM.jl/stable/)）
 
 ##### 向いている問い
 
@@ -192,7 +192,7 @@ Poisson問題から始め、同じ既知解に対する誤差を確認します�
 - Juliaとパッケージのバージョンを`Project.toml`と`Manifest.toml`で固定する。
 - 既知解・製造解、格子収束、保存則、残差など、問題に適した検証を行う。
 - CPU/GPUの速度を比べる場合は、初回コンパイルを計測から分離し、数値結果の一致も確認する。
-- Coding Agentが生成した式、境界条件、API利用を公式資料と数値検証で確認する。
+- コーディングエージェントが生成した式、境界条件、API利用を公式資料と数値検証で確認する。
 - 使用したパッケージの制約と、自分の結果に残る限界を報告する。
 
 完成済みの公開ソルバを使って数値実験を設計する方式は、[公開ソルバの数値手法を読み解く](public-solver-methods.qmd)で扱います。このページでは、離散化や組立ての部品を使いながら自分でソルバを構築する方式だけを扱います。

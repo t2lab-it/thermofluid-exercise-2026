@@ -56,7 +56,7 @@ julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-`test/student/F01.jl`のsmoke TODOを、自分で選んだ名前を使う代表的な挨拶のテストへ置き換えます。テストが何を保証し、何を保証しないかを学習ログに一文ずつ書きます。
+`test/student/F01.jl`の簡易テスト用TODOを、自分で選んだ名前を使う代表的な挨拶のテストへ置き換えます。テストが何を保証し、何を保証しないかを学習ログに一文ずつ書きます。
 
 ## 4. 公式出力を確認する
 
@@ -92,7 +92,7 @@ git push -u origin exercise/F01-first-pull-request
 
 リモートに`push`した後、GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作ります。PR本文に課題ID、テスト結果、学習ログ、diffで確認した内容を記載します。
 
-## 8. Actionsとdiffを確認する
+## 8. GitHub Actionsとdiffを確認する
 
 PRのCIが成功したことと差分を確認します。特に、以下の項目を自身で確認してください：
 

@@ -22,7 +22,7 @@ title: "公開ソルバの数値手法を読み解く"
 
 ## 埋め込み境界法と非圧縮性流れ
 
-### [WaterLily.jl](https://github.com/WaterLily-jl/WaterLily.jl)（[Documentation](https://waterlily-jl.github.io/WaterLily.jl/stable/)）
+### [WaterLily.jl](https://github.com/WaterLily-jl/WaterLily.jl)（[公式資料](https://waterlily-jl.github.io/WaterLily.jl/stable/)）
 
 #### 扱う方程式・現象
 
@@ -83,7 +83,7 @@ $$
 
 と書けます。$\boldsymbol{U}$は保存変数、$\boldsymbol{F}$は流束、$\boldsymbol{S}$は地形などに由来するソース項です。ソース項がある場合は、流束だけでなく両者の離散的な釣合いも数値手法の一部になります。
 
-### [Trixi.jl](https://github.com/trixi-framework/Trixi.jl)（[Documentation](https://trixi-framework.org/TrixiDocumentation/stable/)）
+### [Trixi.jl](https://github.com/trixi-framework/Trixi.jl)（[公式資料](https://trixi-framework.org/TrixiDocumentation/stable/)）
 
 #### 扱う方程式・現象
 
@@ -130,7 +130,7 @@ $$
 
 [Trixi.jlによる一次元衝撃波管](../projects/final-project-topics/trixi-shock-tube.qmd)を標準推奨課題とします。数値流束または解像度の一つだけを変え、波位置、`L1`誤差、保存量、オーバーシュートを同じ時刻で比較します。多次元化、適合格子細分化（AMR）、複数リミターの同時比較は最小範囲を越えます。
 
-### [TrixiShallowWater.jl](https://github.com/trixi-framework/TrixiShallowWater.jl)（[Documentation](https://trixi-framework.org/TrixiShallowWater.jl/)）
+### [TrixiShallowWater.jl](https://github.com/trixi-framework/TrixiShallowWater.jl)（[公式資料](https://trixi-framework.org/TrixiShallowWater.jl/)）
 
 #### 扱う方程式・現象
 
@@ -177,7 +177,7 @@ $$
 
 ## 有限体積法とBoussinesq流体
 
-### [Oceananigans.jl](https://github.com/CliMA/Oceananigans.jl)（[Documentation](https://clima.github.io/OceananigansDocumentation/stable/)）
+### [Oceananigans.jl](https://github.com/CliMA/Oceananigans.jl)（[公式資料](https://clima.github.io/OceananigansDocumentation/stable/)）
 
 #### 扱う方程式・現象
 
@@ -231,7 +231,7 @@ $$
 
 ## Fourier擬スペクトル法と地球流体
 
-### [GeophysicalFlows.jl](https://github.com/FourierFlows/GeophysicalFlows.jl)（[Documentation](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/)）
+### [GeophysicalFlows.jl](https://github.com/FourierFlows/GeophysicalFlows.jl)（[公式資料](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/)）
 
 #### 扱う方程式・現象
 
@@ -280,7 +280,7 @@ Fourier擬スペクトル法では場をFourierモードで表し、空間微分
 
 ## SBP法と分散性浅水波
 
-### [DispersiveShallowWater.jl](https://github.com/NumericalMathematics/DispersiveShallowWater.jl)（[Documentation](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)）
+### [DispersiveShallowWater.jl](https://github.com/NumericalMathematics/DispersiveShallowWater.jl)（[公式資料](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)）
 
 #### 扱う方程式・現象
 

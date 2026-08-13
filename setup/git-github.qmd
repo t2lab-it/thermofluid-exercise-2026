@@ -60,14 +60,14 @@ git config --global user.name "YOUR NAME"
 git config --global user.email "YOUR_GITHUB_EMAIL"
 ```
 
-## 学生リポジトリを clone する
+## 学生リポジトリを複製する
 
 1. GitHubの通知またはメールで届くリポジトリ招待を開く。招待は第1回授業後に届く場合がある。
 2. 招待先が`t2lab-it/thermofluid-exercise-2026-<自分のusername>`であることを確認し、**Accept invitation**を選ぶ。
 3. GitHub で学生リポジトリを閲覧できることを手動で確認する。
-4. 学生リポジトリの Code メニューから clone URL を取得する。
+4. 学生リポジトリの **Code** メニューから複製用URLを取得する。
 5. 作業用ディレクトリで次を実行する。
-   clone後は学生リポジトリへ移動し、配布されたJulia環境を復元してから事前診断を実行します。
+   複製後は学生リポジトリへ移動し、配布されたJulia環境を復元してから事前診断を実行します。
 
 ```bash
 git clone YOUR_COURSE_REPOSITORY_URL
@@ -76,8 +76,8 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. scripts/course.jl preflight
 ```
 
-`YOUR_COURSE_REPOSITORY_URL` と `YOUR_COURSE_REPOSITORY` は、学生リポジトリのHTTPS URLとclone後のディレクトリ名に置き換えます。URLをそのまま公開チャットや提出物へ貼らないでください。`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元し、`preflight`はその環境を診断します。
+`YOUR_COURSE_REPOSITORY_URL` と `YOUR_COURSE_REPOSITORY` は、学生リポジトリのHTTPS URLと複製後のディレクトリ名に置き換えます。URLをそのまま公開チャットや提出物へ貼らないでください。`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元し、`preflight`はその環境を診断します。
 
 標準のHTTPS接続と最初のpull requestを完了した後は、任意で[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)へ進み、既存の学生リポジトリをSSH接続へ切り替えられます。初回セットアップではこの発展手順を先に実行しないでください。
 
-ここまで確認できたら、[Coding Agent](agents.qmd)へ進みます。
+ここまで確認できたら、[コーディングエージェント](agents.qmd)へ進みます。

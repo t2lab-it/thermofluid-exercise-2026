@@ -25,7 +25,7 @@ $$
 
 ## 微分演算子と添字記法
 
-スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し、gradient
+スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し、勾配
 
 $$
 TBA,
