@@ -21,7 +21,7 @@ title: "課題のbranch・PRワークフロー"
 6. commitする。
 7. 自分でpushする。
 8. PRを作る。
-9. Actionsを確認する。
+9. GitHub Actionsを確認する。
 10. diffを読む。
 11. セルフレビューする。
 12. mergeする。
@@ -58,7 +58,7 @@ julia --project=. scripts/course.jl start F02
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-Actionsだけを先に頼らず、ローカルで実行します。公式`run.jl`が`results/<課題ID>/`へ生成するファイルは再生成してcommitし、自由試行は`scratch/`へ置きます。公式出力がない課題では、不要な結果ファイルを作りません。
+GitHub Actionsだけを先に頼らず、ローカルで実行します。公式`run.jl`が`results/<課題ID>/`へ生成するファイルは再生成してcommitし、自由試行は`scratch/`へ置きます。公式出力がない課題では、不要な結果ファイルを作りません。
 
 ## 学習ログ
 
@@ -78,7 +78,7 @@ git commit -m "feat: complete TASK_ID"
 
 `PATHS_YOU_INTEND_TO_SUBMIT`と`TASK_ID`は課題に合わせて置き換えます。`git add .`で無関係なファイルまでまとめず、提出するパスを指定します。
 
-## push・PR・Actions
+## push・PR・GitHub Actions
 
 branch名を確認してから、自分でpushします。
 
@@ -87,9 +87,9 @@ git branch --show-current
 git push -u origin YOUR_EXERCISE_BRANCH
 ```
 
-GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを一つ作り、PRテンプレートを埋めます。Actionsが失敗した場合はログから最初の原因を探し、ローカルで再現して修正し、同じPRへpushします。
+GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを一つ作り、PRテンプレートを埋めます。GitHub Actionsが失敗した場合はログから最初の原因を探し、ローカルで再現して修正し、同じPRへpushします。
 
-Actions枠切れやGitHub障害時は学生の減点理由にしません。ローカルの`Pkg.test()`結果を学習ログへ記録して暫定確認を受け、復旧後の主要チェックポイントで再実行します。
+GitHub Actions枠切れやGitHub障害時は学生の減点理由にしません。ローカルの`Pkg.test()`結果を学習ログへ記録して暫定確認を受け、復旧後の主要チェックポイントで再実行します。
 
 ## diffとセルフレビュー
 

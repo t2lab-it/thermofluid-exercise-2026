@@ -94,4 +94,4 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 - 二つの固定APIが入力契約を守る。
 - 型の異なる代表配列を含む提供テストと学生テストが通る。
 - 偏差の性質と入力非変更を説明できる。
-- この課題用のbranch、PR、学習ログを一つずつ作り、Actions、diff、セルフレビューを完了した。
+- この課題用のbranch、PR、学習ログを一つずつ作り、GitHub Actions、diff、セルフレビューを完了した。

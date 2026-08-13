@@ -9,7 +9,7 @@ title: "Julia・Git・GitHubの最小操作"
 
 - 基本的なgit用語を説明できる。
 - この課題用のfeature branchを作り、変更前後の`git diff`を確認できる。
-- ローカルテスト、push、Actions、セルフレビューを正しい順で実行できる。
+- ローカルテスト、push、GitHub Actions、セルフレビューを正しい順で実行できる。
 
 ## git/GitHubを使った開発手順
 

@@ -11,14 +11,14 @@ title: "GitHub CLIでpull requestを操作する"
 ## GitHub CLIを使えると何が嬉しいか
 
 - branchのpushからpull requestの作成・確認までをターミナル上で進められ、ブラウザとの行き来を減らせる。
-- 実行するコマンドと結果が明確になるため、人が確認しながらCoding Agentへ作業を依頼しやすくなる。
+- 実行するコマンドと結果が明確になるため、人が確認しながらコーディングエージェントへ作業を依頼しやすくなる。
 
 ## このページの到達点
 
 GitHub CLI（`gh`）を導入・認証し、既存のPRをCLIで読み、新しいPRをCLIで作成する。
 
 ::: {.callout-warning title="認証情報を共有しない"}
-GitHubトークン、ブラウザに表示される確認コード、SSH秘密鍵を、他人、pull request、公開チャット、Coding Agentへ貼り付けないでください。
+GitHubトークン、ブラウザに表示される確認コード、SSH秘密鍵を、他人、pull request、公開チャット、コーディングエージェントへ貼り付けないでください。
 :::
 
 ## GitHub CLIを導入する

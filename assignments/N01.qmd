@@ -85,4 +85,4 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 - 実効CFLと最終時刻を確認した。
 - 上流差分法の有界性と中心差分法 + Euler法のオーバーシュートまたはアンダーシュートを確認した。
 - 公式出力、提供テスト、自分の代表テスト、学習ログを確認した。
-- diff、commit、push、PR、Actions、セルフレビュー、mergeを確認した。
+- diff、commit、push、PR、GitHub Actions、セルフレビュー、mergeを確認した。
