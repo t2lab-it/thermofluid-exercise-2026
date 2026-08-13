@@ -135,3 +135,9 @@ end
         @test all(term -> !occursin(term, source), F03_F04_FORBIDDEN_PUBLIC_TERMS)
     end
 end
+
+@testset "F04 Taylor derivation exposes fourth-order cancellation" begin
+    source = read(joinpath(PUBLIC_STRUCTURE_ROOT, "lessons", "F04.qmd"), String)
+    @test count(raw"\frac{h^4}{24}f''''(x)", source) == 4
+    @test occursin(raw"\frac{h^4}{24}f''''(x)-\frac{h^4}{24}f''''(x)=0", source)
+end
