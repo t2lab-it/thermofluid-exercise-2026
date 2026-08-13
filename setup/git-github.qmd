@@ -1,5 +1,5 @@
 ---
-title: "Git・GitHub・学生リポジトリ"
+title: "Git・GitHub・個人課題用リポジトリ"
 ---
 ::: {.course-position}
 準備 3/5
@@ -60,14 +60,28 @@ git config --global user.name "YOUR NAME"
 git config --global user.email "YOUR_GITHUB_EMAIL"
 ```
 
-## 学生リポジトリを複製する
+## 個人課題用リポジトリの公開範囲
+
+受講者へ発行する個人課題用リポジトリは**原則公開**です。GitHubユーザー名、commit・issue・pull requestなどの活動、その日時は外部から見えるため、課題に関係のない個人情報や秘密情報を書き込みません。
+
+公開されるcommitに個人用メールアドレスを載せないため、GitHubのメール設定で`noreply`アドレスを確認し、次のように設定します。
+
+```bash
+git config --global user.email "YOUR_GITHUB_USERNAME@users.noreply.github.com"
+```
+
+教材本文・図は`CC BY 4.0`、コードは`MIT`です。教材や外部資料を使うときは、ライセンスを守り、出典を学習ログやREADMEに記録します。成績、出欠、連絡先、個別フィードバックなどのLMS上の情報はGitに入れず、LMSとGitHubを分けて扱います。
+
+事情があり公開できない場合は、発行前に教員・TAへ**非公開の例外**を相談してください。非公開であること自体を理由に減点せず、課題の進め方、レビュー、提出時期、評価は公開の場合と同じです。
+
+## 個人課題用リポジトリを複製する
 
 1. GitHubの通知またはメールで届くリポジトリ招待を開く。招待は第1回授業後に届く場合がある。
-2. 招待先が`t2lab-it/thermofluid-exercise-2026-<自分のusername>`であることを確認し、**Accept invitation**を選ぶ。
-3. GitHub で学生リポジトリを閲覧できることを手動で確認する。
-4. 学生リポジトリの **Code** メニューから複製用URLを取得する。
+2. 招待は、公開・非公開のどちらの個人課題用リポジトリでも書き込み権限を設定する手順です。招待先が`t2lab-it/thermofluid-exercise-2026-<自分のusername>`であることを確認し、**Accept invitation**を選ぶ。
+3. GitHub で個人課題用リポジトリを閲覧できることを手動で確認する。
+4. 個人課題用リポジトリの **Code** メニューから複製用URLを取得する。
 5. 作業用ディレクトリで次を実行する。
-   複製後は学生リポジトリへ移動し、配布されたJulia環境を復元してから事前診断を実行します。
+   複製後は個人課題用リポジトリへ移動し、配布されたJulia環境を復元してから事前診断を実行します。
 
 ```bash
 git clone YOUR_COURSE_REPOSITORY_URL
@@ -76,8 +90,8 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. scripts/course.jl preflight
 ```
 
-`YOUR_COURSE_REPOSITORY_URL` と `YOUR_COURSE_REPOSITORY` は、学生リポジトリのHTTPS URLと複製後のディレクトリ名に置き換えます。URLをそのまま公開チャットや提出物へ貼らないでください。`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元し、`preflight`はその環境を診断します。
+`YOUR_COURSE_REPOSITORY_URL` と `YOUR_COURSE_REPOSITORY` は、個人課題用リポジトリのHTTPS URLと複製後のディレクトリ名に置き換えます。URLをそのまま公開チャットや提出物へ貼らないでください。`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元し、`preflight`はその環境を診断します。
 
-標準のHTTPS接続と最初のpull requestを完了した後は、任意で[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)へ進み、既存の学生リポジトリをSSH接続へ切り替えられます。初回セットアップではこの発展手順を先に実行しないでください。
+標準のHTTPS接続と最初のpull requestを完了した後は、任意で[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)へ進み、既存の個人課題用リポジトリをSSH接続へ切り替えられます。初回セットアップではこの発展手順を先に実行しないでください。
 
 ここまで確認できたら、[コーディングエージェント](agents.qmd)へ進みます。

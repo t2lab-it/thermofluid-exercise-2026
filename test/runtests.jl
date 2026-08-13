@@ -7,6 +7,7 @@ const VERIFY = joinpath(SITE_ROOT, "scripts", "verify_contracts.jl")
 include(VERIFY)
 
 include(joinpath(@__DIR__, "public_structure_contract_test.jl"))
+include(joinpath(@__DIR__, "public_collaboration_contract_test.jl"))
 include(joinpath(@__DIR__, "assignment_interface_contract_test.jl"))
 include(joinpath(@__DIR__, "reference_artifact_contract_test.jl"))
 include(joinpath(@__DIR__, "navigation_contract_test.jl"))
