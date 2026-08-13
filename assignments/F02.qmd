@@ -87,7 +87,6 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
 実行結果、テスト結果、入力契約とテストの意味を`learning_logs/F02.md`へ記録します。
-トークン、APIキー、パスワード、秘密鍵、個人情報をAgent、学習ログ、PRへ含めないでください。
 
 ## 完了条件
 
