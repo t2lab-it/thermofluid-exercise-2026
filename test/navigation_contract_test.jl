@@ -2,6 +2,8 @@ using Test
 using TOML
 
 const NAVIGATION_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
+isdefined(@__MODULE__, :qmd_link_targets) ||
+    include(joinpath(@__DIR__, "support", "qmd_contracts.jl"))
 const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
 const F03_F04_FORBIDDEN_TERMS = (
     "Forward" * "Diff",
@@ -415,11 +417,15 @@ end
 
             hub_source = read(joinpath(public_root, "assignments", "final-project.qmd"), String)
             hub_hrefs = Set(
-                "projects/final-project-topics/" * match.captures[2]
-                for match in eachmatch(
-                    r"(?m)^(?:- )?\[([^\]]+)\]\(\.\./projects/final-project-topics/([^)]+\.qmd)\)",
-                    hub_source,
+                relpath(
+                    resolve_qmd_target(
+                        joinpath(public_root, "assignments", "final-project.qmd"),
+                        target,
+                    ),
+                    public_root,
                 )
+                for target in qmd_link_targets(hub_source)
+                if startswith(target, "../projects/final-project-topics/")
             )
             @test hub_hrefs == EXPECTED_TOPIC_HREFS
         end
