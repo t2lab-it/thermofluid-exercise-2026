@@ -53,11 +53,4 @@ GitHubを使った開発では、リポジトリへの書込み権限がある�
 を通して`main`へmergeします。
 
 本課題では、この講義用の直接push型を自分の操作で確かめます。
-
-## gitコマンド
-
-_TBA_
-
-## GitHubコマンド
-
-_TBA_
+git/GitHubコマンドの詳細については[課題のbranch・PRワークフロー](../guides/workflow.qmd)ページを参照してください。
