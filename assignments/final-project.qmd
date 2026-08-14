@@ -17,7 +17,7 @@ sidebar: course
 - 作業場所
   - `thermofluid-project-base-2026`を`fork`して独立したプロジェクトリポジトリを作成し、そこを作業場所とします。
 
-## 評価基準
+## 評価基準 {#evaluation-criteria}
 
 最終プロジェクトでは下記の項目を評価基準とします。
 
