@@ -2,42 +2,124 @@
 title: "プロファイリングと性能最適化"
 ---
 
-## 現象と問題
+数値ソルバの性能は、計算量だけでなく、JITコンパイル、メモリ割り当て、データ配置、実行環境の揺らぎにも左右されます。このページでは、既知解や既存テストで正しさを確認済みの自分のCPUソルバを一つ選び、測定から見つけたhotspotへ変更を一件だけ加え、正しさを保ったまま性能がどう変わるかを再現可能な証拠で説明します。
 
-N09までに作成し、正しさを確認した自分のソルバを対象に、実行時間とメモリ割り当ての支配要因を測定します。単なる書き換えではなく、測定とプロファイルに基づく改善過程を扱います。
+## 現象と問いの案
 
-## 問いを決める
+性能測定では、同じ「速さ」でも対象が異なります。新しいJulia processで一回だけ解くまでの **latency** には起動、package読み込み、JITコンパイルが含まれますが、事前実行後に同じ処理を繰り返す時間はwarm-up後のlatencyです。一定時間に処理できる格子点、time step、反復、またはsolve数を **throughput** と呼ぶなら、仕事量 $W$ と測定時間 $T$ を定義して $W/T$ と書きます。基準版と変更版のwarm-up後の代表時間を $T_\mathrm{base},T_\mathrm{change}$ とすると、speedupは
 
-どの計算負荷のどの処理が支配的か、一つの変更が時間・メモリ割り当て・スケーリングへどう影響するかを問います。高速化率を先に約束せず、測定可能な仮説を立てます。
+$$
+S=\frac{T_\mathrm{base}}{T_\mathrm{change}}
+$$
 
-## 比較軸
+です。ただし、入力、問題規模、仕事量、実行範囲が同じで、出力の正しさが保たれた場合にだけ意味があります。
 
-基準commit・入力・計算負荷を固定し、基準状態、改善1、再プロファイル後の改善2を比較します。格子、反復数、スレッド数、測定範囲を比較間で揃えます。
+| 問い | 比較するもの | 主な指標 |
+|---|---|---|
+| **標準：一つのhotspotを変えると性能はどう変わるか** | 基準commitと変更一件後のcommit | profile sample、warm-up後の時間分布、allocation、throughput、回帰検証 |
+| 改善効果は問題規模でどう変わるか | 同じ二つのcommitを $S_0,S_1,S_2$ で実行 | 時間・allocation・memory量の増え方、仕事量あたりの時間 |
+| 初回latencyとwarm-up後のthroughputは同じ結論になるか | 新しいprocessでの一回実行と事前実行後の反復 | 初回時間、warm-up後の分布、throughput、出力一致 |
 
-## 推奨する最小範囲
+### 問い1：一つのhotspotを変えると性能はどう変わるか
 
-ウォームアップとコンパイル時間を分離し、測定→プロファイル→単一変更→正しさの回帰検証→再測定→再プロファイルを一巡します。複数変更を同時に入れず、各diffと効果を対応づけます。
+標準ルートです。正しさを確認済みの基準commitでCPU profileを取り、複数回のprofileで上位に現れる自分のコードの処理を一つ選びます。入力、問題規模、solver設定、Juliaとpackage、thread数、BLAS thread数、測定範囲、事前実行、測定回数を固定し、preallocation、型の安定化、配列走査、不要な一時配列の除去など、profileとallocationの証拠に対応する変更を一件だけ加えます。
 
-## 評価指標
+変更後は、性能を測る前に既存テスト、参照解、保存量、残差、または場の差でcorrectness regressionを確認します。合格した場合だけ、基準版と同じ手順で再測定し、before/afterのprofile可視化、全測定値の分布、時間・allocation・仕事量の表を作ります。速くならなかった場合も、hotspotが移ったのか、変更部分が支配的でなかったのかをprofileと測定分布から説明できれば問いへ答えられます。
 
-ウォームアップ後の時間、メモリ割り当て回数、処理量、格子規模に対するスケーリング、高速化率を使います。カーネル時間と処理全体の時間を区別し、測定分散も示します。
+### 問い2：改善効果は問題規模でどう変わるか
 
-## 二層検証
+標準ルートを終えた後、同じ物理条件、数値手法、終了条件、出力、thread条件を保ち、solverが既に扱える三つの問題規模 $S_0,S_1,S_2$ を選びます。各規模で基準版と変更版のcorrectness regressionを先に確認し、格子点数、未知数、time step数、反復数など仕事量の定義を一つに固定して、warm-up後の時間分布、allocated bytes、allocation回数、必要ならpeak resident memoryを別々に記録します。
 
-外部基準として元の解析解、ベンチマーク、参照値を維持します。自己整合性として改善前後の場の差、保存則、残差、既存テストによる正しさの回帰検証を行います。
+横軸を問題規模または仕事量、縦軸を時間、仕事量あたりの時間、allocated bytesのいずれかにしたbefore/after図を作ります。三点だけから理論的な計算量を断定せず、改善が小規模だけで効くのか、規模とともに効き方が変わるのか、その差が測定の揺らぎより大きいかを議論します。
 
-## 範囲が広すぎる課題
+### 問い3：初回latencyとwarm-up後のthroughputは同じ結論になるか
 
-アルゴリズム、離散化、並列化、データ構造を同時に変えません。ソルバの正しさが未確認のまま性能測定へ進まず、GPU移植や大規模分散計算は別の問いに分けます。
+新しいJulia processで入力読み込みから最初の結果を得るまでのlatencyと、同じ実行pathを一度通した後の反復時間を分けて測ります。基準版と変更版でprocess起動方法、package読み込み、入力、出力、仕事量を揃え、初回測定を繰り返す場合は毎回新しいprocessを使います。warm-up後は同じ処理を固定回数だけ繰り返し、合計仕事量を合計時間で割ってthroughputを求めます。
 
-## 手法・パッケージ
+初回時間とwarm-up後の時間分布を別panelにし、コンパイルを含む改善と数値kernelの改善を混同しません。出力一致を各測定方法で確認し、latencyを短くする変更とthroughputを高める変更が同じでない場合は、solverを対話的に一回使うのか、多数の条件を連続計算するのかという利用目的まで含めて結論を述べます。
 
-Juliaの`Profile`、`BenchmarkTools.jl`、`@time`等を目的に応じて使います。測定・検証テンプレートだけを利用し、ソルバ本体は自分のソルバを使います。
+## 手法と検証
 
-## 計算負荷
+作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです。配布リポジトリの `launch-kits/reuse-your-solver/` にある `README.md` は、参照元commit、入力、仕事量、測定条件、回帰検証を固定するための共通ガイドであり、solver本体、profiling script、測定template、参照値は配布しません。確認した教員用・学生用リポジトリにもこのテーマ専用のstarterや完成例はないため、正しさを確認済みの自分のCPUソルバと、その検証記録を出所とcommit付きで持ち込みます。
 
-数秒で反復できるCPU計算負荷を簡易テストにし、安定した測定に必要な試行数を記録します。長時間の計算例は代表値だけを測り、環境、commit、入力を固定します。
+道具は役割を分けて使います。
 
-## 相談事項
+- [`@time`を含むJulia公式Performance Tips](https://docs.julialang.org/en/v1/manual/performance-tips/)は、最初の呼出しにコンパイルが含まれることと、時間とheap allocationを手早く確認する方法を説明しています。`@time`は初回と二回目の違いを見るsmoke checkに使い、一回の値だけを正式なbefore/after比較には使いません。
+- [Julia公式Profiling manual](https://docs.julialang.org/en/v1/manual/profile/)に従い、測定対象を一度実行してから `Profile.clear()` と `Profile.@profile` を使います。`Profile`は周期的なbacktraceのsample数からhotspotを探す道具であり、各行の正確な実行時間を直接測る道具ではありません。同じ仕事量で各回の前にbufferをclearしてprofileを三回取り、繰り返し現れる処理を変更候補にします。
+- [BenchmarkTools公式manual](https://juliaci.github.io/BenchmarkTools.jl/stable/manual/)は、複数sampleをもつ `Trial`、外部変数の補間、測定外の `setup`、時間分布とallocationの扱いを確認する資料です。現在の授業用 `Project.toml` にはBenchmarkToolsが含まれないため、使う場合は自分の最終プロジェクト環境へ追加し、`Project.toml` と `Manifest.toml` を残します。kernel測定では入力の初期化を `setup` と測定本体のどちらへ含めたか、before/afterで同じにします。
 
-測定範囲、ウォームアップ、プロファイルの読み方、単一変更の切り方、改善しない場合の分析を相談できます。高速化できなくても、測定と原因説明が妥当なら成果になります。
+標準ルートでは、下の契約を基準測定の前に一つの設定または表へ固定します。
+
+| 分類 | 固定・記録するもの | 混同しないもの |
+|---|---|---|
+| 実装 | repository、基準commit、変更commit、Julia・package version | 複数変更をまとめた差分 |
+| 仕事量 | 入力、問題規模、time step・反復・終了条件、測定範囲、出力量 | 異なる仕事量のelapsed time |
+| 環境 | OS、CPU、thread数、BLAS thread数、電源設定、同時実行job | hardware差とcode差 |
+| 回数 | 初回測定のprocess数、warm-up回数、正式測定5回、Profile三回、BenchmarkToolsのsample・eval数 | 一回の最速値と分布 |
+| 時間 | 初回latency、warm-up後の各測定値、medianと分布、定義したthroughput | compile時間、warm latency、throughput |
+| memory | allocation回数、測定区間のallocated bytes、必要なら別測定したpeak resident memory | allocation回数、累積bytes、peak memory |
+| 正しさ | 既存test、参照解、保存量・残差、主要出力の比較方法と根拠ある許容範囲 | 結果が変わった変更のspeedup |
+
+solver全体の標準測定では、同じ実行pathを一度通してから同一条件を五回測り、五つの値とmedianを残します。測定対象が短すぎる場合は、格子や物理条件を変えず、同じkernel、time step、またはsolveを固定回数まとめて仕事量 $W$ を増やします。BenchmarkToolsを使うkernelでは、実際の `samples` と `evals` を保存し、入力を破壊する処理なら各sampleの初期化方法と `evals=1` の要否を確認します。
+
+検証と測定は次の順序を変えません。
+
+1. 基準commitを既存testと既知解で再検証し、比較する主要出力を保存する。
+2. 基準commitをwarm-upし、正式測定、allocation測定、profile三回を行う。
+3. 変更を一件だけ加え、同じtestと主要出力でcorrectness regressionを先に確認する。
+4. 合格した変更だけを同じ測定契約で再測定し、差が測定分布と問題規模に対して一貫するか確認する。
+
+問題規模はsolverごとに意味が異なるため、未実測の格子数や所要時間は指定しません。$S_0$ を「同じhot pathを通り、正しさを確認済みの最小入力」、$S_1$ を「solverが既に扱える次の入力」、$S_2$ を「$S_0,S_1$ の実測から資源内で完了すると判断した入力」と定義し、次の順に進めます。
+
+| 環境 | 未実測の推奨開始規模 | 本計算規模を決める方法 |
+|---|---|---|
+| 学生のlaptop | $S_0$ で基準版と変更版をwarm-up後に各5回 | correctness、時間分布、allocated bytesを確認し、余裕がある場合だけ $S_1$ を追加する |
+| desktop | laptopで使った同じcommit・$S_0$ を最初に再実行 | 数値結果と性能測定を再現してから $S_1$ を測り、$S_0,S_1$ の増加率から $S_2$ を見積もる |
+| 研究室server | 同じcommit・$S_0$ を同じthread条件で最初に再実行 | local結果との一致を確認し、必要な $S_2$ またはthread比較を一つだけ追加する。長時間jobは事前に相談する |
+
+## 進め方
+
+### Step 1：検証済みsolverと測定契約を固定する
+
+- **作業**: forkしたプロジェクトで `launch-kits/reuse-your-solver/` にある `README.md` を読み、正しさを確認済みのCPU solverを一つ選びます。参照元repositoryとcommit、実行command、入力、$S_0$、仕事量、終了条件、出力、Julia・package、thread条件、初回・warm-up・正式測定の範囲と回数を測定契約へ書きます。
+- **確認**: 基準commitをcheckoutした状態で既存testと既知解の比較を再実行し、同じcommandから同じ主要出力を得られることを確認します。正しさが未確認ならprofilingへ進みません。
+- **残すもの**: 測定契約、環境情報、参照元commit、実行command、基準test log、主要出力と比較方法を残します。
+
+### Step 2：基準版の時間・allocation・profileを測る
+
+- **作業**: 初回latencyを扱う場合は新しいprocessで測り、その後に同じpathを一度実行してwarm-upします。正式測定を5回行い、allocation回数とallocated bytesを別列で記録します。各回の前に `Profile.clear()` を実行して同じ仕事量のCPU profileを三回取り、同じ形式のtree、flat table、またはflame graphとして保存します。
+- **確認**: 五つの時間が同じ仕事量を測っていること、profileに十分なsampleがあり三回で主要な呼出し経路が再現すること、測定中にも主要出力が基準値を保つことを確認します。
+- **残すもの**: 初回とwarm-up後を分けたraw time、medianと分布図、allocation回数、allocated bytes、必要ならpeak memory、三回のprofile可視化、測定scriptを残します。
+
+### Step 3：profileから変更一件を選ぶ
+
+- **作業**: profile上位のうち自分のcodeで変更できる処理を一つ選び、`@time`、BenchmarkTools、必要ならallocation profileで原因を狭めます。変更前に「どのsample、allocation、時間がどう変わると予想するか」と、正しさを確認する量を書きます。
+- **確認**: 変更候補が測定対象のhot pathで実行され、関係のないI/O、plot、compile時間だけを見ていないことを確認します。一件のdiffで仮説を検証できなければ変更をさらに分けます。
+- **残すもの**: hotspotの該当file・関数、profile sampleの根拠、仮説、変更するもの・固定するもの、採用しなかった候補と理由を残します。
+
+### Step 4：変更後の正しさを先に再検証する
+
+- **作業**: 選んだ変更を一件だけ実装し、性能測定を行う前に、基準版と同じtest、既知解、保存量、残差、主要出力の比較を実行します。浮動小数点の演算順序が変わる場合は、許容範囲の根拠と差の分布を記録します。
+- **確認**: 全testとdomain固有の検証が基準版と同じ判断で合格し、結果の差を説明できることを確認します。不合格ならspeedupを成功として報告せず、変更を戻すか正しさの問題として調べます。
+- **残すもの**: 変更diff、test log、before/afterの主要出力、誤差・残差・保存量の比較、go/no-go判断を残します。
+
+### Step 5：同じ契約で再測定し、規模依存を調べる
+
+- **作業**: 合格した変更版を基準版と同じprocess、warm-up、入力、仕事量、5回測定、Profile三回で再測定します。$S_0$ の比較後、実測時間とmemory量から $S_1$、必要なら $S_2$ へ一段ずつ進みます。
+- **確認**: before/afterで仕事量、出力、sample・eval数、thread条件が一致し、時間分布の重なり、median、allocation、throughput、profileの移動が同じ方向を示すか確認します。差が揺らぎの範囲なら「差を確認できない」と結論します。
+- **残すもの**: 同じ軸の時間分布、before/after表、同じ形式のprofile可視化、problem-sizeまたはscaling図、全条件のcorrectness結果と測定logを残します。
+
+### Step 6：問いへの回答と再現手順をまとめる
+
+- **作業**: profileで見つけた原因、変更一件、correctness regression、再測定、規模依存を順に結び、[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿って問いへ答えます。高速化しなかった場合も、測定範囲、noise、残ったhotspot、適用限界を説明します。
+- **確認**: 第三者が基準・変更commit、環境、入力、実行順、warm-up、測定回数、図表生成を追跡できるか確認します。latencyとthroughput、allocation回数とallocated bytes・peak memoryを別の量として読めるかも確認します。
+- **残すもの**: before/afterのprofile可視化、時間とmemoryの比較表、problem-sizeまたはscaling図、correctness再検証結果、問いへの回答、再生成script、既知の限界を残します。
+
+## 発展課題
+
+標準ルートでは、検証済みCPU solver、変更一件、同一環境でのbefore/afterに範囲を限定します。その証拠を残した後に、一度に一つの軸を追加できます。
+
+- **複数の変更を積み上げる**: 二件目以降の変更を一件ずつcommitし、各段階でcorrectness regressionと同じ測定を繰り返します。最終版だけを基準版と比べず、どの変更がprofile、時間、allocationへ寄与したかをablation表で示します。
+- **thread数を比較する**: 同じalgorithmと問題規模でJulia thread数またはBLAS thread数の一方だけを変え、speedup、parallel efficiency、memory、結果の再現性を確認します。thread数を増やしただけで仕事量や数値結果が変わらないことを先に検証します。
+- **algorithmや離散化を変える**: 計算量を変えるalgorithm、収束条件、近似、離散化の変更は、単なるcode最適化とは別の問いです。精度、安定性、反復回数、外部基準を新しく検証し、同じ答えを同じ仕事量で得たという前提を置きません。
+- **GPU・分散・大規模serverへ進む**: hardware、並列model、data transfer、packageを同時に変えるとCPU上の変更一件と切り分けられません。まずCPU標準ルートを完了し、新しい性能指標、検証方法、利用時間、保存量を教員またはTAと相談してから別の比較として計画します。
