@@ -26,8 +26,8 @@ title: "熱流体力学演習 2026"
 | 9 | 11/6（金） | 二次元拡散・移流拡散 | 二次元拡散・移流拡散（予定） |
 | 10 | 11/13（金） | Laplace／Poissonと反復法 | Laplace／Poisson・反復法（予定） |
 | — | 11/20（金） | 授業なし | 最終プロジェクト予備計算 |
-| 11 | 11/27（金） | [最終プロジェクト](assignments/final-project.qmd#月27日計画へのフィードバック) | 計画・成立性レビュー |
-| 12 | 12/4（金） | [最終プロジェクト](assignments/final-project.qmd#月4日結果再現性へのフィードバック) | 結果・再現性レビュー |
+| 11 | 11/27（金） | [最終プロジェクト](assignments/final-project.qmd) | [計画・成立性レビュー](assignments/final-project.qmd#月27日計画へのフィードバック) |
+| 12 | 12/4（金） | [最終プロジェクト](assignments/final-project.qmd) | [結果・再現性レビュー](assignments/final-project.qmd#月4日結果再現性へのフィードバック) |
 | 13 | 12/11（金） | [最終プレゼンテーション 1](assignments/final-project.qmd#最終発表) | — |
 | 14 | 12/18（金） | [最終プレゼンテーション 2・試験案内](assignments/final-project.qmd#最終発表) | — |
 | 15 | 2027/1/8（金） | 到達度確認試験 | — |
