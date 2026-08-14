@@ -2,42 +2,201 @@
 title: "Trixi.jlによる一次元衝撃波管"
 ---
 
-## 現象と問題
+衝撃波管では、一つの初期不連続から希薄波、接触不連続、衝撃波が分かれて伝わります。このページでは、`Trixi.jl`の公式modified Sod例を再現し、波構造と数値解を検証した後、解像度など一つの数値軸だけを変え、誤差、保存、非物理振動、計算費用を結びつけて説明します。
 
-一次元Euler方程式のRiemann問題で生じる衝撃波、接触不連続、希薄波を、`Trixi.jl`の公式例から調べます。
+## 現象と問いの案
 
-## 問いを決める
+一次元の圧縮性Euler方程式を
 
-格子、多項式次数、数値流束、リミターの一つが波の位置・鋭さ・誤差へどう影響するかを問い、比較する設定を二つ以上決めます。
+$$
+\begin{aligned}
+\frac{\partial \boldsymbol{U}}{\partial t}
++\frac{\partial \boldsymbol{F}(\boldsymbol{U})}{\partial x}&=0,
+\\
+\boldsymbol{U}=
+\begin{pmatrix}\rho\\ \rho u\\ E\end{pmatrix},
+\\
+\boldsymbol{F}(\boldsymbol{U})=
+\begin{pmatrix}\rho u\\ \rho u^2+p\\ u(E+p)\end{pmatrix}
+\end{aligned}
+$$
 
-## 比較軸
+と書きます。$\rho$は密度、$u$は速度、$E$は単位体積あたりの全エネルギー、$p$は圧力です。比熱比を$\gamma$とする理想気体では
 
-同じ初期左右状態、比熱比、計算領域、終端時刻で一つの数値設定を変えます。公式例からの変更を最小化し、バージョンと設定ファイルを固定します。
+$$
+\begin{aligned}
+p&=(\gamma-1)\left(E-\frac12\rho u^2\right),\\
+c&=\sqrt{\frac{\gamma p}{\rho}}
+\end{aligned}
+$$
 
-## 推奨する最小範囲
+で閉じ、$c$は音速です。保存変数、数値流束、DGSEMの役割は[公開ソルバの数値手法](../../advanced/public-solver-methods.qmd#高次不連続galerkin法と双曲型保存則)でも確認できます。
 
-固定バージョンの一次元Euler衝撃波管の公式例を再現し、一つの解像度または手法パラメータだけを変えて比較します。ソルバ本体の改造は必須ではありません。
+標準の初期値は、公式exampleが採用するmodified Sod問題です。$0\leq x\leq1$、$\gamma=1.4$、初期不連続位置$x_0=0.3$として、primitive変数を
 
-## 評価指標
+$$
+\begin{gathered}
+\boldsymbol{w}=(\rho,u,p),\\
+\boldsymbol{w}(x,0)=
+\begin{cases}
+(1,\ 0.75,\ 1), & x<x_0,\\
+(0.125,\ 0,\ 0.1), & x\geq x_0
+\end{cases}
+\end{gathered}
+$$
 
-密度・速度・圧力の波位置、`L1`誤差、総質量・運動量・エネルギー、オーバーシュート・アンダーシュートを使います。誤差評価時刻と参照解を明示します。
+とします。Riemann解は、連続的に広がる1-familyの希薄波、速度と圧力が連続で密度が跳ぶ接触不連続、Rankine--Hugoniot条件とentropy条件を満たす3-familyの衝撃波から成ります。同じ評価時刻$t_*=0.2$で、exact Riemann解から希薄波の両端、接触不連続、衝撃波の位置を求め、数値解の$\rho,u,p$へ重ねます。
 
-## 二層検証
+::: {.table-responsive}
+| 問い | 比較するもの | 主な指標 |
+|---|---|---|
+| **標準：要素を細かくすると、三つの波と誤差はどう変わるか** | 公式の `initial_refinement_level = 6` と、同じ次数・流束・時間積分で選ぶ隣接する粗い条件または細かい条件 | $\rho,u,p$、波位置、$L_1$誤差、保存収支、正値性、over/undershoot、DOF・時間・memory |
+| 表面数値流束の散逸は、衝撃波と接触不連続の鋭さへどう現れるか | 同じ格子で公式のHLLCと、公式APIから選ぶ一つの代替流束 | 波位置と厚さ、$L_1$誤差、over/undershoot、最小$\rho,p$、保存収支、費用 |
+| 時間刻みを厳しくすると、空間離散化の差と時間誤差を分けられるか | 同じ空間離散化をCFL制御へ切り替え、採用したCFLとその半分 | $L_1$誤差、波位置、保存収支、最小$\rho,p$、step数・RHS評価回数・時間 |
+:::
 
-外部基準としてRiemann解析解または独立な高解像度参照を用います。自己整合性として保存量、格子依存性、CFL、正値性、波ごとの誤差を確認します。
+### 問い1：要素を細かくすると、三つの波と誤差はどう変わるか
 
-## 範囲が広すぎる課題
+標準ルートです。まず公式のlevel 6を変更せず再現し、自己整合性とexact Riemann解との照合を終えます。その後、`initial_refinement_level`だけを一段変えます。$\gamma$、左右状態、領域、境界、$t_*$、多項式次数3、HLLC表面流束、`flux_ranocha`による体積flux differencing、SSPRK43と適応刻みの設定、出力と評価法は固定します。
 
-二・三次元、粘性、反応、多成分、複雑境界を同時に扱いません。多数の流束・リミターを網羅せず、問いに必要な少数比較へ絞ります。
+共通の$x$座標上でexact解と$\rho,u,p$を重ねた図、各波の拡大図、要素数またはDOFに対する$L_1$誤差、保存・正値性・振動・費用の表を作ります。細分化でどの波の誤差が減り、接触不連続や衝撃波の幅と振動がどう変わるか、追加費用に見合う改善かを議論します。
 
-## 手法・パッケージ
+### 問い2：表面数値流束の散逸は、衝撃波と接触不連続の鋭さへどう現れるか
 
-`Trixi.jl`を固定バージョンで使い、公式例、離散化、数値流束、時間積分の設定を説明します。パッケージのソースの大規模改造は求めません。
+検証済みの格子、体積flux differencing、時間積分、評価時刻を固定し、`surface_flux`だけを公式の `flux_hllc` から一つの代替へ変えます。例えば、公式資料にも現れる `flux_lax_friedrichs` を候補にできますが、固定したtagでAPIと実行を確認してから採用します。
 
-## 計算負荷
+三つの波を同じscaleで拡大し、波位置、遷移幅、$L_1$誤差、over/undershoot、最小密度・圧力を並べます。鋭い図だけを優れた結果とせず、散逸によるぼけ、分散による振動、正値性、保存収支、費用のtrade-offとして説明します。
 
-粗い格子のCPUでの簡易テストを残し、複数解像度の代表時間とメモリを測ります。具体的なバージョン、計算例、格子は検証済み簡易導入キットから参照します。
+### 問い3：時間刻みを厳しくすると、空間離散化の差と時間誤差を分けられるか
 
-## 相談事項
+公式exampleはSSPRK43のerror-based adaptive steppingを使います。CFLを明示して調べる場合は、[公式の時間積分資料](https://trixi-framework.org/TrixiDocumentation/stable/time_integration/)に従って `StepsizeCallback` と `adaptive = false` を組み合わせます。短い事前実行から採用したCFLを記録し、同じ条件をCFL/2で再実行します。
 
-公式例、解析解、誤差ノルム、保存量、流束・リミターの選択、過大な比較数を避ける範囲を相談できます。問い、最終比較、図、結論は学生自身が決めます。
+両条件の$\rho,u,p$差、exact解に対する指標、step数、RHS評価回数、wall timeを示します。CFLを半分にした差が解像度や流束の比較差に対して無視できるかを確認し、時間誤差が残る場合は空間手法の優劣を断定しません。
+
+## 手法と検証
+
+作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです。配布repoの `launch-kits/catalog.toml` はこのテーマを `guided-package`／`theme-pack` と分類していますが、現行catalogには `asset_path` と `fast_preflight` がなく、Trixi専用の資産directory、固定example、参照data、教員用・学生用starterもありません。したがって `launch-kits/guided-package/README.md` の共通契約に従い、下表の上流資料から基準scriptと独立な参照解を自分のprojectへ作ります。
+
+::: {.table-responsive}
+| 役割 | 現行の参照先 | projectへ記録すること |
+|---|---|---|
+| 公式開始例 | [`v0.17.2`の `elixir_euler_modified_sod.jl`](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/examples/tree_1d_dgsem/elixir_euler_modified_sod.jl) と[本体repository](https://github.com/trixi-framework/Trixi.jl) | 上流URL・path・tag・commit、入力、solver、境界、時間積分、授業側の変更 |
+| 固定するpackage版 | [2026-08-08公開の `v0.17.2`](https://github.com/trixi-framework/Trixi.jl/releases/tag/v0.17.2) と[tagの `Project.toml`](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/Project.toml) | 2026-08-14確認時の開始候補は `Trixi 0.17.2`、commit `76d6f88`。tagが宣言する `julia = "1.10"` と、自分が解決したJulia・依存package・`Manifest.toml` |
+| 本体の利用条件 | [`Trixi.jl`のMIT License](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/LICENSE.md) | copyまたは派生した範囲、著作権表示、license、変更点 |
+| 出力・時間・callback API | [一次元可視化](https://trixi-framework.org/TrixiDocumentation/stable/visualization/)、[時間積分](https://trixi-framework.org/TrixiDocumentation/stable/time_integration/)、[callbacks](https://trixi-framework.org/TrixiDocumentation/stable/callbacks/) | `sol`から得る$\rho,u,p$、保存方法、adaptiveまたはCFL制御、tolerance、callback、出力形式 |
+| Riemann解析解 | [Toroのexact Riemann solverの手順](https://doi.org/10.1007/b79761) と[ClawpackのEuler解説](https://www.clawpack.org/riemann_book/html/Euler.html) | 同じ左右状態・$\gamma$・$x_0$・$t_*$、root solveとsamplingの設定、波速・中間状態、数値解との照合 |
+| 独立実装のcross-check | [`riemann_book`の `exact_solvers/euler.py`](https://github.com/clawpack/riemann_book/blob/5b171f11fd7a3e810ee7a74a4d9f2dff01d65a6e/exact_solvers/euler.py) と[BSD-3-Clause License](https://github.com/clawpack/riemann_book/blob/5b171f11fd7a3e810ee7a74a4d9f2dff01d65a6e/LICENSE-CODE) | commit `5b171f1`、利用方法、結果の照合。codeをcopyまたは移植する場合は著作権表示とlicenseも残す |
+:::
+
+`v0.17.2`の公式exampleは、`TreeMesh`のlevel 6、DGSEMの多項式次数3、HLLC表面流束、`VolumeIntegralFluxDifferencing(flux_ranocha)`、非周期境界、$t_*=0.2$、SSPRK43のadaptive steppingを使います。level 6は64要素、次数3は各要素4節点なので、基準は1変数あたり256 DOFです。これはAPIと問題設定を再現する基準であり、誤差が十分小さいと確認済みの格子ではありません。
+
+公式exampleの `AnalysisCallback` は実行診断に使えますが、[公式資料が説明する既定のerror](https://trixi-framework.org/TrixiDocumentation/stable/callbacks/#Analyzing-the-numerical-solution)はinitial conditionに対する量です。時間発展したmodified Sodのexact解に対する$L_1$誤差ではないため、外部参照の誤差を別のpostprocessingで計算します。可視化用の高次補間値だけで保存や正値性を判定せず、native DG nodes・quadratureでの診断と、全条件で共通の可視化・誤差評価gridを区別します。
+
+同じ$x$座標と$t_*$で、primitive変数$q\in\{\rho,u,p\}$の平均絶対誤差を
+
+$$
+\begin{gathered}
+\varepsilon_1(q)=\frac{1}{x_R-x_L}\\
+{}\times\int_{x_L}^{x_R}
+|q_h(x,t_*)-q_{\mathrm{ref}}(x,t_*)|\,\mathrm{d}x
+\end{gathered}
+$$
+
+と定義します。参照解のsampling点数または積分分割を増やしても、比較する差に対して$\varepsilon_1$が安定することを確認します。外れ値は同じ評価gridで
+
+$$
+\begin{aligned}
+O_q^+
+&=\max\!\left(0,\max q_h-\max q_{\mathrm{ref}}\right),\\
+O_q^-
+&=\max\!\left(0,\min q_{\mathrm{ref}}-\min q_h\right)
+\end{aligned}
+$$
+
+とし、点ごとの誤差図も併記します。正値性は全保存時刻のnative nodesで$\min\rho$、$\min p$、非有限値の個数を確認します。
+
+このexampleは非周期境界で、左状態には速度があります。したがって質量、運動量、全エネルギーがそれぞれ単純に一定とは限りません。$\boldsymbol{Q}_h(t)=\int\boldsymbol{U}_h\,\mathrm{d}x$として、境界流束を含む収支残差
+
+$$
+\begin{aligned}
+\boldsymbol{R}_{\mathrm{bal}}(t)=
+&\boldsymbol{Q}_h(t)-\boldsymbol{Q}_h(0)\\
+&\quad{}+\int_0^t
+\left[\boldsymbol{F}_R(\tau)-\boldsymbol{F}_L(\tau)\right]\,\mathrm{d}\tau
+\end{aligned}
+$$
+
+を調べます。符号、境界状態、積分方法を小さいcaseで確認し、各成分のabsolute値と採用したscaleで規格化した値を併記します。
+
+最初の条件比較より前に、次の順序で検証します。
+
+::: {.table-responsive}
+| 段階 | 確認対象 | 次へ進む判断 |
+|---|---|---|
+| 公式例再現 | tag固定のmodified Sod example、左右状態、境界、solver、`sol`、summary | 新しいprocessと固定environmentで$t=0.2$まで実行でき、出所・license・変更を追跡できる |
+| 自己整合性 | 有限値、$\min\rho$、$\min p$、境界流束込み保存収支、時間刻み、共通評価grid | CFLまたはtoleranceを厳しくしても主要指標と波形の解釈が変わらない |
+| 外部基準 | exact Riemann解の希薄波端・接触・衝撃波、$\rho,u,p$、$L_1$誤差 | 同じ初期状態と時刻を使い、独立実装またはsampling変更で参照解をcross-checkできる |
+| 一軸比較 | 解像度、表面流束、CFLのうち選んだ一つだけを変えた二条件以上 | 全条件が前二段階を通り、同じ指標、図のscale、評価時刻で比較できる |
+| 規模・費用 | 要素数、DOF、step・RHS評価回数、初回compile、事前実行後のwall time、peak memory、出力容量 | 実測から完了可能な最終条件を選び、再生成できるCPU縮小caseを残せる |
+:::
+
+計算規模は未実測の所要時間を先に決めず、公式level 6のCPU実行から選びます。
+
+::: {.table-responsive}
+| 環境 | 最初に行うこと | 次の規模を決める方法 |
+|---|---|---|
+| 学生のlaptop | 1 threadのCPUで公式level 6を実行し、初回compileと二回目のwall time、step・RHS回数、memory、出力sizeを分けて測る | exact解、保存、正値性を処理できることを確認後、隣接する粗いlevelまたは細かいlevelを一つだけ追加する |
+| 利用可能なdesktop | 同じcommit・Julia・Manifest・Float型・thread数でlaptopのlevel 6を再現する | 指標が一致することを確認し、laptopの実測比と残り時間から一段細かい条件を完了できるか決める |
+| 利用を承認された研究室server | local CPUのlevel 6と同じ入力を再実行し、job、thread、memory上限、結果回収を確認する | 追加資源が必要な問いと条件だけを実行し、localで再生成できる二条件を残す |
+:::
+
+CPUで細かい条件を完了できない場合は、公式level 6と一段粗い条件の二つへ縮小し、$t_*=0.2$、exact解、保存・正値性、共通評価gridは維持します。保存時刻と出力変数を必要最小限にしても、最終state、診断値、raw profile、再実行commandは残し、未完了の細かい条件は最後の時刻、資源上限、停止理由を記録します。
+
+## 進め方
+
+### Step 1：上流資料と再現environmentを固定する
+
+- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み、Trixi専用theme-packが未配布であることを確認します。`Trixi v0.17.2`、公式example path、release commit、MIT Licenseを開始候補にし、自分のprojectで `Project.toml` と `Manifest.toml` を解決します。
+- **確認**: 新しいJulia processでJulia・Trixi・OrdinaryDiffEq関連packageのversionを表示し、公式exampleを変更せず$t=0.2$まで実行します。上流tagと授業側の変更を区別します。
+- **残すもの**: 上流URL・path・tag・commit・license、environment files、version表示、実行command、summary logを残します。
+
+### Step 2：公式modified Sod例を再現し、profileを保存する
+
+- **作業**: $\gamma$、左右状態、$x_0$、領域、境界、level、次数、表面・体積流束、SSPRK43、adaptive設定、tolerance、$t_*$を表へ書き出します。`sol`から同じ座標順の$\rho,u,p$ profileとnative-node診断を保存します。
+- **確認**: 初期状態が公式sourceと一致し、希薄波、接触不連続、衝撃波を同じscaleの図で識別でき、$\rho,p$が正で非有限値がないことを確かめます。
+- **残すもの**: 基準script、設定表、raw profile、全体図と三つの波の拡大図、$\min\rho$、$\min p$、step・RHS回数を残します。
+
+### Step 3：自己整合性と評価契約を確認する
+
+- **作業**: native quadratureで$\boldsymbol{Q}_h$と境界流束込み保存収支を計算します。adaptive steppingの記録を残し、必要ならCFL制御branchで採用CFLとCFL/2を比較します。可視化gridと誤差積分gridを固定します。
+- **確認**: $\boldsymbol{R}_{\mathrm{bal}}$、最小密度・圧力、波形、主要指標が時間刻みと評価gridの一段厳しい条件で安定することを確かめます。既定 `AnalysisCallback` のerrorをexact解の誤差と混同しません。
+- **残すもの**: 保存収支の時系列または表、正値性・非有限値log、時間刻み設定、grid依存表、診断testまたは再計算scriptを残します。
+
+### Step 4：exact Riemann解と照合する
+
+- **作業**: Toroの手順または固定commitの独立solverで、同じ左右状態、$\gamma$、$x_0$、$t_*$の中間状態、波速、$\rho,u,p$を計算します。root solve、sampling、積分法を記録し、sample数を増やした結果または別実装と照合します。
+- **確認**: 希薄波端、接触不連続、衝撃波の位置と状態を数値解へ重ね、各変数の$\varepsilon_1$、$O_q^+$、$O_q^-$を再生成できることを確かめます。参照codeをcopyした場合はBSD licenseを残します。
+- **残すもの**: exact解scriptと出典、波速・中間状態表、overlay図、波ごとの拡大図、誤差・振動表を残します。
+
+### Step 5：一軸比較を実行し、規模と費用を確定する
+
+- **作業**: 標準の問いでは、検証済みlevel 6と、`initial_refinement_level`だけを一段変えた条件を実行します。全条件を同じ$t_*$、postprocessing、図のscaleで処理し、初回compile、二回目のwall time、memory、出力容量を分けて測ります。
+- **確認**: 両条件が保存、正値性、時間刻み、外部照合を通り、波位置、$L_1$誤差、振動の差を数値で示せることを確認します。細分化による差が評価gridや時間刻みの差ではないかも確認します。
+- **残すもの**: exact解を重ねた条件比較図、DOF対$L_1$誤差図、保存・正値性・振動・費用表、raw data、図表生成scriptを残します。
+
+### Step 6：波構造・誤差・保存・費用を問いへの回答にまとめる
+
+- **作業**: [共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い、公式例再現、自己整合性、external exact解、一軸比較を一つの論理へつなぎます。希薄波、接触、衝撃波で見える誤差の違いと、正値性・保存・散逸・分散・費用のtrade-offを説明します。
+- **確認**: 第三者がrepositoryとcommit、environment、入力、実行順、参照解、raw data、図表生成を追跡できるか確認します。軸、変数、時刻、単位、誤差norm、保存残差、over/undershootの定義を資料内で一意にします。
+- **残すもの**: exact解overlay、三つの波の拡大図、一軸比較図、主要条件・指標・費用表、問いへの回答、限界、CPU縮小case、再生成手順を発表資料とproject repositoryへ残します。
+
+## 発展課題
+
+標準ルートでは、一次元ideal-gas Euler、公式modified Sod状態、固定version、uniformな初期level、CPU、一軸比較に範囲を限定します。その検証と再生成手順を残した後、次の軸を一つだけ追加できます。
+
+- **entropy条件と体積離散化を調べる**: 公式exampleが対比するflux differencingとweak-form体積積分を題材に、希薄波の滑らかさ、entropy、正値性、必要なlimiterを調べます。複数の変更を同時にせず、各構成の失敗条件と追加検証を先に定めます。
+- **shock capturingまたはpositivity limiterへ進む**: [公式shock-capturing tutorial](https://trixi-framework.org/TrixiDocumentation/stable/tutorials/shock_capturing/)から一つの手法を選び、indicator・threshold・作動箇所、保存される量、追加散逸を記録します。標準caseをlimiterなしの回帰基準として残します。
+- **AMRへ進む**: uniform levelの結果を基準に、refinement indicatorとlevel上限を一つ追加し、同程度の誤差に必要なDOF、波位置、保存収支、regrid費用を比較します。多数のindicator比較は標準ルート後に相談します。
+- **別のRiemann問題または多次元へ進む**: classical Sod、blast wave、Shu--Osher、多成分、反応、多次元のうち一つを選び、新しい初期・境界条件、参照解、entropy・positivity、計算資源を定めます。modified Sodの検証済み結果を捨てずに回帰caseとして残します。
+
+新しい方程式、流束、limiter、AMR、外部code、長時間server計算を追加する場合は、license、正値性、保存、参照解、計算負荷を教員またはTAと相談します。どの発展でも、公式例の再現、自己整合性、外部照合、一軸比較を省略せず、答える問いと追加費用を先に決めてください。
