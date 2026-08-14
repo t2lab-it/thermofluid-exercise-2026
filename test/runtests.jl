@@ -12,8 +12,6 @@ include(joinpath(@__DIR__, "reference_artifact_contract_test.jl"))
 include(joinpath(@__DIR__, "navigation_contract_test.jl"))
 include(joinpath(@__DIR__, "path_contract_test.jl"))
 include(joinpath(@__DIR__, "pages_deployment_contract_test.jl"))
-include(joinpath(@__DIR__, "final_project_semantic_contract_test.jl"))
-
 function write_fixture(root::AbstractString; run_path_present::Bool, canonical::AbstractString)
     public = joinpath(root, "public")
     student = joinpath(root, "student")

@@ -96,9 +96,9 @@ website:
             - text: "第8回 授業: 共通化から二次元移流へ"
             - text: "第9回 授業: 二次元拡散・移流拡散"
             - text: "第10回 授業: Laplace／Poissonと反復法"
-            - text: "第11回 最終プロジェクト: 計画・成立性レビュー"
+            - text: "第11回 最終プロジェクト: 計画へのフィードバック"
               href: assignments/final-project.qmd
-            - text: "第12回 最終プロジェクト: 結果・再現性レビュー"
+            - text: "第12回 最終プロジェクト: 結果・再現性へのフィードバック"
               href: assignments/final-project.qmd
             - text: "第13回 最終プレゼンテーション 1"
               href: assignments/final-project.qmd
@@ -142,7 +142,7 @@ website:
       contents:
         - href: assignments/final-project.qmd
           text: "最終プロジェクト"
-        - section: "ソルバを構築する"
+        - section: "自作ソルバ課題"
           contents:
             - href: projects/final-project-topics/quasi-1d-nozzle.qmd
               text: "準一次元ノズル流れ"
@@ -156,15 +156,13 @@ website:
               text: "温度場からの熱源位置・強度推定"
             - href: projects/final-project-topics/incompressible-navier-stokes.qmd
               text: "二次元非圧縮性Navier–Stokes"
-        - section: "自作ソルバを再利用する"
-          contents:
             - href: projects/final-project-topics/profiling-and-optimization.qmd
               text: "プロファイリングと性能最適化"
             - href: projects/final-project-topics/gpu-porting.qmd
               text: "GPU移植と性能測定"
             - href: projects/final-project-topics/iterative-solvers.qmd
               text: "反復解法と前処理"
-        - section: "公開ソルバを利用する"
+        - section: "オープンソースソルバ課題"
           contents:
             - href: projects/final-project-topics/waterlily-cylinder-flow.qmd
               text: "WaterLily.jlによる円柱まわり流れ"

@@ -33,7 +33,7 @@ git branch --show-current
 - テストが失敗する: 最初の失敗、対象ファイル、期待値と実値を[テストガイド](testing.qmd)に沿って読む。
 - branchやmainを誤操作した: commitやpushを追加せず、現在の状態を残す。
 
-## mainで作業してしまったら
+## mainで作業してしまったら {#main-branch-recovery}
 
 GitHub Freeの非公開リポジトリではbranch保護に依存しないため、操作ミスを完全には遮断しません。mainでの作業、commit、直接pushに気づいたら、強制push、`reset`、履歴削除を自己判断で行わないでください。
 
