@@ -1,5 +1,12 @@
 ---
 title: "ベクトル解析"
+lesson-id: F03
+understanding-check-points:
+  - "gradient，divergence，curl，Laplacianの直交座標成分と，それぞれの入力・出力"
+  - "混合偏微分の順序を交換するために必要な滑らかさの条件"
+  - "`curl(grad φ) = 0`を成分展開し，混合偏微分の相殺を説明すること"
+  - "`div(curl A) = 0`と`div(grad φ) = ∇²φ`を成分表示で説明すること"
+  - "解析的な成分証明と，次回行う数値微分による確認の役割の違い"
 ---
 ::: {.course-position}
 第4回・授業 1/2 · 課題ID: F03
@@ -149,3 +156,5 @@ $$
 第4回の終わりまでに，`forward_difference`，`backward_difference`，`centered_difference`の3つの差分関数をすべて完成し，一次関数の提供テストを通します．
 この時点ではbranchをmergeせず，PRも完了扱いにしません．
 第5回で同じ`F03-F04`提出単位を完成させます．
+
+{{< include /lessons/_understanding-check.qmd >}}

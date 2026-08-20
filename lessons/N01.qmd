@@ -1,5 +1,12 @@
 ---
 title: "移流方程式と安定性"
+lesson-id: N01
+understanding-check-points:
+  - "移流方程式の各項を，分布が速度`c`で運ばれる現象と対応づけること"
+  - "格子，配列の添字，有効な内部点，左右の境界条件を対応づけること"
+  - "上流差分法＋Euler法と中心差分法＋Euler法の更新式と安定性の違い"
+  - "古い配列から新しい配列を計算し，境界条件を適用してからバッファを交換する順序"
+  - "CFL，調整後の時間刻み，最小・最大値，図，テストから安定例と不安定例を比較すること"
 ---
 ::: {.course-position}
 第6回・授業 1/2 · 課題ID: N01
@@ -211,3 +218,5 @@ $$
 `run.jl`にある`main`，`module`，`export`，`include`と，`provided_support.jl`にある`TOML`，`Plots`，詳細な入力検証，TOML出力，作図処理は提供済みです．
 `main`は二つの`simulate`から受け取った結果を`write_summary`と`make_plots`へ渡し，`results/N01`の公式出力を作ります．
 関数名，引数，スキーム，出力ファイル名，要約のキーは変更しません．
+
+{{< include /lessons/_understanding-check.qmd >}}

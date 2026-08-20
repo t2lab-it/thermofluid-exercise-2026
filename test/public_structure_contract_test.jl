@@ -20,9 +20,19 @@ const F03_F04_FORBIDDEN_PUBLIC_TERMS = (
     "T" * "BA",
 )
 
+is_public_qmd_path(path::AbstractString) =
+    endswith(path, ".qmd") && !startswith(basename(path), "_")
+
 function tracked_public_qmd_paths()
     paths = readlines(`git -C $(PUBLIC_STRUCTURE_ROOT) ls-files -- lessons assignments projects/final-project-topics`)
-    return sort(filter(path -> endswith(path, ".qmd"), paths))
+    return sort(filter(is_public_qmd_path, paths))
+end
+
+@testset "tracked public QMD paths exclude include fragments" begin
+    include_fragment = "lessons/_understanding-check.qmd"
+    @test isfile(joinpath(PUBLIC_STRUCTURE_ROOT, include_fragment))
+    @test include_fragment ∉ tracked_public_qmd_paths()
+    @test "lessons/F02.qmd" ∈ tracked_public_qmd_paths()
 end
 
 function published_course_dates(source::AbstractString)
