@@ -634,7 +634,7 @@ end
         source = read(joinpath(NAVIGATION_SITE_ROOT, relative_path), String)
         @test occursin("3つの差分関数をすべて完成", source)
         @test !occursin("次回に実装する三つの差分関数", source)
-        relative_path == "lessons/F03.qmd" && @test occursin("三つを実装して、一次関数の提供テストを通してください", source)
+        relative_path == "lessons/F03.qmd" && @test occursin("三つを実装して，一次関数の提供テストを通してください", source)
         @test occursin("一次関数の提供テスト", source)
         @test occursin("mergeせず", source)
         @test occursin("PRも完了扱いにしません", source)
