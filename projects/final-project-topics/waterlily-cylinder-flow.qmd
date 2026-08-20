@@ -2,42 +2,155 @@
 title: "WaterLily.jlによる円柱まわり流れ"
 ---
 
-## 現象と問題
+一様流中の静止円柱では、境界層の剥離によって後流に交互の渦が放出され、抗力と揚力が時間変動します。このページでは、`WaterLily.jl`の公式円柱例を再現して数値場と流体力を検証した後、Reynolds数など一つの軸だけを変え、力、渦放出周波数、場の正しさ、計算費用を結びつけて説明します。
 
-二次元一様流中の円柱まわりに生じる剥離と渦放出を、`WaterLily.jl`の公式例から調べます。パッケージの設定を読み、流れの変化を力と周波数で説明します。
+## 現象と問いの案
 
-## 問いを決める
+直径 $D$ の二次元円柱へ速度 $U_\infty$ の一様流が当たり、動粘性係数を $\nu$ とします。支配方程式と`WaterLily.jl`の境界データ埋め込み法（BDIM）は[公開ソルバの数値手法](../../advanced/public-solver-methods.qmd#埋め込み境界法と非圧縮性流れ)で確認できます。標準比較の主要パラメータは
 
-Reynolds数が抗力、揚力振動、渦放出へどう影響するかを問い、`Re=40,100`を候補にします。候補値は断定せず、公開前の実測で安定性と代表時間を確認して確定します。
+$$
+\mathrm{Re}_D=\frac{U_\infty D}{\nu}
+$$
 
-## 比較軸
+です。Reynolds数だけを変える比較では、$U_\infty$、$D$、円柱位置、$D/\Delta x$、$D$で無次元化した計算領域、外側境界条件、初期条件、浮動小数点型、時間積分設定、過渡除外とsamplingの規則を固定し、$\nu$だけを変えます。
 
-Reynolds数を主軸にし、円柱径、流入、計算領域、格子、時間刻み、過渡を除く時間窓を揃えます。公式例から変えた設定と理由を明示します。
+二次元の単位spanあたりの全流体力を $(F_x,F_y)$ とすると、抗力・揚力係数とStrouhal数を
 
-## 推奨する最小範囲
+$$
+\begin{aligned}
+C_D &= \frac{F_x}{\tfrac12\rho U_\infty^2D},\\
+C_L &= \frac{F_y}{\tfrac12\rho U_\infty^2D},\\
+\mathrm{St} &= \frac{f_sD}{U_\infty}
+\end{aligned}
+$$
 
-固定バージョンの円柱公式例を再現し、その後にReynolds数だけを変えた二条件を比較します。ソルバ本体の改造は必須ではありません。
+と定義します。`WaterLily.jl`は密度で規格化した圧力を使うため、実装では固定したpackage版の公式APIと同じ規格化になっているかを確認します。平均抗力 $\overline{C_D}$ に加えて、揚力変動は $C_{L,\mathrm{rms}}=\sqrt{\overline{(C_L-\overline{C_L})^2}}$ を標準にし、半peak-to-peak振幅を使う場合は別の量として明記します。$f_s$ は平均を除いた $C_L$ の主要周波数から求めます。抗力には渦放出周波数の約2倍の成分が現れ得るため、$C_D$ の最大peakをそのまま $f_s$ としません。
 
-## 評価指標
+時間は $t^*=tU_\infty/D$ で記録し、過渡を除く開始時刻 $t_0^*$、sampling区間 $[t_0^*,t_1^*]$、間隔 $\Delta t_s^*$、点数 $N$、窓長 $T_s^*=t_1^*-t_0^*$、周波数抽出法とwindow関数を固定します。$t_0^*$ は見た目だけで決めず、連続する複数窓で $\overline{C_D}$、$C_{L,\mathrm{rms}}$、主要周波数が安定するかで決めます。窓を延長したときに$\mathrm{St}$が安定し、複数の渦放出周期を含み、Nyquist周波数と周波数分解能が目的のpeakを識別できることを確認します。周期的な揚力が確立しない条件では、無理に$\mathrm{St}$を報告せず「定義できるpeakなし」と記録します。
 
-平均抗力、揚力の振幅、Strouhal数、後流の速度・渦度を使います。過渡除外、サンプリング間隔、周波数抽出方法を記録します。
+::: {.table-responsive}
+| 問い | 比較するもの | 主な指標 |
+|---|---|---|
+| **標準：Reynolds数だけを変えると、円柱後流の力と渦放出はどう変わるか** | 公式quickstartの $\mathrm{Re}_D=100$ と、同じ格子・領域・sampling契約で選ぶ追加の一条件 | $\overline{C_D}$、$C_{L,\mathrm{rms}}$、$\mathrm{St}$、$C_D,C_L$ 時系列、無次元渦度場、計算時間 |
+| 円柱を細かく解像すると、力と周波数はどこまで変わるか | 同じRe・領域・時間窓で $D/\Delta x$ だけを増やす二条件以上 | 力と$\mathrm{St}$の差、$\lVert\nabla\cdot\boldsymbol{u}\rVert$、近傍渦度、格子点数、時間・memory |
+| 外側境界を遠ざけると、後流と流体力はどこまで変わるか | 同じRe・$D/\Delta x$・sampling契約で、上流・下流・側方距離を一段ずつ変更 | $\overline{C_D}$、$C_{L,\mathrm{rms}}$、$\mathrm{St}$、後流場、境界近傍の流れ、時間・memory |
+:::
 
-## 二層検証
+### 問い1：Reynolds数だけを変えると、円柱後流の力と渦放出はどう変わるか
 
-外部基準として公式例、既知の抗力・Strouhal範囲を用います。自己整合性として格子・計算領域・時間刻み依存性、力の収束、周波数窓への感度を確認します。
+標準ルートです。まず公式quickstartの $\mathrm{Re}_D=100$ を再現し、自己整合性と外部基準を確認します。その後、[PosdziechとGrundmannの円柱benchmark](https://doi.org/10.1016/j.jfluidstructs.2006.09.004)が扱う $5\leq\mathrm{Re}_D\leq250$ の範囲から、利用環境で同じ検証を完了できる追加条件を一つ選びます。周期的な渦放出を両条件で比較したい場合は、短い事前計算で両方に安定した $C_L$ 変動があることを確認してから確定します。
 
-## 範囲が広すぎる課題
+横軸を $t^*$ とした $C_D,C_L$ 時系列、同じ無次元時刻または位相での $\omega D/U_\infty$ の図、条件ごとの $\overline{C_D}$、$C_{L,\mathrm{rms}}$、$\mathrm{St}$、格子・領域・sampling・費用の表を作ります。Reによる違いと、格子、境界、短いsampling窓による違いを混同していないかを議論します。
 
-三次元、乱流モデル、複雑物体、多体干渉、流体構造連成を最初から加えません。公式例を再現しないまま設定を多数変更しません。
+### 問い2：円柱を細かく解像すると、力と周波数はどこまで変わるか
 
-## 手法・パッケージ
+一つのReynolds数、$D$で無次元化した領域、境界、過渡除外、sampling規則を固定し、$D/\Delta x$だけを一段ずつ増やします。各格子で速度の離散発散、圧力Poisson求解の記録、有限値、円柱近傍と後流の渦度、$C_D,C_L$ を確認し、最も細かい格子を無条件に正解とはみなしません。
 
-`WaterLily.jl`を固定バージョンで使い、公式例の入力・出力と変更点を説明します。パッケージをブラックボックスにせず、境界、格子、時間スケール、流体力評価を確認します。
+$D/\Delta x$ に対する力係数と$\mathrm{St}$の図、円柱近傍の渦度拡大図、格子点数・実行時間・memory表を作ります。指標の変化が小さくなったか、物体表面近傍と後流が同じ向きへ収束しているか、追加費用に対してどの量がまだ変わるかを説明します。
 
-## 計算負荷
+### 問い3：外側境界を遠ざけると、後流と流体力はどこまで変わるか
 
-小さな計算領域・短時間のCPU簡易テストを残し、本解析の計算領域、格子、過渡時間、サンプリング時間は検証済み簡易導入キットの実測値を参照します。
+公式quickstartの領域は最初のAPI確認には使えますが、無限遠の一様流を再現したbenchmark領域ではありません。一つのReと $D/\Delta x$ を固定し、上流、下流、側方の距離を$D$単位で記録して、一度に一方向の広さだけを変えます。格子幅を固定したまま領域を広げるため、格子点数と費用も同時に増えます。
 
-## 相談事項
+同じ範囲を切り出した速度・渦度図と、領域寸法に対する $\overline{C_D}$、$C_{L,\mathrm{rms}}$、$\mathrm{St}$ の図を作ります。境界が後流、blockage、流体力へ与える影響と、外部benchmarkとの差を、格子解像度の影響から分けて議論します。
 
-バージョン、公式例、候補Re、流体力の取得、Strouhal評価、計算領域依存性、実行時間を相談できます。問い、最終比較、図、結論は学生自身が決めます。
+## 手法と検証
+
+作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです。配布リポジトリの `launch-kits/catalog.toml` はこのテーマを `guided-package`／`theme-pack` と分類していますが、現行catalogに `asset_path` と `fast_preflight` はなく、対応する資産directory、固定例、参照data、教員用・学生用starterもありません。したがって、`launch-kits/guided-package/README.md` の共通契約を読み、下表の公式資料から自分のprojectへ再現可能な開始例を作ります。
+
+::: {.table-responsive}
+| 役割 | 現行の参照先 | projectへ記録すること |
+|---|---|---|
+| 公式quickstart・API | [`WaterLily.jl` stable docsの「Flow over a circle」](https://waterlily-jl.github.io/WaterLily.jl/stable/) と[本体repository](https://github.com/WaterLily-jl/WaterLily.jl) | docs URL、円柱例の入力・出力、使用したrelease/tagとcommit、変更点 |
+| 固定するpackage版 | [2026-06-26公開の `v1.8.0`](https://github.com/WaterLily-jl/WaterLily.jl/releases/tag/v1.8.0) と[tagの `Project.toml`](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/Project.toml) | 2026-08-14確認時の開始候補は `WaterLily 1.8.0`。Julia 1.12.6で解決した `Project.toml` と `Manifest.toml`、実際のversionをcommitする |
+| 本体の利用条件 | [`WaterLily.jl`のMIT License](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/LICENSE.md) | 参照・変更・再配布した範囲、著作権表示とlicense |
+| 補助的な公式script | [`WaterLily-Examples/examples/TwoD_Circle.jl`](https://github.com/WaterLily-jl/WaterLily-Examples/blob/main/examples/TwoD_Circle.jl) と[同repositoryのGPL-3.0 License](https://github.com/WaterLily-jl/WaterLily-Examples/blob/main/LICENSE) | 本体quickstartとは別repository・別license。copyまたは派生する場合だけ、参照commitとGPL-3.0の条件を確認する |
+| 数値手法・検証例 | [WeymouthとFontの2025年論文](https://doi.org/10.1016/j.cpc.2025.109748) | BDIM、直交格子、圧力射影、適応時間刻み、格子・領域・時間平均を検証する理由 |
+| 外部benchmark | [PosdziechとGrundmannの二次元円柱計算](https://doi.org/10.1016/j.jfluidstructs.2006.09.004) | 同じReの力・$\mathrm{St}$、格子と領域依存。自分の境界・領域との差を併記する |
+:::
+
+`v1.8.0`のstable APIには `pressure_force(sim)`、`viscous_force(sim)`、`total_force(sim)` があります。公式quickstartは圧力成分を `0.5sim.L*sim.U^2` で割る例ですが、外部資料の**全**抗力・揚力と比較するときは `total_force` を用い、$L=D$、$U=U_\infty$、符号、成分順、規格化を小さい計算で確認します。圧力成分だけを調べる場合は $C_{D,p}$、$C_{L,p}$ と書き、全力係数と混ぜません。
+
+最初の条件比較より前に、次の契約を一つの設定ファイルまたは表へ固定します。
+
+::: {.table-responsive}
+| 分類 | 固定・記録するもの | 先に確認すること |
+|---|---|---|
+| 出所・環境 | WaterLily・例のURL、tag・commit・license、Julia・package、OS、CPU/GPU、thread、Float型 | 新しいprocessで同じenvironmentを復元し、公式quickstartを再実行できる |
+| 物理・幾何 | $U_\infty,D,\nu,\mathrm{Re}_D$、円柱中心、上流・下流・側方距離、外側境界、初期条件 | `Simulation`の長さscaleが $D$、粘性が $U_\infty D/\mathrm{Re}_D$ になっている |
+| 数値条件 | 格子寸法、$D/\Delta x$、BDIM設定、時間刻みの決定法、Poisson求解記録 | 有限値、速度の離散発散、力、後流場が格子・領域・時間刻みの変更で安定する |
+| 統計 | $t_0^*,t_1^*,\Delta t_s^*,N,T_s^*$、detrend、window、周波数抽出法 | 連続窓と延長窓で平均・rms・主要周波数が安定し、複数周期を含む |
+| 力・場・費用 | pressure／viscous／totalの区別、規格化、$\overline{C_D}$、$C_{L,\mathrm{rms}}$、$\mathrm{St}$、$\omega D/U_\infty$、wall time、memory | 同じ定義の量だけを外部値・条件間で比較し、初回compileを正式測定と分ける |
+:::
+
+検証は、下表の上から順に進めます。
+
+::: {.table-responsive}
+| 段階 | 確認対象 | 次へ進む判断 |
+|---|---|---|
+| 公式例再現 | stable docsの円柱quickstart、速度・渦度、`sim_step!`、力API | 固定したversionと新しいprocessで実行でき、入力、出力、license、変更点を追跡できる |
+| 自己整合性 | 有限値、$\nabla\cdot\boldsymbol{u}$、Poisson求解、格子・領域・時間刻み、過渡除外、sampling窓 | 力・周波数・後流場が一段の変更で同じ傾向を示し、差を数値条件から説明できる |
+| 外部基準 | 同じReにおけるbenchmarkの $\overline{C_D}$、揚力の定義、$\mathrm{St}$、格子・領域依存 | 力の定義と境界・領域を対応づけ、差とその主要因を数値で示せる |
+| 条件比較 | 選んだ一軸だけを変えた二条件以上と、同じsampling・測定契約 | 各条件が前二段階を通り、場・力・周波数・費用を同じ定義で比較できる |
+:::
+
+計算規模は、未実測の所要時間を先に決めず、小さいCPU実行から選びます。公式stable docsの `circle(3*2^5,2^6)` は $96\times64$ cells、直径16 cellsの確認済み入力ですが、APIと可視化の開始例であって格子・領域・統計が収束したbenchmarkではありません。
+
+::: {.table-responsive}
+| 環境 | 最初に行うこと | 次の規模を決める方法 |
+|---|---|---|
+| 学生のlaptop | CPUで公式 $96\times64$ 入力を短時間だけ動かし、初回compile、事前実行後のstep時間、memory、出力sizeを記録する | 力の時系列を保存できることを確認後、同じ領域比で $D/\Delta x$ を一段だけ増やし、必要な過渡・sampling時間を完了できるか実測から判断する |
+| 利用可能なdesktop | 同じcommit・version・Float型・thread数でlaptopの最小入力を再現する | laptopとdesktopの実測差を記録し、自己整合性と二条件比較を完了できる格子・時間窓だけを採用する |
+| 利用を承認された研究室server／GPU | local CPUの最小入力を同じcommitで再実行し、job、device、memory上限、結果回収を確認する | localとの一致と追加資源の必要性を示し、承認された一軸・規模だけを実行する。再生成可能なCPU縮小caseを残す |
+:::
+
+CPUだけで長いsamplingを完了できない場合は、公式quickstart規模でAPI・力・場の回帰確認を残し、Re条件数、格子、領域、保存頻度を一度に減らさず一項目ずつ縮小します。複数周期を含まない短い時系列から精密な$\mathrm{St}$を出す代わりに、格子・領域・sampling感度のどこまで確認できたかと、追加計算に必要な実測費用を成果にします。
+
+## 進め方
+
+### Step 1：公式資料と再現environmentを固定する
+
+- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み、theme-packが未配布であることを確認します。`WaterLily.jl`のstable quickstartと `v1.8.0` tagを開始候補にし、Julia 1.12.6の自分のprojectへ依存関係を追加して `Project.toml` と `Manifest.toml` を解決します。公式例をcopyする場合はrepository、path、commit、license、授業側の変更を記録します。
+- **確認**: 新しいJulia processでpackage versionを表示し、公式quickstartの `Simulation` を構築して一step進めます。本体のMITと、補助的な`WaterLily-Examples`のGPL-3.0を混同していないことも確認します。
+- **残すもの**: 上流URL・path・tag・commit・license、Julia・package version、environment files、最初の実行commandとlogを残します。
+
+### Step 2：公式円柱例を再現し、測定を追加する
+
+- **作業**: 公式の $96\times64$、$\mathrm{Re}_D=100$ の円柱例を基準に、$D$、$U_\infty$、$\nu$、領域、円柱位置、境界、Float型を表へ書き出します。時刻、`total_force`、必要に応じてpressure・viscous成分、速度、渦度、Poisson求解情報、実行時間を同じscriptから保存します。
+- **確認**: $\mathrm{Re}_D=U_\infty D/\nu$、$L=D$、力の符号・規格化・成分が定義どおりで、速度・圧力・力に非有限値がなく、後流と力時系列を再生成できることを確かめます。
+- **残すもの**: 基準設定、入力script、version付きlog、$C_D,C_L$ の短い時系列、速度・無次元渦度図、raw force dataを残します。
+
+### Step 3：自己整合性とsampling契約を確認する
+
+- **作業**: 一つのReを固定し、格子、領域、時間刻み設定を一度に一項目だけ変更します。各条件で速度の離散発散、Poisson求解、力、近傍・後流場を確認します。連続する時間窓で $\overline{C_D}$、$C_{L,\mathrm{rms}}$、$\mathrm{St}$ を再計算し、$t_0^*$ とsampling窓を決めます。
+- **確認**: 一段の細分化・領域拡大・窓延長に対する各指標の差を表にし、主要結論が初期過渡、短い窓、境界、粗い円柱表現だけで決まっていないことを確かめます。周期がない条件では$\mathrm{St}$を欠測として扱います。
+- **残すもの**: 自己整合性testまたは診断script、発散・Poisson記録、格子・領域感度表、窓別統計、採用したsampling契約を残します。
+
+### Step 4：同じ定義の外部benchmarkと照合する
+
+- **作業**: PosdziechとGrundmannの論文から、自分と同じReにおける全力係数、揚力の統計定義、$\mathrm{St}$、領域・格子条件を読み取ります。自分の境界、円柱から境界までの距離、$D/\Delta x$、force API、sampling窓を隣列に置きます。
+- **確認**: benchmarkとの差を相対差または絶対差で示し、力の定義、blockage、下流長さ、格子、samplingのどれが比較可能でどれが異なるかを説明します。単一の文献値を根拠のない一律許容値にはしません。
+- **残すもの**: 出典と該当条件、対応表、$\overline{C_D}$・揚力・$\mathrm{St}$の比較図または表、差の原因候補を残します。
+
+### Step 5：一軸比較を実行し、規模と費用を確定する
+
+- **作業**: 標準の問いでは、検証済み基準条件と、$\nu$だけを変えた追加Re条件を計算します。各条件を同じ $t^*$ 範囲、sampling、力・場の定義で処理します。初回compile、事前実行後のstep時間、総step数、wall time、memory、出力容量を分けて記録し、必要なら実測から規模を一段だけ増やします。
+- **確認**: 両条件が自己整合性と外部照合を通り、比較した差がsampling窓や測定の揺らぎより大きいかを確認します。完了しなかった条件も削除せず、最後の時刻、資源上限、停止理由を記録します。
+- **残すもの**: $C_D,C_L$ 時系列、周波数spectrum、同じscaleの渦度図、条件・指標・費用表、raw dataと図表生成scriptを残します。
+
+### Step 6：力・周波数・場・費用を問いへの回答にまとめる
+
+- **作業**: [共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い、公式例再現、自己整合性、外部benchmark、一軸比較を一つの論理へつなぎます。Reの違いを、剥離・後流・流体力・渦放出の変化として説明し、二次元model、有限領域、格子、時間窓、力評価の限界を整理します。
+- **確認**: 第三者がrepositoryとcommit、environment、入力、実行順、raw data、sampling、図表生成を追跡できるか確認します。図の軸・単位・無次元化、force成分、平均・rms・振幅、$\mathrm{St}$ の定義も資料内で一意にします。
+- **残すもの**: 外部benchmark比較図、二条件の力時系列とspectrum、同じscaleの速度または渦度図、条件・指標・費用表、問いへの回答、限界、CPU縮小case、再生成手順を発表資料とproject repositoryへ残します。
+
+## 発展課題
+
+標準ルートでは、二次元、静止円柱、一様流、CPUで再現できる固定version、一軸比較に範囲を限定します。その検証と再生成手順を残した後、次の軸を一つだけ追加できます。
+
+- **渦放出開始付近を調べる**: Reを細かく変え、定常な後流から周期的な揚力が現れる過程を調べます。初期擾乱、計算時間、周波数peakの有無、格子・領域依存を追加で確認し、限られた観測窓から臨界値を断定しません。
+- **複雑形状または移動物体へ進む**: 楕円、多円柱、運動円柱のうち一つを選び、形状・運動を追加したことで必要になる力・moment、位相、幾何解像、保存量の検証を定めます。静止円柱caseを回帰基準として残します。
+- **三次元化またはFSIへ進む**: span方向の長さ・境界・解像度、三次元渦、構造側方程式、coupling、追加memoryを決めます。二次元結果を初期場に使う場合も、三次元の独立な検証とCPU縮小caseを用意します。
+- **GPUまたは長時間server計算へ進む**: 同じcommitのCPU最小caseと結果を照合し、device、Float型、compile、data transfer、memory、job時間、結果回収を記録します。追加資源で答える問いを先に決め、単なる大規模動画を成果にしません。
+
+新しい形状、外部data、package、境界条件、三次元model、研究室資源を加える場合は、license、追加検証、保存量、実行時間を教員またはTAと相談します。どの発展でも、公式円柱例の再現、自己整合性、外部照合、一軸比較を省略せず、標準結果を回帰基準として残してください。
