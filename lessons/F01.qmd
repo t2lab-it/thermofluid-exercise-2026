@@ -1,5 +1,12 @@
 ---
 title: "Julia・Git・GitHubの最小操作"
+lesson-id: F01
+understanding-check-points:
+  - "working tree，branch，commit，remote，pull requestなどの基本的なgit・GitHub用語"
+  - "一般的なOSSのフォーク型と，この講義で使う直接push型の違い"
+  - "直接pushが課題branchをoriginへpushすることであり，mainへの直接pushではないこと"
+  - "branch作成，実装，ローカルテスト，diff確認，commit，push，pull request，mergeの順序"
+  - "ローカルテスト，GitHub Actions，diff，セルフレビューで確認できることの違い"
 ---
 ::: {.course-position}
 第2回・授業 1/2 · 課題ID: F01
@@ -56,3 +63,5 @@ GitHubを使った開発では，リポジトリへの書込み権限がある�
 
 本課題では，この講義用の直接push型を自分の操作で確かめます．
 git/GitHubコマンドの詳細については[課題のbranch・PRワークフロー](../guides/workflow.qmd)ページを参照してください．
+
+{{< include /lessons/_understanding-check.qmd >}}
