@@ -5,18 +5,18 @@ title: "CairoMakieによる可視化"
 任意・発展資料
 :::
 
-このページはとくに可視化に興味がある意欲的な学生向けの任意資料です。
+このページはとくに可視化に興味がある意欲的な学生向けの任意資料です．
 
 ## CairoMakieを使えると何が嬉しいか
 
-- 軸、凡例、色、線種を整え、数値計算の結果を読みやすい図にできる。
-- 初期値と複数の計算結果を同じ図に重ね、数値拡散や不安定な振動を視覚的に比較できる。
-- 同じ描画コードから、画面用のPNGと文書・印刷用のPDFやSVGを再現可能に出力できる。
+- 軸，凡例，色，線種を整え，数値計算の結果を読みやすい図にできる．
+- 初期値と複数の計算結果を同じ図に重ね，数値拡散や不安定な振動を視覚的に比較できる．
+- 同じ描画コードから，画面用のPNGと文書・印刷用のPDFやSVGを再現可能に出力できる．
 
 ## 分離した環境を作る
 
-学生リポジトリの`Project.toml`を変更しないよう、一時的な別環境を作ります。
-`Pkg.add`には大きな通信量と初回コンパイル時間を要します。
+学生リポジトリの`Project.toml`を変更しないよう，一時的な別環境を作ります．
+`Pkg.add`には大きな通信量と初回コンパイル時間を要します．
 
 ```bash
 julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(env); Pkg.add("CairoMakie"); println(env)'
@@ -24,7 +24,8 @@ julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(e
 
 ## 交換ファイルを作る
 
-完成済みの1次元線形移流課題（課題ID: N01）の配列を公式3出力とは分離して scratch/ へ書き出します。次のコードを学生リポジトリの scratch/export_n01.jl として保存してください。
+完成済みの1次元線形移流課題（課題ID: N01）の配列を公式3出力とは分離して scratch/ へ書き出します．
+次のコードを学生リポジトリの scratch/export_n01.jl として保存してください．
 
 ~~~julia
 using DelimitedFiles
@@ -44,7 +45,7 @@ end
 println(output_path)
 ~~~
 
-学生リポジトリのルートディレクトリで実行します。
+学生リポジトリのルートディレクトリで実行します．
 
 ~~~bash
 julia --project=. scratch/export_n01.jl
@@ -52,7 +53,8 @@ julia --project=. scratch/export_n01.jl
 
 ## 1次元線形移流データを描く
 
-次のコードを`scratch/plot_n01_cairomakie.jl`として保存します。交換ファイルの4列を読み、安定例と意図的な不安定例を同じ図で比較します。
+次のコードを`scratch/plot_n01_cairomakie.jl`として保存します．
+交換ファイルの4列を読み，安定例と意図的な不安定例を同じ図で比較します．
 
 ~~~julia
 using CairoMakie
@@ -77,7 +79,7 @@ axislegend(axis)
 save(joinpath(@__DIR__, "n01-cairomakie.png"), figure)
 ~~~
 
-先ほど表示された一時環境の絶対パスを使います。
+先ほど表示された一時環境の絶対パスを使います．
 
 ~~~bash
 julia --project="<表示されたn01-cairomakie環境の絶対パス>" scratch/plot_n01_cairomakie.jl
@@ -85,4 +87,4 @@ julia --project="<表示されたn01-cairomakie環境の絶対パス>" scratch/p
 
 ## 後片付け
 
-必要がなくなったら一時環境を削除できます。
+必要がなくなったら一時環境を削除できます．

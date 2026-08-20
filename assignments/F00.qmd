@@ -7,7 +7,7 @@ title: "環境診断"
 
 ## 目的
 
-授業で使うローカル開発環境を診断し、必要な手動確認を完了します。
+授業で使うローカル開発環境を診断し，必要な手動確認を完了します．
 
 ## 先に読むページ
 
@@ -15,14 +15,14 @@ title: "環境診断"
 
 ## 学生リポジトリ内の場所
 
-実行する診断コードと提供テストは、学生リポジトリの次の場所にあります。
+実行する診断コードと提供テストは，学生リポジトリの次の場所にあります．
 
 - 診断コード: `exercises/F00_environment/run.jl`
 - 提供テスト: `test/provided/F00.jl`
 
 ## 実行
 
-学生リポジトリのルートで、まず配布環境を復元します。
+学生リポジトリのルートで，まず配布環境を復元します．
 
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -30,18 +30,20 @@ julia --project=. scripts/course.jl preflight
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-診断は次の二群を分けて表示します。
+診断は次の二群を分けて表示します．
 
-1. **機械観測**: Julia が正確に 1.12.6 であること、Git が呼び出せること、VS Code と Julia 拡張機能の準備状況。
-2. **手動確認**: GitHub で学生リポジトリを閲覧できること、および[対応エージェントの一つ](../setup/agents.qmd)でファイル編集とコマンド実行ができること。
+1. **機械観測**: Julia が正確に 1.12.6 であること，Git が呼び出せること，VS Code と Julia 拡張機能の準備状況．
+2. **手動確認**: GitHub で学生リポジトリを閲覧できること，および[対応エージェントの一つ](../setup/agents.qmd)でファイル編集とコマンド実行ができること．
 
-手動確認は、実際に自分で確かめてからプロンプトへ回答してください。すべての必須項目が通るまで進捗ファイルは更新されません。
+手動確認は，実際に自分で確かめてからプロンプトへ回答してください．
+すべての必須項目が通るまで進捗ファイルは更新されません．
 
 ## 手動確認を付けて完了する
 
-GitHubへサインインして学生リポジトリを開けることを確認します。次に、正式対応エージェントを一つ選び、`scratch/F00-agent-check.txt`の作成と短い確認文の追記、安全なローカルコマンドの実行を依頼します。
+GitHubへサインインして学生リポジトリを開けることを確認します．
+次に，正式対応エージェントを一つ選び，`scratch/F00-agent-check.txt`の作成と短い確認文の追記，安全なローカルコマンドの実行を依頼します．
 
-選んだエージェントに対応する次のコマンドを一つだけ実行します。
+選んだエージェントに対応する次のコマンドを一つだけ実行します．
 
 ```bash
 julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent copilot
@@ -49,17 +51,19 @@ julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent c
 julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent amazon-q
 ```
 
-成功すると `F00 is complete` と `Current exercise is now F01` が表示されます。公式生成物はありません。
+成功すると `F00 is complete` と `Current exercise is now F01` が表示されます．
+公式生成物はありません．
 
 ## 完了条件
 
-- `julia --version` が `julia version 1.12.6` を返す。
-- `git --version` が成功する。
-- VS Code と Julia 拡張機能を使える。
-- 学生リポジトリをブラウザで閲覧できる。
-- 標準または指定された一つの代替エージェントで、ファイル編集とコマンド実行を確認した。
-- `preflight` が成功し、進捗の完了済み課題が `F00`、現在課題が `F01` になる。
+- `julia --version` が `julia version 1.12.6` を返す．
+- `git --version` が成功する．
+- VS Code と Julia 拡張機能を使える．
+- 学生リポジトリをブラウザで閲覧できる．
+- 標準または指定された一つの代替エージェントで，ファイル編集とコマンド実行を確認した．
+- `preflight` が成功し，進捗の完了済み課題が `F00`，現在課題が `F01` になる．
 
 ## 失敗したとき
 
-表示された修正案と、対応する[トラブル対応](../guides/troubleshooting.qmd)項目を確認してください。支援を依頼するときは OS、バージョン出力、実行したコマンド、秘密情報を除いたエラーを伝えてください。
+表示された修正案と，対応する[トラブル対応](../guides/troubleshooting.qmd)項目を確認してください．
+支援を依頼するときは OS，バージョン出力，実行したコマンド，秘密情報を除いたエラーを伝えてください．

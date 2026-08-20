@@ -6,33 +6,33 @@ title: "GitHub CLIでpull requestを操作する"
 任意・発展資料
 :::
 
-このページは、[SSHでGitHubへ接続する](github-ssh.qmd)を完了した学生向けの発展的な資料です。
+このページは，[SSHでGitHubへ接続する](github-ssh.qmd)を完了した学生向けの発展的な資料です．
 
 ## GitHub CLIを使えると何が嬉しいか
 
-- branchのpushからpull requestの作成・確認までをターミナル上で進められ、ブラウザとの行き来を減らせる。
-- 実行するコマンドと結果が明確になるため、人が確認しながらコーディングエージェントへ作業を依頼しやすくなる。
+- branchのpushからpull requestの作成・確認までをターミナル上で進められ，ブラウザとの行き来を減らせる．
+- 実行するコマンドと結果が明確になるため，人が確認しながらコーディングエージェントへ作業を依頼しやすくなる．
 
 ## このページの到達点
 
-GitHub CLI（`gh`）を導入・認証し、既存のPRをCLIで読み、新しいPRをCLIで作成する。
+GitHub CLI（`gh`）を導入・認証し，既存のPRをCLIで読み，新しいPRをCLIで作成する．
 
 ::: {.callout-warning title="認証情報を共有しない"}
-GitHubトークン、ブラウザに表示される確認コード、SSH秘密鍵を、他人、pull request、公開チャット、コーディングエージェントへ貼り付けないでください。
+GitHubトークン，ブラウザに表示される確認コード，SSH秘密鍵を，他人，pull request，公開チャット，コーディングエージェントへ貼り付けないでください．
 :::
 
 ## GitHub CLIを導入する
 
 ### Windows
 
-PowerShellを利用してGitHub CLIを導入します。
-最新の導入方法は[GitHub CLI公式Windows手順](https://github.com/cli/cli/blob/trunk/docs/install_windows.md)を確認してください。
+PowerShellを利用してGitHub CLIを導入します．
+最新の導入方法は[GitHub CLI公式Windows手順](https://github.com/cli/cli/blob/trunk/docs/install_windows.md)を確認してください．
 
 ```powershell
 winget install --id GitHub.cli --source winget
 ```
 
-PATHの変更を反映するため、ウィンドウを閉じて開き直したうえで以下を確認してください。
+PATHの変更を反映するため，ウィンドウを閉じて開き直したうえで以下を確認してください．
 
 ```powershell
 gh --version
@@ -40,8 +40,8 @@ gh --version
 
 ### macOS
 
-Homebrewを利用してGitHub CLIを導入します。
-最新の導入方法は[GitHub CLI公式macOS手順](https://github.com/cli/cli/blob/trunk/docs/install_macos.md)を確認してください。
+Homebrewを利用してGitHub CLIを導入します．
+最新の導入方法は[GitHub CLI公式macOS手順](https://github.com/cli/cli/blob/trunk/docs/install_macos.md)を確認してください．
 
 ```bash
 brew install gh
@@ -50,9 +50,9 @@ gh --version
 
 ### Linux
 
-ディストリビューションごとに導入方法が異なるため、[GitHub CLI公式Linux手順](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)から自分の環境に対応する手順を選びます。
+ディストリビューションごとに導入方法が異なるため，[GitHub CLI公式Linux手順](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)から自分の環境に対応する手順を選びます．
 
-導入後は新しいターミナルで確認します。
+導入後は新しいターミナルで確認します．
 
 ```bash
 gh --version
@@ -60,7 +60,8 @@ gh --version
 
 ## GitHub CLIを認証する
 
-すでに作成したSSH鍵を再利用します。学生リポジトリのルートディレクトリで次を実行します。
+すでに作成したSSH鍵を再利用します．
+学生リポジトリのルートディレクトリで次を実行します．
 
 ```bash
 gh auth login --hostname github.com --git-protocol ssh --web --skip-ssh-key
@@ -68,9 +69,11 @@ gh auth status
 gh repo view
 ```
 
-`--web`はブラウザ認証を開き、`--skip-ssh-key`はSSH鍵の生成・アップロード確認を飛ばします。ブラウザに表示される確認コードやトークンを記録・共有してはいけません。
+`--web`はブラウザ認証を開き，`--skip-ssh-key`はSSH鍵の生成・アップロード確認を飛ばします．
+ブラウザに表示される確認コードやトークンを記録・共有してはいけません．
 
-`gh auth status`でホストが`github.com`、ユーザー名が意図した自分のアカウント、GitプロトコルがSSHであることを確認します。`gh repo view`では、現在のディレクトリが学生リポジトリとして認識されることを確認します。
+`gh auth status`でホストが`github.com`，ユーザー名が意図した自分のアカウント，GitプロトコルがSSHであることを確認します．
+`gh repo view`では，現在のディレクトリが学生リポジトリとして認識されることを確認します．
 
 ## 既存のpull requestをCLIで読む
 
@@ -78,7 +81,7 @@ gh repo view
 gh pr list --state all
 ```
 
-一覧から適当なPR番号を確認し、`PR_NUMBER`をその番号へ置き換えます。
+一覧から適当なPR番号を確認し，`PR_NUMBER`をその番号へ置き換えます．
 
 ```bash
 gh pr view PR_NUMBER  # PRの概要・本文
@@ -88,7 +91,8 @@ gh pr checks PR_NUMBER  # Checks
 
 ## 課題をpush前まで進める
 
-任意の課題の実装、テスト、学習ログ、diff確認、commitまで完了します。その後、課題branch上で次を確認します。
+任意の課題の実装，テスト，学習ログ，diff確認，commitまで完了します．
+その後，課題branch上で次を確認します．
 
 ```bash
 git status --short
@@ -96,21 +100,21 @@ git branch --show-current
 git diff main...HEAD
 ```
 
-未commitの変更、想定外のファイル、トークン・APIキー・パスワード・秘密鍵・不要な個人情報がないことを、人間がdiffを読んで確認します。
+未commitの変更，想定外のファイル，トークン・APIキー・パスワード・秘密鍵・不要な個人情報がないことを，人間がdiffを読んで確認します．
 
 ## pushを独立して実行する
 
-以下のコマンドを、`BRANCH`を`git branch --show-current`で確認した現在の課題branch名へ置き換えたうえで実行します。
+以下のコマンドを，`BRANCH`を`git branch --show-current`で確認した現在の課題branch名へ置き換えたうえで実行します．
 
 ```bash
 git push -u origin BRANCH
 ```
 
-pushの出力と`upstream`設定を確認してから次へ進みます。
+pushの出力と`upstream`設定を確認してから次へ進みます．
 
 ## pull request本文を準備する
 
-VS Codeで、学生リポジトリ内の除外対象領域に`scratch/pr-body.md`を作ります。
+VS Codeで，学生リポジトリ内の除外対象領域に`scratch/pr-body.md`を作ります．
 
 ```markdown
 ## 課題
@@ -131,17 +135,18 @@ VS Codeで、学生リポジトリ内の除外対象領域に`scratch/pr-body.md
 - 確認した内容:
 ```
 
-本文を書いたら次を実行します。
+本文を書いたら次を実行します．
 
 ```bash
 git status --short
 ```
 
-`scratch/pr-body.md`が表示されないことを確認します。表示される場合は、`scratch/*`の除外設定を教員・TAと確認してください。
+`scratch/pr-body.md`が表示されないことを確認します．
+表示される場合は，`scratch/*`の除外設定を教員・TAと確認してください．
 
 ## pull requestを作成する
 
-Bashまたはzshでは次を実行します。
+Bashまたはzshでは次を実行します．
 
 ```bash
 gh pr create \
@@ -151,7 +156,7 @@ gh pr create \
   --body-file scratch/pr-body.md
 ```
 
-Windows PowerShellでは行継続記号にバッククォートを使います。
+Windows PowerShellでは行継続記号にバッククォートを使います．
 
 ```powershell
 gh pr create `
@@ -161,7 +166,9 @@ gh pr create `
   --body-file scratch/pr-body.md
 ```
 
-`YOUR PR TITLE`は課題IDと変更内容が分かるタイトルへ置き換えます。成功すると作成されたPR URLが表示されるので記録します。続けて次を実行し、`base`が`main`、`head`が現在の課題branchであることを確認します。
+`YOUR PR TITLE`は課題IDと変更内容が分かるタイトルへ置き換えます．
+成功すると作成されたPR URLが表示されるので記録します．
+続けて次を実行し，`base`が`main`，`head`が現在の課題branchであることを確認します．
 
 ```bash
 gh pr view
@@ -169,7 +176,7 @@ gh pr view
 
 ## 作成したpull requestを確認する
 
-人間向けの通常出力を先に読みます。
+人間向けの通常出力を先に読みます．
 
 ```bash
 gh pr view
@@ -177,20 +184,22 @@ gh pr diff
 gh pr checks
 ```
 
-`gh pr view`でタイトル・本文・`base`・`head`を、`gh pr diff`で全変更を、`gh pr checks`でCI状態を確認します。`checks`が`pending`なら失敗とは断定せず、時間を置いて再実行します。
+`gh pr view`でタイトル・本文・`base`・`head`を，`gh pr diff`で全変更を，`gh pr checks`でCI状態を確認します．
+`checks`が`pending`なら失敗とは断定せず，時間を置いて再実行します．
 
-検査が失敗した場合は検査名とリンクを開き、可能ならローカルで再現します。同じ課題branchで修正、テスト、commit、pushを行い、同じPRを更新します。
+検査が失敗した場合は検査名とリンクを開き，可能ならローカルで再現します．
+同じ課題branchで修正，テスト，commit，pushを行い，同じPRを更新します．
 
 ## 構造化出力を確認する
 
-以下のコマンドで、通常出力と同じ情報を構造化して確認できます。
+以下のコマンドで，通常出力と同じ情報を構造化して確認できます．
 
 ```bash
 gh pr view --json number,title,state,url,baseRefName,headRefName
 ```
 
-なおmergeは標準手順へ戻り、diff、検査結果、学習ログを人間が確認してから行います。
-確認済みPRをブラウザで開く場合は次を使えます。
+なおmergeは標準手順へ戻り，diff，検査結果，学習ログを人間が確認してから行います．
+確認済みPRをブラウザで開く場合は次を使えます．
 
 ```bash
 gh pr view --web
@@ -200,17 +209,17 @@ gh pr view --web
 
 | 状況 | 読み取り中心の確認 |
 |---|---|
-| `gh auth status`が失敗する | ホスト、表示されたユーザー名、ブラウザ認証が完了したかを確認する |
-| リポジトリを認識しない | `git status --short`、`git remote -v`、`gh repo view`で現在地とリモートリポジトリを確認する |
+| `gh auth status`が失敗する | ホスト，表示されたユーザー名，ブラウザ認証が完了したかを確認する |
+| リポジトリを認識しない | `git status --short`，`git remote -v`，`gh repo view`で現在地とリモートリポジトリを確認する |
 | 最初のbranch課題のPRが見つからない | `gh pr list --state all`とブラウザ上のPR番号を確認する |
 | `base`または`head`が違う | `gh pr view`で`baseRefName`と`headRefName`に相当する表示を確認する |
 | `checks`が`pending` | 時間を置いて`gh pr checks`を再実行する |
-| `checks`が失敗する | `gh pr checks`の検査名とURLを確認し、ローカル再現を試す |
+| `checks`が失敗する | `gh pr checks`の検査名とURLを確認し，ローカル再現を試す |
 
 ## 完了条件
 
-- 任意のPRを`gh pr view PR_NUMBER`、`gh pr diff PR_NUMBER`、`gh pr checks PR_NUMBER`で確認できる。
-- 任意の実課題で、確認済みbranchを明示的にpushしてからPRを作成できる。
-- 作成したPRの`base`、`head`、本文、全diff、検査結果を人間がCLIで確認できる。
-- トークン、確認コード、秘密鍵を記録・共有していない。
-- mergeは標準課題手順へ戻り、この資料では実行していない。
+- 任意のPRを`gh pr view PR_NUMBER`，`gh pr diff PR_NUMBER`，`gh pr checks PR_NUMBER`で確認できる．
+- 任意の実課題で，確認済みbranchを明示的にpushしてからPRを作成できる．
+- 作成したPRの`base`，`head`，本文，全diff，検査結果を人間がCLIで確認できる．
+- トークン，確認コード，秘密鍵を記録・共有していない．
+- mergeは標準課題手順へ戻り，この資料では実行していない．

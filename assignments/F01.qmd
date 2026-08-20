@@ -7,7 +7,7 @@ title: "最初のbranchとpull request"
 
 ## 目的
 
-小さなJuliaコードを変更し、ローカルテストで確かめ、その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します。
+小さなJuliaコードを変更し，ローカルテストで確かめ，その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します．
 
 ## 学生リポジトリ内の場所
 
@@ -17,11 +17,11 @@ title: "最初のbranchとpull request"
 - 学習ログの雛形: `learning_logs/templates/F01.md`
 - 提出する学習ログ: `learning_logs/F01.md`
 
-長い手順と判断基準の正本は、このページと[共通課題ワークフロー](../guides/workflow.qmd)です。
+長い手順と判断基準の正本は，このページと[共通課題ワークフロー](../guides/workflow.qmd)です．
 
 ## 開始前の確認
 
-最初の環境診断（課題ID: F00）が完了し、現在課題が「最初のbranchとpull request」（課題ID: F01）であることを確認します。
+最初の環境診断（課題ID: F00）が完了し，現在課題が「最初のbranchとpull request」（課題ID: F01）であることを確認します．
 
 ```bash
 julia --project=. scripts/course.jl status
@@ -29,7 +29,9 @@ git status --short
 git branch --show-current
 ```
 
-`Current: F01`、現在branchが`main`であることを確認してください。最初の環境診断からこの課題へ進んだ直後は、`course_progress.toml`だけが変更済みと表示されるのが正常です。それ以外の変更が表示された場合は、branchを作る前に教員・TAへ相談します。
+`Current: F01`，現在branchが`main`であることを確認してください．
+最初の環境診断からこの課題へ進んだ直後は，`course_progress.toml`だけが変更済みと表示されるのが正常です．
+それ以外の変更が表示された場合は，branchを作る前に教員・TAへ相談します．
 
 ## 1. branchを手動で作る
 
@@ -38,17 +40,20 @@ git switch -c exercise/F01-first-pull-request
 git branch --show-current
 ```
 
-二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認します。
+二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認します．
 
 ## 2. 実装する
 
-`exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装します。`strip`で名前の前後の空白を除き、空白だけの名前は既存の処理で拒否します。それ以外は、空白を除いた名前を使う`Hello, name!`という`String`を返します。以下のコマンドで実行します。
+`exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装します．
+`strip`で名前の前後の空白を除き，空白だけの名前は既存の処理で拒否します．
+それ以外は，空白を除いた名前を使う`Hello, name!`という`String`を返します．
+以下のコマンドで実行します．
 
 ```bash
 julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
 ```
 
-変更前後に`git diff`を読み、自分が意図したファイルだけが変わっていることを確認します。
+変更前後に`git diff`を読み，自分が意図したファイルだけが変わっていることを確認します．
 
 ## 3. テストする
 
@@ -56,21 +61,24 @@ julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-`test/student/F01.jl`の簡易テスト用TODOを、自分で選んだ名前を使う代表的な挨拶のテストへ置き換えます。テストが何を保証し、何を保証しないかを学習ログに一文ずつ書きます。
+`test/student/F01.jl`の簡易テスト用TODOを，自分で選んだ名前を使う代表的な挨拶のテストへ置き換えます．
+テストが何を保証し，何を保証しないかを学習ログに一文ずつ書きます．
 
 ## 4. 公式出力を確認する
 
-この最初のbranch課題に公式生成物はありません。ターミナルの実行結果とテスト成功が、この課題の実行確認です。
+この最初のbranch課題に公式生成物はありません．
+ターミナルの実行結果とテスト成功が，この課題の実行確認です．
 
 ## 5. 学習ログを書く
 
-雛形をコピーし、`learning_logs/F01.md`を作ります。少なくとも次を記録します。
+雛形をコピーし，`learning_logs/F01.md`を作ります．
+少なくとも次を記録します．
 
 - 実装した変更
 - 実行したテストと保証範囲
 - diffで確認したこと
 - つまずきと解決方法
-- AIを利用した場合は依頼内容、重要な提案、採用・修正・却下とその理由
+- AIを利用した場合は依頼内容，重要な提案，採用・修正・却下とその理由
 
 ## 6. commitする
 
@@ -82,7 +90,8 @@ git diff --cached
 git commit -m "feat: complete F01 first pull request"
 ```
 
-`git add`には、実際に変更した課題ファイルだけを指定します。公開すべきでない情報（アクセストークン、API key、パスワード、秘密鍵、個人情報など）がdiffへ入っていないことをcommit前に確認してください。
+`git add`には，実際に変更した課題ファイルだけを指定します．
+公開すべきでない情報（アクセストークン，API key，パスワード，秘密鍵，個人情報など）がdiffへ入っていないことをcommit前に確認してください．
 
 ## 7. pushしてPRを作る
 
@@ -90,23 +99,26 @@ git commit -m "feat: complete F01 first pull request"
 git push -u origin exercise/F01-first-pull-request
 ```
 
-リモートに`push`した後、GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作ります。PR本文に課題ID、テスト結果、学習ログ、diffで確認した内容を記載します。
+リモートに`push`した後，GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作ります．
+PR本文に課題ID，テスト結果，学習ログ，diffで確認した内容を記載します．
 
 ## 8. GitHub Actionsとdiffを確認する
 
-PRのCIが成功したことと差分を確認します。特に、以下の項目を自身で確認してください：
+PRのCIが成功したことと差分を確認します．
+特に，以下の項目を自身で確認してください：
 
-- 課題と無関係なファイルがない。
-- 提供テストを削除・弱体化していない。
-- コード、テスト、学習ログの説明が一致する。
-- 秘密情報や不要な個人情報がない。
-- AI提案を使った場合、採否と理由を説明している。
+- 課題と無関係なファイルがない．
+- 提供テストを削除・弱体化していない．
+- コード，テスト，学習ログの説明が一致する．
+- 秘密情報や不要な個人情報がない．
+- AI提案を使った場合，採否と理由を説明している．
 
-修正が必要なら同じbranchで修正、テスト、commit、pushを繰り返してPRを更新します。
+修正が必要なら同じbranchで修正，テスト，commit，pushを繰り返してPRを更新します．
 
 ## 9. mergeしてmainへ戻る
 
-セルフレビューが終わったら、GitHub上でPRをmergeします。その後、ローカルをmainへ戻して更新します。
+セルフレビューが終わったら，GitHub上でPRをmergeします．
+その後，ローカルをmainへ戻して更新します．
 
 ```bash
 git switch main
@@ -114,8 +126,9 @@ git pull --ff-only origin main
 git status --short
 ```
 
-これで「最初のbranchとpull request」は完了です。
+これで「最初のbranchとpull request」は完了です．
 
 ## 任意のCLI発展資料
 
-[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)および[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)に取り組むと、さらにgit/GitHub操作が簡単になります。ただし、これらは必須ではありません。
+[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)および[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)に取り組むと，さらにgit/GitHub操作が簡単になります．
+ただし，これらは必須ではありません．

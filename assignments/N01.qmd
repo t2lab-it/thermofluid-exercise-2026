@@ -7,7 +7,7 @@ title: "1次元線形移流方程式"
 
 ## 目的
 
-1次元線形移流方程式の数値計算を実装し、上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します。
+1次元線形移流方程式の数値計算を実装し，上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します．
 
 ## 学生リポジトリ内の場所
 
@@ -19,7 +19,7 @@ title: "1次元線形移流方程式"
 
 ## 開始
 
-前の数値微分課題（課題ID: F04）をmergeし、更新済みで変更のない`main`から始めます。
+前の数値微分課題（課題ID: F04）をmergeし，更新済みで変更のない`main`から始めます．
 
 ```bash
 julia --project=. scripts/course.jl start N01
@@ -27,7 +27,8 @@ julia --project=. scripts/course.jl start N01
 
 ## 座標・添字・差分の確認
 
-前の数値微分課題（課題ID: F04）で一般の差分精度と収束を確認済みです。ここでは同じ考え方を移流方程式の1段階の更新へ接続します。
+前の数値微分課題（課題ID: F04）で一般の差分精度と収束を確認済みです．
+ここでは同じ考え方を移流方程式の1段階の更新へ接続します．
 
 区間$[x_{\min},x_{\max}]$の`nx`点について
 
@@ -35,24 +36,28 @@ $$
 \Delta x=\frac{x_{\max}-x_{\min}}{n_x-1},\qquad x_i=x_{\min}+(i-1)\Delta x.
 $$
 
-です。添字`i`と物理座標$x_i$を区別してください。空間微分の後退差分と中心差分は
+です．
+添字`i`と物理座標$x_i$を区別してください．
+空間微分の後退差分と中心差分は
 
 $$
 \frac{u_i-u_{i-1}}{\Delta x},\qquad \frac{u_{i+1}-u_{i-1}}{2\Delta x}
 $$
 
-であり、Juliaでは `(u[i] - u[i - 1]) / dx` と `(u[i + 1] - u[i - 1]) / (2 * dx)` に対応します。この課題では、これらを移流方程式の1段階の更新へ組み込みます。
+であり，Juliaでは `(u[i] - u[i - 1]) / dx` と `(u[i + 1] - u[i - 1]) / (2 * dx)` に対応します．
+この課題では，これらを移流方程式の1段階の更新へ組み込みます．
 
 ## 実装範囲
 
-`run.jl`は冒頭にある`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に読みます。学生が実装するのは、次の3つのTODOだけです。
+`run.jl`は冒頭にある`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に読みます．
+学生が実装するのは，次の3つのTODOだけです．
 
-1. 背景1、`0.5 <= x <= 1.0`で2となる矩形初期条件
+1. 背景1，`0.5 <= x <= 1.0`で2となる矩形初期条件
 2. 正の速度に対する上流差分 + Euler法による更新
 3. 中心差分 + Euler法による更新
 
-`main`は`run.jl`にあり、二つの`simulate`を実行して、提供済みの`write_summary`と`make_plots`へ結果を渡します。
-`main`から`write_summary`と`make_plots`を経て、`results/N01`へ3つの公式出力が作られます。
+`main`は`run.jl`にあり，二つの`simulate`を実行して，提供済みの`write_summary`と`make_plots`へ結果を渡します．
+`main`から`write_summary`と`make_plots`を経て，`results/N01`へ3つの公式出力が作られます．
 
 ## 実行とテスト
 
@@ -61,7 +66,7 @@ julia --project=. exercises/N01_linear_advection/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-公式出力は次の3ファイルです。
+公式出力は次の3ファイルです．
 
 - `results/N01/upwind.png`
 - `results/N01/centered-euler.png`
@@ -73,16 +78,19 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 ## 自分のテストと学習ログ
 
-各関数から呼ばれる入力検証は、実行時の入力条件を確認して誤入力を検出します。`test/provided/N01.jl`は数値式、入力条件、公式出力を保護します。
+各関数から呼ばれる入力検証は，実行時の入力条件を確認して誤入力を検出します．
+`test/provided/N01.jl`は数値式，入力条件，公式出力を保護します．
 
-`test/student/N01.jl`の説明コメントと`@test false`を削除し、手計算できる更新式または安定・不安定比較から自分で選んだ代表例を一つ実装します。入力、関数呼び出し、期待値が分かることと、自分のテストが実際に通ることを確認してください。
+`test/student/N01.jl`の説明コメントと`@test false`を削除し，手計算できる更新式または安定・不安定比較から自分で選んだ代表例を一つ実装します．
+入力，関数呼び出し，期待値が分かることと，自分のテストが実際に通ることを確認してください．
 
-学習ログには、そのテストが保証することと保証しないことを分けて記録します。また、`u_old, u_new = u_new, u_old`によって配列全体をコピーせずに新旧の役割を交換できる理由と、同じ配列を新旧に使ってはいけない理由を書いてください。
+学習ログには，そのテストが保証することと保証しないことを分けて記録します．
+また，`u_old, u_new = u_new, u_old`によって配列全体をコピーせずに新旧の役割を交換できる理由と，同じ配列を新旧に使ってはいけない理由を書いてください．
 
 ## 完了条件
 
-- 3つのTODOを式・添字・コードで説明できる。
-- 実効CFLと最終時刻を確認した。
-- 上流差分法の有界性と中心差分法 + Euler法のオーバーシュートまたはアンダーシュートを確認した。
-- 公式出力、提供テスト、自分の代表テスト、学習ログを確認した。
-- diff、commit、push、PR、GitHub Actions、セルフレビュー、mergeを確認した。
+- 3つのTODOを式・添字・コードで説明できる．
+- 実効CFLと最終時刻を確認した．
+- 上流差分法の有界性と中心差分法 + Euler法のオーバーシュートまたはアンダーシュートを確認した．
+- 公式出力，提供テスト，自分の代表テスト，学習ログを確認した．
+- diff，commit，push，PR，GitHub Actions，セルフレビュー，mergeを確認した．

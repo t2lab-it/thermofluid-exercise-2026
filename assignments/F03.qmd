@@ -5,11 +5,12 @@ title: "ベクトル解析の証明と数値微分"
 第4回・課題 2/2 · 課題ID: F03
 :::
 
-提出単位: `F03-F04`（1 branch、1 PR、1学習ログ）
+提出単位: `F03-F04`（1 branch，1 PR，1学習ログ）
 
 ## 目的
 
-第4回ではベクトル解析の三公式を直交座標の成分で証明し、第5回の数値検証を始めます。[F04課題](F04.qmd)まで同じbranchで継続します。
+第4回ではベクトル解析の三公式を直交座標の成分で証明し，第5回の数値検証を始めます．
+[F04課題](F04.qmd)まで同じbranchで継続します．
 
 ## 学生リポジトリ内の場所
 
@@ -21,17 +22,17 @@ title: "ベクトル解析の証明と数値微分"
 
 ## 開始
 
-リポジトリのルートで次を一度だけ実行します。
+リポジトリのルートで次を一度だけ実行します．
 
 ```bash
 julia --project=. scripts/course.jl start F03-F04
 ```
 
-このコマンドが作成した一つのbranchを、第5回の完了まで使います。
+このコマンドが作成した一つのbranchを，第5回の完了まで使います．
 
 ## 解析的な証明
 
-授業ページの定義から、次の三式を直交座標の成分へ展開して証明します。
+授業ページの定義から，次の三式を直交座標の成分へ展開して証明します．
 
 $$
 \nabla\times(\nabla\phi)=\boldsymbol{0},\qquad
@@ -42,18 +43,22 @@ $$
 \nabla\cdot(\nabla\phi)=\nabla^2\phi.
 $$
 
-各証明では、どの混合偏微分を交換したかと、それを許す滑らかさの条件も学習ログへ書いてください。
+各証明では，どの混合偏微分を交換したかと，それを許す滑らかさの条件も学習ログへ書いてください．
 
 ## 実装範囲
 
-`gradient_scalar(point)`、`curl_vector(point)`、`laplacian_scalar(point)`は解析的な微分結果として提供済みです。学生が実装するのは、`exercises/F04_numerical_differentiation/run.jl`内の次の3関数だけです。
+`gradient_scalar(point)`，`curl_vector(point)`，`laplacian_scalar(point)`は解析的な微分結果として提供済みです．
+学生が実装するのは，`exercises/F04_numerical_differentiation/run.jl`内の次の3関数だけです．
 
 - `forward_difference(f, x, h)`
 - `backward_difference(f, x, h)`
 - `centered_difference(f, x, h)`
 
-三次元座標adapter、格子走査、残差関数、集計関数は提供済みで、実装対象ではありません。
+三次元座標adapter，格子走査，残差関数，集計関数は提供済みで，実装対象ではありません．
 
 ## 第4回の最低到達点
 
-第4回の終了時には、三公式の成分証明を学習ログへ書き、`forward_difference`、`backward_difference`、`centered_difference`の3つの差分関数をすべて完成してください。一次関数の提供テストを通して実装を確認します。この時点ではbranchをmergeせず、PRも完了扱いにしません。次回は[F04課題](F04.qmd)から同じ提出単位を完成させます。
+第4回の終了時には，三公式の成分証明を学習ログへ書き，`forward_difference`，`backward_difference`，`centered_difference`の3つの差分関数をすべて完成してください．
+一次関数の提供テストを通して実装を確認します．
+この時点ではbranchをmergeせず，PRも完了扱いにしません．
+次回は[F04課題](F04.qmd)から同じ提出単位を完成させます．
