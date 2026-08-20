@@ -6,36 +6,39 @@ title: "SSHでGitHubへ接続する"
 任意・発展資料
 :::
 
-このページは、標準のHTTPSによる複製と最初のpull requestを完了した学生向けの任意資料です。
+このページは，標準のHTTPSによる複製と最初のpull requestを完了した学生向けの任意資料です．
 
 ## SSHを使えると何が嬉しいか
 
-- GitHubへの接続方法を一度整えると、取得やpushのたびに認証方法を選び直さずに済む。
-- 公開鍵をGitHubへ登録し、秘密鍵を自分のPCから出さない形で認証できる。
-- ターミナル中心のGit操作を続けやすくなり、後続のGitHub CLIやコーディングエージェントとの協働へ進みやすくなる。
+- GitHubへの接続方法を一度整えると，取得やpushのたびに認証方法を選び直さずに済む．
+- 公開鍵をGitHubへ登録し，秘密鍵を自分のPCから出さない形で認証できる．
+- ターミナル中心のGit操作を続けやすくなり，後続のGitHub CLIやコーディングエージェントとの協働へ進みやすくなる．
 
 ## このページの到達点
 
-すでに複製した学生リポジトリの`origin`をHTTPS URLからSSH URLへ安全に切り替えます。
+すでに複製した学生リポジトリの`origin`をHTTPS URLからSSH URLへ安全に切り替えます．
 
 ## 実行前の安全確認
 
-このページで紹介する手順は、自分が管理するPCと自分のGitHubアカウントでだけ実行します。
+このページで紹介する手順は，自分が管理するPCと自分のGitHubアカウントでだけ実行します．
 
 ::: {.callout-warning title="秘密鍵を共有しない"}
-秘密鍵、鍵のパスフレーズ、確認コードを、教員・TAを含む他人、pull request、公開チャット、コーディングエージェントへ渡さないでください。`.pub`で終わる公開鍵だけがGitHubへ登録する対象です。既存の鍵ファイルが存在する場合、それらを削除・上書きしないでください。
+秘密鍵，鍵のパスフレーズ，確認コードを，教員・TAを含む他人，pull request，公開チャット，コーディングエージェントへ渡さないでください．
+`.pub`で終わる公開鍵だけがGitHubへ登録する対象です．
+既存の鍵ファイルが存在する場合，それらを削除・上書きしないでください．
 :::
 
 ## 現在の接続方法を記録する
 
-学生リポジトリのルートディレクトリで、未commitの変更と現在のリモートURLを確認します。
+学生リポジトリのルートディレクトリで，未commitの変更と現在のリモートURLを確認します．
 
 ```bash
 git status --short
 git remote -v
 ```
 
-`origin`の取得先とpush先が`https://github.com/...`なら、現在はHTTPS接続です。すでに`git@github.com:...`ならSSH接続を利用できており、以降の内容を実行する必要はありません。
+`origin`の取得先とpush先が`https://github.com/...`なら，現在はHTTPS接続です．
+すでに`git@github.com:...`ならSSH接続を利用できており，以降の内容を実行する必要はありません．
 
 ## 既存のSSH接続を先に確認する
 
@@ -43,19 +46,25 @@ git remote -v
 ssh -T git@github.com
 ```
 
-初回接続ではホストの真正性を確認する質問が表示されることがあります。表示されたフィンガープリントを、回答時点の[GitHub公式SSH鍵のフィンガープリント](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints)と照合してください。一致した場合だけ接続を承認します。値が違う、または判断できない場合は承認せず、教員・TAへ相談します。
+初回接続ではホストの真正性を確認する質問が表示されることがあります．
+表示されたフィンガープリントを，回答時点の[GitHub公式SSH鍵のフィンガープリント](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints)と照合してください．
+一致した場合だけ接続を承認します．
+値が違う，または判断できない場合は承認せず，教員・TAへ相談します．
 
-認証成功メッセージに自分のGitHubユーザー名が表示された場合はすでにSSH接続を利用できており、以降の内容を実行する必要はありません。
+認証成功メッセージに自分のGitHubユーザー名が表示された場合はすでにSSH接続を利用できており，以降の内容を実行する必要はありません．
 
 ## 接続できない場合だけ鍵を準備する
 
-まず既存の`.ssh`ディレクトリを確認します。この資料では既存名と衝突しにくい`id_ed25519_github`を使います。`YOUR_GITHUB_EMAIL`は自分のGitHub登録メールアドレスへ置き換えてください。
+まず既存の`.ssh`ディレクトリを確認します．
+この資料では既存名と衝突しにくい`id_ed25519_github`を使います．
+`YOUR_GITHUB_EMAIL`は自分のGitHub登録メールアドレスへ置き換えてください．
 
-鍵生成中にパスフレーズを求められたら、空欄にせず設定してください。入力中は画面に文字が表示されないことに注意してください。
+鍵生成中にパスフレーズを求められたら，空欄にせず設定してください．
+入力中は画面に文字が表示されないことに注意してください．
 
 ### Windows
 
-PowerShellで確認し、鍵を作成します。
+PowerShellで確認し，鍵を作成します．
 
 ```powershell
 Get-ChildItem -Force "$HOME\.ssh"
@@ -63,7 +72,7 @@ ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL" -f "$HOME\.ssh\id_ed25519_github"
 Get-Service -Name ssh-agent
 ```
 
-`ssh-agent`が実行中の場合は、管理者権限ではない通常のPowerShellで鍵を読み込みます。
+`ssh-agent`が実行中の場合は，管理者権限ではない通常のPowerShellで鍵を読み込みます．
 
 ```powershell
 ssh-add "$HOME\.ssh\id_ed25519_github"
@@ -71,11 +80,12 @@ ssh-add -l
 Get-Content "$HOME\.ssh\id_ed25519_github.pub"
 ```
 
-Windows OpenSSH Authentication Agentの開始・有効化には、自分のPC上の管理者PowerShellが必要になる場合があります。エージェントが停止している、権限がないなどの場合は、推測でサービス設定を変更せず、[GitHub公式のWindows手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)を確認して教員・TAへ相談してください。
+Windows OpenSSH Authentication Agentの開始・有効化には，自分のPC上の管理者PowerShellが必要になる場合があります．
+エージェントが停止している，権限がないなどの場合は，推測でサービス設定を変更せず，[GitHub公式のWindows手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)を確認して教員・TAへ相談してください．
 
 ### macOS
 
-ターミナルで確認し、鍵を作成してApple Keychain対応の`ssh-add`で読み込みます。
+ターミナルで確認し，鍵を作成してApple Keychain対応の`ssh-add`で読み込みます．
 
 ```bash
 ls -la ~/.ssh
@@ -85,7 +95,8 @@ ssh-add -l
 cat ~/.ssh/id_ed25519_github.pub
 ```
 
-`~/.ssh/config`をVS Codeなどで開き、既存設定を消さずに`github.com`用設定を確認します。すでに`Host github.com`がある場合は、教員・TAに相談してから必要な行を統合してください。
+`~/.ssh/config`をVS Codeなどで開き，既存設定を消さずに`github.com`用設定を確認します．
+すでに`Host github.com`がある場合は，教員・TAに相談してから必要な行を統合してください．
 
 ```sshconfig
 Host github.com
@@ -97,7 +108,7 @@ Host github.com
 
 ### Linux
 
-ターミナルで確認し、鍵を作成して現在のシェルで`ssh-agent`を開始します。
+ターミナルで確認し，鍵を作成して現在のシェルで`ssh-agent`を開始します．
 
 ```bash
 ls -la ~/.ssh
@@ -108,7 +119,8 @@ ssh-add -l
 cat ~/.ssh/id_ed25519_github.pub
 ```
 
-`~/.ssh/config`をVS Codeなどで開き、既存設定を消さずに`github.com`用設定を確認します。すでに`Host github.com`がある場合は、教員・TAに相談してから必要な行を統合してください。
+`~/.ssh/config`をVS Codeなどで開き，既存設定を消さずに`github.com`用設定を確認します．
+すでに`Host github.com`がある場合は，教員・TAに相談してから必要な行を統合してください．
 
 ```sshconfig
 Host github.com
@@ -117,13 +129,14 @@ Host github.com
   IdentitiesOnly yes
 ```
 
-OS別手順の更新や異なる環境については、[GitHub公式の鍵生成・ssh-agent手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)を参照してください。
+OS別手順の更新や異なる環境については，[GitHub公式の鍵生成・ssh-agent手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)を参照してください．
 
 ## 公開鍵だけをGitHubへ登録する
 
-前節の最後に表示した`id_ed25519_github.pub`の内容だけをコピーします。
+前節の最後に表示した`id_ed25519_github.pub`の内容だけをコピーします．
 
-GitHubで自分のプロフィール画像から **Settings** → **SSH and GPG keys** → **New SSH key**へ進み、用途が分かるtitleを付けてAuthentication Keyとして公開鍵を登録します。画面が異なる場合は[GitHub公式の公開鍵登録手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)を確認します。
+GitHubで自分のプロフィール画像から **Settings** → **SSH and GPG keys** → **New SSH key**へ進み，用途が分かるtitleを付けてAuthentication Keyとして公開鍵を登録します．
+画面が異なる場合は[GitHub公式の公開鍵登録手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)を確認します．
 
 ## SSH接続を再確認する
 
@@ -131,11 +144,12 @@ GitHubで自分のプロフィール画像から **Settings** → **SSH and GPG 
 ssh -T git@github.com
 ```
 
-成功メッセージに、接続したい自分のGitHubユーザー名が含まれることを確認します。別のユーザー名が出た場合は、教員・TAへ相談してください。
+成功メッセージに，接続したい自分のGitHubユーザー名が含まれることを確認します．
+別のユーザー名が出た場合は，教員・TAへ相談してください．
 
 ## 既存のoriginをSSHへ切り替える
 
-学生リポジトリを開き、**Code** → **SSH**から取得したURLを用いて以下のコマンドを実行してください。
+学生リポジトリを開き，**Code** → **SSH**から取得したURLを用いて以下のコマンドを実行してください．
 
 ```bash
 git remote -v
@@ -144,23 +158,23 @@ git remote -v
 git fetch origin
 ```
 
-最終行の`git fetch origin`で取得先とpush先の両方が同じSSH URLであることを確認してください。
+最終行の`git fetch origin`で取得先とpush先の両方が同じSSH URLであることを確認してください．
 
 ## トラブルを切り分ける
 
 | 状況 | 読み取り中心の確認 |
 |---|---|
-| `Permission denied (publickey)` | `ssh-add -l`で読み込まれた鍵を確認し、GitHubのSSH keys画面に対応する公開鍵があるか確認する |
-| `The agent has no identities` | OS別手順に戻り、`ssh-agent`の状態と実行した`ssh-add`のパスを確認する |
+| `Permission denied (publickey)` | `ssh-add -l`で読み込まれた鍵を確認し，GitHubのSSH keys画面に対応する公開鍵があるか確認する |
+| `The agent has no identities` | OS別手順に戻り，`ssh-agent`の状態と実行した`ssh-add`のパスを確認する |
 | ホストのフィンガープリントが公式値と一致しない | 画面のフィンガープリントとGitHub公式ページを再確認する |
 | `git fetch origin`が失敗する | `git remote -v`と`ssh -T git@github.com`の結果を確認する |
 | 別のGitHubアカウント名が表示される | `ssh -T git@github.com`の成功メッセージを再確認する |
 
 ## 完了条件
 
-- `ssh -T git@github.com`で、意図した自分のGitHubユーザーとして認証される。
-- `git remote -v`で、`origin`の取得先・push先URLが学生リポジトリのSSH URLになっている。
-- `git fetch origin`が成功する。
-- 秘密鍵、パスフレーズ、確認コードを記録・共有していない。
+- `ssh -T git@github.com`で，意図した自分のGitHubユーザーとして認証される．
+- `git remote -v`で，`origin`の取得先・push先URLが学生リポジトリのSSH URLになっている．
+- `git fetch origin`が成功する．
+- 秘密鍵，パスフレーズ，確認コードを記録・共有していない．
 
-ここまで完了したら、[GitHub CLIでpull requestを操作する](github-cli.qmd)へ進みます。
+ここまで完了したら，[GitHub CLIでpull requestを操作する](github-cli.qmd)へ進みます．
