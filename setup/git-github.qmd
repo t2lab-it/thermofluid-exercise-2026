@@ -5,41 +5,17 @@ title: "Git・GitHub・個人課題用リポジトリ"
 準備 3/5
 :::
 
-## Git を導入する
+## Gitを導入する
 
-### Windows
+公式の[Gitのインストール](https://git-scm.com/book/ja/v2/%E4%BD%BF%E3%81%84%E5%A7%8B%E3%82%81%E3%82%8B-Git%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)ページを参考に，Gitを導入してください．
 
-PowerShell で Git for Windows を導入できます．
-
-```powershell
-winget install --id Git.Git -e --source winget
-```
-
-### macOS
-
-ターミナルで次を実行し，案内に従って Command Line Tools を導入します．
-
-```bash
-xcode-select --install
-```
-
-### Linux
-
-ディストリビューションのパッケージ管理機能で Git を導入します．
-Ubuntu の例は次のとおりです．
-
-```bash
-sudo apt update
-sudo apt install git
-```
-
-新しいターミナルで確認します．
+バージョンは以下のコマンドで確認できます．
 
 ```bash
 git --version
 ```
 
-## GitHub アカウントを作成する
+## GitHubアカウントを作成し，設定する
 
 ::: {.callout-warning title="教室で一斉に作成しない"}
 同じネットワークから全員が同時に登録すると，GitHub側で登録を制限される場合があります．
@@ -47,19 +23,11 @@ git --version
 登録を繰り返すよう指示された場合は操作を止め，教員・TAへ相談してください．
 :::
 
-1. [GitHub](https://github.com/)を開き，**Sign up**を選ぶ．
-2. 本人が継続して管理できるメールアドレス，ユーザー名，パスワードを登録する．
-3. GitHub から届く案内に従ってメールアドレスを確認する．
-4. GitHub にログインできることを確認する．
-
-作成後はユーザー名を指定された方法で提出します．
-画面や登録項目がこの説明と異なる場合は，[GitHub 公式のアカウント作成手順](https://docs.github.com/ja/get-started/start-your-journey/creating-an-account-on-github)を確認してください．
+GitHub公式の[アカウント作成手順](https://docs.github.com/ja/get-started/start-your-journey/creating-an-account-on-github)を参考に，GitHubにアカウントを作成してください．
+メールアドレスには大学のアドレス（`@ed.tus.ac.jp`で終わるもの）を利用してください．
 パスワードや確認コードは，教員・TAを含む他人へ共有しないでください．
 
-## 最初の設定
-
-commit に記録する名前と，GitHub で使うメールアドレスを設定します．
-次の値は自分の情報に置き換えてください．
+初期設定として，commitに記録する名前と，GitHubで使うメールアドレスを設定します．
 
 ```bash
 git config --global user.name "YOUR NAME"
@@ -68,33 +36,23 @@ git config --global user.email "YOUR_GITHUB_EMAIL"
 
 ## 個人課題用リポジトリの公開範囲
 
-受講者へ発行する個人課題用リポジトリは**原則公開**です．
-GitHubユーザー名，commit・issue・pull requestなどの活動，その日時は外部から見えるため，課題に関係のない個人情報や秘密情報を書き込みません．
-
-公開されるcommitに個人用メールアドレスを載せないため，GitHubのメール設定で`noreply`アドレスを確認し，次のように設定します．
-
-```bash
-git config --global user.email "YOUR_GITHUB_USERNAME@users.noreply.github.com"
-```
+受講者が課題に取り組むリポジトリは**公開**です．
+GitHubユーザー名やcommit・issue・pull requestなどの活動，その日時は外部から見えるため，課題に関係のない個人情報や秘密情報を書き込んではいけません．
+AIとの全対話ログ（プロンプトと回答を含む未加工の生の会話記録）も個人課題用リポジトリへcommitしてはいけません．
 
 教材本文・図は`CC BY 4.0`，コードは`MIT`です．
 教材や外部資料を使うときは，ライセンスを守り，出典を学習ログやREADMEに記録します．
-成績，出欠，連絡先，合理的配慮，個別フィードバックなどのLMS上の情報はGitに入れず，LMSとGitHubを分けて扱います．
-AIとの全対話ログ（プロンプトと回答を含む未加工の生の会話記録）も個人課題用リポジトリへcommitしません．
-
-事情があり公開できない場合は，発行前に教員・TAへ**非公開の例外**を相談してください．
-非公開であること自体を理由に減点せず，課題の進め方，レビュー，提出時期，評価は公開の場合と同じです．
 
 ## 個人課題用リポジトリを複製する
 
-1. GitHubの通知またはメールで届くリポジトリ招待を開く．
-   招待は第1回授業後に届く場合がある．
-2. 招待は，公開・非公開のどちらの個人課題用リポジトリでも書き込み権限を設定する手順です．
+1. GitHubのアカウント名を教員・TAに報告する．
+2. GitHubの通知またはメールで届くリポジトリ招待を開く．
+3. 招待は，公開・非公開のどちらの個人課題用リポジトリでも書き込み権限を設定する手順です．
    招待先が`t2lab-it/thermofluid-exercise-2026-<自分のusername>`であることを確認し，**Accept invitation**を選ぶ．
-3. GitHub で個人課題用リポジトリを閲覧できることを手動で確認する．
-4. 個人課題用リポジトリの **Code** メニューから複製用URLを取得する．
-5. 作業用ディレクトリで次を実行する．
-   複製後は個人課題用リポジトリへ移動し，配布されたJulia環境を復元してから事前診断を実行します．
+4. GitHub で個人課題用リポジトリを閲覧できることを確認する．
+5. 個人課題用リポジトリの **Code** メニューから複製用URLを取得する．
+6. 作業用ディレクトリで次を実行する．
+   `YOUR_COURSE_REPOSITORY_URL` と `YOUR_COURSE_REPOSITORY` は，個人課題用リポジトリのHTTPS URLと複製後のディレクトリ名に置き換えてください．
 
 ```bash
 git clone YOUR_COURSE_REPOSITORY_URL
@@ -102,12 +60,7 @@ cd YOUR_COURSE_REPOSITORY
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. scripts/course.jl preflight
 ```
+`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用のJulia環境を復元し，`preflight`はその環境を診断します．
 
-`YOUR_COURSE_REPOSITORY_URL` と `YOUR_COURSE_REPOSITORY` は，個人課題用リポジトリのHTTPS URLと複製後のディレクトリ名に置き換えます．
-URLをそのまま公開チャットや提出物へ貼らないでください．
-`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元し，`preflight`はその環境を診断します．
-
-標準のHTTPS接続と最初のpull requestを完了した後は，任意で[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)へ進み，既存の個人課題用リポジトリをSSH接続へ切り替えられます．
-初回セットアップではこの発展手順を先に実行しないでください．
-
-ここまで確認できたら，[コーディングエージェント](agents.qmd)へ進みます．
+なお，[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)の内容を実行すると，GitHubへの接続がより便利になります．
+興味のある人は試してみてください．
