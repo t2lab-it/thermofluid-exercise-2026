@@ -34,7 +34,7 @@ c&=\sqrt{\frac{\gamma p}{\rho}}
 $$
 
 で閉じ，$c$は音速です．
-保存変数，数値流束，DGSEMの役割は[公開ソルバの数値手法](../../advanced/public-solver-methods.qmd#高次不連続galerkin法と双曲型保存則)でも確認できます．
+保存変数，数値流束，DGSEMの役割は[CFDソルバ in Julia](../../advanced/public-solver-methods.qmd#高次不連続galerkin法と双曲型保存則)でも確認できます．
 
 標準の初期値は，公式exampleが採用するmodified Sod問題です．
 $0\leq x\leq1$，$\gamma=1.4$，初期不連続位置$x_0=0.3$として，primitive変数を

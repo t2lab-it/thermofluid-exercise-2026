@@ -41,9 +41,9 @@ website:
           - href: advanced/cairomakie.qmd
             text: CairoMakieによる可視化
           - href: advanced/package-built-solvers.qmd
-            text: パッケージを使って偏微分方程式ソルバを構築する
+            text: PDEソルバ in Julia
           - href: advanced/public-solver-methods.qmd
-            text: 公開ソルバの数値手法を読み解く
+            text: CFDソルバ in Julia
   sidebar:
     - id: course
       title: "熱流体力学演習 2026"
@@ -132,9 +132,9 @@ website:
         - href: advanced/cairomakie.qmd
           text: "CairoMakieによる可視化"
         - href: advanced/package-built-solvers.qmd
-          text: "パッケージを使って偏微分方程式ソルバを構築する"
+          text: "PDEソルバ in Julia"
         - href: advanced/public-solver-methods.qmd
-          text: "公開ソルバの数値手法を読み解く"
+          text: "CFDソルバ in Julia"
     - id: final-project-topics
       title: "最終プロジェクト課題案"
       style: docked

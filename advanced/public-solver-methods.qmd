@@ -1,5 +1,5 @@
 ---
-title: "公開ソルバの数値手法を読み解く"
+title: "CFDソルバ in Julia"
 ---
 ::: {.course-position}
 任意・発展資料

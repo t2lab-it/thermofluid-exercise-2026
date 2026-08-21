@@ -8,7 +8,7 @@ title: "WaterLily.jlによる円柱まわり流れ"
 ## 現象と問いの案
 
 直径 $D$ の二次元円柱へ速度 $U_\infty$ の一様流が当たり，動粘性係数を $\nu$ とします．
-支配方程式と`WaterLily.jl`の境界データ埋め込み法（BDIM）は[公開ソルバの数値手法](../../advanced/public-solver-methods.qmd#埋め込み境界法と非圧縮性流れ)で確認できます．
+支配方程式と`WaterLily.jl`の境界データ埋め込み法（BDIM）は[CFDソルバ in Julia](../../advanced/public-solver-methods.qmd#埋め込み境界法と非圧縮性流れ)で確認できます．
 標準比較の主要パラメータは
 
 $$

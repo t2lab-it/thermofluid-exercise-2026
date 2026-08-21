@@ -56,7 +56,7 @@ sidebar: course
 ### オープンソースソルバ課題
 
 この課題では，ソースコードが公開されているJuliaで実装されたCFDソルバを用いて様々な問題に取り組みます．
-各CFDソルバの詳細は[公開ソルバの数値手法を読み解く](../advanced/public-solver-methods.qmd)にまとめられています．
+各CFDソルバの詳細は[CFDソルバ in Julia](../advanced/public-solver-methods.qmd)にまとめられています．
 ここで言及されている以外のオープンソースソルバを対象にすることも歓迎します．
 
 - [WaterLily.jlによる円柱まわり流れ](../projects/final-project-topics/waterlily-cylinder-flow.qmd)

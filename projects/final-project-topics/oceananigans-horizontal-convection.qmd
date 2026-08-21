@@ -25,7 +25,7 @@ $$
 
 です．
 $\nu$は動粘性係数，$\kappa$は浮力拡散係数です．
-有限体積法，staggered配置，圧力射影の役割は[公開ソルバの数値手法](../../advanced/public-solver-methods.qmd#有限体積法とboussinesq流体)でも確認できます．
+有限体積法，staggered配置，圧力射影の役割は[CFDソルバ in Julia](../../advanced/public-solver-methods.qmd#有限体積法とboussinesq流体)でも確認できます．
 
 基準条件は $L_x=2H$ の二次元領域で，初期場を $u=w=b=0$ とし，上面に
 
