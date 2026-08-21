@@ -30,7 +30,6 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
 - `LinearAlgebra`，`TOML`，`Test`はJuliaに付属する標準ライブラリです．
 - `Plots`は現在の授業用プロジェクトが直接使う外部runtime依存です．
-- `JuliaFormatter`は授業側が版を固定する開発ツールです．
 - `OrdinaryDiffEqLowOrderRK`，`BenchmarkTools`，`SparseArrays`，`IterativeSolvers`は，それぞれを使う後続課題が追加された時点でだけ授業用環境へ加えます．
 
 ## Juliaコードを実行する
@@ -61,19 +60,18 @@ VS Code上の操作は公式資料も参照してください．
 - [formatter](https://www.julia-vscode.org/docs/latest/userguide/formatter/)
 - [linter](https://www.julia-vscode.org/docs/stable/userguide/linter/)
 
-## pull request前に整形とテストを行う
+## pull request前に保存とテストを行う
 
-pull requestを作る前に，リポジトリのルートディレクトリで次の順に実行します．
+pull requestを作る前に，編集したJuliaファイルをVS Codeで保存して自動整形を適用します．
+その後，リポジトリのルートディレクトリで次の順に実行します．
 
 ```bash
-julia --project=. scripts/format.jl
 git diff
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-1行目は学生が編集するJuliaコードを整形します．
-2行目でformatterが加えた変更を自分で読み，意図した変更だけか確認します．
-3行目で全テストを新しいプロセスから実行します．
+1行目で保存時の自動整形を含む変更を自分で読み，意図した変更だけか確認します．
+2行目で全テストを新しいプロセスから実行します．
 
 ## 問題が起きたとき
 
