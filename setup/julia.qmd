@@ -5,37 +5,10 @@ title: "Julia 1.12.6 と VS Code"
 準備 2/5
 :::
 
-## Juliaup で Julia を導入する
+## JuliaupでJuliaを導入する
 
-Julia は Juliaup で管理し，この演習では **1.12.6 ちょうど**を使います．
-インストール方法が変わった場合は，[Julia 公式インストール案内](https://julialang.org/downloads/)を優先してください．
-
-### Windows
-
-PowerShell で Juliaup を導入します．
-
-```powershell
-winget install --name Julia --id 9NJNWW8PVKMN -e -s msstore
-```
-
-### macOS
-
-ターミナルで Juliaup の公式インストーラーを実行します．
-
-```bash
-curl -fsSL https://install.julialang.org | sh
-```
-
-### Linux
-
-ターミナルで Juliaup の公式インストーラーを実行します．
-
-```bash
-curl -fsSL https://install.julialang.org | sh
-```
-
-インストール後，新しいターミナルを開いてください．
-どの OS でも次のコマンドで授業用バージョンを追加し，既定にします．
+公式の[インストール案内](https://julialang.org/downloads/)を参考に，Juliaのバージョンを管理するJuliaupを導入してください．
+その後，新しいターミナルを開いて以下のコマンドを実行し，本演習で使う **Julia ver.1.12.6** を追加してください．
 
 ```bash
 juliaup add 1.12.6
@@ -43,13 +16,15 @@ juliaup default 1.12.6
 julia --version
 ```
 
-最後の出力が `julia version 1.12.6` であることを確認します．
+最後のコマンドで `julia version 1.12.6` が出力されることを確認してください．
 
-## パッケージ環境を復元する
+## パッケージ環境を整備する
 
-学生リポジトリを複製した後は，リポジトリのルートディレクトリへ移動し，授業で固定したパッケージ環境を復元します．
-Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理します．
-`Project.toml`は直接使う依存関係と互換条件，`Manifest.toml`は実際に解決された依存関係全体の版を記録します．
+学生リポジトリを複製した後は，リポジトリのルートディレクトリへ移動し，次のコマンドで授業で固定したパッケージ環境を復元します．
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+```
 
 授業で扱うパッケージは次のように分類します．
 
@@ -57,12 +32,6 @@ Juliaの環境は`Project.toml`と`Manifest.toml`の2ファイルで管理しま
 - `Plots`は現在の授業用プロジェクトが直接使う外部runtime依存です．
 - `JuliaFormatter`は授業側が版を固定する開発ツールです．
 - `OrdinaryDiffEqLowOrderRK`，`BenchmarkTools`，`SparseArrays`，`IterativeSolvers`は，それぞれを使う後続課題が追加された時点でだけ授業用環境へ加えます．
-
-複製直後は，授業側が用意した2ファイルから次のコマンドで環境を復元します．
-
-```bash
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
-```
 
 ## Juliaコードを実行する
 
@@ -92,9 +61,6 @@ VS Code上の操作は公式資料も参照してください．
 - [formatter](https://www.julia-vscode.org/docs/latest/userguide/formatter/)
 - [linter](https://www.julia-vscode.org/docs/stable/userguide/linter/)
 
-VS Codeのターミナルでも`julia version 1.12.6`が表示される必要があります．
-通常のターミナルと結果が異なる場合は，VS Codeを完全に終了してから起動し直してください．
-
 ## pull request前に整形とテストを行う
 
 pull requestを作る前に，リポジトリのルートディレクトリで次の順に実行します．
@@ -111,10 +77,12 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 ## 問題が起きたとき
 
-- `julia --version`が異なる: ターミナルやVS Codeを開き直し，`juliaup status`と`juliaup default 1.12.6`を確認する．
-- パッケージを読み込めない: リポジトリのルートディレクトリと現在のbranchを確認し，`Pkg.instantiate()`を再実行する．
+- `julia --version`が異なる
+  - ターミナルやVS Codeを開き直し，`juliaup status`と`juliaup default 1.12.6`を確認する．
+- パッケージを読み込めない
+  - リポジトリのルートディレクトリと現在のbranchを確認し，`Pkg.instantiate()`を再実行する．
   `Pkg.add`で穴埋めしない．
-- REPLでは動くがスクリプトやテストが失敗する: `Julia: Run File in New Process`または上のCLIで，残ったREPL状態に依存していないか確認する．
-- 保存時整形や警告表示が動かない: リポジトリをフォルダーとして開いたか，Julia拡張と`.vscode/settings.json`が有効か確認する．
-
-Juliaの導入まで確認できたら，[Git・GitHub・学生リポジトリ](git-github.qmd)へ進みます．
+- REPLでは動くがスクリプトやテストが失敗する
+  - `Julia: Run File in New Process`または上のCLIで，残ったREPL状態に依存していないか確認する．
+- 保存時整形や警告表示が動かない
+  - リポジトリをフォルダーとして開いたか，Julia拡張と`.vscode/settings.json`が有効か確認する．
