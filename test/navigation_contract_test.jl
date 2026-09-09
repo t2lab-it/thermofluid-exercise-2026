@@ -26,6 +26,7 @@ const EXPECTED_COURSE_HREFS = [
 const EXPECTED_GUIDE_HREFS = Set([
     "guides/testing.qmd", "guides/commands.qmd",
     "guides/troubleshooting.qmd", "guides/glossary.qmd",
+    "guides/final-project-handoff.qmd",
 ])
 const EXPECTED_ADVANCED_HREFS = Set([
     "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
@@ -607,8 +608,8 @@ end
     )["assignments"]
     @test contracts["F03"]["start_command"] == F03_F04_START_COMMAND
     @test contracts["F04"]["start_command"] == F03_F04_START_COMMAND
-    @test contracts["F03"]["run_path"] == "exercises/F03_vector_calculus/run.jl"
-    @test contracts["F04"]["run_path"] == "exercises/F04_numerical_differentiation/run.jl"
+    @test contracts["F03"]["run_path"] == "exercises/F03-F04_vector_calculus/F03.jl"
+    @test contracts["F04"]["run_path"] == "exercises/F03-F04_vector_calculus/run.jl"
 
     quarto_source = read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String)
     @test occursin("ベクトル解析の証明と数値微分", quarto_source)

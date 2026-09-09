@@ -98,7 +98,7 @@ $E(h)\approx C h^p$ の領域では $R(h)\approx 2^p$，$p_{\mathrm{obs}}\approx
 
 ## 三公式の数値残差
 
-`exercises/F04_numerical_differentiation/run.jl`では，学生の`centered_difference`を外側の偏微分に使い，内側にはF03で提供された解析関数を使います．
+`exercises/F03-F04_vector_calculus/run.jl`では，学生の`centered_difference`を外側の偏微分に使い，内側にはF03で提供された解析関数を使います．
 
 - `curl_gradient_residual`: 提供済み`gradient_scalar`の各成分を，学生の中心差分で外側から微分し，curlを組み立てる．
 - `divergence_curl_residual`: 提供済み`curl_vector`の各成分を，学生の中心差分で外側から微分し，divergenceを組み立てる．

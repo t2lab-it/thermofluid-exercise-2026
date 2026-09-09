@@ -6,3 +6,5 @@ title: "ガイド"
 - [コマンド一覧](commands.qmd): セットアップと課題ですでに扱ったコマンド
 - [トラブル対応](troubleshooting.qmd): 最初に残す証拠と相談手順
 - [用語集](glossary.qmd): 教材内の日本語・英語の対応
+
+- [最終プロジェクトへのコード移行](final-project-handoff.qmd)：課題成果から必要なコードを選び，移行先で再検証する手順．

@@ -13,11 +13,13 @@ title: "数値微分によるベクトル公式の検証"
 
 ## 学生リポジトリ内の場所
 
-- 解析関数: `exercises/F03_vector_calculus/run.jl`
-- 実装・実行: `exercises/F04_numerical_differentiation/run.jl`
-- 提供テスト: `test/provided/F04.jl`
-- 自分のテスト: `test/student/F04.jl`
-- 学習ログ: `learning_logs/F03-F04.md`
+自分が複製したローカルの `exercises/F03-F04_vector_calculus/` を開きます．通常編集するのは `run.jl`，`tests.jl`，`learning_log.md` の3ファイルです．
+
+- 解析関数: `exercises/F03-F04_vector_calculus/F03.jl`
+- 実装・実行: `exercises/F03-F04_vector_calculus/run.jl`
+- 提供テスト: `exercises/F03-F04_vector_calculus/provided_tests.jl`
+- 自分のテスト: `exercises/F03-F04_vector_calculus/tests.jl`
+- 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
 
 ## 開始または再開
 
@@ -54,16 +56,16 @@ julia --project=. scripts/course.jl start F03-F04
 ## 実行とテスト
 
 ```bash
-julia --project=. exercises/F04_numerical_differentiation/run.jl
-julia --project=. test/runtests.jl
+julia --project=. exercises/F03-F04_vector_calculus/run.jl
+julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-`test/student/F04.jl`には，手計算で導関数が分かる独立な例を一つ追加し，どの実装ミスを検出するかコメントで説明します．
+`exercises/F03-F04_vector_calculus/tests.jl`には，手計算で導関数が分かる独立な例を一つ追加し，どの実装ミスを検出するかコメントで説明します．
 学生テストはこの一ファイルだけです．
 
 ## 学習ログ
 
-`learning_logs/F03-F04.md`に，三つの成分証明，一次元誤差と観測次数，`n=9`と`n=17`の三残差と比，解析的証明と数値的証拠の役割の違い，自分のテスト，AI利用，diff・テスト・結果を一つにまとめます．
+`exercises/F03-F04_vector_calculus/learning_log.md`に，三つの成分証明，一次元誤差と観測次数，`n=9`と`n=17`の三残差と比，解析的証明と数値的証拠の役割の違い，自分のテスト，AI利用，diff・テスト・結果を一つにまとめます．
 
 解析的証明は恒等式が成立する理由を示します．
 数値的証拠は差分実装が期待する収束を示します．
@@ -75,6 +77,6 @@ julia --project=. test/runtests.jl
 - 学生TODOである前進・後退・中心差分の3関数だけを実装した．
 - 一次元の全誤差比と観測次数を確認した．
 - `n=9`と`n=17`で三残差が減少し，各比が`3.0`から`4.8`に入ることを確認した．
-- `test/student/F04.jl`に独立なテストを追加し，全テストを通した．
-- `learning_logs/F03-F04.md`を完成させ，意図したdiffだけをcommitした．
+- `exercises/F03-F04_vector_calculus/tests.jl`に独立なテストを追加し，全テストを通した．
+- `exercises/F03-F04_vector_calculus/learning_log.md`を完成させ，意図したdiffだけをcommitした．
 - 同じbranchから一つのPRを作り，F03とF04をまとめて提出した．

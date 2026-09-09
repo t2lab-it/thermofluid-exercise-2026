@@ -17,11 +17,12 @@ title: "Juliaの配列・関数・テスト"
 
 ## 学生リポジトリ内の場所
 
+自分が複製したローカルの `exercises/F02_julia_arrays_and_tests/` を開きます．通常編集するのは `run.jl`，`tests.jl`，`learning_log.md` の3ファイルです．
+
 - 編集するコード: `exercises/F02_julia_arrays_and_tests/run.jl`
-- 提供テスト: `test/provided/F02.jl`
-- 自分で追加するテスト: `test/student/F02.jl`
-- 学習ログの雛形: `learning_logs/templates/F02.md`
-- 提出する学習ログ: `learning_logs/F02.md`
+- 提供テスト: `exercises/F02_julia_arrays_and_tests/provided_tests.jl`
+- 自分で追加するテスト: `exercises/F02_julia_arrays_and_tests/tests.jl`
+- 提出する学習ログ: `exercises/F02_julia_arrays_and_tests/learning_log.md`
 
 ## 課題を開始する
 
@@ -80,7 +81,7 @@ $$
 6. 呼び出し前後で入力配列が同じである．
 
 丸め誤差を含む値には`==`ではなく，理由を説明した許容誤差つき比較を使います．
-`test/student/F02.jl`には，自分で値を選んだ代表例を少なくとも一つ追加してください．
+`exercises/F02_julia_arrays_and_tests/tests.jl`の`@test false`を，自分で値を選んだ代表例へ置き換えてください．
 
 ## 実行とテスト
 
@@ -89,7 +90,7 @@ julia --project=. exercises/F02_julia_arrays_and_tests/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-実行結果，テスト結果，入力契約とテストの意味を`learning_logs/F02.md`へ記録します．
+実行結果，テスト結果，入力契約とテストの意味を`exercises/F02_julia_arrays_and_tests/learning_log.md`へ記録します．
 
 ## 完了条件
 

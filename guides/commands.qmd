@@ -28,7 +28,9 @@ julia --project=. scripts/course.jl preflight
 julia --project=. scripts/course.jl status
 # F02の課題branchを作って開始する
 julia --project=. scripts/course.jl start F02
-# 現在課題と前提課題のテストを実行する
+# 公式出力の配置とサイズを確認する
+julia --project=. scripts/course.jl check-results
+# 現在課題と完了済み課題のテストを実行する
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 

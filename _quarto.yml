@@ -31,6 +31,8 @@ website:
             text: トラブル対応
           - href: guides/glossary.qmd
             text: 用語集
+          - href: guides/final-project-handoff.qmd
+            text: 最終プロジェクトへの移行
       - text: 発展資料
         rel: split-navigation split-navigation-advanced
         menu:
@@ -117,6 +119,8 @@ website:
           text: "コマンド一覧"
         - href: guides/troubleshooting.qmd
           text: "トラブル対応"
+        - href: guides/final-project-handoff.qmd
+          text: "最終プロジェクトへの移行"
         - href: guides/glossary.qmd
           text: "用語集"
     - id: advanced
