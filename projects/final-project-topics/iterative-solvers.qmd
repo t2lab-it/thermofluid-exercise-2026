@@ -99,7 +99,7 @@ CGはSPDを前提とします．
 
 [IterativeSolvers.jl公式CG](https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/cg/)も候補です．
 `cg!` は初期値，SPDな左前処理 `Pl`，`abstol`，`reltol`，`maxiter`，`log=true` の履歴を扱いますが，反復中の真の残差を毎回は計算しないと公式docsに明記されています．
-また，公式stable docsの生成環境は授業のJulia 1.12.6と異なるため，現行環境での互換性をdocsだけから断定しません．
+また，公式stable docsの生成環境は授業のJulia 1.12.7と異なるため，現行環境での互換性をdocsだけから断定しません．
 どちらを使っても，package既定値を共通条件とはみなさず，停止式を明記して真の残差を再計算します．
 
 packageを採用しない場合は，`LinearAlgebra` と `SparseArrays` だけでCPU向けCGとPCGを実装し，授業のJacobi法と同じmatrix-vector interface，停止式，履歴出力を使います．
