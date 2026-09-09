@@ -7,18 +7,18 @@ isdefined(@__MODULE__, :parse_qmd_document) ||
 
 const ASSIGNMENT_IDENTIFIERS = Dict(
     "F00" => String[],
-    "F01" => ["student_greeting", "test/student/F01.jl"],
-    "F02" => ["mean_temperature", "temperature_anomaly", "test/student/F02.jl"],
+    "F01" => ["student_greeting", "exercises/F01_first_pull_request/tests.jl"],
+    "F02" => ["mean_temperature", "temperature_anomaly", "exercises/F02_julia_arrays_and_tests/tests.jl"],
     "F03" => [
         "gradient_scalar", "curl_vector", "laplacian_scalar",
     ],
     "F04" => [
         "forward_difference", "backward_difference", "centered_difference",
-        "centered_partial", "verify_vector_identities", "test/student/F04.jl",
+        "centered_partial", "verify_vector_identities", "exercises/F03-F04_vector_calculus/tests.jl",
     ],
     "N01" => [
         "rectangular_initial_condition", "upwind_step!", "centered_step!",
-        "test/student/N01.jl",
+        "exercises/N01_linear_advection/tests.jl",
     ],
 )
 

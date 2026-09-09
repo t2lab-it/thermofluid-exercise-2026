@@ -14,11 +14,13 @@ title: "ベクトル解析の証明と数値微分"
 
 ## 学生リポジトリ内の場所
 
-- 解析関数: `exercises/F03_vector_calculus/run.jl`
-- 差分関数の実装・実行: `exercises/F04_numerical_differentiation/run.jl`
-- 提供テスト: `test/provided/F04.jl`
-- 自分のテスト: `test/student/F04.jl`
-- 学習ログ: `learning_logs/F03-F04.md`
+自分が複製したローカルの `exercises/F03-F04_vector_calculus/` を開きます．通常編集するのは `run.jl`，`tests.jl`，`learning_log.md` の3ファイルです．
+
+- 解析関数: `exercises/F03-F04_vector_calculus/F03.jl`
+- 差分関数の実装・実行: `exercises/F03-F04_vector_calculus/run.jl`
+- 提供テスト: `exercises/F03-F04_vector_calculus/provided_tests.jl`
+- 自分のテスト: `exercises/F03-F04_vector_calculus/tests.jl`
+- 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
 
 ## 開始
 
@@ -48,7 +50,7 @@ $$
 ## 実装範囲
 
 `gradient_scalar(point)`，`curl_vector(point)`，`laplacian_scalar(point)`は解析的な微分結果として提供済みです．
-学生が実装するのは，`exercises/F04_numerical_differentiation/run.jl`内の次の3関数だけです．
+学生が実装するのは，`exercises/F03-F04_vector_calculus/run.jl`内の次の3関数だけです．
 
 - `forward_difference(f, x, h)`
 - `backward_difference(f, x, h)`

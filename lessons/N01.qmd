@@ -208,15 +208,19 @@ $$
 `summary.toml`の最小・最大と公式図を同じ実行結果として見比べます．
 中心差分法 + Euler法を実用的な解法として推奨しているのではありません．
 
+## 診断を読む
+
+`run.jl`の`simulate`で実効CFLと最小・最大値を求め，`summary_section`で初期範囲からの超過量を求めます．この計算と図を対応させ，中心差分＋陽Eulerの振動・増幅を説明してください．入力検証・TOML保存・描画の詳細は`provided_support.jl`にあります．
+
 ## テストで確かめる
 
 各数値関数から呼ばれる入力検証は，実行時の入力条件を確認し，誤った配列や計算条件を早く知らせます．
-`test/provided/N01.jl`は教材側の包括的な確認として，数値式，入力条件，公式出力を保護します．
-`test/student/N01.jl`では，自分で選んだ代表例を一件だけ，入力，関数呼び出し，期待値が分かる形で書きます．
+`exercises/N01_linear_advection/provided_tests.jl`は教材側の包括的な確認として，数値式，入力条件，公式出力を保護します．
+`exercises/N01_linear_advection/tests.jl`では，自分で選んだ代表例を一件だけ，入力，関数呼び出し，期待値が分かる形で書きます．
 
 この1次元線形移流課題の完成要件は，`run.jl`の3つのTODOを実装し，時間ループと結果を説明することです．
 `run.jl`にある`main`，`module`，`export`，`include`と，`provided_support.jl`にある`TOML`，`Plots`，詳細な入力検証，TOML出力，作図処理は提供済みです．
-`main`は二つの`simulate`から受け取った結果を`write_summary`と`make_plots`へ渡し，`results/N01`の公式出力を作ります．
+`main`は二つの`simulate`から受け取った結果を`write_summary`と`make_plots`へ渡し，`exercises/N01_linear_advection/results`の公式出力を作ります．
 関数名，引数，スキーム，出力ファイル名，要約のキーは変更しません．
 
 {{< include /lessons/_understanding-check.qmd >}}

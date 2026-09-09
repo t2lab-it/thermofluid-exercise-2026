@@ -11,11 +11,13 @@ title: "1次元線形移流方程式"
 
 ## 学生リポジトリ内の場所
 
+自分が複製したローカルの `exercises/N01_linear_advection/` を開きます．通常編集するのは `run.jl`，`tests.jl`，`learning_log.md` の3ファイルです．
+
 - 実装・実行: `exercises/N01_linear_advection/run.jl`
 - 提供済みの補助ファイル: `exercises/N01_linear_advection/provided_support.jl`
-- 提供テスト: `test/provided/N01.jl`
-- 自分のテスト: `test/student/N01.jl`
-- 学習ログ: `learning_logs/N01.md`
+- 提供テスト: `exercises/N01_linear_advection/provided_tests.jl`
+- 自分のテスト: `exercises/N01_linear_advection/tests.jl`
+- 学習ログ: `exercises/N01_linear_advection/learning_log.md`
 
 ## 開始
 
@@ -56,8 +58,9 @@ $$
 2. 正の速度に対する上流差分 + Euler法による更新
 3. 中心差分 + Euler法による更新
 
+実効CFL・極値と，`summary_section`のオーバーシュート・アンダーシュートの計算も`run.jl`で確認します．
 `main`は`run.jl`にあり，二つの`simulate`を実行して，提供済みの`write_summary`と`make_plots`へ結果を渡します．
-`main`から`write_summary`と`make_plots`を経て，`results/N01`へ3つの公式出力が作られます．
+`main`から`write_summary`と`make_plots`を経て，`exercises/N01_linear_advection/results`へ3つの公式出力が作られます．
 
 ## 実行とテスト
 
@@ -66,11 +69,13 @@ julia --project=. exercises/N01_linear_advection/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-公式出力は次の3ファイルです．
+初回実行時に課題内の`results/`を作ります．完成結果はテンプレートに同梱しません．再生成した次の3ファイルを確認し，学習ログから参照してcommitします．
 
-- `results/N01/upwind.png`
-- `results/N01/centered-euler.png`
-- `results/N01/summary.toml`
+- `exercises/N01_linear_advection/results/upwind.png`
+- `exercises/N01_linear_advection/results/centered-euler.png`
+- `exercises/N01_linear_advection/results/summary.toml`
+
+図中の`Initial`は初期値，`Final`は最終値です．`Upwind`は上流差分，`Centered`は中心差分を表します．
 
 ![安定な上流差分法 + Euler法の公式出力](../assets/figures/N01-upwind.png){fig-alt="上流差分法 + Euler法で移流した矩形波"}
 
@@ -79,9 +84,9 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ## 自分のテストと学習ログ
 
 各関数から呼ばれる入力検証は，実行時の入力条件を確認して誤入力を検出します．
-`test/provided/N01.jl`は数値式，入力条件，公式出力を保護します．
+`exercises/N01_linear_advection/provided_tests.jl`は数値式，入力条件，公式出力を保護します．
 
-`test/student/N01.jl`の説明コメントと`@test false`を削除し，手計算できる更新式または安定・不安定比較から自分で選んだ代表例を一つ実装します．
+`exercises/N01_linear_advection/tests.jl`の`@test false`を置き換え，手計算できる更新式または安定・不安定比較から自分で選んだ代表例を一つ実装します．
 入力，関数呼び出し，期待値が分かることと，自分のテストが実際に通ることを確認してください．
 
 学習ログには，そのテストが保証することと保証しないことを分けて記録します．
