@@ -6,7 +6,7 @@
 
 ## 必要なローカル環境
 
-- Julia 1.12.6
+- Julia 1.12.7
 - Quarto 1.9.31
 - Git
 
@@ -20,7 +20,7 @@ quarto --version
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
-JuliaとQuartoの表示がそれぞれ`1.12.6`、`1.9.31`であることを確認します。
+JuliaとQuartoの表示がそれぞれ`1.12.7`、`1.9.31`であることを確認します。
 
 ## レンダリング
 

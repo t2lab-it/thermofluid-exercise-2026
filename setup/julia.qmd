@@ -1,5 +1,5 @@
 ---
-title: "Julia 1.12.6 と VS Code"
+title: "Julia 1.12.7 と VS Code"
 ---
 ::: {.course-position}
 準備 2/5
@@ -8,15 +8,15 @@ title: "Julia 1.12.6 と VS Code"
 ## JuliaupでJuliaを導入する
 
 公式の[インストール案内](https://julialang.org/downloads/)を参考に，Juliaのバージョンを管理するJuliaupを導入してください．
-その後，新しいターミナルを開いて以下のコマンドを実行し，本演習で使う **Julia ver.1.12.6** を追加してください．
+その後，新しいターミナルを開いて以下のコマンドを実行し，本演習で使う **Julia ver.1.12.7** を追加してください．
 
 ```bash
-juliaup add 1.12.6
-juliaup default 1.12.6
+juliaup add 1.12.7
+juliaup default 1.12.7
 julia --version
 ```
 
-最後のコマンドで `julia version 1.12.6` が出力されることを確認してください．
+最後のコマンドで `julia version 1.12.7` が出力されることを確認してください．
 
 ## パッケージ環境を整備する
 
@@ -76,7 +76,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ## 問題が起きたとき
 
 - `julia --version`が異なる
-  - ターミナルやVS Codeを開き直し，`juliaup status`と`juliaup default 1.12.6`を確認する．
+  - ターミナルやVS Codeを開き直し，`juliaup status`と`juliaup default 1.12.7`を確認する．
 - パッケージを読み込めない
   - リポジトリのルートディレクトリと現在のbranchを確認し，`Pkg.instantiate()`を再実行する．
   `Pkg.add`で穴埋めしない．
