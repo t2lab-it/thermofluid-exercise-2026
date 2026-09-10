@@ -19,7 +19,7 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 実行する診断コードと提供テストは，学生リポジトリの次の場所にあります．
 
 - 診断コード: exercises/F00_environment/run.jl
-- 提供テスト: test/provided/F00.jl
+- 提供テスト: test/f00_preflight_test.jl
 
 ## 実行
 
@@ -54,7 +54,7 @@ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github 
 julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
 ~~~
 
-成功すると F00 is complete と Current exercise is now F01 が表示されます．
+成功すると `F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。` が表示されます．
 出力にはruntime，pwd，Julia，Git，手動確認の結果が残ります．公式生成物はありません．
 
 ## 完了条件

@@ -34,12 +34,18 @@ read_environment(relative) =
     @test !occursin("YOUR_COURSE_REPOSITORY_URL", git_setup)
     @test !occursin("HTTPS URL", git_setup)
     @test occursin("SSH接続は標準の複製経路", git_setup)
+    @test findfirst("SSHでGitHubへ接続する", git_setup) <
+        findfirst("git clone git@github.com:OWNER/REPOSITORY.git", git_setup)
 
     @test occursin("準備 3/5 の必須手順", ssh)
     @test occursin("### Windows (WSL2 Ubuntu 24.04)", ssh)
     @test occursin("### macOS", ssh)
     @test occursin("### Linux", ssh)
     @test occursin("git remote set-url origin git@github.com:OWNER/REPOSITORY.git", ssh)
+    @test findfirst("## 既存のSSH接続を先に確認する", ssh) <
+        findfirst("## 既存のcloneのoriginをSSHへ切り替える", ssh)
+    @test !occursin("## 現在の接続方法を記録する", ssh)
+    @test occursin("既存のclone", ssh)
 
     @test occursin("Windows (WSL2 Ubuntu)", cli)
     @test occursin("install_linux.md", cli)
@@ -51,11 +57,12 @@ read_environment(relative) =
         "confirm-vscode",
         "confirm-github",
         "confirm-agent",
-        "F00 is complete",
-        "Current exercise is now F01",
+        "F00が完了しました。現在の課題はF01です。",
     )
         @test occursin(term, f00)
     end
+    @test occursin("test/f00_preflight_test.jl", f00)
+    @test !occursin("test/provided/F00.jl", f00)
 
     for term in ("pwd", "uname -a", "git remote -v", "WSL1", "/mnt/c")
         @test occursin(term, troubleshooting)

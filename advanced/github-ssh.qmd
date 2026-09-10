@@ -30,18 +30,6 @@ SSH鍵を準備してGitHubへの接続を確認し，個人課題用リポジ�
 既存の鍵ファイルが存在する場合，それらを削除・上書きしないでください．
 :::
 
-## 現在の接続方法を記録する
-
-学生リポジトリのルートディレクトリで，未commitの変更と現在のリモートURLを確認します．
-
-```bash
-git status --short
-git remote -v
-```
-
-`origin`の取得先とpush先が`https://github.com/...`なら，現在はHTTPS接続です．
-すでに`git@github.com:...`ならSSH接続を利用できており，以降の内容を実行する必要はありません．
-
 ## 既存のSSH接続を先に確認する
 
 ```bash
@@ -146,11 +134,13 @@ ssh -T git@github.com
 成功メッセージに，接続したい自分のGitHubユーザー名が含まれることを確認します．
 別のユーザー名が出た場合は，教員・TAへ相談してください．
 
-## 既存のoriginをSSHへ切り替える
+## 既存のcloneのoriginをSSHへ切り替える
 
+すでにHTTPSで複製済みの学生リポジトリだけが対象です．初めて複製する場合は，この節を飛ばして，SSH接続の確認後に教材のclone手順へ戻ります．
 学生リポジトリを開き，**Code** → **SSH**から取得したURLを用いて以下のコマンドを実行してください．
 
 ```bash
+git status --short
 git remote -v
 git remote set-url origin git@github.com:OWNER/REPOSITORY.git
 git remote -v
