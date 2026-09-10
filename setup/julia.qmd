@@ -5,6 +5,13 @@ title: "Julia 1.13.0 と VS Code"
 準備 2/5
 :::
 
+## OS別の実行場所
+
+Windowsでは WSL2 Ubuntu 24.04 の端末を開き，その Linux 側で以下のコマンドを実行します．
+リポジトリは /home/<user>/... の下へ置き，/mnt/c/... は使いません．
+Windows版VS Codeでは VS Code Remote - WSL の公式チュートリアルに従ってリポジトリを開きます．
+macOSとnative Linuxでは，それぞれの標準ターミナルとVS Codeを使います．
+
 ## JuliaupでJuliaを導入する
 
 公式の[インストール案内](https://julialang.org/downloads/)を参考に，Juliaのバージョンを管理するJuliaupを導入してください．

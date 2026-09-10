@@ -3,10 +3,12 @@ title: "SSHでGitHubへ接続する"
 ---
 
 ::: {.course-position}
-任意・発展資料
+準備 3/5 の必須手順
 :::
 
-このページは，標準のHTTPSによる複製と最初のpull requestを完了した学生向けの任意資料です．
+このページは，個人課題用リポジトリを複製する前に完了する標準SSH手順です．
+Windowsでは，このページのコマンドを WSL2 Ubuntu の Linux 側で実行します．
+macOSとnative Linuxでは各OSの標準ターミナルで実行します．
 
 ## SSHを使えると何が嬉しいか
 
@@ -16,7 +18,7 @@ title: "SSHでGitHubへ接続する"
 
 ## このページの到達点
 
-すでに複製した学生リポジトリの`origin`をHTTPS URLからSSH URLへ安全に切り替えます．
+SSH鍵を準備してGitHubへの接続を確認し，個人課題用リポジトリをSSH URLで複製できる状態にします．すでにHTTPSで複製済みの場合は，最後にoriginをSSH URLへ安全に切り替えます．
 
 ## 実行前の安全確認
 
@@ -27,18 +29,6 @@ title: "SSHでGitHubへ接続する"
 `.pub`で終わる公開鍵だけがGitHubへ登録する対象です．
 既存の鍵ファイルが存在する場合，それらを削除・上書きしないでください．
 :::
-
-## 現在の接続方法を記録する
-
-学生リポジトリのルートディレクトリで，未commitの変更と現在のリモートURLを確認します．
-
-```bash
-git status --short
-git remote -v
-```
-
-`origin`の取得先とpush先が`https://github.com/...`なら，現在はHTTPS接続です．
-すでに`git@github.com:...`ならSSH接続を利用できており，以降の内容を実行する必要はありません．
 
 ## 既存のSSH接続を先に確認する
 
@@ -62,26 +52,23 @@ ssh -T git@github.com
 鍵生成中にパスフレーズを求められたら，空欄にせず設定してください．
 入力中は画面に文字が表示されないことに注意してください．
 
-### Windows
+### Windows (WSL2 Ubuntu 24.04)
 
-PowerShellで確認し，鍵を作成します．
+Windowsでは WSL2 Ubuntu の端末で，Linux向けの手順を実行します．
+まずリポジトリを置く場所がLinuxファイルシステム上であることを確認してください．
 
-```powershell
-Get-ChildItem -Force "$HOME\.ssh"
-ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL" -f "$HOME\.ssh\id_ed25519_github"
-Get-Service -Name ssh-agent
-```
-
-`ssh-agent`が実行中の場合は，管理者権限ではない通常のPowerShellで鍵を読み込みます．
-
-```powershell
-ssh-add "$HOME\.ssh\id_ed25519_github"
+~~~bash
+pwd
+uname -a
+ls -la ~/.ssh
+ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL" -f ~/.ssh/id_ed25519_github
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519_github
 ssh-add -l
-Get-Content "$HOME\.ssh\id_ed25519_github.pub"
-```
+cat ~/.ssh/id_ed25519_github.pub
+~~~
 
-Windows OpenSSH Authentication Agentの開始・有効化には，自分のPC上の管理者PowerShellが必要になる場合があります．
-エージェントが停止している，権限がないなどの場合は，推測でサービス設定を変更せず，[GitHub公式のWindows手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)を確認して教員・TAへ相談してください．
+uname -aにWSL2のカーネルが表示されない，またはpwdが/mnt/c以下の場合は，課題を進めず受講環境の準備へ戻ります．
 
 ### macOS
 
@@ -147,11 +134,13 @@ ssh -T git@github.com
 成功メッセージに，接続したい自分のGitHubユーザー名が含まれることを確認します．
 別のユーザー名が出た場合は，教員・TAへ相談してください．
 
-## 既存のoriginをSSHへ切り替える
+## 既存のcloneのoriginをSSHへ切り替える
 
+すでにHTTPSで複製済みの学生リポジトリだけが対象です．初めて複製する場合は，この節を飛ばして，SSH接続の確認後に教材のclone手順へ戻ります．
 学生リポジトリを開き，**Code** → **SSH**から取得したURLを用いて以下のコマンドを実行してください．
 
 ```bash
+git status --short
 git remote -v
 git remote set-url origin git@github.com:OWNER/REPOSITORY.git
 git remote -v

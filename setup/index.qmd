@@ -5,33 +5,47 @@ title: "受講環境の準備"
 準備 1/5
 :::
 
-この演習では，Windows，macOS，Linux のローカル環境を正式にサポートします．
+この演習では，macOS・native Linux，および Windows 上の WSL2 Ubuntu 24.04 LTS の Linux 側を正式にサポートします．
+Windows での演習コマンドは WSL2 Ubuntu 内で実行し，Windows ネイティブ側の Julia・Git・Git Bash は使いません．
 受講開始までに，Julia 1.13.0，Git，Visual Studio Code（VS Code），Julia 拡張機能，および対応するコーディングエージェントのうち一つを準備してください．
+
+Windows では，まず Microsoft公式のWSLインストール手順
+(https://learn.microsoft.com/en-us/windows/wsl/install) に従って Ubuntu 24.04 LTS を準備します．
+その後，VS Code Remote - WSL の公式チュートリアル
+(https://code.visualstudio.com/docs/remote/wsl-tutorial) に従い，Windows版VS CodeからWSL2のリポジトリを開きます．
+演習リポジトリは WSL2 の Linux ファイルシステムにある /home/<user>/... の下へ clone してください．/mnt/c/... は正式な配置場所ではありません．
 
 ## 準備するもの
 
 | 項目 | 必須条件 | 確認方法 |
 |---|---|---|
-| Julia | Juliaup で Julia 1.13.0 を選択 | `julia --version` |
-| Git | コマンドラインから実行可能 | `git --version` |
-| VS Code | 起動できる | アプリケーションを起動 |
-| Julia 拡張機能 | VS Code から Julia を実行できる | Julia ファイルを開いて実行 |
+| 実行環境 | Windows: WSL2 Ubuntu 24.04 LTS，または native macOS / native Linux | uname -a と pwd |
+| Julia | Juliaup で Julia 1.13.0 を選択 | julia --version |
+| Git | 実行環境の Linux/macOS 側から実行可能 | git --version |
+| VS Code | WindowsではRemote-WSL接続，macOS/Linuxではローカル起動 | リポジトリを開く |
+| Julia 拡張機能 | 接続中の環境で Julia を実行できる | Julia ファイルを開いて実行 |
 | GitHub | 学生ごとに割り当てられる個人課題用リポジトリを閲覧できる | ブラウザで手動確認 |
-| コーディングエージェント | 標準または代替の一つで編集とコマンド実行ができる | [エージェントの確認](agents.qmd) |
+| コーディングエージェント | 接続中の環境で編集とコマンド実行ができる | エージェントの確認 |
 
 ## 推奨する準備順
 
 1. このページで，準備するものと支援を依頼するときの情報を確認する．
 2. [Julia と VS Code](julia.qmd)を準備する．
-3. [Git と GitHub](git-github.qmd)を準備し，個人課題用リポジトリを複製する．
+3. [Git と GitHub](git-github.qmd)を準備し，SSHで個人課題用リポジトリを複製する．
 4. [コーディングエージェント](agents.qmd)を一つ確認する．
 5. [課題ワークフロー](../guides/workflow.qmd)で，最初の課題以降のbranch・PR手順を確認する．
 6. 5ページの準備を終えてから，[最初の環境診断](../assignments/F00.qmd)（課題ID: F00）を実行する．
 
-環境の復元と診断に使うコマンドは，複製後に実行できるよう[Git と GitHub](git-github.qmd)にまとめています．
-コーディングエージェントと課題ワークフローを確認してから，最初の環境診断へ進んでください．
+環境の復元と診断に使うコマンドは，複製後に実行できるよう [Git と GitHub](git-github.qmd) にまとめています．
+[コーディングエージェント](agents.qmd)と[課題ワークフロー](../guides/workflow.qmd)を確認してから，最初の環境診断へ進んでください．
+
+## Windowsの実行境界
+
+Windowsでは，演習の Julia・Git・SSH・VS Code拡張機能・コーディングエージェントをすべて WSL2 Ubuntu 側で動かします．
+Windows版VS Codeは Remote - WSL 接続の画面として使いますが，Julia拡張機能とエージェントの処理対象は WSL2 側です．
+WSL1，Windowsネイティブの Julia・Git，Git Bash，および /mnt/c 以下の clone は正式サポート対象外です．
 
 ## 支援を依頼するとき
 
-教員・TA へ，OS，`julia --version`，`git --version`，失敗したコマンド，エラーメッセージを伝えてください．
+教員・TA へ，OSまたはWSL2の状態，pwd，uname -a，julia --version，git --version，失敗したコマンド，エラーメッセージを伝えてください．
 アクセストークン，APIキー，パスワード，個人情報は共有しないでください．

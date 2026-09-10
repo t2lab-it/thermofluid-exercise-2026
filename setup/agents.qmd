@@ -7,6 +7,13 @@ title: "コーディングエージェントの準備"
 
 ここでは，授業で使うコーディングエージェントを導入します．
 
+## WindowsのRemote - WSL
+
+Windowsでは，Windows版VS Codeに Remote - WSL 拡張機能を導入し，WSL2 Ubuntu内の学生リポジトリを開きます．
+VS Codeの左下にWSL接続が表示され，統合ターミナルの pwd が /home/<user>/... になっていることを確認してください．
+Julia拡張機能と以下のエージェントは，Remote - WSLで開いた接続先へ導入・接続し，WSL2側の Julia・Git・SSH を使います．
+Windowsネイティブ側でエージェントや課題コマンドを実行しません．
+
 ## GitHub Copilot
 
 1. VS Code の Extensions で `GitHub Copilot` をインストールする．
