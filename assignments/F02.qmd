@@ -20,8 +20,7 @@ title: "Juliaの配列・関数・テスト"
 自分が複製したローカルの `exercises/F02_julia_arrays_and_tests/` を開きます．通常編集するのは `run.jl`，`tests.jl`，`learning_log.md` の3ファイルです．
 
 - 編集するコード: `exercises/F02_julia_arrays_and_tests/run.jl`
-- 提供テスト: `exercises/F02_julia_arrays_and_tests/provided_tests.jl`
-- 自分で追加するテスト: `exercises/F02_julia_arrays_and_tests/tests.jl`
+- 配布済み必須テスト・自作テスト: `exercises/F02_julia_arrays_and_tests/tests.jl`
 - 提出する学習ログ: `exercises/F02_julia_arrays_and_tests/learning_log.md`
 
 ## 課題を開始する
@@ -71,17 +70,14 @@ $$
 
 ## テストする観点
 
-契約の各項目に対応する以下のテストを実装します．
+`tests.jl`には，次の四つを確かめる必須テストが配布済みです．各入力と期待値を読み，手計算でも結果を確かめます．
 
-1. 手計算できる配列の平均が一致する．
-2. 偏差の各値が`T_i-\bar{T}`と一致する．
-3. 偏差の平均または総和が丸め誤差の範囲で0になる．
-4. `Float64`以外の配列でも動作する．
-5. 空配列，`NaN`，`Inf`を拒否する．
-6. 呼び出し前後で入力配列が同じである．
+1. 一つの有限値配列について，平均と偏差配列が一致する．
+2. 偏差の総和が丸め誤差の範囲で0になる．
+3. `temperature_anomaly`の呼び出し前後で入力配列が同じである．
+4. 空配列，`NaN`，`Inf`から一つ選び，対象APIが拒否する．
 
-丸め誤差を含む値には`==`ではなく，理由を説明した許容誤差つき比較を使います．
-`exercises/F02_julia_arrays_and_tests/tests.jl`の`@test false`を，自分で値を選んだ代表例へ置き換えてください．
+自作TODOでは，戻り値の型，別の数学的性質，または必須とは異なる不正入力から一つ選びます．丸め誤差を含む値には`==`ではなく，理由を説明した許容誤差つき比較を使います．
 
 ## 実行とテスト
 
@@ -95,6 +91,6 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ## 完了条件
 
 - 二つの固定APIが入力契約を守る．
-- 型の異なる代表配列を含む提供テストと学生テストが通る．
+- 配布済み必須テストと，型または数学的性質を扱う自作テストが通る．
 - 偏差の性質と入力非変更を説明できる．
 - この課題用のbranch，PR，学習ログを一つずつ作り，GitHub Actions，diff，セルフレビューを完了した．
