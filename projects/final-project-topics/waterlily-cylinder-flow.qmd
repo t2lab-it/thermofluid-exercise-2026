@@ -84,7 +84,7 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 | 役割 | 現行の参照先 | projectへ記録すること |
 |---|---|---|
 | 公式quickstart・API | [`WaterLily.jl` stable docsの「Flow over a circle」](https://waterlily-jl.github.io/WaterLily.jl/stable/) と[本体repository](https://github.com/WaterLily-jl/WaterLily.jl) | docs URL，円柱例の入力・出力，使用したrelease/tagとcommit，変更点 |
-| 固定するpackage版 | [2026-06-26公開の `v1.8.0`](https://github.com/WaterLily-jl/WaterLily.jl/releases/tag/v1.8.0) と[tagの `Project.toml`](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/Project.toml) | 2026-08-14確認時の開始候補は `WaterLily 1.8.0`．Julia 1.12.7で解決した `Project.toml` と `Manifest.toml`，実際のversionをcommitする |
+| 固定するpackage版 | [2026-06-26公開の `v1.8.0`](https://github.com/WaterLily-jl/WaterLily.jl/releases/tag/v1.8.0) と[tagの `Project.toml`](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/Project.toml) | 2026-08-14確認時の開始候補は `WaterLily 1.8.0`．Julia 1.13.0で解決した `Project.toml` と `Manifest.toml`，実際のversionをcommitする |
 | 本体の利用条件 | [`WaterLily.jl`のMIT License](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/LICENSE.md) | 参照・変更・再配布した範囲，著作権表示とlicense |
 | 補助的な公式script | [`WaterLily-Examples/examples/TwoD_Circle.jl`](https://github.com/WaterLily-jl/WaterLily-Examples/blob/main/examples/TwoD_Circle.jl) と[同repositoryのGPL-3.0 License](https://github.com/WaterLily-jl/WaterLily-Examples/blob/main/LICENSE) | 本体quickstartとは別repository・別license．copyまたは派生する場合だけ，参照commitとGPL-3.0の条件を確認する |
 | 数値手法・検証例 | [WeymouthとFontの2025年論文](https://doi.org/10.1016/j.cpc.2025.109748) | BDIM，直交格子，圧力射影，適応時間刻み，格子・領域・時間平均を検証する理由 |
@@ -137,7 +137,7 @@ CPUだけで長いsamplingを完了できない場合は，公式quickstart規�
 ### Step 1：公式資料と再現environmentを固定する
 
 - **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，theme-packが未配布であることを確認します．
-  `WaterLily.jl`のstable quickstartと `v1.8.0` tagを開始候補にし，Julia 1.12.7の自分のprojectへ依存関係を追加して `Project.toml` と `Manifest.toml` を解決します．
+  `WaterLily.jl`のstable quickstartと `v1.8.0` tagを開始候補にし，Julia 1.13.0の自分のprojectへ依存関係を追加して `Project.toml` と `Manifest.toml` を解決します．
   公式例をcopyする場合はrepository，path，commit，license，授業側の変更を記録します．
 - **確認**: 新しいJulia processでpackage versionを表示し，公式quickstartの `Simulation` を構築して一step進めます．
   本体のMITと，補助的な`WaterLily-Examples`のGPL-3.0を混同していないことも確認します．

@@ -6,13 +6,13 @@ title: "受講環境の準備"
 :::
 
 この演習では，Windows，macOS，Linux のローカル環境を正式にサポートします．
-受講開始までに，Julia 1.12.7，Git，Visual Studio Code（VS Code），Julia 拡張機能，および対応するコーディングエージェントのうち一つを準備してください．
+受講開始までに，Julia 1.13.0，Git，Visual Studio Code（VS Code），Julia 拡張機能，および対応するコーディングエージェントのうち一つを準備してください．
 
 ## 準備するもの
 
 | 項目 | 必須条件 | 確認方法 |
 |---|---|---|
-| Julia | Juliaup で Julia 1.12.7 を選択 | `julia --version` |
+| Julia | Juliaup で Julia 1.13.0 を選択 | `julia --version` |
 | Git | コマンドラインから実行可能 | `git --version` |
 | VS Code | 起動できる | アプリケーションを起動 |
 | Julia 拡張機能 | VS Code から Julia を実行できる | Julia ファイルを開いて実行 |

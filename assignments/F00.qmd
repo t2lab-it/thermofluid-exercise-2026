@@ -33,7 +33,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 診断は次の二群を分けて表示します．
 
-1. **機械観測**: Julia が正確に 1.12.7 であること，Git が呼び出せること，VS Code と Julia 拡張機能の準備状況．
+1. **機械観測**: Julia が正確に 1.13.0 であること，Git が呼び出せること，VS Code と Julia 拡張機能の準備状況．
 2. **手動確認**: GitHub で学生リポジトリを閲覧できること，および[対応エージェントの一つ](../setup/agents.qmd)でファイル編集とコマンド実行ができること．
 
 手動確認は，実際に自分で確かめてからプロンプトへ回答してください．
@@ -57,7 +57,7 @@ julia --project=. scripts/course.jl preflight --confirm-github --confirm-agent a
 
 ## 完了条件
 
-- `julia --version` が `julia version 1.12.7` を返す．
+- `julia --version` が `julia version 1.13.0` を返す．
 - `git --version` が成功する．
 - VS Code と Julia 拡張機能を使える．
 - 学生リポジトリをブラウザで閲覧できる．
