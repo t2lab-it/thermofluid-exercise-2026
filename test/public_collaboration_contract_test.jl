@@ -7,6 +7,7 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
     git_setup = read_public("setup/git-github.qmd")
     workflow = read_public("guides/workflow.qmd")
     ai_guidance = read_public("guides/ai-usage.qmd")
+    understanding_check = read_public("lessons/_understanding-check.qmd")
     glossary = read_public("guides/glossary.qmd")
 
     public_scope_match = match(r"(?ms)^##\s+[^\n]*公開範囲\s*\n(?:(?!^##\s).)*", git_setup)
@@ -23,6 +24,12 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
         @test occursin(term, workflow)
     end
     for term in ("依頼内容", "提案", "採用", "修正", "却下", "判断理由")
+        @test occursin(term, ai_guidance)
+    end
+    for term in ("LETUS", "UTF-8", "対話全文", "学生リポジトリ")
+        @test occursin(term, understanding_check)
+    end
+    for term in ("LETUS", "理解度チェック", "全文")
         @test occursin(term, ai_guidance)
     end
     @test occursin("学生リポジトリ", glossary)
