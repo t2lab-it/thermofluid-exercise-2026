@@ -215,8 +215,8 @@ $$
 ## テストで確かめる
 
 各数値関数から呼ばれる入力検証は，実行時の入力条件を確認し，誤った配列や計算条件を早く知らせます．
-`exercises/N01_linear_advection/provided_tests.jl`は教材側の包括的な確認として，数値式，入力条件，公式出力を保護します．
-`exercises/N01_linear_advection/tests.jl`では，自分で選んだ代表例を一件だけ，入力，関数呼び出し，期待値が分かる形で書きます．
+必須TODOは，矩形初期条件，風上差分と中心差分の配列全体，境界条件，安定・不安定の比較を扱います．PNG・TOML・ファイルサイズは学生テストの対象にしません．
+`exercises/N01_linear_advection/tests.jl`では，公開された五つの必須TODOについて入力・呼び出し・期待値を書き，さらに自分で選んだ数値的性質を一件テストします．
 
 この1次元線形移流課題の完成要件は，`run.jl`の3つのTODOを実装し，時間ループと結果を説明することです．
 `run.jl`にある`main`，`module`，`export`，`include`と，`provided_support.jl`にある`TOML`，`Plots`，詳細な入力検証，TOML出力，作図処理は提供済みです．

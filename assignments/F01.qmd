@@ -14,8 +14,7 @@ title: "最初のbranchとpull request"
 自分が複製したローカルの `exercises/F01_first_pull_request/` を開きます．通常編集するのは `run.jl`，`tests.jl`，`learning_log.md` の3ファイルです．
 
 - 編集するコード: `exercises/F01_first_pull_request/run.jl`
-- 提供テスト: `exercises/F01_first_pull_request/provided_tests.jl`
-- 自分で追加するテスト: `exercises/F01_first_pull_request/tests.jl`
+- 必須・自作テスト: `exercises/F01_first_pull_request/tests.jl`
 - 提出する学習ログ: `exercises/F01_first_pull_request/learning_log.md`
 
 長い手順と判断基準の正本は，このページと[共通課題ワークフロー](../guides/workflow.qmd)です．
@@ -62,8 +61,8 @@ julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-`exercises/F01_first_pull_request/tests.jl`の未記入テスト`@test false`を，自分で選んだ名前を使う代表的な挨拶のテストへ置き換えます．
-テストが何を保証し，何を保証しないかを学習ログに一文ずつ書きます．
+`exercises/F01_first_pull_request/tests.jl`の三つのTODOを置き換えます．必須テストでは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を確かめます．自作テストでは，必須とは異なる名前と期待文字列を自分で選びます．
+各テストが何を保証し，何を保証しないかを学習ログに一文ずつ書きます．
 
 ## 4. 公式出力を確認する
 
@@ -109,7 +108,7 @@ PRのCIが成功したことと差分を確認します．
 特に，以下の項目を自身で確認してください：
 
 - 課題と無関係なファイルがない．
-- 提供テストを削除・弱体化していない．
+- `tests.jl`の必須TODOを省略せず，自作テストも空・恒真・根拠のない過大な許容誤差にしていない．
 - コード，テスト，学習ログの説明が一致する．
 - 秘密情報や不要な個人情報がない．
 - AI提案を使った場合，採否と理由を説明している．
