@@ -23,20 +23,15 @@ GitHubトークン，ブラウザに表示される確認コード，SSH秘密�
 
 ## GitHub CLIを導入する
 
-### Windows
+### Windows (WSL2 Ubuntu)
 
-PowerShellを利用してGitHub CLIを導入します．
-最新の導入方法は[GitHub CLI公式Windows手順](https://github.com/cli/cli/blob/trunk/docs/install_windows.md)を確認してください．
+Windowsでは，WSL2 Ubuntu内でLinux向けの公式手順を実行します．
+最新の導入方法は GitHub CLI公式Linux手順
+(https://github.com/cli/cli/blob/trunk/docs/install_linux.md) を確認してください．
 
-```powershell
-winget install --id GitHub.cli --source winget
-```
-
-PATHの変更を反映するため，ウィンドウを閉じて開き直したうえで以下を確認してください．
-
-```powershell
+~~~bash
 gh --version
-```
+~~~
 
 ### macOS
 
@@ -153,16 +148,6 @@ gh pr create \
   --base main \
   --head BRANCH \
   --title "YOUR PR TITLE" \
-  --body-file scratch/pr-body.md
-```
-
-Windows PowerShellでは行継続記号にバッククォートを使います．
-
-```powershell
-gh pr create `
-  --base main `
-  --head BRANCH `
-  --title "YOUR PR TITLE" `
   --body-file scratch/pr-body.md
 ```
 

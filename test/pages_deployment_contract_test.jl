@@ -14,7 +14,7 @@ using Test
         @test occursin("pages: write", workflow)
         @test occursin("id-token: write", workflow)
         @test occursin("julia-actions/setup-julia@v2", workflow)
-        @test occursin("version: '1.12.7'", workflow)
+        @test occursin("version: '1.13.0'", workflow)
         @test occursin("quarto-dev/quarto-actions/setup@v2", workflow)
         @test occursin("version: '1.9.31'", workflow)
         setup_quarto = findfirst("      - name: Set up Quarto", workflow)

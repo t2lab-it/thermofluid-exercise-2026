@@ -17,17 +17,22 @@ title: "トラブル対応"
 3. リポジトリのルートで次を実行する．
 
 ```bash
+pwd
+uname -a
 julia --version
 git --version
 git status --short
 git branch --show-current
+git remote -v
 ```
 
-4. OS，期待した結果，実際の結果，失敗直前に行った操作をメモする．
-5. 秘密情報や個人情報が含まれていないことを確認する．
+4. WindowsならWSL2 Ubuntu 24.04内で実行したか，pwdが/home/<user>/...か，uname -aにWSL2が含まれるかを確認する．macOS・native LinuxではOS名を記録する．
+5. OS，期待した結果，実際の結果，失敗直前に行った操作をメモする．
+6. 秘密情報や個人情報が含まれていないことを確認する．
 
 ## 自分で確認する範囲
 
+- 実行環境が不明，WSL1，Windowsネイティブ側，または/mnt/c以下: 受講環境の準備へ戻る．
 - `julia`や`git`が見つからない: [受講環境の準備](../setup/index.qmd)へ戻る．
 - Juliaの版が違う: [Julia 1.13.0とVS Code](../setup/julia.qmd)を確認する．
 - 複製・認証で止まる: [Git・GitHub](../setup/git-github.qmd)の順序を確認する．

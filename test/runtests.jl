@@ -12,6 +12,7 @@ include(joinpath(@__DIR__, "assignment_interface_contract_test.jl"))
 include(joinpath(@__DIR__, "reference_artifact_contract_test.jl"))
 include(joinpath(@__DIR__, "navigation_contract_test.jl"))
 include(joinpath(@__DIR__, "path_contract_test.jl"))
+include(joinpath(@__DIR__, "environment_contract_test.jl"))
 include(joinpath(@__DIR__, "pages_deployment_contract_test.jl"))
 function write_fixture(root::AbstractString; run_path_present::Bool, canonical::AbstractString)
     public = joinpath(root, "public")
@@ -102,12 +103,12 @@ end
     end
 
     project = TOML.parsefile(joinpath(SITE_ROOT, "Project.toml"))
-    @test project["compat"]["julia"] == "1.12.7"
+    @test project["compat"]["julia"] == "1.13.0"
     @test project["compat"]["Plots"] == "1.41.6"
     @test haskey(project["deps"], "QuartoNotebookRunner")
     @test !haskey(project["deps"], "CairoMakie")
     manifest = read(joinpath(SITE_ROOT, "Manifest.toml"), String)
-    @test occursin("julia_version = \"1.12.7\"", manifest)
+    @test occursin("julia_version = \"1.13.0\"", manifest)
     @test !occursin("[[deps.CairoMakie]]", manifest)
 
     png_signature = UInt8[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]

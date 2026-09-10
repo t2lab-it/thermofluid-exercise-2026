@@ -6,11 +6,11 @@
 
 ## 必要なローカル環境
 
-- Julia 1.12.7
+- Julia 1.13.0
 - Quarto 1.9.31
 - Git
 
-Windows、macOS、Linuxのローカル環境を対象にします。Codespaces、devcontainer、Jupyterは使用しません。
+WindowsではWSL2 Ubuntu 24.04 LTSのLinux側，macOSではnative macOS，Linuxではnative Linuxを対象にします。Windowsネイティブ側のJulia・Git・Git Bash・WSL1と/mnt/c以下のcloneは正式サポートしません。Codespaces、devcontainer、Jupyterは使用しません。
 
 ## 初期化
 
@@ -20,7 +20,7 @@ quarto --version
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
-JuliaとQuartoの表示がそれぞれ`1.12.7`、`1.9.31`であることを確認します。
+JuliaとQuartoの表示がそれぞれ`1.13.0`、`1.9.31`であることを確認します。
 
 ## レンダリング
 
@@ -30,12 +30,8 @@ macOS・Linux（bash/zsh）では次を実行します。
 QUARTO_JULIA_PROJECT=. quarto render
 ```
 
-Windows PowerShellでは次を実行します。
-
-```powershell
-$env:QUARTO_JULIA_PROJECT = "."
-quarto render
-```
+受講者の課題コマンドは，WindowsではWSL2 Ubuntu内で実行します．
+教材のQuarto編集環境をWSL2に必ず構築することは要求しません。
 
 生成物は`_site/`へ出力されます。`_quarto.yml`はJuliaエンジンを明示します。Julia実行確認用の簡易セルは公開ページに置かず、教員用のリリース予行演習が一時Quartoプロジェクトで検証します。
 
