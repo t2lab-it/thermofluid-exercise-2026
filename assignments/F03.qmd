@@ -18,7 +18,7 @@ title: "ベクトル解析の証明と数値微分"
 
 - 解析関数: `exercises/F03-F04_vector_calculus/F03.jl`
 - 差分関数の実装・実行: `exercises/F03-F04_vector_calculus/run.jl`
-- 必須・自作テスト: `exercises/F03-F04_vector_calculus/tests.jl`
+- 配布済み必須テスト・自作テスト: `exercises/F03-F04_vector_calculus/tests.jl`
 - 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
 
 ## 開始
@@ -60,6 +60,6 @@ $$
 ## 第4回の最低到達点
 
 第4回の終了時には，三公式の成分証明を学習ログへ書き，`forward_difference`，`backward_difference`，`centered_difference`の3つの差分関数をすべて完成してください．
-`tests.jl`の二次関数を使う必須TODOで三つの差分を区別して確認します．収束次数と自作テストのTODOはF04で完成させるため，この中間時点では提出単位全体のテストが未完でも構いません．
+`tests.jl`の配布済み必須テストを実行し，二次関数で三つの差分を区別して確認します．収束次数を扱う必須テストも配布済みですが，その結果の解釈と自作テストのTODOはF04で完成させるため，この中間時点では提出単位全体のテストが未完でも構いません．
 この時点ではbranchをmergeせず，PRも完了扱いにしません．
 次回は[F04課題](F04.qmd)から同じ提出単位を完成させます．

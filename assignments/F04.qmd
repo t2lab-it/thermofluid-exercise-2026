@@ -17,7 +17,7 @@ title: "数値微分によるベクトル公式の検証"
 
 - 解析関数: `exercises/F03-F04_vector_calculus/F03.jl`
 - 実装・実行: `exercises/F03-F04_vector_calculus/run.jl`
-- 必須・自作テスト: `exercises/F03-F04_vector_calculus/tests.jl`
+- 配布済み必須テスト・自作テスト: `exercises/F03-F04_vector_calculus/tests.jl`
 - 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
 
 ## 開始または再開
@@ -59,7 +59,7 @@ julia --project=. exercises/F03-F04_vector_calculus/run.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-`exercises/F03-F04_vector_calculus/tests.jl`では，二次関数の手計算値で三つの差分を区別し，刻み幅を半分にした誤差から各差分の収束次数を確かめます．さらに，別の関数・評価点・入力条件から一つ選んだ自作テストを追加し，検出する実装ミスを説明します．F03単独の別テストファイルは作りません．
+`exercises/F03-F04_vector_calculus/tests.jl`の配布済み必須テストでは，二次関数の手計算値で三つの差分を区別し，刻み幅を半分にした誤差から各差分の収束次数を確かめます．各期待値と判定範囲の意味を確認してから，別の関数・評価点・入力条件から一つ選んだ自作テストを追加し，検出する実装ミスを説明します．F03単独の別テストファイルは作りません．
 
 ## 学習ログ
 
@@ -75,6 +75,6 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 - 学生TODOである前進・後退・中心差分の3関数だけを実装した．
 - 一次元の全誤差比と観測次数を確認した．
 - `n=9`と`n=17`で三残差が減少し，各比が`3.0`から`4.8`に入ることを確認した．
-- `exercises/F03-F04_vector_calculus/tests.jl`の二つの必須TODOと一つの自作TODOを完成し，全テストを通した．
+- `exercises/F03-F04_vector_calculus/tests.jl`の配布済み必須テストを確認し，一つの自作TODOを完成して全テストを通した．
 - `exercises/F03-F04_vector_calculus/learning_log.md`を完成させ，意図したdiffだけをcommitした．
 - 同じbranchから一つのPRを作り，F03とF04をまとめて提出した．

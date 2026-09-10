@@ -147,13 +147,13 @@ D_0f(x)=\frac{f(x+h)-f(x-h)}{2h}
 $$
 
 と定義します．
-授業の最後の20分では `exercises/F03-F04_vector_calculus/run.jl`を開き，`forward_difference`，`backward_difference`，`centered_difference`の三つを実装して，二次関数で三つの差分の違いを確かめる必須テストを書いてください．
+授業の最後の20分では `exercises/F03-F04_vector_calculus/run.jl`を開き，`forward_difference`，`backward_difference`，`centered_difference`の三つを実装して，配布済みの二次関数テストで三つの差分の違いを確かめてください．
 第4回ではbranchをmergeせず，PRも完了扱いにしません．
 続きは[数値微分と格子収束](F04.qmd)です．
 
 ## 第4回の最低到達点
 
-第4回の終わりまでに，`forward_difference`，`backward_difference`，`centered_difference`の3つの差分関数をすべて完成し，二次関数で三つの差分の違いを確かめる必須テストを書きます．
+第4回の終わりまでに，`forward_difference`，`backward_difference`，`centered_difference`の3つの差分関数をすべて完成し，配布済みの必須テストを実行して二次関数で三つの差分の違いを確かめます．
 この時点ではbranchをmergeせず，PRも完了扱いにしません．
 第5回で同じ`F03-F04`提出単位を完成させます．
 

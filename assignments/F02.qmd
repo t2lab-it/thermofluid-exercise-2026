@@ -20,7 +20,7 @@ title: "Juliaの配列・関数・テスト"
 自分が複製したローカルの `exercises/F02_julia_arrays_and_tests/` を開きます．通常編集するのは `run.jl`，`tests.jl`，`learning_log.md` の3ファイルです．
 
 - 編集するコード: `exercises/F02_julia_arrays_and_tests/run.jl`
-- 必須・自作テスト: `exercises/F02_julia_arrays_and_tests/tests.jl`
+- 配布済み必須テスト・自作テスト: `exercises/F02_julia_arrays_and_tests/tests.jl`
 - 提出する学習ログ: `exercises/F02_julia_arrays_and_tests/learning_log.md`
 
 ## 課題を開始する
@@ -70,7 +70,7 @@ $$
 
 ## テストする観点
 
-`tests.jl`の必須TODOでは，次の四つを自分で選んだ入力と手計算した期待値で確かめます．
+`tests.jl`には，次の四つを確かめる必須テストが配布済みです．各入力と期待値を読み，手計算でも結果を確かめます．
 
 1. 一つの有限値配列について，平均と偏差配列が一致する．
 2. 偏差の総和が丸め誤差の範囲で0になる．
@@ -91,6 +91,6 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ## 完了条件
 
 - 二つの固定APIが入力契約を守る．
-- 必須テストと，型または数学的性質を扱う自作テストが通る．
+- 配布済み必須テストと，型または数学的性質を扱う自作テストが通る．
 - 偏差の性質と入力非変更を説明できる．
 - この課題用のbranch，PR，学習ログを一つずつ作り，GitHub Actions，diff，セルフレビューを完了した．
