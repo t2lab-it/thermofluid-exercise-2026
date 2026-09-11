@@ -45,15 +45,10 @@ AIとの全対話ログ（プロンプトと回答を含む未加工の生の会
 
 ## 個人課題用リポジトリを複製する
 
-1. GitHubのアカウント名を教員・TAに報告する．
-2. GitHubの通知またはメールで届くリポジトリ招待を開く．
-3. 招待は，公開・非公開のどちらの個人課題用リポジトリでも書き込み権限を設定する手順です．
-   招待先が`t2lab-it/thermofluid-exercise-2026-<自分のusername>`であることを確認し，**Accept invitation**を選ぶ．
-4. GitHub で個人課題用リポジトリを閲覧できることを確認する．
-5. 初めて複製する場合は，複製前に[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)を完了する．すでにHTTPSで複製済みの場合のorigin切替は同ページ後半で扱います．
-6. 個人課題用リポジトリの **Code** メニューから **SSH** の複製用URLを取得する．
-7. 作業用ディレクトリで次を実行する．
-   YOUR_COURSE_REPOSITORY は複製後のディレクトリ名に置き換え，SSH URLの OWNER/REPOSITORY も自分のリポジトリへ置き換えてください．WindowsではWSL2 Ubuntu内の /home/<user>/... で実行します．
+1. [個人課題用テンプレートリポジトリ](https://github.com/t2lab-it/thermofluid-exercise-student-2026)にアクセスする．
+2. 'Use this template'→'Create a new repository'と進み，自分の作業用リポジトリを作成する．
+   その際，名前は`thermofluid-exercise-2026-<自分のusername>`とする．
+3. WSLの中で作業するディレクトリを決めて移動し，以下のコマンドを実行する．
 
 ```bash
 git clone git@github.com:OWNER/REPOSITORY.git
