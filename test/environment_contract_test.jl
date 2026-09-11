@@ -34,8 +34,19 @@ read_environment(relative) =
     @test !occursin("YOUR_COURSE_REPOSITORY_URL", git_setup)
     @test !occursin("HTTPS URL", git_setup)
     @test occursin("SSH接続は標準の複製経路", git_setup)
-    @test findfirst("SSHでGitHubへ接続する", git_setup) <
-        findfirst("git clone git@github.com:OWNER/REPOSITORY.git", git_setup)
+    @test occursin(
+        "https://github.com/t2lab-it/thermofluid-exercise-student-2026",
+        git_setup,
+    )
+    @test occursin("'Use this template'→'Create a new repository'", git_setup)
+    @test occursin("thermofluid-exercise-2026-<自分のusername>", git_setup)
+    template_position = findfirst("個人課題用テンプレートリポジトリ", git_setup)
+    clone_position = findfirst("git clone git@github.com:OWNER/REPOSITORY.git", git_setup)
+    @test !isnothing(template_position)
+    @test !isnothing(clone_position)
+    if !isnothing(template_position) && !isnothing(clone_position)
+        @test first(template_position) < first(clone_position)
+    end
 
     @test occursin("準備 3/5 の必須手順", ssh)
     @test occursin("### Windows (WSL2 Ubuntu 24.04)", ssh)
