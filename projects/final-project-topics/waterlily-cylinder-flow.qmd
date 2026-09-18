@@ -133,55 +133,70 @@ CPUだけで長いsamplingを完了できない場合は，公式quickstart規�
 
 ## 進め方
 
+[共通手順](../../assignments/final-project.qmd#project-workflow)でプロジェクトリポジトリを準備してから，以下に取り組んでください．
+
 ### Step 1：公式資料と再現environmentを固定する
 
-- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
-  `WaterLily.jl`のstable quickstartと `v1.8.0` tagを開始候補にし，Julia 1.13.0の自分のprojectへ依存関係を追加して `Project.toml` と `Manifest.toml` を解決します．
-  公式例をcopyする場合はrepository，path，commit，license，授業側の変更を記録します．
-- **確認**: 新しいJulia processでpackage versionを表示し，公式quickstartの `Simulation` を構築して一step進めます．
-  本体のMITと，補助的な`WaterLily-Examples`のGPL-3.0を混同していないことも確認します．
-- **残すもの**: 上流URL・path・tag・commit・license，Julia・package version，environment files，最初の実行commandとlogを残します．
+プロジェクトリポジトリで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
+`WaterLily.jl`のstable quickstartと `v1.8.0` tagを開始候補にし，Julia 1.13.0の自分のプロジェクトへ依存関係を追加して `Project.toml` と `Manifest.toml` を解決します．
+公式例をコピーする場合はリポジトリ，パス，commit，ライセンス，授業側の変更を記録します．
+
+新しいJuliaプロセスでパッケージ版を表示し，公式quickstartの `Simulation` を構築して一ステップ進めます．
+本体のMITと，補助的な`WaterLily-Examples`のGPL-3.0を混同していないことも確認します．
+
+上流URL・パス・tag・commit・ライセンス，Julia・パッケージ版，環境ファイル，最初の実行コマンドとログを残します．
 
 ### Step 2：公式円柱例を再現し，測定を追加する
 
-- **作業**: 公式の $96\times64$，$\mathrm{Re}_D=100$ の円柱例を基準に，$D$，$U_\infty$，$\nu$，領域，円柱位置，境界，Float型を表へ書き出します．
-  時刻，`total_force`，必要に応じてpressure・viscous成分，速度，渦度，Poisson求解情報，実行時間を同じscriptから保存します．
-- **確認**: $\mathrm{Re}_D=U_\infty D/\nu$，$L=D$，力の符号・規格化・成分が定義どおりで，速度・圧力・力に非有限値がなく，後流と力時系列を再生成できることを確かめます．
-- **残すもの**: 基準設定，入力script，version付きlog，$C_D,C_L$ の短い時系列，速度・無次元渦度図，raw force dataを残します．
+公式の $96\times64$，$\mathrm{Re}_D=100$ の円柱例を基準に，$D$，$U_\infty$，$\nu$，領域，円柱位置，境界，Float型を表へ書き出します．
+時刻，`total_force`，必要に応じてpressure・viscous成分，速度，渦度，Poisson求解情報，実行時間を同じスクリプトから保存します．
+
+$\mathrm{Re}_D=U_\infty D/\nu$，$L=D$，力の符号・規格化・成分が定義どおりで，速度・圧力・力に非有限値がなく，後流と力時系列を再生成できることを確かめます．
+
+基準設定，入力スクリプト，版付きログ，$C_D,C_L$ の短い時系列，速度・無次元渦度図，流体力の生データを残します．
 
 ### Step 3：自己整合性とsampling契約を確認する
 
-- **作業**: 一つのReを固定し，格子，領域，時間刻み設定を一度に一項目だけ変更します．
-  各条件で速度の離散発散，Poisson求解，力，近傍・後流場を確認します．
-  連続する時間窓で $\overline{C_D}$，$C_{L,\mathrm{rms}}$，$\mathrm{St}$ を再計算し，$t_0^*$ とsampling窓を決めます．
-- **確認**: 一段の細分化・領域拡大・窓延長に対する各指標の差を表にし，主要結論が初期過渡，短い窓，境界，粗い円柱表現だけで決まっていないことを確かめます．
-  周期がない条件では$\mathrm{St}$を欠測として扱います．
-- **残すもの**: 自己整合性testまたは診断script，発散・Poisson記録，格子・領域感度表，窓別統計，採用したsampling契約を残します．
+一つのReを固定し，格子，領域，時間刻み設定を一度に一項目だけ変更します．
+各条件で速度の離散発散，Poisson求解，力，近傍・後流場を確認します．
+連続する時間窓で $\overline{C_D}$，$C_{L,\mathrm{rms}}$，$\mathrm{St}$ を再計算し，$t_0^*$ とサンプリング窓を決めます．
+
+一段の細分化・領域拡大・窓延長に対する各指標の差を表にし，主要結論が初期過渡，短い窓，境界，粗い円柱表現だけで決まっていないことを確かめます．
+周期がない条件では$\mathrm{St}$を欠測として扱います．
+
+自己整合性テストまたは診断スクリプト，発散・Poisson記録，格子・領域感度表，窓別統計，採用したサンプリング契約を残します．
 
 ### Step 4：同じ定義の外部benchmarkと照合する
 
-- **作業**: PosdziechとGrundmannの論文から，自分と同じReにおける全力係数，揚力の統計定義，$\mathrm{St}$，領域・格子条件を読み取ります．
-  自分の境界，円柱から境界までの距離，$D/\Delta x$，force API，sampling窓を隣列に置きます．
-- **確認**: benchmarkとの差を相対差または絶対差で示し，力の定義，blockage，下流長さ，格子，samplingのどれが比較可能でどれが異なるかを説明します．
-  単一の文献値を根拠のない一律許容値にはしません．
-- **残すもの**: 出典と該当条件，対応表，$\overline{C_D}$・揚力・$\mathrm{St}$の比較図または表，差の原因候補を残します．
+PosdziechとGrundmannの論文から，自分と同じReにおける全力係数，揚力の統計定義，$\mathrm{St}$，領域・格子条件を読み取ります．
+自分の境界，円柱から境界までの距離，$D/\Delta x$，force API，サンプリング窓を隣列に置きます．
+
+ベンチマークとの差を相対差または絶対差で示し，力の定義，blockage，下流長さ，格子，サンプリングのどれが比較可能でどれが異なるかを説明します．
+単一の文献値を根拠のない一律許容値にはしません．
+
+出典と該当条件，対応表，$\overline{C_D}$・揚力・$\mathrm{St}$の比較図または表，差の原因候補を残します．
 
 ### Step 5：一軸比較を実行し，規模と費用を確定する
 
-- **作業**: 標準の問いでは，検証済み基準条件と，$\nu$だけを変えた追加Re条件を計算します．
-  各条件を同じ $t^*$ 範囲，sampling，力・場の定義で処理します．
-  初回compile，事前実行後のstep時間，総step数，wall time，memory，出力容量を分けて記録し，必要なら実測から規模を一段だけ増やします．
-- **確認**: 両条件が自己整合性と外部照合を通り，比較した差がsampling窓や測定の揺らぎより大きいかを確認します．
-  完了しなかった条件も削除せず，最後の時刻，資源上限，停止理由を記録します．
-- **残すもの**: $C_D,C_L$ 時系列，周波数spectrum，同じscaleの渦度図，条件・指標・費用表，raw dataと図表生成scriptを残します．
+標準の問いでは，検証済み基準条件と，$\nu$だけを変えた追加Re条件を計算します．
+各条件を同じ $t^*$ 範囲，サンプリング，力・場の定義で処理します．
+初回コンパイル，事前実行後のステップ時間，総ステップ数，wall time，メモリ，出力容量を分けて記録し，必要なら実測から規模を一段だけ増やします．
+
+両条件が自己整合性と外部照合を通り，比較した差がサンプリング窓や測定の揺らぎより大きいかを確認します．
+完了しなかった条件も削除せず，最後の時刻，資源上限，停止理由を記録します．
+
+$C_D,C_L$ 時系列，周波数スペクトル，同じ尺度の渦度図，条件・指標・費用表，生データと図表生成スクリプトを残します．
 
 ### Step 6：力・周波数・場・費用を問いへの回答にまとめる
 
-- **作業**: [共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，公式例再現，自己整合性，外部benchmark，一軸比較を一つの論理へつなぎます．
-  Reの違いを，剥離・後流・流体力・渦放出の変化として説明し，二次元model，有限領域，格子，時間窓，力評価の限界を整理します．
-- **確認**: 第三者がrepositoryとcommit，environment，入力，実行順，raw data，sampling，図表生成を追跡できるか確認します．
-  図の軸・単位・無次元化，force成分，平均・rms・振幅，$\mathrm{St}$ の定義も資料内で一意にします．
-- **残すもの**: 外部benchmark比較図，二条件の力時系列とspectrum，同じscaleの速度または渦度図，条件・指標・費用表，問いへの回答，限界，CPU縮小case，再生成手順を発表資料とproject repositoryへ残します．
+[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，公式例再現，自己整合性，外部ベンチマーク，一軸比較を一つの論理へつなぎます．
+Reの違いを，剥離・後流・流体力・渦放出の変化として説明し，二次元モデル，有限領域，格子，時間窓，力評価の限界を整理します．
+
+図の軸・単位・無次元化，force成分，平均・rms・振幅，$\mathrm{St}$ の定義も資料内で一意にします．
+
+外部ベンチマーク比較図，二条件の力時系列とスペクトル，同じ尺度の速度または渦度図，条件・指標・費用表，問いへの回答，限界，CPU縮小ケース，再生成手順を発表資料とプロジェクトリポジトリへ残します．
+
+[共通の記録項目](../../assignments/final-project.qmd#project-records)を揃え，[発表前の確認](../../assignments/final-project.qmd#presentation-check)を行ってください．
 
 ## 発展課題
 
