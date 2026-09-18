@@ -11,17 +11,13 @@ title: "学生向け課題ワークフロー"
 ## コマンドを実行する場所 {#repository-root}
 
 このページにあるコマンドは，**学生リポジトリのルートディレクトリ**で実行します．
+以下のコマンドで確認してください．
 
 ~~~console
 $ ls -d */
 exercises/  scripts/  src/  test/
 （ほかのディレクトリは省略）
-~~~
 
-で`exercises/`や`scripts/`などのディレクトリが見えることを確認してください．
-続いて，
-
-~~~console
 $ pwd
 /home/student/YOUR_COURSE_REPOSITORY
 
@@ -29,7 +25,7 @@ $ git rev-parse --show-toplevel
 /home/student/YOUR_COURSE_REPOSITORY
 ~~~
 
-の出力が同じファイルパス（学生リポジトリのルート）を示すことを確認します．
+`pwd`と`git rev-parse --show-toplevel`が同じファイルパス（学生リポジトリのルート）を出力することを確認します．
 環境の準備は[受講環境の準備](../setup/index.qmd)，cloneとGitHubの設定は[Git・GitHub](../setup/git-github.qmd)を参照してください．
 
 ## 初回セットアップと「環境診断（F00）」のpreflight {#f00-preflight}
@@ -37,6 +33,7 @@ $ git rev-parse --show-toplevel
 ### 1. Julia環境を復元する
 
 cloneした学生リポジトリのルートで以下のコマンドを実行します．
+gitのバージョンは本演習では指定しませんが，一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
 
 ~~~console
 $ julia --version
@@ -46,19 +43,14 @@ $ git --version
 git version 2.43.0
 ~~~
 
-Juliaは`1.13.0`を使います．
-gitのバージョンは本演習では指定しませんが，新しいものが良いでしょう．
-一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
-
 次のコマンドで，課題で用いるパッケージの依存環境が導入されます．
+その実体は`Project.toml`と`Manifest.toml`に記述されています．
+気になる人は中を見てみるとよいでしょう．
 
 ~~~console
 $ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 （初回はパッケージの導入・プリコンパイル状況を表示．復元済みなら出力がない場合もあります）
 ~~~
-
-その実体は`Project.toml`と`Manifest.toml`に記述されています．
-気になる人は中を見てみるとよいでしょう．
 
 ### 2. F00の環境を診断する
 
@@ -103,24 +95,14 @@ F00の進捗は更新されませんでした。すべての機械観測と3項�
 - GitHubで自分の学生リポジトリを閲覧できる．
 - 対応エージェントの一つで，ファイル編集と安全なローカルコマンド実行ができる．
 
-確認したエージェントに対応するコマンドを一つ選んで実行します．
+確認したエージェントに対応するコマンドを実行します．
+これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
 
 ~~~console
-$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot
-（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
-F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
-
-$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent codex
-（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
-F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
-
-$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
-（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
+$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot # or codex or amazon-q
+（機械観測・手動確認の表示は省略．）
 F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
 ~~~
-
-`F00が完了しました。現在の課題はF01です。`という出力を確認してください．
-これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
 
 この時点から，F01課題で受講者が実装する`tests.jl`が`Pkg.test()`の実行対象になります．
 テストが未実装のため，ここで`Pkg.test()`を実行するとエラーになることを確かめてください．
@@ -147,9 +129,6 @@ $ git branch --show-current
 main
 ~~~
 
-`status`の現在課題がF01であること，branchが`main`であることを確認します．
-F00完了直後は`course_progress.toml`が変更済みと表示されることがあります．
-
 ## 課題を開始する {#start-exercise}
 
 ### F01：branchを手動で作る
@@ -173,8 +152,7 @@ $ git branch --show-current
 exercise/F01-first-pull-request
 ~~~
 
-最後の出力が`exercise/F01-first-pull-request`であることを確認して，F01の実装を始めます．
-`course_progress.toml`以外の変更が表示される場合は，教員・TAへ相談してください．
+上記と異なる出力が得られた場合は，教員・TAへ相談してください．
 
 ### F02以降：更新済みのmainから開始する
 
@@ -195,7 +173,7 @@ $ git branch --show-current
 main
 ~~~
 
-`git status --short`が空で，branchが`main`であることを確認した後，次のコマンドの`TASK_ID`を各課題の提出単位へ置換して実行します．
+次のコマンドの`TASK_ID`は各課題の提出単位へ置換して実行してください．
 
 ~~~console
 $ julia --project=. scripts/course.jl start TASK_ID
@@ -225,7 +203,7 @@ $ julia --project=. exercises/<課題フォルダ>/run.jl
 ### 自作テストの場所と書き方
 
 入力，関数呼び出し，期待値または判定基準をもつ自作テストを，各課題の`exercises/<課題フォルダ>/tests.jl`に書きます．
-課題が`course_progress.toml`の現在課題または完了済み課題になってから，
+課題が`course_progress.toml`の現在課題または完了済み課題になってから，次のコマンドがその課題の`tests.jl`を実行するようになります．
 
 ~~~console
 $ julia --project=. -e 'using Pkg; Pkg.test()'
@@ -233,8 +211,6 @@ $ julia --project=. -e 'using Pkg; Pkg.test()'
 Test Summary: | Pass  Total  Time
 （テスト名・成功件数・実行時間を表示）
 ~~~
-
-が，その課題の`tests.jl`を実行するようになります．
 
 そのままだと，自作テストの`@test false`が実行されて，`Pkg.test()`は失敗します．
 自身が実装する課題にあわせて適切なテストを実装できれば，`Pkg.test()`が通ります．
@@ -255,13 +231,12 @@ Test Summary: | Pass  Total  Time
 
 公式出力がある課題では，`run.jl`を実行します．
 例えば「1次元線形移流方程式（N01）」では次の通りです．
+生成された`results/`ディレクトリの中身を確認してください．
 
 ~~~console
 $ julia --project=. exercises/N01_linear_advection/run.jl
 N01の出力を書き込みました: /home/student/YOUR_COURSE_REPOSITORY/exercises/N01_linear_advection/results
 ~~~
-
-生成された`results/`ディレクトリの中身を確認してください．
 
 公式出力の配置やサイズを機械的に確認する必要がある課題では，次も実行してファイルの配置・サイズを確認します．
 
@@ -306,6 +281,7 @@ commitする前に，アクセストークンやAPI key，パスワード，秘�
 ## push，PR，GitHub Actions，セルフレビュー {#submit-pr}
 
 commitした課題branchをoriginへpushします．
+`main`で作業した場合は，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)を確認してください．
 
 ~~~console
 $ git branch --show-current
@@ -318,8 +294,6 @@ branch 'YOUR_EXERCISE_BRANCH' set up to track 'origin/YOUR_EXERCISE_BRANCH'.
 
 GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを作成し，PRテンプレートを埋めます．
 PR本文には提出単位，テスト結果，公式出力，作業branch上の学習ログURL，diffで確認した内容を記載します．
-
-`main`で作業した場合は，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)を確認してください．
 
 GitHub Actionsが成功することを確認してください．
 失敗した場合はエラー文を読んでその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
@@ -360,5 +334,4 @@ $ git branch --show-current
 main
 ~~~
 
-`status`が空，branchが`main`であることを確認します．
-その後，[課題開始](#start-exercise)に戻って次の課題に取り組んでください．
+この後は[課題開始](#start-exercise)に戻って次の課題に取り組んでください．
