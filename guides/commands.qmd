@@ -5,58 +5,64 @@ title: "コマンド一覧"
 参照・コマンド一覧
 :::
 
-このページは，セットアップと現在公開済みの課題ですでに扱ったコマンドだけをまとめています．
-リポジトリのルートで実行してください．
+このページは，学生リポジトリのルートで使うコマンドの早見表です．
+実行する順序と，F00から次の課題までの提出手順は[学生向け課題ワークフロー](workflow.qmd)を正本として確認してください．
+このページでは，手順を繰り返さず，コマンドの目的と参照先をまとめます．
+
+## 実行場所
+
+すべてのコマンドを，`Project.toml`，`exercises/`，`scripts/`がある学生リポジトリのルートで実行します．
+公開教材リポジトリや個別の課題フォルダで実行しません．
+
+~~~bash
+pwd
+git rev-parse --show-toplevel
+~~~
+
+初回の環境準備は[受講環境の準備](../setup/index.qmd)，cloneとGitHubの設定は[Git・GitHub](../setup/git-github.qmd)を参照してください．
+F00から始める手順は[初回セットアップとF00のpreflight](workflow.qmd#f00-preflight)です．
 
 ## 環境と復元
 
-```bash
-# Juliaのバージョンを確認する
-julia --version
-# Gitのバージョンを確認する
-git --version
-# 課題で固定されたJuliaパッケージを復元する
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
-```
+| コマンド | 目的 |
+|---|---|
+| `julia --version` | Julia 1.13.0を確認する |
+| `git --version` | Gitを確認する |
+| `julia --project=. -e 'using Pkg; Pkg.instantiate()'` | 配布されたJulia環境を復元する |
 
-## 課題の状態
+## 課題の状態とテスト
 
-```bash
-# 課題を始める前の環境を診断する
-julia --project=. scripts/course.jl preflight
-# 現在の課題進捗を確認する
-julia --project=. scripts/course.jl status
-# F02の課題branchを作って開始する
-julia --project=. scripts/course.jl start F02
-# 公式出力の配置とサイズを確認する
-julia --project=. scripts/course.jl check-results
-# 現在課題と完了済み課題のテストを実行する
-julia --project=. -e 'using Pkg; Pkg.test()'
-```
+| コマンド | 目的 |
+|---|---|
+| `julia --project=. scripts/course.jl preflight` | F00の機械的な環境診断だけを行う |
+| `julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent AGENT_ID` | 手動確認を記録してF00を完了する．`AGENT_ID`は確認した一つのエージェントへ置き換える |
+| `julia --project=. scripts/course.jl status` | 現在課題，完了済み課題，branchを表示する |
+| `julia --project=. scripts/course.jl start TASK_ID` | F02以降の提出単位を開始する |
+| `julia --project=. -e 'using Pkg; Pkg.test()'` | `course_progress.toml`の現在課題と完了済み課題のテストを実行する |
+| `julia --project=. scripts/course.jl check-results` | 公式出力の配置とサイズを確認する |
 
-`F02`は，課題ページで指定された提出単位（例：`F03-F04`，`N01`）へ置き換えてください．
-開始できるのは次の提出単位です．
+F01は`start`を使わず，[F01のbranch開始](workflow.qmd#start-exercise)にある手動コマンドを実行します．
+F02以降の前提，F03-F04の提出単位，`preflight`・`status`・`Pkg.test()`の役割分担は[課題ワークフロー](workflow.qmd)で確認します．
 
-## Gitで変更を確認する
+## 課題単独のテスト
 
-```bash
-# 変更済み・commit対象に追加済み・未追跡のファイルを一覧する
-git status --short
-# 現在のbranch名を確認する
-git branch --show-current
-# まだstageしていない変更内容を確認する
-git diff
-# 次のcommit対象に追加済みの変更を確認する
-git diff --cached
-# 直近5件のcommitを確認する
-git log --oneline -5
-```
+現在の課題だけを実行するときは，次の形式を使います．
 
-最初のbranchとpull request課題（課題ID: F01）でだけ，指定された課題branchを手動で作ります．
+~~~bash
+julia --project=. exercises/<課題フォルダ>/tests.jl
+~~~
 
-```bash
-# F01で最初の課題branchを手動作成する
-git switch -c exercise/F01-first-pull-request
-```
+自作テストの置き場所，`@test false`を置き換える方法，配布済み必須テストの扱いは[テストを書く・実行する](workflow.qmd#tests)，数値検証の考え方は[テストと数値検証](testing.qmd)を参照してください．
 
-commit，push，mergeの前後を含む手順は[課題ワークフロー](workflow.qmd)を参照してください．
+## Gitの確認
+
+| コマンド | 目的 |
+|---|---|
+| `git status --short` | 変更済み・stage済み・未追跡のファイルを確認する |
+| `git branch --show-current` | 現在のbranch名を確認する |
+| `git diff` | stage前の変更内容を確認する |
+| `git diff --cached` | commit対象の変更内容を確認する |
+| `git diff main...HEAD` | mainからの提出差分を確認する |
+| `git log --oneline -5` | 直近のcommitを確認する |
+
+commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新の順序は[学習ログ，diff，commit](workflow.qmd#commit)から[merge後](workflow.qmd#after-merge)までを参照してください．

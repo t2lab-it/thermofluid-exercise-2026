@@ -8,7 +8,7 @@ title: "1次元線形移流方程式"
 ## 目的
 
 1次元線形移流方程式の数値計算を実装し，上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します．
-[共通課題ワークフロー](../guides/workflow.qmd)に従って作業してください．
+branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を正本として使ってください．
 
 ## 学生リポジトリ内の場所
 
@@ -19,11 +19,11 @@ title: "1次元線形移流方程式"
 
 ## 開始
 
-前の数値微分課題（課題ID: F04）をmergeし，更新済みで変更のない`main`から始めます．
+前の数値微分課題（提出単位: F03-F04）をmergeし，更新済みで変更のない`main`から始めます．開始前の確認は[課題を開始する](../guides/workflow.qmd#start-exercise)を参照してください．
 
-```bash
+~~~bash
 julia --project=. scripts/course.jl start N01
-```
+~~~
 
 ## 座標・添字・差分の確認
 
@@ -62,12 +62,11 @@ $$
 
 ## 実行とテスト
 
-```bash
+~~~bash
 julia --project=. exercises/N01_linear_advection/run.jl
-julia --project=. -e 'using Pkg; Pkg.test()'
-```
+~~~
 
-実行すると課題内の`results/`へ次の3ファイルを生成します．内容を確認し，学習ログから参照してcommitしてください．
+実行すると課題内の`results/`へ次の3ファイルを生成します．内容の確認，`Pkg.test()`，学習ログ，commitの順序は[公式出力を確認する](../guides/workflow.qmd#official-results)と[学習ログ，diff，commit](../guides/workflow.qmd#commit)を参照してください．
 
 - `exercises/N01_linear_advection/results/upwind.png`
 - `exercises/N01_linear_advection/results/centered-euler.png`
@@ -82,6 +81,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ## `tests.jl`と学習ログ
 
 `exercises/N01_linear_advection/tests.jl`の五つの必須TODOで，次を確かめてください．
+課題単独のテストと，現在課題・完了済み課題をまとめる`Pkg.test()`の実行方法は[テストを書く・実行する](../guides/workflow.qmd#tests)を参照します．
 
 1. 矩形初期条件
 2. 上流差分後の配列全体
@@ -102,4 +102,4 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 - 実効CFLと最終時刻を確認した．
 - 上流差分法の有界性と中心差分法 + Euler法のオーバーシュートまたはアンダーシュートを確認した．
 - 公式出力，五つの必須テスト，一つの自作テスト，学習ログを確認した．
-- diff，commit，push，PR，GitHub Actions，セルフレビュー，mergeを確認した．
+- [学習ログ，diff，commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)までを完了した．

@@ -4,6 +4,8 @@
 
 公開URL: <https://t2lab-it.github.io/thermofluid-exercise-2026/>
 
+学生向けの課題開始，テスト，学習ログ，PR，mergeの手順は[課題ワークフロー](guides/workflow.qmd)を正本として確認してください。
+
 ## 必要なローカル環境
 
 - Julia 1.13.0

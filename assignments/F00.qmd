@@ -12,7 +12,7 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 
 ## 先に読むページ
 
-[受講環境の準備](../setup/index.qmd)
+[受講環境の準備](../setup/index.qmd)と[学生向け課題ワークフロー](../guides/workflow.qmd#f00-preflight)を先に読みます．
 
 ## 学生リポジトリ内の場所
 
@@ -21,14 +21,13 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 - 診断コード: exercises/F00_environment/run.jl
 - 提供テスト: test/f00_preflight_test.jl
 
-## 実行
+## F00固有の確認
 
-学生リポジトリのルートで，まず配布環境を復元します．
+学生リポジトリのルートで行う順序，`preflight`・`status`・`Pkg.test()`の役割，F01への進み方は[学生向け課題ワークフロー](../guides/workflow.qmd#f00-preflight)に従います．
+F00の診断だけを行うコマンドは次の通りです．
 
 ~~~bash
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
 julia --project=. scripts/course.jl preflight
-julia --project=. -e 'using Pkg; Pkg.test()'
 ~~~
 
 診断は次の二群を分けて表示します．
@@ -52,7 +51,7 @@ GitHubへサインインして学生リポジトリを開けることを確認�
 VS Codeで学生リポジトリを開き，WindowsではRemote - WSL接続とJulia拡張機能がWSL2側へ接続していることを確認します．
 次に，正式対応エージェントを一つ選び，scratch/F00-agent-check.txtの作成と短い確認文の追記，安全なローカルコマンドの実行を依頼します．
 
-選んだエージェントに対応する次のコマンドを一つだけ実行します．
+手動確認を終えたら，選んだエージェントに対応する次のコマンドを一つだけ実行します．
 
 ~~~bash
 julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot

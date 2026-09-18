@@ -10,7 +10,7 @@ title: "数値微分によるベクトル公式の検証"
 ## 目的
 
 三つの一次元差分を実装し，一次元の観測次数とF03の三公式の格子収束を確認して，[F03課題](F03.qmd)から続く一つの提出を完成させます．
-[共通課題ワークフロー](../guides/workflow.qmd)に従って作業してください．
+branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を正本として使ってください．
 
 ## 学生リポジトリ内の場所
 
@@ -21,11 +21,11 @@ title: "数値微分によるベクトル公式の検証"
 
 ## 開始または再開
 
-第4回にまだ開始していない場合だけ，[F03の開始条件](F03.qmd#開始)を確認し，次を実行してください．
+第4回にまだ開始していない場合だけ，[F03の開始条件](F03.qmd#開始)と[課題を開始する](../guides/workflow.qmd#start-exercise)を確認し，次を実行してください．
 
-```bash
+~~~bash
 julia --project=. scripts/course.jl start F03-F04
-```
+~~~
 
 ::: {.callout-note title="開始済みの場合"}
 既存の`F03-F04`用branchへ戻って作業を続けてください．
@@ -54,12 +54,12 @@ julia --project=. scripts/course.jl start F03-F04
 
 ## 実行とテスト
 
-```bash
+~~~bash
 julia --project=. exercises/F03-F04_vector_calculus/run.jl
-julia --project=. -e 'using Pkg; Pkg.test()'
-```
+~~~
 
 `exercises/F03-F04_vector_calculus/tests.jl`の配布済み必須テストで，次を確認してください．
+課題単独のテストと`Pkg.test()`の実行方法は[テストを書く・実行する](../guides/workflow.qmd#tests)を参照します．
 
 - 二次関数の手計算値で三つの差分を区別できる．
 - 刻み幅を半分にした誤差から，各差分の収束次数を確かめられる．
@@ -87,4 +87,4 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 - `n=9`と`n=17`で三残差が減少し，各比が`3.0`から`4.8`に入ることを確認した．
 - `exercises/F03-F04_vector_calculus/tests.jl`の配布済み必須テストを確認し，一つの自作TODOを完成して全テストを通した．
 - `exercises/F03-F04_vector_calculus/learning_log.md`を完成させ，意図したdiffだけをcommitした．
-- 同じbranchから一つのPRを作り，F03とF04をまとめて提出した．
+- [学習ログ，diff，commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)までを完了し，同じbranchから一つのPRでF03とF04をまとめて提出した．
