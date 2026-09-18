@@ -44,7 +44,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
    - 対応エージェントの一つでファイル編集とコマンド実行ができる
 
 手動確認は実際に自分で確かめてからプロンプトへ回答してください．
-すべての必須項目が通るまで進捗ファイルは更新されません．
+すべての必須項目が通ると進捗ファイルが更新されます．
 
 ## 手動確認を付けて完了する
 
@@ -60,14 +60,14 @@ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github 
 julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
 ~~~
 
-成功すると `F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。` が表示されます．
+成功メッセージの `F00が完了しました。現在の課題はF01です。` を確認し，[F01課題](F01.qmd)へ進んでください．
 出力にはruntime，pwd，Julia，Git，手動確認の結果が残ります．
 
 ## 完了条件
 
 - runtime が WSL2，native Linux，または macOS のいずれかである．
-- WindowsではWSL2 Ubuntu 24.04を使い，native Windows，WSL1，Git Bashを使っていない．
-- pwdがWSL2の/home/<user>/...，native Linux/macOSのworkspaceなど正式な場所を示し，WSL2の/mnt/c以下ではない．
+- WindowsではWSL2 Ubuntu 24.04を使う．
+- pwdがWSL2の/home/<user>/...，native Linux/macOSのworkspaceなど正式な場所を示す．
 - julia --version が julia version 1.13.0 を返す．
 - git --version が成功する．
 - VS CodeとJulia拡張機能を使える（WindowsではRemote - WSL接続）．

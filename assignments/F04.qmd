@@ -28,7 +28,7 @@ julia --project=. scripts/course.jl start F03-F04
 ```
 
 ::: {.callout-note title="開始済みの場合"}
-既存の`F03-F04`用branchへ戻って作業を続けてください．`start`の再実行や新しいbranchの作成は不要です．
+既存の`F03-F04`用branchへ戻って作業を続けてください．
 :::
 
 ## 実装範囲

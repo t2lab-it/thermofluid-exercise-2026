@@ -638,8 +638,8 @@ end
         @test occursin(name, assignment)
     end
     @test all(fragment -> occursin(fragment, assignment), ("二次関数", "三つの差分", "必須"))
-    @test occursin("mergeせず", assignment)
-    @test occursin(r"PRも完了扱いにし(?:ません|ない)", assignment)
+    @test occursin("一つのbranchを，第5回の完了まで使います", assignment)
+    @test occursin("PRの確認・mergeはF04の完了条件を満たしてから行います", assignment)
     lesson_path = joinpath(NAVIGATION_SITE_ROOT, "lessons", "F03.qmd")
     @test any(qmd_link_targets(read(lesson_path, String))) do target
         normpath(resolve_qmd_target(lesson_path, target)) == assignment_path

@@ -41,5 +41,4 @@ VS Code の Extensions で `Amazon Q` を検索し，Amazon Q DeveloperのVS Cod
 2. `scratch/F00-agent-check.txt` に一行書くよう依頼し，ファイルを開いて内容を確認する．既存ファイルがある場合は上書きせず，別名を使う．
 3. 確認用に作ったファイルを削除する．
 
-`scratch/` はGitの管理対象外なので，この確認用ファイルは通常の `git diff` には表示されません．
 AI利用時の記録と注意事項は[AI利用と安全](../guides/ai-usage.qmd)を確認してください．

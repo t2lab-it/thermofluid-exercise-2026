@@ -173,9 +173,7 @@ end
 
 `run.jl`の冒頭では，`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に関数のつながりを示します．
 `main`は`run.jl`にあり，二つの`simulate`を実行して，提供済みの`write_summary`と`make_plots`へ結果を渡します．
-`main`は読む対象ですが，編集対象ではありません．
 `include("provided_support.jl")`は，教材側が用意した入力検証と出力の詳細を読み込んでいます．
-`provided_support.jl`を読解・編集する必要はありません．
 
 ## バッファ交換
 
@@ -206,7 +204,6 @@ $$
 | 中心差分法 + Euler法 | オーバーシュートまたはアンダーシュートと振動が現れる | 意図的な不安定比較 |
 
 `summary.toml`の最小・最大と公式図を同じ実行結果として見比べます．
-中心差分法 + Euler法を実用的な解法として推奨しているのではありません．
 
 ## 診断を読む
 
