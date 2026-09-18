@@ -3,8 +3,7 @@ title: "Julia・Git・GitHubの最小操作"
 lesson-id: F01
 understanding-check-points:
   - "working tree，branch，commit，remote，pull requestなどの基本的なgit・GitHub用語"
-  - "一般的なOSSのfork型と，この講義で使う直接push型の違い"
-  - "直接pushが課題branchをoriginへpushすることであり，mainへの直接pushではないこと"
+  - "課題branchをoriginへpushし，pull requestを通してmainへmergeすること"
   - "branch作成，実装，ローカルテスト，diff確認，commit，push，pull request，mergeの順序"
   - "ローカルテスト，GitHub Actions，diff，セルフレビューで確認できることの違い"
 ---
@@ -20,7 +19,7 @@ understanding-check-points:
 
 ## git/GitHubを使った開発手順
 
-1. [学生用リポジトリテンプレート](https://github.com/t2lab-it/thermofluid-exercise-student-2026)をローカルへ複製する．
+1. [準備ページ](../setup/git-github.qmd)の手順に従い，テンプレートから作成した自分の個人課題用リポジトリをローカルへ複製する．
 2. ローカルリポジトリで課題用branchを作る．
 3. コードを実装する．
 4. ローカルテストを実行する．

@@ -15,15 +15,14 @@ read_environment(relative) =
     f00 = read_environment("assignments/F00.qmd")
     troubleshooting = read_environment("guides/troubleshooting.qmd")
 
-    for term in ("WSL2 Ubuntu 24.04", "native macOS", "native Linux", "/home/<user>")
+    for term in ("WSL2 Ubuntu 24.04", "native macOS", "native Linux")
         @test occursin(term, setup)
     end
-    for term in ("WSL1", "Git Bash", "/mnt/c", "Remote - WSL")
+    for term in ("Git Bash", "Remote - WSL")
         @test occursin(term, setup)
     end
     @test occursin("learn.microsoft.com/en-us/windows/wsl/install", setup)
     @test occursin("code.visualstudio.com/docs/remote/wsl-tutorial", setup)
-    @test occursin("SSHで個人課題用リポジトリを複製", setup)
 
     for source in (setup, julia_setup, agents, git_setup, ssh, cli, f00, troubleshooting)
         @test !occursin("PowerShell", source)
@@ -75,7 +74,7 @@ read_environment(relative) =
     @test occursin("test/f00_preflight_test.jl", f00)
     @test !occursin("test/provided/F00.jl", f00)
 
-    for term in ("pwd", "uname -a", "git remote -v", "WSL1", "/mnt/c")
+    for term in ("pwd", "uname -a", "git remote -v", "WSL1", "/mnt/c", "/home/<user>")
         @test occursin(term, troubleshooting)
     end
 end

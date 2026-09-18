@@ -26,9 +26,11 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
     for term in ("依頼内容", "提案", "採用", "修正", "却下", "判断理由")
         @test occursin(term, ai_guidance)
     end
-    for term in ("LETUS", "UTF-8", "対話全文", "学生リポジトリ")
+    for term in ("LETUS", "UTF-8", "対話全文")
         @test occursin(term, understanding_check)
     end
+    @test occursin("[AI利用と安全](/guides/ai-usage.qmd)", understanding_check)
+    @test occursin(r"対話全文を学生リポジトリ[^。\n]*含めず", ai_guidance)
     for term in ("LETUS", "理解度チェック", "全文")
         @test occursin(term, ai_guidance)
     end
