@@ -160,7 +160,7 @@ gh pr checks
 gh pr view --json number,title,state,url,baseRefName,headRefName
 ```
 
-確認後は[共通課題ワークフロー](../guides/workflow.qmd#self-review)に従ってセルフレビューとmergeを行ってください．
+確認後は[共通課題ワークフロー](../guides/workflow.qmd#submit-pr)に従ってセルフレビューとmergeを行ってください．
 確認済みPRをブラウザで開く場合は次を使えます．
 
 ```bash
