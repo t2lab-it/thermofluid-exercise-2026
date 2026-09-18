@@ -2,6 +2,8 @@
 title: "二次元自然対流キャビティ"
 ---
 
+実行例では `$` はシェルへの入力，`julia>` はJulia REPLへの入力を表します．プロンプトと出力は入力せず，コピーボタンで入力だけをコピーできます．出力は一例で，`（…）` は説明・省略を表します．パス・バージョン・件数などは環境や作業状況により異なります．
+
 左右の壁に温度差がある正方形容器では，密度差による浮力が循環を生み，壁を通る熱輸送を変えます．
 このページでは，Boussinesq近似を用いた二次元ソルバを自作し，自己整合性，de Vahl Davisベンチマーク，二つ以上の条件比較へ順に進み，最終発表で流れと熱輸送の変化を根拠とともに説明できる形にします．
 
@@ -110,9 +112,12 @@ $\mathrm{Ra}=10^3,10^4$ について，各二格子の温度等値線と流線�
 
 資産ディレクトリで次を実行します．
 
-~~~bash
-cd launch-kits/assets/natural-convection-cavity
-julia --startup-file=no preflight.jl
+~~~console
+$ cd launch-kits/assets/natural-convection-cavity
+（成功時は出力なし）
+
+$ julia --startup-file=no preflight.jl
+（配布資産の診断結果と preflight passed を表示）
 ~~~
 
 現行資産では **preflight passed** とともに，2行，$\mathrm{Ra}=1000,10000$，$\mathrm{Pr}=0.71$，格子節点数65と129が表示されます．

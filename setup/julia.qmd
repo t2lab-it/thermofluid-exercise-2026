@@ -5,6 +5,8 @@ title: "Julia 1.13.0 と VS Code"
 準備 2/5
 :::
 
+実行例では `$` はシェルへの入力，`julia>` はJulia REPLへの入力を表します．プロンプトと出力は入力せず，コピーボタンで入力だけをコピーできます．出力は一例で，`（…）` は説明・省略を表します．パス・バージョン・件数などは環境や作業状況により異なります．
+
 ## OS別の実行場所
 
 ::: {.callout-warning title="OS別の実行場所"}
@@ -18,13 +20,35 @@ macOSとnative Linuxでは，それぞれの標準ターミナルとVS Codeを�
 公式の[インストール案内](https://julialang.org/downloads/)を参考に，Juliaのバージョンを管理するJuliaupを導入してください．
 その後，新しいターミナルを開いて以下のコマンドを実行し，本演習で使う **Julia ver.1.13.0** を追加してください．
 
-```bash
-juliaup add 1.13.0
-juliaup default 1.13.0
-julia --version
+```console
+$ juliaup add 1.13.0
+（Julia 1.13.0 のインストール状況を表示．導入済みならその旨を表示）
+
+$ juliaup default 1.13.0
+（既定のJuliaが 1.13.0 に設定されたことを表示）
+
+$ julia --version
+julia version 1.13.0
 ```
 
 最後のコマンドで `julia version 1.13.0` が出力されることを確認してください．
+
+## シェルとJulia REPLを区別する
+
+`$` の入力はターミナルで実行します．Julia REPLを起動したら，`julia>` の入力を実行してください．起動時のバナーは省略しています．
+
+```console
+$ julia --project=.
+（Juliaが起動し，julia> のプロンプトが表示されます）
+```
+
+```julia-repl
+julia> 1 + 2
+3
+
+julia> exit()
+（Juliaが終了し，シェルへ戻ります）
+```
 
 ## VS Codeと拡張機能を整える
 

@@ -5,6 +5,8 @@ title: "コマンド一覧"
 参照・コマンド一覧
 :::
 
+実行例では `$` はシェルへの入力，`julia>` はJulia REPLへの入力を表します．プロンプトと出力は入力せず，コピーボタンで入力だけをコピーできます．出力は一例で，`（…）` は説明・省略を表します．パス・バージョン・件数などは環境や作業状況により異なります．
+
 このページは，学生リポジトリのルートで使うコマンドの早見表です．
 実行する順序と，F00から次の課題までの提出手順は[学生向け課題ワークフロー](workflow.qmd)を正本として確認してください．
 このページでは，コマンドの目的と参照先をまとめます．
@@ -13,9 +15,12 @@ title: "コマンド一覧"
 
 すべてのコマンドを，`Project.toml`，`exercises/`，`scripts/`がある学生リポジトリのルートで実行します．
 
-~~~bash
-pwd
-git rev-parse --show-toplevel
+~~~console
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git rev-parse --show-toplevel
+/home/student/YOUR_COURSE_REPOSITORY
 ~~~
 
 初回の環境準備は[受講環境の準備](../setup/index.qmd)，cloneとGitHubの設定は[Git・GitHub](../setup/git-github.qmd)を参照してください．
@@ -47,8 +52,11 @@ F02以降の前提とF03-F04の提出単位は[課題ワークフロー](workflo
 
 現在の課題だけを実行するときは，次の形式を使います．
 
-~~~bash
-julia --project=. exercises/<課題フォルダ>/tests.jl
+~~~console
+$ julia --project=. exercises/<課題フォルダ>/tests.jl
+（実装・自作テスト完成後の例）
+Test Summary: | Pass  Total  Time
+（テスト名・成功件数・実行時間を表示）
 ~~~
 
 自作テストの置き場所，`@test false`を置き換える方法，配布済み必須テストの扱いは[テストを書く・実行する](workflow.qmd#tests)，数値検証の考え方は[テストと数値検証](testing.qmd)を参照してください．

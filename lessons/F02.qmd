@@ -24,11 +24,11 @@ Julia言語を使ったプログラミングに習熟し，
 ## 配列・ループ・関数・テストを順に動かす
 
 ターミナルで`julia --project=.`を実行し，表示された`julia>`へ次を一つずつ入力します．
-出力行は入力せず，表示内容と見比べます．
+`julia>` は表示用のプロンプトです．コピーボタンでは入力だけをコピーできます．出力行は入力せず，表示内容と見比べます．
 
 まずはJuliaの配列を作成し，その要素にアクセスしてみます．
 
-```julia
+```julia-repl
 julia> values = [10.0, 20.0, 30.0]
 3-element Vector{Float64}:
  10.0
@@ -49,7 +49,7 @@ julia> for value in values
 配列の要素番号（インデックス）とその値の違いに注意しましょう．
 ここでは`eachindex(values)`を使っています．
 
-```julia
+```julia-repl
 julia> function double_values(values)
            result = similar(values)
            for i in eachindex(values)

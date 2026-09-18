@@ -5,14 +5,17 @@ title: "Git・GitHub・個人課題用リポジトリ"
 準備 3/5
 :::
 
+実行例では `$` はシェルへの入力，`julia>` はJulia REPLへの入力を表します．プロンプトと出力は入力せず，コピーボタンで入力だけをコピーできます．出力は一例で，`（…）` は説明・省略を表します．パス・バージョン・件数などは環境や作業状況により異なります．
+
 ## Gitを導入する
 
 公式の[Gitのインストール](https://git-scm.com/book/ja/v2/%E4%BD%BF%E3%81%84%E5%A7%8B%E3%82%81%E3%82%8B-Git%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)ページを参考に，Gitを導入してください．
 
 バージョンは以下のコマンドで確認できます．
 
-```bash
-git --version
+```console
+$ git --version
+git version 2.43.0
 ```
 
 ## GitHubアカウントを作成し，設定する
@@ -29,9 +32,12 @@ GitHub公式の[アカウント作成手順](https://docs.github.com/ja/get-star
 
 初期設定として，commitに記録する名前と，GitHubで使うメールアドレスを設定します．
 
-```bash
-git config --global user.name "YOUR NAME"
-git config --global user.email "YOUR_GITHUB_EMAIL"
+```console
+$ git config --global user.name "YOUR NAME"
+（成功時は出力なし）
+
+$ git config --global user.email "YOUR_GITHUB_EMAIL"
+（成功時は出力なし）
 ```
 
 ## 個人課題用リポジトリの公開範囲
@@ -60,10 +66,16 @@ macOSとnative Linuxでは，各OSの標準ターミナルを使います．
 
 `OWNER/REPOSITORY`は自分のリポジトリ，`YOUR_COURSE_REPOSITORY`はcloneで作られるディレクトリ名へ置き換えてください．
 
-```bash
-git clone git@github.com:OWNER/REPOSITORY.git
-cd YOUR_COURSE_REPOSITORY
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
+```console
+$ git clone git@github.com:OWNER/REPOSITORY.git
+Cloning into 'REPOSITORY'...
+（転送状況は省略）
+
+$ cd YOUR_COURSE_REPOSITORY
+（成功時は出力なし）
+
+$ julia --project=. -e 'using Pkg; Pkg.instantiate()'
+（初回はパッケージの導入・プリコンパイル状況を表示．復元済みなら出力がない場合もあります）
 ```
 `Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用のJulia環境を復元します．
 

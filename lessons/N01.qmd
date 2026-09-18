@@ -28,25 +28,49 @@ Julia固有の書き方を短く復習してから，偏微分方程式の計算
 Juliaの配列は1番から始まります．
 `u[i]`は現在の点，`u[i - 1]`は左隣，`u[i + 1]`は右隣です．
 `end`は最後の添字を表します．
+以下はJulia REPLの実行例です．`julia>` と出力は入力せず，コピーボタンで入力だけをコピーしてください．
 
-```julia
-u = [1.0, 2.0, 1.0]
-u[1]       # 1.0
-u[end]     # 1.0
-copy(u)    # 同じ値を持つ別の配列
+```julia-repl
+julia> u = [1.0, 2.0, 1.0]
+3-element Vector{Float64}:
+ 1.0
+ 2.0
+ 1.0
+
+julia> u[1]
+1.0
+
+julia> u[end]
+1.0
+
+julia> copy(u)    # 同じ値を持つ別の配列
+3-element Vector{Float64}:
+ 1.0
+ 2.0
+ 1.0
 ```
 
 関数名の末尾の`!`は，引数の配列を変更する関数であることを知らせる慣習です．
 キーワード引数は`;`の後に書きます．
 
-```julia
-function set_left!(u; value=1.0)
-    u[1] = value
-    return u
-end
+```julia-repl
+julia> function set_left!(u; value=1.0)
+           u[1] = value
+           return u
+       end
+set_left! (generic function with 1 method)
 
-u = [0.0, 0.0, 0.0]
-set_left!(u; value=1.0)
+julia> u = [0.0, 0.0, 0.0]
+3-element Vector{Float64}:
+ 0.0
+ 0.0
+ 0.0
+
+julia> set_left!(u; value=1.0)
+3-element Vector{Float64}:
+ 1.0
+ 0.0
+ 0.0
 ```
 
 この先で使う記号は，次の意味です．
@@ -113,16 +137,28 @@ $$
 `0.5 <= x <= 1.0`を2，それ以外で1とします．
 まず小さな配列で，条件式が端点を含むことを確かめます．
 
-```julia
-x = [0.0, 0.5, 1.0, 1.5]
-u0 = [0.5 <= xi <= 1.0 ? 2.0 : 1.0 for xi in x]
-# [1.0, 2.0, 2.0, 1.0]
+```julia-repl
+julia> x = [0.0, 0.5, 1.0, 1.5]
+4-element Vector{Float64}:
+ 0.0
+ 0.5
+ 1.0
+ 1.5
+
+julia> u0 = [0.5 <= xi <= 1.0 ? 2.0 : 1.0 for xi in x]
+4-element Vector{Float64}:
+ 1.0
+ 2.0
+ 2.0
+ 1.0
 ```
 
 ## 境界条件
 
 正の速度では情報が左から領域へ入り，右へ出ます．
 この1次元線形移流課題では左端を1に固定し，右端は左隣の値をコピーしてゼロ勾配を表します．
+
+次は関数内に書くコードの抜粋です．
 
 ```julia
 u[1] = 1.0
@@ -160,6 +196,8 @@ $$
 ## 時間ループ
 
 局所的な1ステップの更新を理解してから，提供済みの時間ループを読みます．
+
+次は時間発展ループの抜粋です．
 
 ```julia
 for _ in 1:steps

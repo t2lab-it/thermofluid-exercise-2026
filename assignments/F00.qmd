@@ -5,6 +5,8 @@ title: "環境診断"
 第1回・課題 2/2 · 課題ID: F00
 :::
 
+実行例では `$` はシェルへの入力，`julia>` はJulia REPLへの入力を表します．プロンプトと出力は入力せず，コピーボタンで入力だけをコピーできます．出力は一例で，`（…）` は説明・省略を表します．パス・バージョン・件数などは環境や作業状況により異なります．
+
 ## 目的
 
 授業で使うローカル開発環境を診断し，必要な手動確認を完了します．
@@ -26,16 +28,21 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 
 次のコマンドで作業場所が学生用リポジトリのルートであることを確認してください．
 
-~~~bash
-ls -d */
+~~~console
+$ ls -d */
+exercises/  scripts/  src/  test/
+（ほかのディレクトリは省略）
 ~~~
 
 で`exercises/`や`scripts/`などのディレクトリが見えることを確認してください．
 続いて，
 
-~~~bash
-pwd
-git rev-parse --show-toplevel
+~~~console
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git rev-parse --show-toplevel
+/home/student/YOUR_COURSE_REPOSITORY
 ~~~
 
 の出力が同じファイルパス（学生リポジトリのルート）を示すことを確認します．
@@ -44,9 +51,12 @@ git rev-parse --show-toplevel
 
 cloneした学生リポジトリのルートで以下のコマンドを実行します．
 
-~~~bash
-julia --version
-git --version
+~~~console
+$ julia --version
+julia version 1.13.0
+
+$ git --version
+git version 2.43.0
 ~~~
 
 Juliaは`1.13.0`を使います．
@@ -55,8 +65,9 @@ gitのバージョンは本演習では指定しませんが，新しいもの�
 
 次のコマンドで，課題で用いるパッケージの依存環境が導入されます．
 
-~~~bash
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
+~~~console
+$ julia --project=. -e 'using Pkg; Pkg.instantiate()'
+（初回はパッケージの導入・プリコンパイル状況を表示．復元済みなら出力がない場合もあります）
 ~~~
 
 その実体は`Project.toml`と`Manifest.toml`に記述されています．
@@ -66,8 +77,20 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
 `preflight`で機械的な環境診断を行います．
 
-~~~bash
-julia --project=. scripts/course.jl preflight
+~~~console
+$ julia --project=. scripts/course.jl preflight
+端末で確認した項目
+  [PASS] Runtime: （実行環境）
+  [PASS] 作業ディレクトリ (pwd): （作業場所）
+  [PASS] Julia: （Juliaのバージョン）
+  [PASS] Git: （Gitのバージョン）
+
+手動確認
+  [NOT CONFIRMED] VS Code・Julia拡張機能 (WindowsはRemote - WSL)
+  [NOT CONFIRMED] GitHubへのサインインとリポジトリへのアクセス
+  [NOT CONFIRMED] 正式対応AIエージェント: 未指定
+
+F00の進捗は更新されませんでした。すべての機械観測と3項目の手動確認を完了してください。
 ~~~
 
 診断は次の二群を分けて表示します．
@@ -93,10 +116,18 @@ julia --project=. scripts/course.jl preflight
 
 確認したエージェントに対応するコマンドを一つ選んで実行します．
 
-~~~bash
-julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot
-julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent codex
-julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
+~~~console
+$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot
+（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
+F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
+
+$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent codex
+（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
+F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
+
+$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
+（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
+F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
 ~~~
 
 `F00が完了しました。現在の課題はF01です。`という出力を確認してください．
@@ -105,16 +136,26 @@ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github 
 この時点から，F01課題で受講者が実装する`tests.jl`が`Pkg.test()`の実行対象になります．
 テストが未実装のため，ここで`Pkg.test()`を実行するとエラーになることを確かめてください．
 
-~~~bash
-julia --project=. -e 'using Pkg; Pkg.test()'
+~~~console
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+（未実装の自作テストによる失敗例．途中の表示は省略）
+Expression: false
+（Test Failed とエラーが表示されます）
 ~~~
 
 ## 4. F01へ進んだことを確認する
 
-~~~bash
-julia --project=. scripts/course.jl status
-git status --short
-git branch --show-current
+~~~console
+$ julia --project=. scripts/course.jl status
+現在の提出単位: F01
+完了済み: F00
+（課題ページ・実行方法などの表示は省略）
+
+$ git status --short
+ M course_progress.toml
+
+$ git branch --show-current
+main
 ~~~
 
 `status`の現在課題がF01であること，branchが`main`であることを確認します．

@@ -2,6 +2,8 @@
 title: "最終プロジェクトへのコード移行"
 ---
 
+実行例では `$` はシェルへの入力，`julia>` はJulia REPLへの入力を表します．プロンプトと出力は入力せず，コピーボタンで入力だけをコピーできます．出力は一例で，`（…）` は説明・省略を表します．パス・バージョン・件数などは環境や作業状況により異なります．
+
 
 授業で作成したコードを，[最終プロジェクトの共通手順](../assignments/final-project.qmd#project-repository)で用意した別リポジトリへ移します．
 このページでは，移すファイルの選び方，出典の記録，移行後の検証を扱います．
@@ -19,10 +21,17 @@ title: "最終プロジェクトへのコード移行"
 
 学生リポジトリ側を未commit変更のない状態にし、利用するコードのテストを実行してから参照元commitを記録します。
 
-```bash
-git status --short
-git rev-parse HEAD
-julia --project=. -e 'using Pkg; Pkg.test()'
+```console
+$ git status --short
+（変更があれば状態とパスを表示．変更がなければ出力なし）
+
+$ git rev-parse HEAD
+（現在のcommitを表す40桁のハッシュ）
+
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+（実装・自作テスト完成後の例）
+Test Summary: | Pass  Total  Time
+（テスト名・成功件数・実行時間を表示）
 ```
 
 公開されている参照元ならリポジトリURLと参照元commitを記録します。参照元が非公開の場合は、公開してよい参照元commitだけをプロジェクトリポジトリに記録し、非公開リポジトリのURL、氏名、学籍番号、秘密情報は転記しません。

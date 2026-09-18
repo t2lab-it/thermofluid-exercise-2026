@@ -60,7 +60,7 @@ $$
 
 `run.jl`を実行して課題内の`results/`へ次の3ファイルを生成し，内容を確認します．公式出力の確認，テスト，学習ログ，commitの順序は[学生向け課題ワークフローの「公式出力を確認する」](../guides/workflow.qmd#official-results)，[「テスト」](../guides/workflow.qmd#tests)，[「学習ログ，diff，commit」](../guides/workflow.qmd#commit)に従ってください．
 
-~~~bash
+~~~text
 exercises/N01_linear_advection/results/upwind.png
 exercises/N01_linear_advection/results/centered-euler.png
 exercises/N01_linear_advection/results/summary.toml
