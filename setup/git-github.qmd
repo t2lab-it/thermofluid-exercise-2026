@@ -38,25 +38,34 @@ git config --global user.email "YOUR_GITHUB_EMAIL"
 
 受講者が課題に取り組むリポジトリは**公開**です．
 GitHubユーザー名やcommit・issue・pull requestなどの活動，その日時は外部から見えるため，課題に関係のない個人情報や秘密情報を書き込んではいけません．
-AIとの全対話ログ（プロンプトと回答を含む未加工の生の会話記録）も個人課題用リポジトリへcommitしてはいけません．
+AIとの全対話ログも個人課題用リポジトリへcommitしてはいけません．記録・提出の方法は[AI利用と安全](../guides/ai-usage.qmd)を確認してください．
 
 教材本文・図は`CC BY 4.0`，コードは`MIT`です．
 教材や外部資料を使うときは，ライセンスを守り，出典を学習ログやREADMEに記録します．
 
 ## 個人課題用リポジトリを複製する
 
+SSH接続は標準の複製経路です．先に[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)を完了してください．
+
 1. [個人課題用テンプレートリポジトリ](https://github.com/t2lab-it/thermofluid-exercise-student-2026)にアクセスする．
 2. 'Use this template'→'Create a new repository'と進み，自分の作業用リポジトリを作成する．
    その際，名前は`thermofluid-exercise-2026-<自分のusername>`とする．
-3. WSLの中で作業するディレクトリを決めて移動し，以下のコマンドを実行する．
+3. 作成した自分のリポジトリの **Code** → **SSH** からURLをコピーする．
+4. 作業ディレクトリへ移動し，以下のコマンドを実行する．
+
+::: {.callout-warning title="WindowsではWSL2内で実行する"}
+WSL2 Ubuntuの端末を使い，リポジトリはLinux側の `/home/<user>/...` に置いてください．
+macOSとnative Linuxでは，各OSの標準ターミナルを使います．
+:::
+
+`OWNER/REPOSITORY`は自分のリポジトリ，`YOUR_COURSE_REPOSITORY`はcloneで作られるディレクトリ名へ置き換えてください．
 
 ```bash
 git clone git@github.com:OWNER/REPOSITORY.git
 cd YOUR_COURSE_REPOSITORY
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
-julia --project=. scripts/course.jl preflight
 ```
-`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用のJulia環境を復元し，`preflight`はその環境を診断します．
+`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用のJulia環境を復元します．
 
-SSH接続は標準の複製経路です．
-GitHub CLIは，SSH接続を確認した後に必要な人だけ発展資料で追加します．
+続いて[コーディングエージェント](agents.qmd)と[課題ワークフロー](../guides/workflow.qmd)を確認し，[環境診断（F00）](../assignments/F00.qmd)を実行してください．
+GitHub CLIを使いたい人は，準備後に[任意の発展資料](../advanced/github-cli.qmd)を参照してください．

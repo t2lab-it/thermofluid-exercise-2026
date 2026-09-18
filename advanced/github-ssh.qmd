@@ -10,12 +10,6 @@ title: "SSHでGitHubへ接続する"
 Windowsでは，このページのコマンドを WSL2 Ubuntu の Linux 側で実行します．
 macOSとnative Linuxでは各OSの標準ターミナルで実行します．
 
-## SSHを使えると何が嬉しいか
-
-- GitHubへの接続方法を一度整えると，取得やpushのたびに認証方法を選び直さずに済む．
-- 公開鍵をGitHubへ登録し，秘密鍵を自分のPCから出さない形で認証できる．
-- ターミナル中心のGit操作を続けやすくなり，後続のGitHub CLIやコーディングエージェントとの協働へ進みやすくなる．
-
 ## このページの到達点
 
 SSH鍵を準備してGitHubへの接続を確認し，個人課題用リポジトリをSSH URLで複製できる状態にします．すでにHTTPSで複製済みの場合は，最後にoriginをSSH URLへ安全に切り替えます．
@@ -41,7 +35,8 @@ ssh -T git@github.com
 一致した場合だけ接続を承認します．
 値が違う，または判断できない場合は承認せず，教員・TAへ相談します．
 
-認証成功メッセージに自分のGitHubユーザー名が表示された場合はすでにSSH接続を利用できており，以降の内容を実行する必要はありません．
+認証成功メッセージに自分のGitHubユーザー名が表示された場合は，鍵の作成と登録を省略できます．
+初めてcloneする人は[個人課題用リポジトリの複製](../setup/git-github.qmd#個人課題用リポジトリを複製する)へ戻り，HTTPSでclone済みの人は[originの切替え](#ssh-origin)へ進んでください．
 
 ## 接続できない場合だけ鍵を準備する
 
@@ -134,7 +129,7 @@ ssh -T git@github.com
 成功メッセージに，接続したい自分のGitHubユーザー名が含まれることを確認します．
 別のユーザー名が出た場合は，教員・TAへ相談してください．
 
-## 既存のcloneのoriginをSSHへ切り替える
+## 既存のcloneのoriginをSSHへ切り替える {#ssh-origin}
 
 すでにHTTPSで複製済みの学生リポジトリだけが対象です．初めて複製する場合は，この節を飛ばして，SSH接続の確認後に教材のclone手順へ戻ります．
 学生リポジトリを開き，**Code** → **SSH**から取得したURLを用いて以下のコマンドを実行してください．
@@ -147,7 +142,7 @@ git remote -v
 git fetch origin
 ```
 
-最終行の`git fetch origin`で取得先とpush先の両方が同じSSH URLであることを確認してください．
+`git remote -v`で取得先とpush先が同じSSH URLであること，`git fetch origin`で取得に成功することを確認してください．
 
 ## トラブルを切り分ける
 
@@ -162,8 +157,8 @@ git fetch origin
 ## 完了条件
 
 - `ssh -T git@github.com`で，意図した自分のGitHubユーザーとして認証される．
-- `git remote -v`で，`origin`の取得先・push先URLが学生リポジトリのSSH URLになっている．
-- `git fetch origin`が成功する．
+- clone済みの場合は，`git remote -v`で`origin`の取得先・push先が学生リポジトリのSSH URLとなり，`git fetch origin`が成功する．
 - 秘密鍵，パスフレーズ，確認コードを記録・共有していない．
 
-ここまで完了したら，[GitHub CLIでpull requestを操作する](github-cli.qmd)へ進みます．
+ここまで完了したら，[Git・GitHubの準備](../setup/git-github.qmd)へ戻ってください．
+[GitHub CLIでpull requestを操作する](github-cli.qmd)は，準備後に必要な人だけ取り組む任意資料です．
