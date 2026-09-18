@@ -68,6 +68,7 @@ git status --short
 git diff
 git add PATHS_YOU_INTEND_TO_SUBMIT
 git diff --cached
+julia --project=. -e 'using Pkg; Pkg.test()'
 git commit -m "feat: complete TASK_ID"
 ```
 

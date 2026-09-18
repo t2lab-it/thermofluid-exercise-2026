@@ -7,10 +7,11 @@ title: "Julia 1.13.0 と VS Code"
 
 ## OS別の実行場所
 
-Windowsでは WSL2 Ubuntu 24.04 の端末を開き，その Linux 側で以下のコマンドを実行します．
-リポジトリは /home/<user>/... の下へ置き，/mnt/c/... は使いません．
+::: {.callout-warning title="OS別の実行場所"}
+Windowsでは WSL2 Ubuntu 24.04 の端末を開き，その Linux 側でJuliaをインストールします．
 Windows版VS Codeでは VS Code Remote - WSL の公式チュートリアルに従ってリポジトリを開きます．
 macOSとnative Linuxでは，それぞれの標準ターミナルとVS Codeを使います．
+:::
 
 ## JuliaupでJuliaを導入する
 
@@ -25,37 +26,7 @@ julia --version
 
 最後のコマンドで `julia version 1.13.0` が出力されることを確認してください．
 
-## パッケージ環境を整備する
-
-学生リポジトリを複製した後は，リポジトリのルートディレクトリへ移動し，次のコマンドで授業で固定したパッケージ環境を復元します．
-
-```bash
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
-```
-
-授業で扱うパッケージは次のように分類します．
-
-- `LinearAlgebra`，`TOML`，`Test`はJuliaに付属する標準ライブラリです．
-- `Plots`は現在の授業用プロジェクトが直接使う外部runtime依存です．
-- `OrdinaryDiffEqLowOrderRK`，`BenchmarkTools`，`SparseArrays`，`IterativeSolvers`は，それぞれを使う後続課題が追加された時点でだけ授業用環境へ加えます．
-
-## Juliaコードを実行する
-
-リポジトリのルートディレクトリで`--project=.`を付けると，授業用のパッケージ環境を選んでJuliaを起動できます．
-
-```bash
-julia --project=.
-julia --project=. exercises/F04_numerical_differentiation/run.jl
-julia --project=. -e 'using Pkg; Pkg.test()'
-```
-
-1行目は対話的なREPL，2行目はスクリプトを新しいプロセスで実行する例，3行目は授業用のテストを初期状態のテストプロセスで実行する例です．
-REPLでは`exit()`またはCtrl+Dで終了できます．
-
-VS CodeのCommand Paletteでは，`Julia: Start REPL`で授業用REPLを開始し，`Julia: Execute Code in REPL`で選択範囲や現在行を試せます．
-ファイル全体を独立した状態で確認するときは`Julia: Run File in New Process`を使います．
-
-## VS Codeを授業用に整える
+## VS Codeと拡張機能を整える
 
 VS Codeをインストールしたら，拡張機能`julialang.language-julia`を必ず導入します．
 学生リポジトリの`.vscode/`には，Juliaファイルの4空白インデント，括弧の色分け，末尾空白の除去，保存時の自動整形，`linter`を有効にする授業用設定があります．
@@ -66,19 +37,6 @@ VS Code上の操作は公式資料も参照してください．
 - [Juliaコードの実行](https://www.julia-vscode.org/docs/latest/userguide/runningcode/)
 - [formatter](https://www.julia-vscode.org/docs/latest/userguide/formatter/)
 - [linter](https://www.julia-vscode.org/docs/stable/userguide/linter/)
-
-## pull request前に保存とテストを行う
-
-pull requestを作る前に，編集したJuliaファイルをVS Codeで保存して自動整形を適用します．
-その後，リポジトリのルートディレクトリで次の順に実行します．
-
-```bash
-git diff
-julia --project=. -e 'using Pkg; Pkg.test()'
-```
-
-1行目で保存時の自動整形を含む変更を自分で読み，意図した変更だけか確認します．
-2行目で全テストを新しいプロセスから実行します．
 
 ## 問題が起きたとき
 
