@@ -39,6 +39,15 @@ code {
   overflow-wrap: anywhere;
 }
 
+:not(pre) > code {
+  white-space: normal;
+}
+
+.math.display {
+  display: block;
+  overflow-x: auto;
+}
+
 body.quarto-dark :not(pre) > code {
   color: #f8f9fa;
   background-color: #343a40;
