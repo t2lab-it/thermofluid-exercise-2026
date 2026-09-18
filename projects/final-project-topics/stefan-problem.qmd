@@ -79,7 +79,7 @@ $$
 
 ## 手法と検証
 
-作業場所は，最終プロジェクト用の **thermofluid-project-base-2026** をforkした各自のリポジトリです．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
 [一次元Stefan問題の配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/stefan-problem)は完成ソルバではなく，基準条件を確かめて自分の実装を始めるための小さなパックです．
 
 - [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/README.md): 固定する縮小ケース，相似式，学生が自分で決める範囲

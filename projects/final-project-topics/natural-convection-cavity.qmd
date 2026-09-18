@@ -101,7 +101,7 @@ $\mathrm{Ra}=10^3,10^4$ について，各二格子の温度等値線と流線�
 
 ## 手法と検証
 
-作業場所は，最終プロジェクト用の **thermofluid-project-base-2026** をforkした各自のリポジトリです．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
 [二次元自然対流キャビティの配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/natural-convection-cavity)には，次の三つだけがあります．
 
 - [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/README.md): 領域，境界条件，格子規約，ベンチマーク量の定義，学生が決める範囲

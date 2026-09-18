@@ -77,7 +77,7 @@ NASA CDVの $\gamma=1.4$ 基準との外部比較を済ませてからこの問�
 
 ## 手法と検証
 
-作業場所は，最終プロジェクト用の **thermofluid-project-base-2026** をforkした各自のリポジトリです．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
 このページの[準一次元ノズル用配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/quasi-1d-nozzle)には，次の三つだけがあります．
 
 - **README.md**: 参照資産の用途，NASA資料，学生が自分で決める範囲を説明する文書

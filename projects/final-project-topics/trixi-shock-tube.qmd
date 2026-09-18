@@ -91,9 +91,9 @@ CFLを半分にした差が解像度や流束の比較差に対して無視で�
 
 ## 手法と検証
 
-作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです．
-配布repoの `launch-kits/catalog.toml` はこのテーマを `guided-package`／`theme-pack` と分類していますが，現行catalogには `asset_path` と `fast_preflight` がなく，Trixi専用の資産directory，固定example，参照data，教員用・学生用starterもありません．
-したがって `launch-kits/guided-package/README.md` の共通契約に従い，下表の上流資料から基準scriptと独立な参照解を自分のprojectへ作ります．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
+このテーマ専用の開始ファイル・固定例・参照データは未配布です．
+`launch-kits/guided-package/README.md` を読み，下表の上流資料から基準scriptと独立な参照解を自分のprojectへ作ってください．
 
 ::: {.table-responsive}
 | 役割 | 現行の参照先 | projectへ記録すること |

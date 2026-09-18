@@ -76,9 +76,9 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 
 ## 手法と検証
 
-作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです．
-配布リポジトリの `launch-kits/catalog.toml` はこのテーマを `guided-package`／`theme-pack` と分類していますが，現行catalogに `asset_path` と `fast_preflight` はなく，対応する資産directory，固定例，参照data，教員用・学生用starterもありません．
-したがって，`launch-kits/guided-package/README.md` の共通契約を読み，下表の公式資料から自分のprojectへ再現可能な開始例を作ります．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
+このテーマ専用の開始ファイル・固定例・参照データは未配布です．
+`launch-kits/guided-package/README.md` を読み，下表の公式資料から自分のprojectへ再現可能な開始例を作ってください．
 
 ::: {.table-responsive}
 | 役割 | 現行の参照先 | projectへ記録すること |

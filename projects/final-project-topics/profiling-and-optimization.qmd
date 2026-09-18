@@ -54,9 +54,9 @@ warm-up後は同じ処理を固定回数だけ繰り返し，合計仕事量を�
 
 ## 手法と検証
 
-作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
 配布リポジトリの `launch-kits/reuse-your-solver/` にある `README.md` は，参照元commit，入力，仕事量，測定条件，回帰検証を固定するための共通ガイドであり，solver本体，profiling script，測定template，参照値は配布しません．
-確認した教員用・学生用リポジトリにもこのテーマ専用のstarterや完成例はないため，正しさを確認済みの自分のCPUソルバと，その検証記録を出所とcommit付きで持ち込みます．
+正しさを確認済みの自分のCPUソルバと検証記録を，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
 道具は役割を分けて使います．
 

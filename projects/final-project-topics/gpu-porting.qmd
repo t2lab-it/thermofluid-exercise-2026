@@ -62,10 +62,10 @@ Float32が速い，または小さいmemoryで動くことを前提にせず，�
 
 ## 手法と検証
 
-作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
 配布リポジトリの `launch-kits/` にある `reuse-your-solver/` の共通ガイドを使います．
 このガイドは参照元commit，正しさ，入力，仕事量，device条件，測定方法，CPU/GPU場の回帰検証を固定する契約であり，solver本体，GPU専用starter，完成例，測定scriptは配布しません．
-確認した教員用・学生用リポジトリにもテーマ専用資産はないため，正しさを確認済みの自分のCPU solverと検証記録を出所とcommit付きで持ち込みます．
+正しさを確認済みの自分のCPU solverと検証記録を，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
 現在の配布用 `Project.toml` にCUDA.jlは含まれません．
 GPU経路を実行できることを確認してから自分のproject環境へ追加し，`Project.toml` と `Manifest.toml`，JuliaとCUDA.jlのversionを残します．

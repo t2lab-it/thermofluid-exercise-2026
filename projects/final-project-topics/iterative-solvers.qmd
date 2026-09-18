@@ -71,10 +71,10 @@ solverの内部履歴だけを使わず，終了後の $\boldsymbol{b}-A\boldsym
 
 ## 手法と検証
 
-作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
 配布リポジトリの `launch-kits/` にある `reuse-your-solver/README.md` は，参照元commit，正しさ，入力，処理量，測定方法，回帰検証を固定する共通ガイドです．
-反復解法用solver，テーマ専用starter，完成例，測定scriptは配布せず，確認した教員用・学生用リポジトリにもテーマ専用資産はありません．
-N08–N09までに作成した5点差分・Jacobi法・残差・製造解のcodeを，出所と参照元commit，既存testとともに持ち込みます．
+反復解法用solver，テーマ専用starter，完成例，測定scriptは配布しません．
+N08–N09までに作成した5点差分・Jacobi法・残差・製造解のcodeと既存testを，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
 標準ルートでは，最初の比較より前に次の契約を一つの設定または表へ固定します．
 
