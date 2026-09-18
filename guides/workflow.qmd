@@ -11,20 +11,21 @@ title: "学生向け課題ワークフロー"
 ## コマンドを実行する場所 {#repository-root}
 
 このページにあるコマンドは，**学生リポジトリのルートディレクトリ**で実行します．
+以下のコマンドで確認してください．
 
-~~~bash
-ls -d */
+~~~console
+$ ls -d */
+exercises/  scripts/  src/  test/
+（ほかのディレクトリは省略）
+
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git rev-parse --show-toplevel
+/home/student/YOUR_COURSE_REPOSITORY
 ~~~
 
-で`exercises/`や`scripts/`などのディレクトリが見えることを確認してください．
-続いて，
-
-~~~bash
-pwd
-git rev-parse --show-toplevel
-~~~
-
-の出力が同じファイルパス（学生リポジトリのルート）を示すことを確認します．
+`pwd`と`git rev-parse --show-toplevel`が同じファイルパス（学生リポジトリのルート）を出力することを確認します．
 環境の準備は[受講環境の準備](../setup/index.qmd)，cloneとGitHubの設定は[Git・GitHub](../setup/git-github.qmd)を参照してください．
 
 ## 初回セットアップと「環境診断（F00）」のpreflight {#f00-preflight}
@@ -32,32 +33,44 @@ git rev-parse --show-toplevel
 ### 1. Julia環境を復元する
 
 cloneした学生リポジトリのルートで以下のコマンドを実行します．
+gitのバージョンは本演習では指定しませんが，一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
 
-~~~bash
-julia --version
-git --version
+~~~console
+$ julia --version
+julia version 1.13.0
+
+$ git --version
+git version 2.43.0
 ~~~
-
-Juliaは`1.13.0`を使います．
-gitのバージョンは本演習では指定しませんが，新しいものが良いでしょう．
-一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
 
 次のコマンドで，課題で用いるパッケージの依存環境が導入されます．
-
-~~~bash
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
-~~~
-
 その実体は`Project.toml`と`Manifest.toml`に記述されています．
 気になる人は中を見てみるとよいでしょう．
+
+~~~console
+$ julia --project=. -e 'using Pkg; Pkg.instantiate()'
+（初回はパッケージの導入・プリコンパイル状況を表示．復元済みなら出力がない場合もあります）
+~~~
 
 ### 2. F00の環境を診断する
 
 学生用リポジトリ内に，状態を確認するコマンドがいくつか用意されています．
 まず，`preflight`で機械的な環境診断を行えます．
 
-~~~bash
-julia --project=. scripts/course.jl preflight
+~~~console
+$ julia --project=. scripts/course.jl preflight
+端末で確認した項目
+  [PASS] Runtime: （実行環境）
+  [PASS] 作業ディレクトリ (pwd): （作業場所）
+  [PASS] Julia: （Juliaのバージョン）
+  [PASS] Git: （Gitのバージョン）
+
+手動確認
+  [NOT CONFIRMED] VS Code・Julia拡張機能 (WindowsはRemote - WSL)
+  [NOT CONFIRMED] GitHubへのサインインとリポジトリへのアクセス
+  [NOT CONFIRMED] 正式対応AIエージェント: 未指定
+
+F00の進捗は更新されませんでした。すべての機械観測と3項目の手動確認を完了してください。
 ~~~
 
 診断は次の二群を分けて表示します．
@@ -72,8 +85,6 @@ julia --project=. scripts/course.jl preflight
    - GitHubで学生リポジトリを閲覧できる
    - 対応エージェントの一つでファイル編集とコマンド実行ができる
 
-診断が成功したら手動確認へ進みます．
-
 ### 3. 手動確認を完了として記録する
 
 次の項目を自分で確認します．
@@ -82,34 +93,39 @@ julia --project=. scripts/course.jl preflight
 - GitHubで自分の学生リポジトリを閲覧できる．
 - 対応エージェントの一つで，ファイル編集と安全なローカルコマンド実行ができる．
 
-確認したエージェントに対応するコマンドを一つ選んで実行します．
-
-~~~bash
-julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot
-julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent codex
-julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
-~~~
-
-`F00が完了しました。現在の課題はF01です。`という出力を確認してください．
+確認したエージェントに対応するコマンドを実行します．
 これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
+
+~~~console
+$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot # or codex or amazon-q
+（機械観測・手動確認の表示は省略．）
+F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
+~~~
 
 この時点から，F01課題で受講者が実装する`tests.jl`が`Pkg.test()`の実行対象になります．
 テストが未実装のため，ここで`Pkg.test()`を実行するとエラーになることを確かめてください．
 
-~~~bash
-julia --project=. -e 'using Pkg; Pkg.test()'
+~~~console
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+（未実装の自作テストによる失敗例．途中の表示は省略）
+Expression: false
+（Test Failed とエラーが表示されます）
 ~~~
 
 ### 4. F01へ進んだことを確認する
 
-~~~bash
-julia --project=. scripts/course.jl status
-git status --short
-git branch --show-current
-~~~
+~~~console
+$ julia --project=. scripts/course.jl status
+現在の提出単位: F01
+完了済み: F00
+（課題ページ・実行方法などの表示は省略）
 
-`status`の現在課題がF01であること，branchが`main`であることを確認します．
-F00完了直後は`course_progress.toml`が変更済みと表示されることがあります．
+$ git status --short
+ M course_progress.toml
+
+$ git branch --show-current
+main
+~~~
 
 ## 課題を開始する {#start-exercise}
 
@@ -117,32 +133,49 @@ F00完了直後は`course_progress.toml`が変更済みと表示されること�
 
 F01は，初めてなので`main` branchから作業ブランチを手動で作成します．
 
-~~~bash
-git status --short
-git diff -- course_progress.toml
-git branch --show-current
-git switch -c exercise/F01-first-pull-request
-git branch --show-current
+~~~console
+$ git status --short
+（変更があれば状態とパスを表示．変更がなければ出力なし）
+
+$ git diff -- course_progress.toml
+（F00完了による現在課題・完了済み課題の変更が表示されます）
+
+$ git branch --show-current
+（現在のbranch名．開始前・merge後は main，作業中は課題branch）
+
+$ git switch -c exercise/F01-first-pull-request
+Switched to a new branch 'exercise/F01-first-pull-request'
+
+$ git branch --show-current
+exercise/F01-first-pull-request
 ~~~
 
-最後の出力が`exercise/F01-first-pull-request`であることを確認して，F01の実装を始めます．
-`course_progress.toml`以外の変更が表示される場合は，教員・TAへ相談してください．
+上記と異なる出力が得られた場合は，教員・TAへ相談してください．
 
 ### F02以降：更新済みのmainから開始する
 
 F02以降は，前の課題をGitHubでmergeしたクリーンな`main`から開始します．
 
-~~~bash
-git switch main
-git pull --ff-only origin main
-git status --short
-git branch --show-current
+~~~console
+$ git switch main
+Switched to branch 'main'
+（追跡先との比較表示は省略）
+
+$ git pull --ff-only origin main
+（更新があれば Fast-forward と変更一覧，更新済みなら Already up to date.）
+
+$ git status --short
+（変更がなければ出力なし）
+
+$ git branch --show-current
+main
 ~~~
 
-`git status --short`が空で，branchが`main`であることを確認した後，次のコマンドの`TASK_ID`を各課題の提出単位へ置換して実行します．
+次のコマンドの`TASK_ID`は各課題の提出単位へ置換して実行してください．
 
-~~~bash
-julia --project=. scripts/course.jl start TASK_ID
+~~~console
+$ julia --project=. scripts/course.jl start TASK_ID
+（指定した課題のbranch作成と開始のメッセージ，課題ページ・実行方法などを表示）
 ~~~
 
 ## 通常の課題作業 {#exercise-work}
@@ -158,8 +191,9 @@ julia --project=. scripts/course.jl start TASK_ID
 
 実装したコードを動かすときは，学生リポジトリのルートから次を実行します．
 
-~~~bash
-julia --project=. exercises/<課題フォルダ>/run.jl
+~~~console
+$ julia --project=. exercises/<課題フォルダ>/run.jl
+（課題ごとの実行結果や，生成した出力ファイルの場所を表示）
 ~~~
 
 ## テストを書く・実行する {#tests}
@@ -167,13 +201,14 @@ julia --project=. exercises/<課題フォルダ>/run.jl
 ### 自作テストの場所と書き方
 
 入力，関数呼び出し，期待値または判定基準をもつ自作テストを，各課題の`exercises/<課題フォルダ>/tests.jl`に書きます．
-課題が`course_progress.toml`の現在課題または完了済み課題になってから，
+課題が`course_progress.toml`の現在課題または完了済み課題になってから，次のコマンドがその課題の`tests.jl`を実行するようになります．
 
-~~~bash
-julia --project=. -e 'using Pkg; Pkg.test()'
+~~~console
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+（実装・自作テスト完成後の例）
+Test Summary: | Pass  Total  Time
+（テスト名・成功件数・実行時間を表示）
 ~~~
-
-が，その課題の`tests.jl`を実行するようになります．
 
 そのままだと，自作テストの`@test false`が実行されて，`Pkg.test()`は失敗します．
 自身が実装する課題にあわせて適切なテストを実装できれば，`Pkg.test()`が通ります．
@@ -183,25 +218,29 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 特定の課題の配布済み必須テストと自作テストを実行するときは，学生リポジトリのルートから次を実行します．
 
-~~~bash
-julia --project=. exercises/<課題フォルダ>/tests.jl
+~~~console
+$ julia --project=. exercises/<課題フォルダ>/tests.jl
+（実装・自作テスト完成後の例）
+Test Summary: | Pass  Total  Time
+（テスト名・成功件数・実行時間を表示）
 ~~~
 
 ## 公式出力を確認する {#official-results}
 
 公式出力がある課題では，`run.jl`を実行します．
 例えば「1次元線形移流方程式（N01）」では次の通りです．
-
-~~~bash
-julia --project=. exercises/N01_linear_advection/run.jl
-~~~
-
 生成された`results/`ディレクトリの中身を確認してください．
+
+~~~console
+$ julia --project=. exercises/N01_linear_advection/run.jl
+N01の出力を書き込みました: /home/student/YOUR_COURSE_REPOSITORY/exercises/N01_linear_advection/results
+~~~
 
 公式出力の配置やサイズを機械的に確認する必要がある課題では，次も実行してファイルの配置・サイズを確認します．
 
-~~~bash
-julia --project=. scripts/course.jl check-results
+~~~console
+$ julia --project=. scripts/course.jl check-results
+結果ファイルのサイズ上限を確認しました。
 ~~~
 
 ## 学習ログ，diff，commit {#commit}
@@ -217,12 +256,21 @@ julia --project=. scripts/course.jl check-results
 その後，課題ファイルだけをcommitします．
 `PATHS_YOU_INTEND_TO_SUBMIT`と`TASK_ID`は実際の値へ置き換えてください．
 
-~~~bash
-git status --short
-git diff
-git add PATHS_YOU_INTEND_TO_SUBMIT
-git diff --cached
-git commit -m "feat: complete TASK_ID"
+~~~console
+$ git status --short
+（変更があれば状態とパスを表示．変更がなければ出力なし）
+
+$ git diff
+（stage前の変更が差分として表示されます）
+
+$ git add PATHS_YOU_INTEND_TO_SUBMIT
+（成功時は出力なし）
+
+$ git diff --cached
+（stageした変更が差分として表示されます）
+
+$ git commit -m "feat: complete TASK_ID"
+（branch名・commitの短縮ハッシュ・メッセージと，変更ファイル数を表示）
 ~~~
 
 課題に必要なパス・ファイルだけを`git add`へ指定してください．
@@ -231,16 +279,19 @@ commitする前に，アクセストークンやAPI key，パスワード，秘�
 ## push，PR，GitHub Actions，セルフレビュー {#submit-pr}
 
 commitした課題branchをoriginへpushします．
+`main`で作業した場合は，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)を確認してください．
 
-~~~bash
-git branch --show-current
-git push -u origin YOUR_EXERCISE_BRANCH
+~~~console
+$ git branch --show-current
+（現在のbranch名．開始前・merge後は main，作業中は課題branch）
+
+$ git push -u origin YOUR_EXERCISE_BRANCH
+（転送状況は省略）
+branch 'YOUR_EXERCISE_BRANCH' set up to track 'origin/YOUR_EXERCISE_BRANCH'.
 ~~~
 
 GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを作成し，PRテンプレートを埋めます．
 PR本文には提出単位，テスト結果，公式出力，作業branch上の学習ログURL，diffで確認した内容を記載します．
-
-`main`で作業した場合は，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)を確認してください．
 
 GitHub Actionsが成功することを確認してください．
 失敗した場合はエラー文を読んでその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
@@ -254,8 +305,9 @@ Actionsが成功した後，GitHubの`Files changed`を読んで以下を確認�
 
 なお，以下のコマンドでもPRの差分を確認できますが，GitHub上のほうが読みやすいと思います．
 
-~~~bash
-git diff main...HEAD
+~~~console
+$ git diff main...HEAD
+（mainとの分岐点から現在のcommitまでの差分が表示されます）
 ~~~
 
 通常課題では，セルフレビュー（目視での差分確認）後にGitHub上でPRをmergeします．
@@ -265,12 +317,19 @@ git diff main...HEAD
 
 merge後はローカルの`main`を更新して次の課題を始めます．
 
-~~~bash
-git switch main
-git pull --ff-only origin main
-git status --short
-git branch --show-current
+~~~console
+$ git switch main
+Switched to branch 'main'
+（追跡先との比較表示は省略）
+
+$ git pull --ff-only origin main
+（更新があれば Fast-forward と変更一覧，更新済みなら Already up to date.）
+
+$ git status --short
+（変更がなければ出力なし）
+
+$ git branch --show-current
+main
 ~~~
 
-`status`が空，branchが`main`であることを確認します．
-その後，[課題開始](#start-exercise)に戻って次の課題に取り組んでください．
+この後は[課題開始](#start-exercise)に戻って次の課題に取り組んでください．

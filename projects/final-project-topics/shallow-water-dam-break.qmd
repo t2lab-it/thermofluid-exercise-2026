@@ -95,9 +95,12 @@ $h_R=0.1\ \mathrm{m}$ の配布CSVを $h_R=0.2\ \mathrm{m}$ の参照として�
 
 資産ディレクトリで次を実行します．
 
-~~~bash
-cd launch-kits/assets/shallow-water-dam-break
-julia --startup-file=no preflight.jl
+~~~console
+$ cd launch-kits/assets/shallow-water-dam-break
+（成功時は出力なし）
+
+$ julia --startup-file=no preflight.jl
+（配布資産の診断結果と preflight passed を表示）
 ~~~
 
 現行資産では **preflight passed** とともに，22行，水深比10，三つの波位置が出力されます．

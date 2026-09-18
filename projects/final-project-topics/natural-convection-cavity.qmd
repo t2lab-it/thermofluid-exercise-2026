@@ -110,9 +110,12 @@ $\mathrm{Ra}=10^3,10^4$ について，各二格子の温度等値線と流線�
 
 資産ディレクトリで次を実行します．
 
-~~~bash
-cd launch-kits/assets/natural-convection-cavity
-julia --startup-file=no preflight.jl
+~~~console
+$ cd launch-kits/assets/natural-convection-cavity
+（成功時は出力なし）
+
+$ julia --startup-file=no preflight.jl
+（配布資産の診断結果と preflight passed を表示）
 ~~~
 
 現行資産では **preflight passed** とともに，2行，$\mathrm{Ra}=1000,10000$，$\mathrm{Pr}=0.71$，格子節点数65と129が表示されます．

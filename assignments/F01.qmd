@@ -20,37 +20,50 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 学生リポジトリのルートで，最初の環境診断（F00）が完了し，現在課題が「最初のbranchとpull request」（F01）であることを確認します．
 
-```bash
-pwd
-git rev-parse --show-toplevel
-julia --project=. scripts/course.jl status
-git status --short
-git branch --show-current
+```console
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git rev-parse --show-toplevel
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ julia --project=. scripts/course.jl status
+現在の提出単位: F01
+完了済み: F00
+（課題ページ・実行方法などの表示は省略）
+
+$ git status --short
+ M course_progress.toml
+
+$ git branch --show-current
+main
 ```
 
-`現在の提出単位: F01`，現在branchが`main`であることを確認してください．
-最初の環境診断からこの課題へ進んだ直後は，`course_progress.toml`だけが変更済みと表示されるのが正常です．
-それ以外の変更が表示された場合は，branchを作る前に教員・TAへ相談してください．
+上記と異なる出力が得られた場合は，教員・TAへ相談してください．
 
 ## 1. この課題のbranchを手動で作る
 
 F00完了後の`main`から，次のコマンドで課題用branchを作成します．
 
-```bash
-git switch -c exercise/F01-first-pull-request
-git branch --show-current
-```
+```console
+$ git switch -c exercise/F01-first-pull-request
+Switched to a new branch 'exercise/F01-first-pull-request'
 
-二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認してください．
+$ git branch --show-current
+exercise/F01-first-pull-request
+```
 
 ## 2. 実装する
 
 `exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装してください．
 修正したプログラムは以下のコマンドで実行します．
 
-```bash
-julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
-git diff -- exercises/F01_first_pull_request/run.jl
+```console
+$ julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
+Hello, 自分の名前!
+
+$ git diff -- exercises/F01_first_pull_request/run.jl
+（自分が実装した student_greeting の差分が表示されます）
 ```
 
 実行結果とdiffを確認し，自分が意図したファイルだけが変わっていることを確認します．
@@ -64,14 +77,20 @@ git diff -- exercises/F01_first_pull_request/run.jl
 
 課題単独のテストは以下で実行できます．
 
-```bash
-julia --project=. exercises/F01_first_pull_request/tests.jl
+```console
+$ julia --project=. exercises/F01_first_pull_request/tests.jl
+（実装・自作テスト完成後の例）
+Test Summary: | Pass  Total  Time
+（テスト名・成功件数・実行時間を表示）
 ```
 
 全体のテストは以下で実行できます．
 
-```bash
-julia --project=. -e 'using Pkg; Pkg.test()'
+```console
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+（実装・自作テスト完成後の例）
+Test Summary: | Pass  Total  Time
+（テスト名・成功件数・実行時間を表示）
 ```
 
 ## 4. 実行結果を確認する
@@ -92,27 +111,44 @@ F01課題ではファイル出力はありません．
 
 `course_progress.toml`と実際に変更したF01の課題ファイルだけをcommit対象にします．
 
-```bash
-git status --short
-git diff
-git add course_progress.toml exercises/F01_first_pull_request
-git diff --cached
-julia --project=. -e 'using Pkg; Pkg.test()'
-git commit -m "feat: complete F01"
+```console
+$ git status --short
+（変更があれば状態とパスを表示．変更がなければ出力なし）
+
+$ git diff
+（stage前の変更が差分として表示されます）
+
+$ git add course_progress.toml exercises/F01_first_pull_request
+（成功時は出力なし）
+
+$ git diff --cached
+（stageした変更が差分として表示されます）
+
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+（実装・自作テスト完成後の例）
+Test Summary: | Pass  Total  Time
+（テスト名・成功件数・実行時間を表示）
+
+$ git commit -m "feat: complete F01"
+（branch名・commitの短縮ハッシュ・メッセージと，変更ファイル数を表示）
 ```
 
 アクセストークンやAPI key，パスワード，秘密鍵など，課題と無関係な生成物や個人情報が含まれていないかを確認してからcommitしてください．
 
 ## 7. pushしてPRを作る
 
-`exercise/F01-first-pull-request` branchをoriginへpushし，`main`へのPRを作ります．
+`exercise/F01-first-pull-request` branchをoriginへpushします．
 
-```bash
-git branch --show-current
-git push -u origin exercise/F01-first-pull-request
+```console
+$ git branch --show-current
+exercise/F01-first-pull-request
+
+$ git push -u origin exercise/F01-first-pull-request
+（転送状況は省略）
+branch 'exercise/F01-first-pull-request' set up to track 'origin/exercise/F01-first-pull-request'.
 ```
 
-GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作成し，PRテンプレートを埋めます．
+続いて，GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作成し，PRテンプレートを埋めます．
 
 ## 8. GitHub Actionsとdiffを確認する
 
@@ -132,14 +168,21 @@ Actionsが成功した後，GitHubの`Files changed`を読んでF01の`run.jl`�
 GitHub Actionsが成功してセルフレビュー（目視での差分確認）が終わったら，GitHub上でPRをmergeします．
 その後，以下のコマンドでローカルのmainブランチを最新状態にします．
 
-```bash
-git switch main
-git pull --ff-only origin main
-git status --short
-git branch --show-current
+```console
+$ git switch main
+Switched to branch 'main'
+（追跡先との比較表示は省略）
+
+$ git pull --ff-only origin main
+（更新があれば Fast-forward と変更一覧，更新済みなら Already up to date.）
+
+$ git status --short
+（変更がなければ出力なし）
+
+$ git branch --show-current
+main
 ```
 
-`status`が空で，branchが`main`であることを確認します．
 これで「最初のbranchとpull request」は完了です．
 
 ## 任意のCLI発展資料

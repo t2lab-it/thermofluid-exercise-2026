@@ -87,9 +87,12 @@ NASA CDVの $\gamma=1.4$ 基準との外部比較を済ませてからこの問�
 問い，面積関数，離散化，ソルバの構成，評価指標，可視化，解釈は自分で決めます．
 開始時には，資産ディレクトリで次を実行します．
 
-~~~bash
-cd launch-kits/assets/quasi-1d-nozzle
-julia --startup-file=no preflight.jl
+~~~console
+$ cd launch-kits/assets/quasi-1d-nozzle
+（成功時は出力なし）
+
+$ julia --startup-file=no preflight.jl
+（配布資産の診断結果と preflight passed を表示）
 ~~~
 
 CSVが読み込めること，**area_ratio** が単調増加であること，亜音速分枝が $M<1$，超音速分枝が $M>1$ であること，両分枝の面積–Mach数残差が **1e-10** 以下であることを確認します．

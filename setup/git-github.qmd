@@ -11,8 +11,9 @@ title: "Git・GitHub・個人課題用リポジトリ"
 
 バージョンは以下のコマンドで確認できます．
 
-```bash
-git --version
+```console
+$ git --version
+git version 2.43.0
 ```
 
 ## GitHubアカウントを作成し，設定する
@@ -29,9 +30,12 @@ GitHub公式の[アカウント作成手順](https://docs.github.com/ja/get-star
 
 初期設定として，commitに記録する名前と，GitHubで使うメールアドレスを設定します．
 
-```bash
-git config --global user.name "YOUR NAME"
-git config --global user.email "YOUR_GITHUB_EMAIL"
+```console
+$ git config --global user.name "YOUR NAME"
+（成功時は出力なし）
+
+$ git config --global user.email "YOUR_GITHUB_EMAIL"
+（成功時は出力なし）
 ```
 
 ## 個人課題用リポジトリの公開範囲
@@ -60,9 +64,13 @@ macOSとnative Linuxでは，各OSの標準ターミナルを使います．
 
 `OWNER/REPOSITORY`は自分のリポジトリ，`YOUR_COURSE_REPOSITORY`はcloneで作られるディレクトリ名へ置き換えてください．
 
-```bash
-git clone git@github.com:OWNER/REPOSITORY.git
-cd YOUR_COURSE_REPOSITORY
+```console
+$ git clone git@github.com:OWNER/REPOSITORY.git
+Cloning into 'REPOSITORY'...
+（転送状況は省略）
+
+$ cd YOUR_COURSE_REPOSITORY
+（成功時は出力なし）
 ```
 `exercises/`や`scripts/`が見えることを確認してください．
 Juliaのパッケージ環境は，[環境診断（F00）](../assignments/F00.qmd)で復元します．

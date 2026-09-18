@@ -88,9 +88,12 @@ $$
 
 開始時には，資産ディレクトリで次を実行します．
 
-~~~bash
-cd launch-kits/assets/stefan-problem
-julia --startup-file=no preflight.jl
+~~~console
+$ cd launch-kits/assets/stefan-problem
+（成功時は出力なし）
+
+$ julia --startup-file=no preflight.jl
+（配布資産の診断結果と preflight passed を表示）
 ~~~
 
 CSVの4列，正値と単調増加，左右境界温度，$\alpha$，$\mathrm{Ste}$，$\lambda$，界面位置の残差が整合することを確認し，界面位置と相似式の差と相似式残差はいずれも **1e-14** 以下であることを出力します．

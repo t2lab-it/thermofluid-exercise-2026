@@ -21,12 +21,13 @@ understanding-check-points:
 
 ## 配列・ループ・関数・テストを順に動かす
 
-ターミナルで`julia --project=.`を実行し，表示された`julia>`へ次を一つずつ入力します．
-出力行は入力せず，表示内容と見比べます．
+ターミナルで`julia --project=.`を実行してREPL（Read-Eval-Print Loopという対話型実行環境）を立ち上げます．
+表示された`julia>` という表示用のプロンプトに続いて，以下のコマンドを一つずつ入力して出力と見比べてください．
 
 まずはJuliaの配列を作成し，その要素にアクセスしてみます．
+配列の要素番号（インデックス）とその値の違いに注意しましょう．
 
-```julia
+```julia-repl
 julia> values = [10.0, 20.0, 30.0]
 3-element Vector{Float64}:
  10.0
@@ -44,10 +45,9 @@ julia> for value in values
 10.0
 ```
 
-配列の要素番号（インデックス）とその値の違いに注意しましょう．
-ここでは`eachindex(values)`を使っています．
+`eachindex(values)`を使った配列要素へのアクセスは以下のようにおこないます．
 
-```julia
+```julia-repl
 julia> function double_values(values)
            result = similar(values)
            for i in eachindex(values)
@@ -62,34 +62,18 @@ julia> double_values([1.0, 2.0, 3.0])
  2.0
  4.0
  6.0
+```
 
+`double_values`関数は入力として配列を受け取り，ループで要素がもとの二倍の大きさになる新しい配列を組み立て，`return`で返します．
+その動作を以下のようにテストしてみましょう．
+`@test`は式がtrueになることを確認します．
+
+```julia-repl
 julia> using Test
 
 julia> @test double_values([1.0, 2.0, 3.0]) == [2.0, 4.0, 6.0]
 Test Passed
 ```
-
-`double_values`関数は入力として配列を受け取り，ループで要素がもとの二倍の大きさになる新しい配列を組み立て，`return`で返します．
-`@test`は式がtrueになることを確認します．
-
-
-## 平均から偏差へ
-
-偏差は平均からのずれです．
-
-$$
-T_i'=T_i-\bar{T}
-$$
-
-定義より，偏差配列の和は厳密計算なら
-
-$$
-\sum_i T_i'=0
-$$
-
-です．
-浮動小数点の演算には丸め誤差があるため，`== 0`で完全一致を求めず，許容誤差の範囲で0に近いことを確認します．
-この性質は，特定の入力例だけでなく多くの入力に共通するテストになります．
 
 ## テストを層に分ける
 
