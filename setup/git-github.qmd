@@ -60,3 +60,7 @@ julia --project=. scripts/course.jl preflight
 
 SSH接続は標準の複製経路です．
 GitHub CLIは，SSH接続を確認した後に必要な人だけ発展資料で追加します．
+
+## なぜGit/GitHubを使うべきなのか？
+
+参考：[渡辺 宙志，計算物理屋のためのGit/GitHub入門](https://github.com/cpss2026-git/cpss2026-git.github.io)
