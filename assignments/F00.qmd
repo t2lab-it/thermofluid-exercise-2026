@@ -30,12 +30,7 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 $ ls -d */
 exercises/  scripts/  src/  test/
 （ほかのディレクトリは省略）
-~~~
 
-で`exercises/`や`scripts/`などのディレクトリが見えることを確認してください．
-続いて，
-
-~~~console
 $ pwd
 /home/student/YOUR_COURSE_REPOSITORY
 
@@ -43,11 +38,12 @@ $ git rev-parse --show-toplevel
 /home/student/YOUR_COURSE_REPOSITORY
 ~~~
 
-の出力が同じファイルパス（学生リポジトリのルート）を示すことを確認します．
+`pwd`と`git rev-parse --show-toplevel`が同じファイルパス（学生リポジトリのルート）を出力することを確認します．
 
 ## 1. Julia環境を復元する
 
 cloneした学生リポジトリのルートで以下のコマンドを実行します．
+gitのバージョンは本演習では指定しませんが，一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
 
 ~~~console
 $ julia --version
@@ -57,19 +53,14 @@ $ git --version
 git version 2.43.0
 ~~~
 
-Juliaは`1.13.0`を使います．
-gitのバージョンは本演習では指定しませんが，新しいものが良いでしょう．
-一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
-
 次のコマンドで，課題で用いるパッケージの依存環境が導入されます．
+その実体は`Project.toml`と`Manifest.toml`に記述されています．
+気になる人は中を見てみるとよいでしょう．
 
 ~~~console
 $ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 （初回はパッケージの導入・プリコンパイル状況を表示．復元済みなら出力がない場合もあります）
 ~~~
-
-その実体は`Project.toml`と`Manifest.toml`に記述されています．
-気になる人は中を見てみるとよいでしょう．
 
 ## 2. F00の機械診断
 
@@ -105,7 +96,6 @@ F00の進捗は更新されませんでした。すべての機械観測と3項�
 
 ## 3. 手動確認を完了として記録する
 
-
 次の項目を自分で確認します．
 
 - VS CodeとJulia拡張機能が接続中の環境で動く（WindowsではRemote - WSL）．
@@ -114,22 +104,20 @@ F00の進捗は更新されませんでした。すべての機械観測と3項�
 
 確認したエージェントに対応するコマンドを一つ選んで実行します．
 
+次の項目を自分で確認します．
+
+- VS CodeとJulia拡張機能が接続中の環境で動く（WindowsではRemote - WSL）．
+- GitHubで自分の学生リポジトリを閲覧できる．
+- 対応エージェントの一つで，ファイル編集と安全なローカルコマンド実行ができる．
+
+確認したエージェントに対応するコマンドを実行します．
+これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
+
 ~~~console
-$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot
-（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
-F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
-
-$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent codex
-（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
-F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
-
-$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
-（機械観測・手動確認の表示は省略．三つの候補のうち一つだけ実行）
+$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot # or codex or amazon-q
+（機械観測・手動確認の表示は省略．）
 F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
 ~~~
-
-`F00が完了しました。現在の課題はF01です。`という出力を確認してください．
-これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
 
 この時点から，F01課題で受講者が実装する`tests.jl`が`Pkg.test()`の実行対象になります．
 テストが未実装のため，ここで`Pkg.test()`を実行するとエラーになることを確かめてください．
@@ -155,9 +143,6 @@ $ git status --short
 $ git branch --show-current
 main
 ~~~
-
-`status`の現在課題がF01であること，branchが`main`であることを確認します．
-F00完了直後は`course_progress.toml`が変更済みと表示されることがあります．
 
 ## 完了条件
 
