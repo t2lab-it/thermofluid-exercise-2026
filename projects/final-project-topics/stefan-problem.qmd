@@ -80,7 +80,7 @@ $$
 ## 手法と検証
 
 作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
-[一次元Stefan問題の配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/stefan-problem)は完成ソルバではなく，基準条件を確かめて自分の実装を始めるための小さなパックです．
+[一次元Stefan問題の配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/stefan-problem)で基準条件を確かめ，自分の実装を始めます．
 
 - [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/README.md): 固定する縮小ケース，相似式，学生が自分で決める範囲
 - [similarity-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/similarity-reference.csv): 時刻，相似界面位置，左右境界温度からなる基準CSV
@@ -93,13 +93,12 @@ cd launch-kits/assets/stefan-problem
 julia --startup-file=no preflight.jl
 ~~~
 
-この事前診断は非対話で，リポジトリへファイルを書き出しません．
 CSVの4列，正値と単調増加，左右境界温度，$\alpha$，$\mathrm{Ste}$，$\lambda$，界面位置の残差が整合することを確認し，界面位置と相似式の差と相似式残差はいずれも **1e-14** 以下であることを出力します．
-**preflight passed** は配布資産が読める証拠であって，エンタルピーソルバが完成した証拠ではありません．
+標準出力の **preflight passed** を最初の実行記録に残してください．
 
 学生が実装するのは，エンタルピーと温度・液相率の対応，空間離散化，時間積分，境界条件，界面抽出，実験と図表です．
 固定格子エンタルピー法の背景と相変化温度を幅として扱う考え方は，[Voller, Cross, Markatos のエンタルピー法](https://doi.org/10.1002/nme.1620240119)を出発点にしてください．
-関数名，ファイル構成，線形ソルバ，可視化，問いへの結論は，配布資産には含まれず，各プロジェクトで決めます．
+関数名，ファイル構成，線形ソルバ，可視化，問いへの結論は各プロジェクトで決めます．
 
 検証は，下表の順序で進めます．
 前の段階で問題が見つかったら，次の段階の条件比較へ進まず，入力・実装・格子・時間刻み・境界条件を見直します．
@@ -116,7 +115,7 @@ CSVの4列，正値と単調増加，左右境界温度，$\alpha$，$\mathrm{St
 これは条件選択と記録の例であり，同じ数値を再現できなければ一つの誤差値だけで判断せず，界面定義，相変化温度幅，エネルギー収支，格子・時間刻みを順に確認してください．
 
 計算規模は，再現できる小さな基準から決めます．
-下表のLinux値は配布資料と教員の参照計算の実測であり，学生自身のソルバの性能や他のOSでの実行を保証するものではありません．
+下表は配布資料と教員の参照計算のLinux実測値です．自分の環境では小さい基準ケースから実行時間とメモリを測り，計算規模を決めます．
 
 以下はJulia 1.12.6での実測記録です．授業指定版1.13.0での実測は未確認です．
 

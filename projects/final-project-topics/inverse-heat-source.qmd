@@ -57,7 +57,6 @@ $$
 $Q$ をGaussianの最大値として定義する方法もありますが，両者を混ぜないでください．
 標準ルートでは $Q$ を上の積分値，$\sigma$ と探索可能な $(x_0,y_0,Q)$ の範囲を固定し，同じ定義を合成データ生成と推定に使います．
 [DOLFINxのPoisson公式例](https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_poisson.html)では，Poisson方程式，Dirichlet・Neumann境界，Gaussian型ソース項の具体例を確認できます．
-このリンクは式と境界条件を読むための資料であり，この課題のJulia実装や正しさを保証するものではありません．
 
 センサー位置を $\boldsymbol{s}_i=(x_i,y_i)$，合成真値を $\boldsymbol{\theta}^*$ とすると，観測モデルは
 
@@ -119,12 +118,10 @@ $g_\sigma$ を領域内で正規化して同じ $Q$ を保つことで，境界�
 ## 手法と検証
 
 作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
-現行の[launch-kits/assets](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets)には，このテーマ専用のREADME，データ，preflight，完成ソルバはありません．
 以下の検証計画に沿って自分の実装を確かめ，実行コマンドと計算時間を記録してください．
 
 学生は，熱源 $s(x,y;\boldsymbol{\theta})$，順熱伝導ソルバ，センサー位置での補間，合成観測生成，粗密グリッド探索，指標と図表の作成を実装します．
 授業で作成したLaplace／Poissonソルバを再利用しても，[PDEソルバ in Julia](../../advanced/package-built-solvers.qmd)を選んでも構いませんが，採用する離散化，境界処理，線形解法，停止条件，補間法を記録してください．
-特定のパッケージAPIやファイル構成を標準契約にはしません．
 
 順ソルバの外部基準には製造解を使えます．
 たとえば
@@ -178,8 +175,7 @@ $J_x(x_0)=\min_{y_0,Q}J(x_0,y_0,Q)$ のような目的関数プロファイル�
 プロファイルによる実用的識別可能性の考え方と，PDEのパラメータ推定にも適用できる範囲は，[Raueほか (2009) の原論文](https://doi.org/10.1093/BIOINFORMATICS/BTP358)を参照してください．
 標準ルートでは信頼区間の閾値を根拠なく設定せず，目的関数の形，探索範囲，検証用RMSEを報告します．
 
-このテーマについて確認済みの実行時間，メモリ，格子数，探索点数はありません．
-下表の値はすべて未実測として扱い，各自の最小例から計算規模を決めます．
+各自の最小例で実行時間とメモリを測り，計算規模を決めます．
 
 | 環境 | 最初に測るもの | 規模を増やす前に残す記録 |
 |---|---|---|

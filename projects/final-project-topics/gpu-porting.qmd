@@ -64,11 +64,9 @@ Float32が速い，または小さいmemoryで動くことを前提にせず，�
 
 作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
 配布リポジトリの `launch-kits/` にある `reuse-your-solver/` の共通ガイドを使います．
-このガイドは参照元commit，正しさ，入力，仕事量，device条件，測定方法，CPU/GPU場の回帰検証を固定する契約であり，solver本体，GPU専用starter，完成例，測定scriptは配布しません．
 正しさを確認済みの自分のCPU solverと検証記録を，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
-現在の配布用 `Project.toml` にCUDA.jlは含まれません．
-GPU経路を実行できることを確認してから自分のproject環境へ追加し，`Project.toml` と `Manifest.toml`，JuliaとCUDA.jlのversionを残します．
+GPUを利用できる環境を確認してからCUDA.jlを自分のproject環境へ追加し，`Project.toml` と `Manifest.toml`，JuliaとCUDA.jlのversionを残します．
 [CUDA.jl公式Installation](https://cuda.juliagpu.org/stable/installation/overview/)では，動作するNVIDIA driverが前提で，toolkitは通常artifactとして取得できること，`CUDA.versioninfo()` で環境を確認することを説明しています．
 研究室の共有環境ではdriver，package，account，実行方法を自分で変更せず，教員，TA，または管理者の案内を先に確認します．
 
@@ -101,7 +99,6 @@ memory poolが予約した量，使用中の配列量，処理中のpeakを同�
 | CPU/GPU回帰 | $S_0$ の主要場，保存量，残差，必要なら誤差の空間分布 | 演算順序と精度を考慮した根拠ある範囲で差を説明できる |
 | 性能・規模比較 | 同じ仕事量のCPU，GPU kernel，GPU end-to-end | 各規模で回帰検証に合格し，同期済みのraw timeを残している |
 
-問題規模はsolverと利用環境によって異なるため，未実測の格子数や所要時間は指定しません．
 $S_0$ を「CPUで正しさを確認済みで，同じ主要kernelを通る最小入力」，$S_1$ を「$S_0$ のGPU回帰とmemory確認後に一段だけ増やす入力」，$S_2$ を「$S_0,S_1$ の実測時間とmemoryから利用条件内で完了できると判断した入力」とします．
 
 | 環境 | 最初に行うこと | 次の規模を決める方法 |

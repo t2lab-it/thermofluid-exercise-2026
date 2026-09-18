@@ -73,7 +73,6 @@ solverの内部履歴だけを使わず，終了後の $\boldsymbol{b}-A\boldsym
 
 作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
 配布リポジトリの `launch-kits/` にある `reuse-your-solver/README.md` は，参照元commit，正しさ，入力，処理量，測定方法，回帰検証を固定する共通ガイドです．
-反復解法用solver，テーマ専用starter，完成例，測定scriptは配布しません．
 N08–N09までに作成した5点差分・Jacobi法・残差・製造解のcodeと既存testを，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
 標準ルートでは，最初の比較より前に次の契約を一つの設定または表へ固定します．
@@ -92,14 +91,12 @@ CGはSPDを前提とします．
 これらのtestは数学的証明の代わりではないため，$-\nabla^2$，内部自由度，Dirichlet消去からSPDになる理由も説明します．
 確認に失敗した系へCGをそのまま適用せず，行列組立てと境界処理を直します．
 
-実装は特定packageへ固定しません．
-現在の配布用 `Project.toml` には反復解法packageが含まれないため，追加する場合は自分のprojectで解決したversionとJulia versionを `Project.toml`，`Manifest.toml`，実行logへ残し，小さいSPD系でAPIと停止挙動を確認します．
+反復解法packageを追加する場合は，自分のprojectで解決したversionとJulia versionを `Project.toml`，`Manifest.toml`，実行logへ残し，小さいSPD系でAPIと停止挙動を確認します．
 [LinearSolve.jl公式のsolver一覧](https://docs.sciml.ai/LinearSolve/stable/solvers/solvers/)は正定値系の候補として `KrylovJL_CG()` を示し，[共通solver options](https://docs.sciml.ai/LinearSolve/stable/basics/common_solver_opts/)は `abstol`，`reltol`，`maxiters`，`Pl`，`Pr` を説明しています．
 [公式のpreconditioner interface](https://docs.sciml.ai/LinearSolve/stable/basics/Preconditioners/)には対角前処理，incomplete Cholesky，limited-memory LDL$^{\mathsf T}$ などの候補がありますが，選んだ前処理がCGに必要な対称正定値性と，解決したpackage versionでのinterfaceを満たすことを小規模testで確認してから採用します．
 
 [IterativeSolvers.jl公式CG](https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/cg/)も候補です．
 `cg!` は初期値，SPDな左前処理 `Pl`，`abstol`，`reltol`，`maxiter`，`log=true` の履歴を扱いますが，反復中の真の残差を毎回は計算しないと公式docsに明記されています．
-また，公式stable docsの生成環境は授業のJulia 1.13.0と異なるため，現行環境での互換性をdocsだけから断定しません．
 どちらを使っても，package既定値を共通条件とはみなさず，停止式を明記して真の残差を再計算します．
 
 packageを採用しない場合は，`LinearAlgebra` と `SparseArrays` だけでCPU向けCGとPCGを実装し，授業のJacobi法と同じmatrix-vector interface，停止式，履歴出力を使います．
@@ -116,7 +113,6 @@ packageを採用しない場合は，`LinearAlgebra` と `SparseArrays` だけ�
 | 外部基準 | 例えば $u=\sin(\pi x)\sin(\pi y)$ と $f=2\pi^2\sin(\pi x)\sin(\pi y)$ の製造解，小規模の直接解 | 格子細分化で製造解誤差が減り，反復解と直接解の差を停止条件から説明できる |
 | 条件比較 | Jacobi・CG・PCG，格子規模，選んだ問いの追加軸 | 各条件が前二段階を通り，同じ仕事量と測定範囲の結果を比較できる |
 
-問題規模はsolverと利用環境によって異なるため，未実測の格子数や所要時間は指定しません．
 $S_0$ は「既存test，SPD確認，製造解，小規模直接解を短時間で再実行できる最小格子」，$S_1$ は「$S_0$ の正しさと測定を確認後に一段だけ細かくした格子」，$S_2$ は「$S_0,S_1$ の実測時間とmemoryから利用条件内で完了できると判断した格子」とします．
 
 | 環境 | 最初に行うこと | 次の規模を決める方法 |
@@ -148,7 +144,7 @@ $S_0$ は「既存test，SPD確認，製造解，小規模直接解を短時間�
   packageを使う場合は解決したversion，solver名，tolerance，履歴，前処理interfaceを $S_0$ で確認し，使わない場合はCPU実装と対角前処理を用意します．
   各手法の終了後に $\boldsymbol{r}=\boldsymbol{b}-A\boldsymbol{x}$ を再計算します．
 - **確認**: 全手法が停止理由と反復回数を返し，再計算した真の残差が共通条件を満たし，直接解・製造解との差を説明できることを確かめます．
-  solver履歴と真の残差が違う場合は両方を保存し，その差を隠しません．
+  solver履歴と真の残差が違う場合は両方を保存します．
 - **残すもの**: 三手法の実装または呼出しwrapper，package version，停止log，収束履歴，真の残差・解誤差の回帰testを残します．
 
 ### Step 4：setup，solve，total timeとmemoryを分けて測る

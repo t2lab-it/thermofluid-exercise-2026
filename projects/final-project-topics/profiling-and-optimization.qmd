@@ -55,7 +55,7 @@ warm-up後は同じ処理を固定回数だけ繰り返し，合計仕事量を�
 ## 手法と検証
 
 作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
-配布リポジトリの `launch-kits/reuse-your-solver/` にある `README.md` は，参照元commit，入力，仕事量，測定条件，回帰検証を固定するための共通ガイドであり，solver本体，profiling script，測定template，参照値は配布しません．
+配布リポジトリの `launch-kits/reuse-your-solver/README.md` に沿って，参照元commit，入力，仕事量，測定条件，回帰検証を記録します．
 正しさを確認済みの自分のCPUソルバと検証記録を，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
 道具は役割を分けて使います．
@@ -66,7 +66,7 @@ warm-up後は同じ処理を固定回数だけ繰り返し，合計仕事量を�
   `Profile`は周期的なbacktraceのsample数からhotspotを探す道具であり，各行の正確な実行時間を直接測る道具ではありません．
   同じ仕事量で各回の前にbufferをclearしてprofileを三回取り，繰り返し現れる処理を変更候補にします．
 - [BenchmarkTools公式manual](https://juliaci.github.io/BenchmarkTools.jl/stable/manual/)は，複数sampleをもつ `Trial`，外部変数の補間，測定外の `setup`，時間分布とallocationの扱いを確認する資料です．
-  現在の授業用 `Project.toml` にはBenchmarkToolsが含まれないため，使う場合は自分の最終プロジェクト環境へ追加し，`Project.toml` と `Manifest.toml` を残します．
+  BenchmarkToolsを使う場合は自分の最終プロジェクト環境へ追加し，`Project.toml` と `Manifest.toml` を残します．
   kernel測定では入力の初期化を `setup` と測定本体のどちらへ含めたか，before/afterで同じにします．
 
 標準ルートでは，下の契約を基準測定の前に一つの設定または表へ固定します．
@@ -92,7 +92,6 @@ BenchmarkToolsを使うkernelでは，実際の `samples` と `evals` を保存�
 3. 変更を一件だけ加え，同じtestと主要出力でcorrectness regressionを先に確認する．
 4. 合格した変更だけを同じ測定契約で再測定し，差が測定分布と問題規模に対して一貫するか確認する．
 
-問題規模はsolverごとに意味が異なるため，未実測の格子数や所要時間は指定しません．
 $S_0$ を「同じhot pathを通り，正しさを確認済みの最小入力」，$S_1$ を「solverが既に扱える次の入力」，$S_2$ を「$S_0,S_1$ の実測から資源内で完了すると判断した入力」と定義し，次の順に進めます．
 
 | 環境 | 未実測の推奨開始規模 | 本計算規模を決める方法 |
