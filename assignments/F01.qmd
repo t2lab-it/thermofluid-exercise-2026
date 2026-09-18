@@ -39,9 +39,7 @@ $ git branch --show-current
 main
 ```
 
-`現在の提出単位: F01`，現在branchが`main`であることを確認してください．
-最初の環境診断からこの課題へ進んだ直後は，`course_progress.toml`だけが変更済みと表示されるのが正常です．
-それ以外の変更が表示された場合は，branchを作る前に教員・TAへ相談してください．
+上記と異なる出力が得られた場合は，教員・TAへ相談してください．
 
 ## 1. この課題のbranchを手動で作る
 
@@ -54,8 +52,6 @@ Switched to a new branch 'exercise/F01-first-pull-request'
 $ git branch --show-current
 exercise/F01-first-pull-request
 ```
-
-二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認してください．
 
 ## 2. 実装する
 
@@ -141,7 +137,7 @@ $ git commit -m "feat: complete F01"
 
 ## 7. pushしてPRを作る
 
-`exercise/F01-first-pull-request` branchをoriginへpushし，`main`へのPRを作ります．
+`exercise/F01-first-pull-request` branchをoriginへpushします．
 
 ```console
 $ git branch --show-current
@@ -152,7 +148,7 @@ $ git push -u origin exercise/F01-first-pull-request
 branch 'exercise/F01-first-pull-request' set up to track 'origin/exercise/F01-first-pull-request'.
 ```
 
-GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作成し，PRテンプレートを埋めます．
+続いて，GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作成し，PRテンプレートを埋めます．
 
 ## 8. GitHub Actionsとdiffを確認する
 
@@ -187,7 +183,6 @@ $ git branch --show-current
 main
 ```
 
-`status`が空で，branchが`main`であることを確認します．
 これで「最初のbranchとpull request」は完了です．
 
 ## 任意のCLI発展資料
