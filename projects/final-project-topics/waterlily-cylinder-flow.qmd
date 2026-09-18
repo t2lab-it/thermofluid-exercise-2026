@@ -76,9 +76,8 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 
 ## 手法と検証
 
-作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです．
-配布リポジトリの `launch-kits/catalog.toml` はこのテーマを `guided-package`／`theme-pack` と分類していますが，現行catalogに `asset_path` と `fast_preflight` はなく，対応する資産directory，固定例，参照data，教員用・学生用starterもありません．
-したがって，`launch-kits/guided-package/README.md` の共通契約を読み，下表の公式資料から自分のprojectへ再現可能な開始例を作ります．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
+`launch-kits/guided-package/README.md` を読み，下表の公式資料から自分のprojectへ再現可能な開始例を作ってください．
 
 ::: {.table-responsive}
 | 役割 | 現行の参照先 | projectへ記録すること |
@@ -118,8 +117,8 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 | 条件比較 | 選んだ一軸だけを変えた二条件以上と，同じsampling・測定契約 | 各条件が前二段階を通り，場・力・周波数・費用を同じ定義で比較できる |
 :::
 
-計算規模は，未実測の所要時間を先に決めず，小さいCPU実行から選びます．
-公式stable docsの `circle(3*2^5,2^6)` は $96\times64$ cells，直径16 cellsの確認済み入力ですが，APIと可視化の開始例であって格子・領域・統計が収束したbenchmarkではありません．
+小さいCPU実行の時間とメモリを測り，計算規模を決めます．
+APIと可視化の開始例には，公式stable docsの `circle(3*2^5,2^6)`（$96\times64$ cells，直径16 cells）を使います．格子・領域・統計の収束は，選んだ条件で確認してください．
 
 ::: {.table-responsive}
 | 環境 | 最初に行うこと | 次の規模を決める方法 |
@@ -136,7 +135,7 @@ CPUだけで長いsamplingを完了できない場合は，公式quickstart規�
 
 ### Step 1：公式資料と再現environmentを固定する
 
-- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，theme-packが未配布であることを確認します．
+- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
   `WaterLily.jl`のstable quickstartと `v1.8.0` tagを開始候補にし，Julia 1.13.0の自分のprojectへ依存関係を追加して `Project.toml` と `Manifest.toml` を解決します．
   公式例をcopyする場合はrepository，path，commit，license，授業側の変更を記録します．
 - **確認**: 新しいJulia processでpackage versionを表示し，公式quickstartの `Simulation` を構築して一step進めます．

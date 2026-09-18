@@ -24,7 +24,7 @@ is_public_qmd_path(path::AbstractString) =
     endswith(path, ".qmd") && !startswith(basename(path), "_")
 
 function tracked_public_qmd_paths()
-    paths = readlines(`git -C $(PUBLIC_STRUCTURE_ROOT) ls-files -- lessons assignments projects/final-project-topics`)
+    paths = readlines(`git -C $(PUBLIC_STRUCTURE_ROOT) ls-files -- index.qmd setup lessons assignments guides advanced projects/final-project-topics`)
     return sort(filter(is_public_qmd_path, paths))
 end
 
@@ -117,7 +117,7 @@ end
         isnothing(document) && continue
         @test !isempty(document.title)
         @test !isempty(document.body)
-        if basename(relative_path) != "index.qmd"
+        if startswith(relative_path, r"(lessons|assignments|projects)/") && basename(relative_path) != "index.qmd"
             @test has_level2_heading(document.body)
         end
 

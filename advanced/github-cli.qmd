@@ -8,11 +8,6 @@ title: "GitHub CLIでpull requestを操作する"
 
 このページは，[SSHでGitHubへ接続する](github-ssh.qmd)を完了した学生向けの発展的な資料です．
 
-## GitHub CLIを使えると何が嬉しいか
-
-- branchのpushからpull requestの作成・確認までをターミナル上で進められ，ブラウザとの行き来を減らせる．
-- 実行するコマンドと結果が明確になるため，人が確認しながらコーディングエージェントへ作業を依頼しやすくなる．
-
 ## このページの到達点
 
 GitHub CLI（`gh`）を導入・認証し，既存のPRをCLIで読み，新しいPRをCLIで作成する．
@@ -26,8 +21,7 @@ GitHubトークン，ブラウザに表示される確認コード，SSH秘密�
 ### Windows (WSL2 Ubuntu)
 
 Windowsでは，WSL2 Ubuntu内でLinux向けの公式手順を実行します．
-最新の導入方法は GitHub CLI公式Linux手順
-(https://github.com/cli/cli/blob/trunk/docs/install_linux.md) を確認してください．
+導入方法は[GitHub CLI公式Linux手順](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)を確認してください．
 
 ~~~bash
 gh --version
@@ -86,7 +80,7 @@ gh pr checks PR_NUMBER  # Checks
 
 ## 課題をpush前まで進める
 
-任意の課題の実装，テスト，学習ログ，diff確認，commitまで完了します．
+[共通課題ワークフロー](../guides/workflow.qmd)に従い，実装，テスト，学習ログ，diff確認，commitまで完了してください．
 その後，課題branch上で次を確認します．
 
 ```bash
@@ -109,26 +103,9 @@ pushの出力と`upstream`設定を確認してから次へ進みます．
 
 ## pull request本文を準備する
 
-VS Codeで，学生リポジトリ内の除外対象領域に`scratch/pr-body.md`を作ります．
-
-```markdown
-## 課題
-
-- 課題ID:
-
-## テスト
-
-- 実行したコマンド:
-- 結果:
-
-## 学習ログ
-
-- path:
-
-## diff確認
-
-- 確認した内容:
-```
+VS Codeで，学生リポジトリの`.github/pull_request_template.md`を`scratch/pr-body.md`へコピーし，記入してください．
+提出単位，作業branch上の学習ログURL，提出前の確認項目は，ブラウザでPRを作る場合と共通です．
+記録する内容は[共通課題ワークフロー](../guides/workflow.qmd#submit-pr)を参照してください．
 
 本文を書いたら次を実行します．
 
@@ -183,7 +160,7 @@ gh pr checks
 gh pr view --json number,title,state,url,baseRefName,headRefName
 ```
 
-なおmergeは標準手順へ戻り，diff，検査結果，学習ログを人間が確認してから行います．
+確認後は[共通課題ワークフロー](../guides/workflow.qmd#self-review)に従ってセルフレビューとmergeを行ってください．
 確認済みPRをブラウザで開く場合は次を使えます．
 
 ```bash
@@ -207,4 +184,3 @@ gh pr view --web
 - 任意の実課題で，確認済みbranchを明示的にpushしてからPRを作成できる．
 - 作成したPRの`base`，`head`，本文，全diff，検査結果を人間がCLIで確認できる．
 - トークン，確認コード，秘密鍵を記録・共有していない．
-- mergeは標準課題手順へ戻り，この資料では実行していない．

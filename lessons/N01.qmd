@@ -173,9 +173,7 @@ end
 
 `run.jl`の冒頭では，`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に関数のつながりを示します．
 `main`は`run.jl`にあり，二つの`simulate`を実行して，提供済みの`write_summary`と`make_plots`へ結果を渡します．
-`main`は読む対象ですが，編集対象ではありません．
 `include("provided_support.jl")`は，教材側が用意した入力検証と出力の詳細を読み込んでいます．
-`provided_support.jl`を読解・編集する必要はありません．
 
 ## バッファ交換
 
@@ -206,7 +204,6 @@ $$
 | 中心差分法 + Euler法 | オーバーシュートまたはアンダーシュートと振動が現れる | 意図的な不安定比較 |
 
 `summary.toml`の最小・最大と公式図を同じ実行結果として見比べます．
-中心差分法 + Euler法を実用的な解法として推奨しているのではありません．
 
 ## 診断を読む
 
@@ -214,13 +211,10 @@ $$
 
 ## テストで確かめる
 
-各数値関数から呼ばれる入力検証は，実行時の入力条件を確認し，誤った配列や計算条件を早く知らせます．
-必須TODOは，矩形初期条件，風上差分と中心差分の配列全体，境界条件，安定・不安定の比較を扱います．PNG・TOML・ファイルサイズは学生テストの対象にしません．
-`exercises/N01_linear_advection/tests.jl`では，公開された五つの必須TODOについて入力・呼び出し・期待値を書き，さらに自分で選んだ数値的性質を一件テストします．
+少数の格子点について1ステップ後の配列を手計算し，実装の戻り値と比べてください．
+配列全体を比べると，更新式だけでなく，添字や境界条件の誤りも調べられます．
+安定・不安定の比較では，最小・最大と初期範囲からの超過量を，図の振動と対応づけます．
 
-この1次元線形移流課題の完成要件は，`run.jl`の3つのTODOを実装し，時間ループと結果を説明することです．
-`run.jl`にある`main`，`module`，`export`，`include`と，`provided_support.jl`にある`TOML`，`Plots`，詳細な入力検証，TOML出力，作図処理は提供済みです．
-`main`は二つの`simulate`から受け取った結果を`write_summary`と`make_plots`へ渡し，`exercises/N01_linear_advection/results`の公式出力を作ります．
-関数名，引数，スキーム，出力ファイル名，要約のキーは変更しません．
+実装範囲，提供済みの処理，`tests.jl`の記入箇所と提出物は[N01課題](../assignments/N01.qmd)を確認してください．
 
 {{< include /lessons/_understanding-check.qmd >}}

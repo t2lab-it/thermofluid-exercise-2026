@@ -34,8 +34,8 @@ julia --project=. scripts/course.jl check-results
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-`F02`は，実際に開始する課題IDへ置き換えます．
-順序を飛ばしません．
+`F02`は，課題ページで指定された提出単位（例：`F03-F04`，`N01`）へ置き換えてください．
+開始できるのは次の提出単位です．
 
 ## Gitで変更を確認する
 
@@ -60,5 +60,3 @@ git switch -c exercise/F01-first-pull-request
 ```
 
 commit，push，mergeの前後を含む手順は[課題ワークフロー](workflow.qmd)を参照してください．
-
-この一覧の新しい必須コマンドは，セットアップまたは公開済みの課題で使われた後にだけ追加します．

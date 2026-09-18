@@ -33,6 +33,9 @@ read_environment(relative) =
     @test !occursin("YOUR_COURSE_REPOSITORY_URL", git_setup)
     @test !occursin("HTTPS URL", git_setup)
     @test occursin("SSH接続は標準の複製経路", git_setup)
+    @test occursin("../advanced/github-ssh.qmd", git_setup)
+    @test occursin("../setup/git-github.qmd", ssh)
+    @test occursin(".github/pull_request_template.md", cli)
     @test occursin(
         "https://github.com/t2lab-it/thermofluid-exercise-student-2026",
         git_setup,

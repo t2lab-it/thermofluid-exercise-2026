@@ -129,9 +129,8 @@ $b,\zeta,\chi$ の場，平均profile，$Nu$，$\Psi$，$K$，$\delta_\chi/H$を
 
 ## 手法と検証
 
-作業場所は[最終プロジェクトの共通ページ](../../assignments/final-project.qmd)に従って作る **thermofluid-project-base-2026** のforkです．
-配布repoの `launch-kits/catalog.toml` はこのテーマを `guided-package`／`theme-pack` と分類していますが，現行catalogには `asset_path` と `fast_preflight` がなく，Oceananigans専用の資産directory，固定script，参照data，教員用・学生用starterはありません．
-`launch-kits/guided-package/README.md` の共通契約に従い，下表の上流資料から基準scriptと診断を自分のprojectへ作ります．
+作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
+`launch-kits/guided-package/README.md` を読み，下表の上流資料から基準scriptと診断を自分のprojectへ作ってください．
 
 ::: {.table-responsive}
 | 役割 | 現行の参照先 | projectへ記録すること |
@@ -213,7 +212,7 @@ $Nu$だけで平均開始を決めません．
 | 規模・費用 | 格子点数，step数，初回compile，事前実行後のwall time，peak memory，JLD2容量 | 実測から完了可能な条件と平均窓を選び，local CPUで再生成できる縮小caseを残せる |
 :::
 
-計算規模は未実測の所要時間を先に決めず，公式 $128\times64$ のCPU実行から選びます．
+公式 $128\times64$ のCPU実行の時間とメモリを測り，計算規模を決めます．
 
 ::: {.table-responsive}
 | 環境 | 最初に行うこと | 次の規模を決める方法 |
@@ -230,7 +229,7 @@ CPUで $128\times64$ の必要な積分を完了できない場合は，$64\time
 
 ### Step 1：上流資料と再現environmentを固定する
 
-- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，専用theme-packが未配布であることを確認します．
+- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
   `Oceananigans v0.110.15`，公式example path，tag commit，MIT Licenseを開始候補にし，projectの `Project.toml` と `Manifest.toml` を解決します．
 - **確認**: 新しいJulia processでJulia・Oceananigans・CairoMakie・JLD2のversionを表示し，上流sourceと自分のscriptの差を説明できるか確認します．
 - **残すもの**: 上流URL・path・tag・commit・license，environment files，version表示，実行command，変更記録を残します．

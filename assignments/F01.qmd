@@ -127,5 +127,4 @@ git status --short
 
 ## 任意のCLI発展資料
 
-[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)および[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)に取り組むと，さらにgit/GitHub操作が簡単になります．
-ただし，これらは必須ではありません．
+[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)では，ターミナルからPRを作成・確認する方法を紹介します．
