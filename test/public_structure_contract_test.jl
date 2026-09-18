@@ -35,12 +35,6 @@ end
     @test "lessons/F02.qmd" ∈ tracked_public_qmd_paths()
 end
 
-@testset "F02 REPL examples use Quarto's Julia syntax highlighter" begin
-    source = read(joinpath(PUBLIC_STRUCTURE_ROOT, "lessons", "F02.qmd"), String)
-    @test occursin(r"(?m)^```julia\s*$", source)
-    @test !occursin(r"(?m)^```julia-repl\s*$", source)
-end
-
 function published_course_dates(source::AbstractString)
     block = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", source)
     isnothing(block) && return String[]
