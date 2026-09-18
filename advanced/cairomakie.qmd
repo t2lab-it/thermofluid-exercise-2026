@@ -18,8 +18,10 @@ title: "CairoMakieによる可視化"
 次のコマンドで，CairoMakie用の一時環境を作ります．
 `Pkg.add`には大きな通信量と初回コンパイル時間を要します．
 
-```bash
-julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(env); Pkg.add("CairoMakie"); println(env)'
+```console
+$ julia -e 'using Pkg; env = joinpath(tempdir(), "n01-cairomakie"); Pkg.activate(env); Pkg.add("CairoMakie"); println(env)'
+（パッケージの導入状況は省略）
+/tmp/n01-cairomakie
 ```
 
 ## 交換ファイルを作る
@@ -47,8 +49,9 @@ println(output_path)
 
 学生リポジトリのルートディレクトリで実行します．
 
-~~~bash
-julia --project=. scratch/export_n01.jl
+~~~console
+$ julia --project=. scratch/export_n01.jl
+/home/student/YOUR_COURSE_REPOSITORY/scratch/n01-output.tsv
 ~~~
 
 ## 1次元線形移流データを描く
@@ -81,8 +84,9 @@ save(joinpath(@__DIR__, "n01-cairomakie.png"), figure)
 
 先ほど表示された一時環境の絶対パスを使います．
 
-~~~bash
-julia --project="<表示されたn01-cairomakie環境の絶対パス>" scratch/plot_n01_cairomakie.jl
+~~~console
+$ julia --project="<表示されたn01-cairomakie環境の絶対パス>" scratch/plot_n01_cairomakie.jl
+（成功時は通常出力なし．scratch/n01-cairomakie.png が生成されます）
 ~~~
 
 ## 後片付け

@@ -11,14 +11,29 @@ title: "トラブル対応"
 2. エラーメッセージを先頭から末尾まで読む．
 3. リポジトリのルートで次を実行する．
 
-```bash
-pwd
-uname -a
-julia --version
-git --version
-git status --short
-git branch --show-current
-git remote -v
+```console
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ uname -a
+Linux HOSTNAME 6.x.y-microsoft-standard-WSL2 ... x86_64 GNU/Linux
+（WSL2の例．native LinuxやmacOSでは異なる表示）
+
+$ julia --version
+julia version 1.13.0
+
+$ git --version
+git version 2.43.0
+
+$ git status --short
+（変更があれば状態とパスを表示．変更がなければ出力なし）
+
+$ git branch --show-current
+（現在のbranch名．開始前・merge後は main，作業中は課題branch）
+
+$ git remote -v
+origin  git@github.com:OWNER/REPOSITORY.git (fetch)
+origin  git@github.com:OWNER/REPOSITORY.git (push)
 ```
 
 4. WindowsならWSL2 Ubuntu 24.04内で実行したか，pwdが/home/<user>/...か，uname -aにWSL2が含まれるかを確認する．macOS・native LinuxではOS名を記録する．

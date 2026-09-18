@@ -11,6 +11,9 @@ project:
     - advanced/*.qmd
     - projects/final-project-topics/*.qmd
 
+filters:
+  - filters/console-examples.lua
+
 engines: ['julia']
 lang: ja
 
