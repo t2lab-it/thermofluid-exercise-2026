@@ -3,6 +3,7 @@ using TOML
 const CANONICAL_BASE = "https://t2lab-it.github.io/thermofluid-exercise-2026/"
 const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01"])
 const SELF_CONTAINED_ASSIGNMENT_IDS = Set(["F00", "F01"])
+const WORKFLOW_ASSIGNMENT_IDS = setdiff(REQUIRED_IDS, SELF_CONTAINED_ASSIGNMENT_IDS)
 const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
 
 function fail(message::AbstractString)
@@ -71,6 +72,13 @@ function verify_contracts(contracts_path, public_root, student_root)
     end
 
     required = ("site_path", "run_path", "start_command", "canonical_url")
+    workflow_file = path_inside(public_root, joinpath("guides", "workflow.qmd"))
+    workflow = if workflow_file === nothing || !isfile(workflow_file)
+        ok &= fail("missing workflow page: guides/workflow.qmd")
+        nothing
+    else
+        read(workflow_file, String)
+    end
     seen_site = Set{String}()
     seen_run = Set{String}()
     seen_url = Set{String}()
@@ -132,6 +140,9 @@ function verify_contracts(contracts_path, public_root, student_root)
             if id in SELF_CONTAINED_ASSIGNMENT_IDS
                 occursin(command, page) ||
                     (ok &= fail("site page start command mismatch for $id"))
+            elseif id in WORKFLOW_ASSIGNMENT_IDS && workflow !== nothing
+                occursin(command, workflow) ||
+                    (ok &= fail("workflow start command mismatch for $id"))
             end
         end
     end

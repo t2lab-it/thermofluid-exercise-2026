@@ -60,6 +60,41 @@ function verify_fixture(fixture)
     return success(process), String(take!(output))
 end
 
+function write_complete_contract_fixture(root::AbstractString)
+    public = joinpath(root, "public")
+    student = joinpath(root, "student")
+    mkpath(joinpath(public, "assignments"))
+    mkpath(joinpath(public, "lessons"))
+    mkpath(joinpath(public, "guides"))
+
+    contracts_source = joinpath(SITE_ROOT, "assignments", "contracts.toml")
+    contracts = TOML.parsefile(contracts_source)["assignments"]
+    contracts_path = joinpath(public, "assignments", "contracts.toml")
+    cp(contracts_source, contracts_path)
+
+    workflow_commands = String[]
+    for (id, contract) in contracts
+        run_path = contract["run_path"]
+        mkpath(dirname(joinpath(student, run_path)))
+        write(joinpath(student, run_path), "# fixture\n")
+        write(joinpath(public, "lessons", "$id.qmd"), "# $id lesson\n")
+
+        page = "`$run_path`\n"
+        if id in ("F00", "F01")
+            page *= "\n`$(contract["start_command"])`\n"
+        else
+            push!(workflow_commands, "`$(contract["start_command"])`")
+        end
+        write(joinpath(public, contract["site_path"]), page)
+    end
+    write(
+        joinpath(public, "guides", "workflow.qmd"),
+        join(sort!(unique(workflow_commands)), "\n") * "\n",
+    )
+
+    return (; contracts=contracts_path, public, student)
+end
+
 @testset "assignment link contract rejects invalid repositories" begin
     @test isfile(VERIFY)
 
@@ -179,5 +214,46 @@ end
         passed, output = verify_fixture(fixture)
         @test !passed
         @test occursin("site page run path mismatch", output)
+    end
+end
+
+
+@testset "start commands remain documented at their canonical location" begin
+    mktempdir() do root
+        fixture = write_complete_contract_fixture(root)
+        passed, output = verify_fixture(fixture)
+        @test passed
+        @test occursin("assignment contracts verified", output)
+
+        workflow_path = joinpath(fixture.public, "guides", "workflow.qmd")
+        workflow = read(workflow_path, String)
+        write(workflow_path, replace(
+            workflow,
+            "`julia --project=. scripts/course.jl start F02`\n" => "",
+        ))
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("workflow start command mismatch for F02", output)
+    end
+
+    mktempdir() do root
+        fixture = write_complete_contract_fixture(root)
+        page_path = joinpath(fixture.public, "assignments", "F01.qmd")
+        page = read(page_path, String)
+        write(page_path, replace(
+            page,
+            "`git switch -c exercise/F01-first-pull-request`\n" => "",
+        ))
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("site page start command mismatch for F01", output)
+    end
+
+    mktempdir() do root
+        fixture = write_complete_contract_fixture(root)
+        rm(joinpath(fixture.public, "guides", "workflow.qmd"))
+        passed, output = verify_fixture(fixture)
+        @test !passed
+        @test occursin("missing workflow page", output)
     end
 end
