@@ -53,7 +53,7 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
 ### 2. F00の環境を診断する
 
-学生用リポジトリ内に，状態を環境するコマンドがいくつか用意されています．
+学生用リポジトリ内に，状態を確認するコマンドがいくつか用意されています．
 まず，`preflight`で機械的な環境診断（実行環境，作業場所，Julia，Git）を行えます．
 
 ~~~bash
@@ -82,7 +82,7 @@ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github 
 これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
 
 この時点から，F01課題で受講者が実装する`tests.jl`が`Pkg.test()`の実行対象になります．
-テストが未実装のため，ここで`Pkg.test()`を実装するとエラーになることを確かめてください．
+テストが未実装のため，ここで`Pkg.test()`を実行するとエラーになることを確かめてください．
 
 ~~~bash
 julia --project=. -e 'using Pkg; Pkg.test()'
@@ -173,7 +173,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 ### 課題単独のテスト
 
-受講生が実装した特定の課題での自作テストのみを調べるときは，学生リポジトリのルートから次を実行します．
+特定の課題の配布済み必須テストと自作テストを実行するときは，学生リポジトリのルートから次を実行します．
 
 ~~~bash
 julia --project=. exercises/<課題フォルダ>/tests.jl
@@ -190,7 +190,7 @@ julia --project=. exercises/N01_linear_advection/run.jl
 
 生成された`results/`ディレクトリの中身を確認してください．
 
-公式出力の配置やサイズを機械的に確認する必要がある課題では，次も実行してファイルの配置・サイズの確認を確認します．
+公式出力の配置やサイズを機械的に確認する必要がある課題では，次も実行してファイルの配置・サイズを確認します．
 
 ~~~bash
 julia --project=. scripts/course.jl check-results

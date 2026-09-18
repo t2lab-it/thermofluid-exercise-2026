@@ -67,7 +67,7 @@ exercises/N01_linear_advection/results/summary.toml
 ~~~
 
 図中の`Initial`は初期値，`Final`は最終値です．`Upwind`は上流差分，`Centered`は中心差分を表します．
-PNGが開けること，`summary.toml`が実行結果と一致すること，課題ページと[数値検証の基準](testing.qmd#公開基準値と比べる)にある符号・範囲・オーバーシュートまたはアンダーシュート・実効CFL・最終時刻を確認します．
+PNGが開けること，`summary.toml`が実行結果と一致すること，課題ページと[数値検証の基準](../guides/testing.qmd#公開基準値と比べる)にある符号・範囲・オーバーシュートまたはアンダーシュート・実効CFL・最終時刻を確認します．
 
 ![安定な上流差分法 + Euler法の公式出力](../assets/figures/N01-upwind.png){fig-alt="上流差分法 + Euler法で移流した矩形波"}
 
