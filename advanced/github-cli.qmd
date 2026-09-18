@@ -59,8 +59,6 @@ gh repo view
 ```
 
 `--web`はブラウザ認証を開き，`--skip-ssh-key`はSSH鍵の生成・アップロード確認を飛ばします．
-ブラウザに表示される確認コードやトークンを記録・共有してはいけません．
-
 `gh auth status`でホストが`github.com`，ユーザー名が意図した自分のアカウント，GitプロトコルがSSHであることを確認します．
 `gh repo view`では，現在のディレクトリが学生リポジトリとして認識されることを確認します．
 
@@ -89,9 +87,9 @@ git branch --show-current
 git diff main...HEAD
 ```
 
-未commitの変更，想定外のファイル，トークン・APIキー・パスワード・秘密鍵・不要な個人情報がないことを，人間がdiffを読んで確認します．
+未commitの変更がなく，現在のbranchと差分が提出内容に合っていることを確認してください．
 
-## pushを独立して実行する
+## 課題branchをpushする
 
 以下のコマンドを，`BRANCH`を`git branch --show-current`で確認した現在の課題branch名へ置き換えたうえで実行します．
 
@@ -118,7 +116,7 @@ git status --short
 
 ## pull requestを作成する
 
-Bashまたはzshでは次を実行します．
+`BRANCH`と`YOUR PR TITLE`を置き換え，次を実行します．
 
 ```bash
 gh pr create \
@@ -138,7 +136,7 @@ gh pr view
 
 ## 作成したpull requestを確認する
 
-人間向けの通常出力を先に読みます．
+作成したPRの内容と検査結果を確認します．
 
 ```bash
 gh pr view
@@ -151,14 +149,6 @@ gh pr checks
 
 検査が失敗した場合は検査名とリンクを開き，可能ならローカルで再現します．
 同じ課題branchで修正，テスト，commit，pushを行い，同じPRを更新します．
-
-## 構造化出力を確認する
-
-以下のコマンドで，通常出力と同じ情報を構造化して確認できます．
-
-```bash
-gh pr view --json number,title,state,url,baseRefName,headRefName
-```
 
 確認後は[共通課題ワークフロー](../guides/workflow.qmd#submit-pr)に従ってセルフレビューとmergeを行ってください．
 確認済みPRをブラウザで開く場合は次を使えます．

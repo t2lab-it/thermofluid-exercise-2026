@@ -49,21 +49,9 @@ ssh -T git@github.com
 
 ### Windows (WSL2 Ubuntu 24.04)
 
-Windowsでは WSL2 Ubuntu の端末で，Linux向けの手順を実行します．
-まずリポジトリを置く場所がLinuxファイルシステム上であることを確認してください．
-
-~~~bash
-pwd
-uname -a
-ls -la ~/.ssh
-ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL" -f ~/.ssh/id_ed25519_github
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519_github
-ssh-add -l
-cat ~/.ssh/id_ed25519_github.pub
-~~~
-
-uname -aにWSL2のカーネルが表示されない，またはpwdが/mnt/c以下の場合は，課題を進めず受講環境の準備へ戻ります．
+WSL2 Ubuntuの端末で，以下の[Linuxの手順](#linux)を実行してください．
+`pwd`が`/home/<user>/...`を示し，`uname -a`にWSL2のカーネルが表示されることを確認します．
+配置や接続に問題がある場合は，[トラブル対応](../guides/troubleshooting.qmd)を参照してください．
 
 ### macOS
 
@@ -88,7 +76,7 @@ Host github.com
   IdentitiesOnly yes
 ```
 
-### Linux
+### Linux {#linux}
 
 ターミナルで確認し，鍵を作成して現在のシェルで`ssh-agent`を開始します．
 
