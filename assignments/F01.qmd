@@ -7,8 +7,9 @@ title: "最初のbranchとpull request"
 
 ## 目的
 
-小さなJuliaコードを新しいbranch上で変更し，差分をローカルテストで検証し，pull request（PR）を出してmainへ統合する一連の流れを経験します．
-[共通課題ワークフロー](../guides/workflow.qmd)にしたがって作業します．
+小さなJuliaコードを新しいbranch上で変更し，差分をローカルテストで検証します．
+branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を正本として使います．
+このページにはF01の手順をまとめています．
 
 ## 学生リポジトリ内の場所
 
@@ -18,9 +19,11 @@ title: "最初のbranchとpull request"
 
 ## 開始前の確認
 
-最初の環境診断（課題ID: F00）が完了し，現在課題が「最初のbranchとpull request」（課題ID: F01）であることを確認してください．
+学生リポジトリのルートで，最初の環境診断（課題ID: F00）が完了し，現在課題が「最初のbranchとpull request」（課題ID: F01）であることを確認します．
 
 ```bash
+pwd
+git rev-parse --show-toplevel
 julia --project=. scripts/course.jl status
 git status --short
 git branch --show-current
@@ -30,7 +33,9 @@ git branch --show-current
 最初の環境診断からこの課題へ進んだ直後は，`course_progress.toml`だけが変更済みと表示されるのが正常です．
 それ以外の変更が表示された場合は，branchを作る前に教員・TAへ相談してください．
 
-## 1. branchを手動で作る
+## 1. この課題のbranchを手動で作る
+
+F00完了後の`main`から，次のbranch名を指定します．
 
 ```bash
 git switch -c exercise/F01-first-pull-request
@@ -48,79 +53,94 @@ git branch --show-current
 
 ```bash
 julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
+git diff -- exercises/F01_first_pull_request/run.jl
 ```
 
-変更前後に`git diff`を読み，自分が意図したファイルだけが変わっていることを確認してください．
+実行結果とdiffを確認し，自分が意図したファイルだけが変わっていることを確認します．
 
 ## 3. テストする
 
+`exercises/F01_first_pull_request/tests.jl`の配布済み必須テストを読みます．
+必須テストは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を検証します．
+実装前の失敗と実装後の成功を確認し，指定された`@test false`を実装した名前と期待文字列を使う自作テストへ置き換えてください．
+これらのテストが何を保証し，何を保証しないかを学習ログにまとめてください．
+
+課題単独のテストと，現在課題・完了済み課題をまとめるテストを順に実行します．
+
 ```bash
+julia --project=. exercises/F01_first_pull_request/tests.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-`exercises/F01_first_pull_request/tests.jl`の配布済み必須テストを読みます．
-必須テストは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を検証します．
-実装前の失敗と実装後の成功を確認し，自作テストのTODOを実装した名前と期待文字列を使うテストへ置き換えてください．
-これらのテストが何を保証し，何を保証しないかを学習ログにまとめてください．
+## 4. 実行結果を確認する
 
-## 4. 公式出力を確認する
-
-ターミナルの実行結果とテスト成功が，この課題の実行確認です．
+F01に独立した公式ファイル出力はありません．`run.jl`の実行結果とテスト結果を確認し，結果の意味を学習ログに記録します．
 
 ## 5. 学習ログを書く
 
-`exercises/F01_first_pull_request/learning_log.md`へ，以下の項目を記録してください．
+次の内容を`exercises/F01_first_pull_request/learning_log.md`へ記録します．
 
-- 実装した変更
-- 実行したテストと保証範囲
-- diffで確認したこと
-- つまずきと解決方法
-- AIを利用した場合は依頼内容，重要な提案，採用・修正・却下とその理由
+- 実装した変更と，F01の契約に対して満たした内容
+- 必須テストの意味，自作テストの入力・期待値・判定基準，保証範囲
+- 実行したコマンド，テスト結果，実行結果の観察
+- `git diff`で確認した内容，つまずきと解決方法
+- AIを使った場合の依頼内容，提案の採否と理由，[AI利用と安全](../guides/ai-usage.qmd)に従った提出状況
+
+F01では，前後の空白を含む名前，空白だけの名前，自作テストの保証範囲を自分の言葉で説明してください．
 
 ## 6. commitする
+
+`course_progress.toml`と実際に変更したF01の課題ファイルだけをcommit対象にします．
 
 ```bash
 git status --short
 git diff
-git add course_progress.toml exercises/F01_first_pull_request/run.jl exercises/F01_first_pull_request/tests.jl exercises/F01_first_pull_request/learning_log.md
+git add course_progress.toml exercises/F01_first_pull_request
 git diff --cached
-git commit -m "feat: complete F01 first pull request"
+julia --project=. -e 'using Pkg; Pkg.test()'
+git commit -m "feat: complete F01"
 ```
 
-`git add`には，実際に変更した課題ファイルだけを指定します．
-公開すべきでない情報（アクセストークン，API key，パスワード，秘密鍵，個人情報など）がdiffへ入っていないことをcommit前に確認してください．
+課題に必要なファイル，生成物のサイズ，秘密情報，個人情報を確認してからcommitします．
 
 ## 7. pushしてPRを作る
 
+`exercise/F01-first-pull-request`をoriginへpushし，`main`へのPRを作ります．
+
 ```bash
+git branch --show-current
 git push -u origin exercise/F01-first-pull-request
 ```
 
-リモートに`push`した後，GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作ります．
-PR本文に課題ID，テスト結果，学習ログ，diffで確認した内容を記載してください．
+GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作成し，提出単位，テスト結果，作業branch上の学習ログURL，diffで確認した内容を記載します．
 
 ## 8. GitHub Actionsとdiffを確認する
 
-PRのCIが成功したことと差分を確認してください．
-特に，以下の項目を自身で確認してください：
+F01の`run.jl`，`tests.jl`，`learning_log.md`，`course_progress.toml`だけが意図した差分になっていることを確認します．
 
-- 課題と無関係なファイルがない．
-- `tests.jl`の配布済み必須テストを削除・無効化せず，自作テストも空・恒真・根拠のない過大な許容誤差にしていない．
-- コード，テスト，学習ログの説明が一致する．
-- 秘密情報や不要な個人情報がない．
-- AI提案を使った場合，採否と理由を説明している．
+GitHub Actionsが成功するまで確認し，失敗時は同じbranch・同じPRで修正，テスト，commit，pushを行います．
 
-修正が必要なら同じbranchで修正，テスト，commit，pushを繰り返してPRを更新します．
+```bash
+git diff main...HEAD
+```
+
+セルフレビューでは，必須テスト，自作テスト，学習ログ，生成物，秘密情報，AI利用，LETUS提出を確認します．
 
 ## 9. mergeしてmainへ戻る
 
 セルフレビューが終わったら，GitHub上でPRをmergeします．
-その後，ローカルをmainへ戻して更新します．
 
 ```bash
 git switch main
 git pull --ff-only origin main
 git status --short
+git branch --show-current
+```
+
+`status`が空で，branchが`main`であることを確認します．次の課題F02を開始するときは，次を実行します．
+
+```bash
+julia --project=. scripts/course.jl start F02
 ```
 
 これで「最初のbranchとpull request」は完了です．

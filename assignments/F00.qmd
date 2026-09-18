@@ -12,7 +12,7 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 
 ## 先に読むページ
 
-[受講環境の準備](../setup/index.qmd)
+[受講環境の準備](../setup/index.qmd)を先に読みます．このページにF00の手順をまとめています．
 
 ## 学生リポジトリ内の場所
 
@@ -21,14 +21,35 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 - 診断コード: exercises/F00_environment/run.jl
 - 提供テスト: test/f00_preflight_test.jl
 
-## 実行
+## 実行場所
 
-学生リポジトリのルートで，まず配布環境を復元します．
+すべてのコマンドを，`Project.toml`，`Manifest.toml`，`exercises/`，`scripts/`がある学生リポジトリのルートで実行します．
 
 ~~~bash
+pwd
+git rev-parse --show-toplevel
+~~~
+
+二つの出力が学生リポジトリの同じルートを示すことを確認します．
+
+## 1. Julia環境を復元する
+
+clone後，学生リポジトリのルートで実行します．
+
+~~~bash
+julia --version
+git --version
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
+~~~
+
+Juliaは`1.13.0`を使います．`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元します．
+
+## 2. F00の機械診断
+
+`preflight`で機械的な環境診断を行います．
+
+~~~bash
 julia --project=. scripts/course.jl preflight
-julia --project=. -e 'using Pkg; Pkg.test()'
 ~~~
 
 診断は次の二群を分けて表示します．
@@ -43,16 +64,19 @@ julia --project=. -e 'using Pkg; Pkg.test()'
    - GitHubで学生リポジトリを閲覧できる
    - 対応エージェントの一つでファイル編集とコマンド実行ができる
 
-手動確認は実際に自分で確かめてからプロンプトへ回答してください．
-すべての必須項目が通ると進捗ファイルが更新されます．
+F00の提供テストを確認する場合は，次を実行します．
 
-## 手動確認を付けて完了する
+~~~bash
+julia --project=. -e 'using Pkg; Pkg.test()'
+~~~
+
+## 3. 手動確認を完了として記録する
 
 GitHubへサインインして学生リポジトリを開けることを確認します．
 VS Codeで学生リポジトリを開き，WindowsではRemote - WSL接続とJulia拡張機能がWSL2側へ接続していることを確認します．
 次に，正式対応エージェントを一つ選び，scratch/F00-agent-check.txtの作成と短い確認文の追記，安全なローカルコマンドの実行を依頼します．
 
-選んだエージェントに対応する次のコマンドを一つだけ実行します．
+手動確認を終えたら，選んだエージェントに対応するコマンドを一つ選んで実行します．
 
 ~~~bash
 julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot
@@ -62,6 +86,17 @@ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github 
 
 成功メッセージの `F00が完了しました。現在の課題はF01です。` を確認し，[F01課題](F01.qmd)へ進んでください．
 出力にはruntime，pwd，Julia，Git，手動確認の結果が残ります．
+
+## 4. F01へ進んだことを確認する
+
+~~~bash
+julia --project=. scripts/course.jl status
+git status --short
+git branch --show-current
+~~~
+
+`status`の現在課題がF01であること，branchが`main`であることを確認します．
+F00完了時の`course_progress.toml`はF01のbranchへ引き継ぎます．
 
 ## 完了条件
 
