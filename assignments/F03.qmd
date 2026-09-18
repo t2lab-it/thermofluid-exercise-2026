@@ -22,13 +22,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 開始
 
-F02をmergeし，更新済みで変更のない`main`から始めます．開始前の確認は[課題を開始する](../guides/workflow.qmd#start-exercise)を参照し，次を一度だけ実行してください．
-
-~~~bash
-julia --project=. scripts/course.jl start F03-F04
-~~~
-
-このコマンドが作成した一つのbranchを，第5回の完了まで使います．
+F02をmergeし，更新済みで変更のない`main`から始めます．開始前の確認とF03-F04の提出単位の開始は[学生向け課題ワークフローの「課題を開始する」](../guides/workflow.qmd#start-exercise)に従ってください．作成した一つのbranchを，第5回の完了まで使います．
 
 ## 解析的な証明
 

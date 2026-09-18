@@ -20,13 +20,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 課題を開始する
 
-F01をmergeし，更新済みで変更のない`main`から始めます．開始前の確認とF02以降の前提は[課題を開始する](../guides/workflow.qmd#start-exercise)を参照してください．
-
-~~~bash
-julia --project=. scripts/course.jl start F02
-~~~
-
-これでbranchが`exercise/F02-julia-arrays-and-tests`へ移り，進捗が`F02`になります．
+F01をmergeし，更新済みで変更のない`main`から始めます．開始前の確認とF02以降の開始手順は[学生向け課題ワークフローの「課題を開始する」](../guides/workflow.qmd#start-exercise)に従ってください．F02のbranch名は`exercise/F02-julia-arrays-and-tests`です．
 
 ## 実装するAPI
 
@@ -75,11 +69,7 @@ $$
 
 ## 実行とテスト
 
-~~~bash
-julia --project=. exercises/F02_julia_arrays_and_tests/run.jl
-~~~
-
-課題単独のテストと`Pkg.test()`の使い分けは[テストを書く・実行する](../guides/workflow.qmd#tests)を参照し，実行結果，テスト結果，入力契約とテストの意味を`exercises/F02_julia_arrays_and_tests/learning_log.md`へ記録します．
+`run.jl`の実行，課題単独のテスト，現在課題・完了済み課題のまとめテストの順序は[学生向け課題ワークフローの「テスト」](../guides/workflow.qmd#tests)に従ってください．実行結果，テスト結果，入力契約とテストの意味を`exercises/F02_julia_arrays_and_tests/learning_log.md`へ記録します．
 
 ## 完了条件
 

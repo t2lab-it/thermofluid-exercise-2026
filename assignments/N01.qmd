@@ -19,11 +19,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 開始
 
-前の数値微分課題（提出単位: F03-F04）をmergeし，更新済みで変更のない`main`から始めます．開始前の確認は[課題を開始する](../guides/workflow.qmd#start-exercise)を参照してください．
-
-~~~bash
-julia --project=. scripts/course.jl start N01
-~~~
+前の数値微分課題（提出単位: F03-F04）をmergeし，更新済みで変更のない`main`から始めます．開始前の確認とN01の開始は[学生向け課題ワークフローの「課題を開始する」](../guides/workflow.qmd#start-exercise)に従ってください．
 
 ## 座標・添字・差分の確認
 
@@ -62,11 +58,7 @@ $$
 
 ## 実行とテスト
 
-~~~bash
-julia --project=. exercises/N01_linear_advection/run.jl
-~~~
-
-実行すると課題内の`results/`へ次の3ファイルを生成します．内容の確認，`Pkg.test()`，学習ログ，commitの順序は[公式出力を確認する](../guides/workflow.qmd#official-results)と[学習ログ，diff，commit](../guides/workflow.qmd#commit)を参照してください．
+`run.jl`を実行して課題内の`results/`へ次の3ファイルを生成し，内容を確認します．公式出力の確認，テスト，学習ログ，commitの順序は[学生向け課題ワークフローの「公式出力を確認する」](../guides/workflow.qmd#official-results)，[「テスト」](../guides/workflow.qmd#tests)，[「学習ログ，diff，commit」](../guides/workflow.qmd#commit)に従ってください．
 
 - `exercises/N01_linear_advection/results/upwind.png`
 - `exercises/N01_linear_advection/results/centered-euler.png`
@@ -81,7 +73,7 @@ julia --project=. exercises/N01_linear_advection/run.jl
 ## `tests.jl`と学習ログ
 
 `exercises/N01_linear_advection/tests.jl`の五つの必須TODOで，次を確かめてください．
-課題単独のテストと，現在課題・完了済み課題をまとめる`Pkg.test()`の実行方法は[テストを書く・実行する](../guides/workflow.qmd#tests)を参照します．
+課題単独のテストと，現在課題・完了済み課題をまとめるテストは[学生向け課題ワークフローの「テスト」](../guides/workflow.qmd#tests)に従って実行します．
 
 1. 矩形初期条件
 2. 上流差分後の配列全体

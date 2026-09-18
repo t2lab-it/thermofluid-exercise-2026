@@ -626,11 +626,6 @@ end
         @test all(term -> !occursin(term, source), F03_F04_FORBIDDEN_TERMS)
     end
 
-    for id in ("F03", "F04")
-        source = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
-        @test occursin(F03_F04_START_COMMAND, source)
-    end
-
     # F03の到達点は課題ページに集約し，授業ページから参照する．
     assignment_path = joinpath(NAVIGATION_SITE_ROOT, "assignments", "F03.qmd")
     assignment = read(assignment_path, String)
@@ -643,5 +638,18 @@ end
     lesson_path = joinpath(NAVIGATION_SITE_ROOT, "lessons", "F03.qmd")
     @test any(qmd_link_targets(read(lesson_path, String))) do target
         normpath(resolve_qmd_target(lesson_path, target)) == assignment_path
+    end
+end
+
+@testset "later assignment pages delegate shell commands to the shared workflow" begin
+    command_patterns = (
+        r"(?m)^\s*julia\s+--project",
+        r"(?m)^\s*git\s+(?:switch|pull|status|branch|diff|add|commit|push)\b",
+    )
+    for id in ("F02", "F03", "F04", "N01")
+        source = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
+        for pattern in command_patterns
+            @test !occursin(pattern, source)
+        end
     end
 end

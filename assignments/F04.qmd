@@ -21,11 +21,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 開始または再開
 
-第4回にまだ開始していない場合だけ，[F03の開始条件](F03.qmd#開始)と[課題を開始する](../guides/workflow.qmd#start-exercise)を確認し，次を実行してください．
-
-~~~bash
-julia --project=. scripts/course.jl start F03-F04
-~~~
+第4回にまだ開始していない場合は，[F03の開始条件](F03.qmd#開始)と[学生向け課題ワークフローの「課題を開始する」](../guides/workflow.qmd#start-exercise)に従ってF03-F04の提出単位を開始してください．
 
 ::: {.callout-note title="開始済みの場合"}
 既存の`F03-F04`用branchへ戻って作業を続けてください．
@@ -54,12 +50,7 @@ julia --project=. scripts/course.jl start F03-F04
 
 ## 実行とテスト
 
-~~~bash
-julia --project=. exercises/F03-F04_vector_calculus/run.jl
-~~~
-
-`exercises/F03-F04_vector_calculus/tests.jl`の配布済み必須テストで，次を確認してください．
-課題単独のテストと`Pkg.test()`の実行方法は[テストを書く・実行する](../guides/workflow.qmd#tests)を参照します．
+`run.jl`の実行と`exercises/F03-F04_vector_calculus/tests.jl`の配布済み必須テストは，[学生向け課題ワークフローの「通常の課題作業」](../guides/workflow.qmd#exercise-work)と[「テスト」](../guides/workflow.qmd#tests)に従ってください．
 
 - 二次関数の手計算値で三つの差分を区別できる．
 - 刻み幅を半分にした誤差から，各差分の収束次数を確かめられる．
