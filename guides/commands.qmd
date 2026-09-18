@@ -7,12 +7,11 @@ title: "コマンド一覧"
 
 このページは，学生リポジトリのルートで使うコマンドの早見表です．
 実行する順序と，F00から次の課題までの提出手順は[学生向け課題ワークフロー](workflow.qmd)を正本として確認してください．
-このページでは，手順を繰り返さず，コマンドの目的と参照先をまとめます．
+このページでは，コマンドの目的と参照先をまとめます．
 
 ## 実行場所
 
 すべてのコマンドを，`Project.toml`，`exercises/`，`scripts/`がある学生リポジトリのルートで実行します．
-公開教材リポジトリや個別の課題フォルダで実行しません．
 
 ~~~bash
 pwd
@@ -41,8 +40,8 @@ F00から始める手順は[初回セットアップとF00のpreflight](workflow
 | `julia --project=. -e 'using Pkg; Pkg.test()'` | `course_progress.toml`の現在課題と完了済み課題のテストを実行する |
 | `julia --project=. scripts/course.jl check-results` | 公式出力の配置とサイズを確認する |
 
-F01は`start`を使わず，[F01のbranch開始](workflow.qmd#start-exercise)にある手動コマンドを実行します．
-F02以降の前提，F03-F04の提出単位，`preflight`・`status`・`Pkg.test()`の役割分担は[課題ワークフロー](workflow.qmd)で確認します．
+F01は，[F01のbranch開始](workflow.qmd#start-exercise)にある手動コマンドで開始します．
+F02以降の前提とF03-F04の提出単位は[課題ワークフロー](workflow.qmd)で確認します．
 
 ## 課題単独のテスト
 

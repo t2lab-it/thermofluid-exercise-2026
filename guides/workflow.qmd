@@ -6,14 +6,13 @@ title: "学生向け課題ワークフロー"
 :::
 
 このページを，学生リポジトリで課題を進めるときの入口・正本として使います．
-F00の環境診断，F01以降の課題開始，実装，テスト，学習ログ，commit，pull request（PR），merge，次の課題の開始までを，このページの順に実行してください．
+F00から次の課題開始までの手順を，このページの順に実行します．
 課題固有のAPI，期待値，数値条件，編集対象は各[課題ページ](../assignments/index.qmd)に残しています．
 
 ## コマンドを実行する場所 {#repository-root}
 
 以下のコマンドは，配布された**学生リポジトリのルートディレクトリ**で実行します．
 `Project.toml`，`Manifest.toml`，`exercises/`，`scripts/`が見えるディレクトリです．
-この公開教材リポジトリのルートや，個別の`exercises/<課題フォルダ>/`へ移動してから実行しないでください．
 
 ~~~bash
 pwd
@@ -28,7 +27,7 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 
 ### 1. Julia環境を復元する
 
-clone直後，または配布環境を初めて使うときに，学生リポジトリのルートで実行します．
+clone後，学生リポジトリのルートで実行します．
 
 ~~~bash
 julia --version
@@ -36,27 +35,18 @@ git --version
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ~~~
 
-Juliaは`1.13.0`であることを確認してください．
+Juliaは`1.13.0`を使います．
 `Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元します．
 
-### 2. 診断だけを実行する
+### 2. F00の環境を診断する
 
-まず，手動確認を記録しない診断だけのコマンドを実行します．
-この段階では`--confirm-*`を付けません．
+まず，`preflight`で機械的な環境診断を行います．F00の完了は手動確認後に記録します．
 
 ~~~bash
 julia --project=. scripts/course.jl preflight
 ~~~
 
-runtime（WSL2 / native Linux / macOS），正式なworkspaceにある`pwd`，Julia，Gitの結果を読みます．
-失敗した場合は，表示された修正案を確認し，成功するまで次へ進みません．
-F00の提供テストだけを確認したい場合は，この診断の後に次を実行できます．
-
-~~~bash
-julia --project=. -e 'using Pkg; Pkg.test()'
-~~~
-
-この時点では現在課題がF00なので，`Pkg.test()`はF00と完了済み課題のテストを対象にします．
+診断結果で実行環境，作業場所，Julia，Gitを確認します．診断が成功したら手動確認へ進みます．
 
 ### 3. 手動確認を完了として記録する
 
@@ -66,7 +56,7 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 - GitHubで自分の学生リポジトリを閲覧できる．
 - 対応エージェントの一つで，ファイル編集と安全なローカルコマンド実行ができる．
 
-確認したエージェントに対応する**次のコマンドを一つだけ**実行します．三つすべてを実行しません．
+確認したエージェントに対応するコマンドを一つ選んで実行します．
 
 ~~~bash
 julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot
@@ -74,9 +64,7 @@ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github 
 julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
 ~~~
 
-`F00が完了しました。現在の課題はF01です。`という成功メッセージを確認してください．
-成功したコマンドが`course_progress.toml`を更新し，次の課題をF01にします．
-確認結果を記録する前に，VS Code，GitHub，エージェントを実際に使えていることを確認してください．
+`F00が完了しました。現在の課題はF01です。`を確認します．`course_progress.toml`が更新され，現在の課題がF01になります．
 
 ### 4. F01へ進んだことを確認する
 
@@ -88,14 +76,13 @@ git branch --show-current
 
 `status`の現在課題がF01であること，branchが`main`であることを確認します．
 F00完了直後は`course_progress.toml`が変更済みと表示されることがあります．
-これはF01のbranchへ引き継ぐ変更であり，F00用のbranch・PR・学習ログを別に作りません．
+F00完了時の`course_progress.toml`はF01のbranchへ引き継ぎます．
 
 ## 課題を開始する {#start-exercise}
 
 ### F01：branchを手動で作る
 
-F01だけは，F00完了後の`main`から指定されたbranchを手動で作ります．
-F01に対して`course.jl start`は使いません．
+F01は，F00完了後の`main`から指定されたbranchを手動で作成します．
 
 ~~~bash
 git status --short
@@ -105,13 +92,13 @@ git switch -c exercise/F01-first-pull-request
 git branch --show-current
 ~~~
 
-最後の出力が`exercise/F01-first-pull-request`であることを確認してから，F01の実装を始めます．
-F00で更新された`course_progress.toml`以外の予期しない変更があれば，branchを作る前に教員・TAへ相談してください．
+最後の出力が`exercise/F01-first-pull-request`であることを確認して，F01の実装を始めます．
+`course_progress.toml`以外の変更が表示される場合は，branchを作る前に教員・TAへ相談してください．
 
-### F02以降：変更のないmainから開始する
+### F02以降：更新済みのmainから開始する
 
-F02以降は，前の提出単位をGitHubでmergeした後，ローカルの`main`を更新してから開始します．
-`start`を，作業中のbranch，未commitの変更がある`main`，または前のPRをまだmergeしていない状態で実行しません．
+F02以降は，前の提出単位をGitHubでmergeし，ローカルのクリーンな`main`から開始します．
+`start`はクリーンな`main`で実行します．
 
 ~~~bash
 git switch main
@@ -120,7 +107,7 @@ git status --short
 git branch --show-current
 ~~~
 
-`git status --short`に何も表示されず，branchが`main`であることを確認した後，次のコマンドの`TASK_ID`を課題ページの提出単位へ置き換えて実行します．
+`git status --short`が空で，branchが`main`であることを確認した後，次のコマンドの`TASK_ID`を課題ページの提出単位へ置き換えて実行します．
 
 ~~~bash
 julia --project=. scripts/course.jl start TASK_ID
@@ -132,7 +119,7 @@ julia --project=. scripts/course.jl start TASK_ID
 - F03では`julia --project=. scripts/course.jl start F03-F04`を一度実行し，F04まで同じbranch・PR・学習ログを使う．
 - N01ではF03-F04をmergeした後に`julia --project=. scripts/course.jl start N01`を一度実行する．
 
-F04で，すでにF03-F04のbranchを開始している場合は`start`をもう一度実行せず，そのbranchへ戻って続けます．
+F04でF03-F04のbranchを開始済みなら，そのbranchへ戻って続けます．
 開始前の前提と提出単位は，必ず該当する[課題ページ](../assignments/index.qmd)でも確認してください．
 
 ## 通常の課題作業 {#exercise-work}
@@ -148,7 +135,7 @@ F04で，すでにF03-F04のbranchを開始している場合は`start`をもう
 | `exercises/<課題フォルダ>/learning_log.md` | 実装，テストの意味と結果，公式出力，diff，判断，つまずきを自分の言葉で記録する |
 
 配布された補助ファイル，出力形式，関数の呼び出し方は，課題ページの契約に従ってください．
-自分が担当するTODO以外の提供コードや必須テストを，動かすためだけに削除・無効化しません．
+配布コードの構造と必須テストを保ちます．
 
 ## テストを書く・実行する {#tests}
 
@@ -156,10 +143,10 @@ F04で，すでにF03-F04のbranchを開始している場合は`start`をもう
 
 自作テストは，各課題の`exercises/<課題フォルダ>/tests.jl`に書きます．
 課題ページで指定された`@test false`を，入力，関数呼び出し，期待値または判定基準を持つ自作テストへ置き換えてください．
-配布済みの必須テストは保持し，削除・無効化・恒真化しません．
+配布済みの必須テストを保持します．
 許容誤差を使う場合は，丸め誤差や数値手法に照らした根拠を学習ログへ記録します．
 
-各テストが保証することと保証しないことを区別してください．
+各テストの保証範囲を整理してください．
 具体例，数学的性質，入力契約，失敗条件などの選び方と数値検証の詳しい説明は[テストと数値検証](testing.qmd#exercise-tests)にあります．
 
 ### 課題単独のテスト
@@ -184,9 +171,8 @@ julia --project=. exercises/F01_first_pull_request/tests.jl
 julia --project=. -e 'using Pkg; Pkg.test()'
 ~~~
 
-学生リポジトリの`Pkg.test()`は`course_progress.toml`の現在課題と完了済み課題を基準にテストします．
-まだ開始していない将来課題のテストを，このコマンドが課題として要求するわけではありません．
-課題単独の`tests.jl`が通っても，`Pkg.test()`とCIで確認される過去の課題を壊していないかを別に確認します．
+学生リポジトリの`Pkg.test()`は`course_progress.toml`にある現在課題と完了済み課題を実行します．
+課題単独の`tests.jl`に加え，`Pkg.test()`で完了済み課題との互換性を確認します．
 
 ## 公式出力を確認する {#official-results}
 
@@ -234,12 +220,11 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 git commit -m "feat: complete TASK_ID"
 ~~~
 
-`git add`に広すぎる指定や秘密情報を含めません．commit前に，アクセストークン，API key，パスワード，秘密鍵，課題に不要な個人情報，課題と無関係な生成物がdiffへ入っていないことを確認します．
-F00は通常の提出branchを作らないため，F00だけのcommit・PRは作りません．F00完了時の`course_progress.toml`の変更はF01のbranchへ引き継ぎます．
+課題に必要なパスだけを`git add`へ指定し，commit前にアクセストークン，API key，パスワード，秘密鍵，課題に不要な個人情報，課題と無関係な生成物を確認します．
 
 ## push，PR，GitHub Actions，セルフレビュー {#submit-pr}
 
-commitしたbranch名を確認し，`main`へ直接pushせず，課題branchをoriginへpushします．
+commitした課題branchをoriginへpushします．
 
 ~~~bash
 git branch --show-current
@@ -259,17 +244,17 @@ git diff main...HEAD
 セルフレビューでは次を確認します．
 
 - 課題の必須ファイルだけが含まれている．
-- 配布済み必須テストを削除・無効化していない．自作テストが空，恒真，または根拠のない過大な許容誤差になっていない．
+- 配布済み必須テストを保持し，自作テストに判定基準と許容誤差の根拠がある．
 - 実装，テスト，公式出力，学習ログ，PR本文の説明が一致している．
-- 生成物がサイズ制限内で，秘密情報や不要な個人情報がない．
+- 生成物のサイズと提出内容を確認し，秘密情報・不要な個人情報を除く．
 - AI提案の採否と判断理由を自分の言葉で説明できる．
-- 理解度チェックの対話全文をLETUSへ提出し，GitHubの差分には含めていない．
+- 理解度チェックの対話全文をLETUSへ提出し，GitHubには課題の提出ファイルだけを含める．
 
 通常課題はセルフレビュー後，教員・TAの確認が必要なチェックポイントでは確認後に，GitHub上でPRをmergeします．
 
 ## merge後にmainを更新し，次の課題を始める {#after-merge}
 
-merge後は古い課題branchで次の課題を始めず，ローカルの`main`を更新します．
+merge後はローカルの`main`を更新して次の課題を始めます．
 
 ~~~bash
 git switch main
@@ -286,19 +271,19 @@ git branch --show-current
 | F02 | F03-F04 |
 | F03-F04 | N01 |
 
-次の課題を始める前に，前のPRが本当にmerge済みで，ローカル`main`に変更がなく，`status`の現在課題が次のIDと一致していることを確認してください．
-`main`で作業・commit・pushしてしまった場合は，自分で履歴を書き換えず，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)を確認してください．
+次の課題は，merge済みでクリーンな`main`から，`status`で次のIDを確認して始めます．
+`main`で作業した場合は，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)を確認してください．
 
 ## 最短コマンド一覧
 
 以下は順序だけを確認するための一覧です．`<課題フォルダ>`，`TASK_ID`，`PATHS_YOU_INTEND_TO_SUBMIT`，`YOUR_EXERCISE_BRANCH`は実際の値へ置き換えます．
 
 1. 学生リポジトリのルートで`julia --project=. -e 'using Pkg; Pkg.instantiate()'`を実行する．
-2. `julia --project=. scripts/course.jl preflight`で診断し，手動確認後に`julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent AGENT_ID`を一つだけ実行する．
+2. `julia --project=. scripts/course.jl preflight`で診断し，手動確認したエージェントに合わせて`julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent AGENT_ID`を実行する．
 3. `julia --project=. scripts/course.jl status`で現在がF01になったことを確認し，F01では`git switch -c exercise/F01-first-pull-request`を実行する．
-4. F02以降は，前のPRをmergeした変更のない`main`から`julia --project=. scripts/course.jl start TASK_ID`を実行する．
+4. F02以降は，前のPRをmergeしたクリーンな`main`から`julia --project=. scripts/course.jl start TASK_ID`を実行する．
 5. 課題ページを読み，`run.jl`を実行し，`exercises/<課題フォルダ>/tests.jl`へ自作テストを書いて単独実行する．
 6. `julia --project=. -e 'using Pkg; Pkg.test()'`を実行し，必要なら`run.jl`と`check-results`で公式出力を確認する．
 7. `learning_log.md`を書き，`git diff`，`git add`，`git diff --cached`を確認してcommitする．
 8. 課題branchをpushし，GitHubでPRを作り，Actions，Files changed，セルフレビューを確認してmergeする．
-9. `git switch main`，`git pull --ff-only origin main`，`git status --short`を実行し，変更のないmainから次の課題を開始する．
+9. `git switch main`，`git pull --ff-only origin main`，`git status --short`を実行し，次の課題を開始する．
