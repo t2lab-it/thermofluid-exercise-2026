@@ -5,8 +5,6 @@ title: "学生向け課題ワークフロー"
 準備 5/5
 :::
 
-{{< include /_includes/_console-note.qmd >}}
-
 このページでは，学生リポジトリで課題を進めるときの手順をまとめます．
 各課題固有の情報は[各課題ページ](../assignments/index.qmd)を参照してください．
 

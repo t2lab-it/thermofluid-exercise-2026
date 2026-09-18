@@ -2,8 +2,6 @@
 title: "最終プロジェクトへのコード移行"
 ---
 
-{{< include /_includes/_console-note.qmd >}}
-
 
 授業で作成したコードを，[最終プロジェクトの共通手順](../assignments/final-project.qmd#project-repository)で用意した別リポジトリへ移します．
 このページでは，移すファイルの選び方，出典の記録，移行後の検証を扱います．

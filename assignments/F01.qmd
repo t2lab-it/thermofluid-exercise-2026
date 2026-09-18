@@ -5,8 +5,6 @@ title: "最初のbranchとpull request"
 第2回・課題 2/2 · 課題ID: F01
 :::
 
-{{< include /_includes/_console-note.qmd >}}
-
 ## 目的
 
 Juliaで書かれた"Hello, World"コードを新しいbranch上で変更し，差分をローカルテストで検証します．

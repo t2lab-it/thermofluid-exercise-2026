@@ -5,8 +5,6 @@ title: "Julia 1.13.0 と VS Code"
 準備 2/5
 :::
 
-{{< include /_includes/_console-note.qmd >}}
-
 ## OS別の実行場所
 
 ::: {.callout-warning title="OS別の実行場所"}

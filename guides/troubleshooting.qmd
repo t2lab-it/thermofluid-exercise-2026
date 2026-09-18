@@ -5,8 +5,6 @@ title: "トラブル対応"
 参照・トラブル対応
 :::
 
-{{< include /_includes/_console-note.qmd >}}
-
 ## 最初の証拠を残す
 
 1. 失敗したコマンドを一つ特定する．

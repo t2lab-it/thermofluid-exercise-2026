@@ -5,8 +5,6 @@ title: "CairoMakieによる可視化"
 任意・発展資料
 :::
 
-{{< include /_includes/_console-note.qmd >}}
-
 このページはとくに可視化に興味がある意欲的な学生向けの任意資料です．
 
 ## CairoMakieを使えると何が嬉しいか

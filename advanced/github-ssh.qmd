@@ -6,8 +6,6 @@ title: "SSHでGitHubへ接続する"
 準備 3/5 の必須手順
 :::
 
-{{< include /_includes/_console-note.qmd >}}
-
 このページは，個人課題用リポジトリを複製する前に完了する標準SSH手順です．
 Windowsでは，このページのコマンドを WSL2 Ubuntu の Linux 側で実行します．
 macOSとnative Linuxでは各OSの標準ターミナルで実行します．
