@@ -28,7 +28,7 @@ Julia言語を使ったプログラミングに習熟し，
 
 まずはJuliaの配列を作成し，その要素にアクセスしてみます．
 
-```julia-repl
+```julia
 julia> values = [10.0, 20.0, 30.0]
 3-element Vector{Float64}:
  10.0
@@ -49,7 +49,7 @@ julia> for value in values
 配列の要素番号（インデックス）とその値の違いに注意しましょう．
 ここでは`eachindex(values)`を使っています．
 
-```julia-repl
+```julia
 julia> function double_values(values)
            result = similar(values)
            for i in eachindex(values)
