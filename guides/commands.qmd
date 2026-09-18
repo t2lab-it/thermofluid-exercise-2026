@@ -6,8 +6,7 @@ title: "コマンド一覧"
 :::
 
 このページは，学生リポジトリのルートで使うコマンドの早見表です．
-実行する順序と，F00から次の課題までの提出手順は[学生向け課題ワークフロー](workflow.qmd)を正本として確認してください．
-このページでは，コマンドの目的と参照先をまとめます．
+実行順と確認方法は[学生向け課題ワークフロー](workflow.qmd)を参照してください．
 
 ## 実行場所
 
@@ -41,7 +40,9 @@ F00から始める手順は[初回セットアップとF00のpreflight](workflow
 | `julia --project=. scripts/course.jl check-results` | 公式出力の配置とサイズを確認する |
 
 F01は，[F01のbranch開始](workflow.qmd#start-exercise)にある手動コマンドで開始します．
-F02以降の前提とF03-F04の提出単位は[課題ワークフロー](workflow.qmd)で確認します．
+`TASK_ID`は[各課題ページ](../assignments/index.qmd)で確認してください．
+F03とF04は`F03-F04`として，同じbranch・PRで提出します．
+`AGENT_ID`は`copilot`，`codex`，`amazon-q`のうち，手動確認したものを指定してください．
 
 ## 課題単独のテスト
 
