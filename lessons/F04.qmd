@@ -104,7 +104,7 @@ $E(h)\approx C h^p$ の領域では $R(h)\approx 2^p$，$p_{\mathrm{obs}}\approx
 - `divergence_curl_residual`: 提供済み`curl_vector`の各成分を，学生の中心差分で外側から微分し，divergenceを組み立てる．
 - `laplacian_identity_residual`: 提供済み`gradient_scalar`を外側から中心差分し，そのdivergenceから提供済み`laplacian_scalar`を引く．
 
-`centered_partial`は一変数の`centered_difference`を三次元座標へ接続する提供済みadapterで，`verify_vector_identities`は格子点を走査して最大残差を集計する提供済み関数です．
+`centered_partial`は一変数の`centered_difference`を三次元座標へ接続する提供済みの補助関数で，`verify_vector_identities`は格子点を走査して最大残差を集計する提供済み関数です．
 
 ::: {.callout-warning}
 内側と外側の両方に，まったく同じ可換な離散微分演算を適用すると，離散演算子同士が代数的に相殺し，残差が二次精度で減る様子ではなく丸め誤差レベルの値だけが見えることがあります．

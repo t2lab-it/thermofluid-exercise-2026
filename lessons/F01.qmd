@@ -32,7 +32,7 @@ understanding-check-points:
 
 実装は必ず課題branchで行い，pull request を通して`main`へmergeします．
 `main`へ直接pushしてはいけません．
-（参照：[mainで作業してしまったら](../guides/troubleshooting.html#main-branch-recovery)）
+（参照：[mainで作業してしまったら](../guides/troubleshooting.qmd#main-branch-recovery)）
 
 本課題では，この手順を自分の操作で確かめます．
 git/GitHubコマンドの詳細については[課題のbranch・PRワークフロー](../guides/workflow.qmd)ページを参照してください．

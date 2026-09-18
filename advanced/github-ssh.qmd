@@ -50,40 +50,9 @@ Hi USERNAME! You've successfully authenticated, but GitHub does not provide shel
 
 ### Windows (WSL2 Ubuntu 24.04)
 
-Windowsでは WSL2 Ubuntu の端末で，Linux向けの手順を実行します．
-まずリポジトリを置く場所がLinuxファイルシステム上であることを確認してください．
-
-~~~console
-$ pwd
-/home/student/YOUR_COURSE_REPOSITORY
-
-$ uname -a
-Linux HOSTNAME 6.x.y-microsoft-standard-WSL2 ... x86_64 GNU/Linux
-（WSL2の例．native LinuxやmacOSでは異なる表示）
-
-$ ls -la ~/.ssh
-（既存の鍵・設定ファイルを表示．ディレクトリがなければ No such file or directory）
-
-$ ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL" -f ~/.ssh/id_ed25519_github
-Generating public/private ed25519 key pair.
-Enter passphrase (empty for no passphrase):
-（パスフレーズを入力し，再入力の要求にも回答．鍵の保存先などの表示は省略）
-
-$ eval "$(ssh-agent -s)"
-Agent pid 12345
-
-$ ssh-add ~/.ssh/id_ed25519_github
-（必要に応じてパスフレーズを入力）
-Identity added: /home/student/.ssh/id_ed25519_github (YOUR_GITHUB_EMAIL)
-
-$ ssh-add -l
-256 SHA256:（フィンガープリント） YOUR_GITHUB_EMAIL (ED25519)
-
-$ cat ~/.ssh/id_ed25519_github.pub
-ssh-ed25519 （公開鍵の文字列） YOUR_GITHUB_EMAIL
-~~~
-
-uname -aにWSL2のカーネルが表示されない，またはpwdが/mnt/c以下の場合は，課題を進めず受講環境の準備へ戻ります．
+WSL2 Ubuntuの端末で，以下の[Linuxの手順](#linux)を実行してください．
+`pwd`が`/home/<user>/...`を示し，`uname -a`にWSL2のカーネルが表示されることを確認します．
+配置や接続に問題がある場合は，[トラブル対応](../guides/troubleshooting.qmd)を参照してください．
 
 ### macOS
 
@@ -120,7 +89,7 @@ Host github.com
   IdentitiesOnly yes
 ```
 
-### Linux
+### Linux {#linux}
 
 ターミナルで確認し，鍵を作成して現在のシェルで`ssh-agent`を開始します．
 

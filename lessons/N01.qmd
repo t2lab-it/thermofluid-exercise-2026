@@ -244,7 +244,10 @@ $$
 
 ## 診断を読む
 
-`run.jl`の`simulate`で実効CFLと最小・最大値を求め，`summary_section`で初期範囲からの超過量を求めます．この計算と図を対応させ，中心差分＋陽Eulerの振動・増幅を説明してください．入力検証・TOML保存・描画の詳細は`provided_support.jl`にあります．
+`simulate`で実効CFLと最小・最大値を，`summary_section`で初期範囲からの超過量を求めます．
+この計算と図を対応させ，中心差分＋陽Eulerの振動・増幅を説明してください．
+出力の比較には[N01課題の公開基準値](../assignments/N01.qmd#reference-results)を使います．
+入力検証・TOML保存・描画の詳細は`provided_support.jl`にあります．
 
 ## テストで確かめる
 

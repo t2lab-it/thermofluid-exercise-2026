@@ -102,53 +102,69 @@ $S_0$ を「同じhot pathを通り，正しさを確認済みの最小入力」
 
 ## 進め方
 
+[共通手順](../../assignments/final-project.qmd#project-workflow)でプロジェクトリポジトリを準備してから，以下に取り組んでください．
+
 ### Step 1：検証済みsolverと測定契約を固定する
 
-- **作業**: forkしたプロジェクトで `launch-kits/reuse-your-solver/` にある `README.md` を読み，正しさを確認済みのCPU solverを一つ選びます．
-  参照元repositoryとcommit，実行command，入力，$S_0$，仕事量，終了条件，出力，Julia・package，thread条件，初回・warm-up・正式測定の範囲と回数を測定契約へ書きます．
-- **確認**: 基準commitをcheckoutした状態で既存testと既知解の比較を再実行し，同じcommandから同じ主要出力を得られることを確認します．
-  正しさが未確認ならprofilingへ進みません．
-- **残すもの**: 測定契約，環境情報，参照元commit，実行command，基準test log，主要出力と比較方法を残します．
+プロジェクトリポジトリで `launch-kits/reuse-your-solver/` にある `README.md` を読み，正しさを確認済みのCPUソルバを一つ選びます．
+参照元リポジトリとcommit，実行コマンド，入力，$S_0$，仕事量，終了条件，出力，Julia・パッケージ，スレッド条件，初回・事前実行・正式測定の範囲と回数を測定契約へ書きます．
+
+基準commitをcheckoutした状態で既存テストと既知解の比較を再実行し，同じコマンドから同じ主要出力を得られることを確認します．
+正しさが未確認ならprofilingへ進みません．
+
+測定契約，環境情報，参照元commit，実行コマンド，基準テストログ，主要出力と比較方法を残します．
 
 ### Step 2：基準版の時間・allocation・profileを測る
 
-- **作業**: 初回latencyを扱う場合は新しいprocessで測り，その後に同じpathを一度実行してwarm-upします．
-  正式測定を5回行い，allocation回数とallocated bytesを別列で記録します．
-  各回の前に `Profile.clear()` を実行して同じ仕事量のCPU profileを三回取り，同じ形式のtree，flat table，またはflame graphとして保存します．
-- **確認**: 五つの時間が同じ仕事量を測っていること，profileに十分なsampleがあり三回で主要な呼出し経路が再現すること，測定中にも主要出力が基準値を保つことを確認します．
-- **残すもの**: 初回とwarm-up後を分けたraw time，medianと分布図，allocation回数，allocated bytes，必要ならpeak memory，三回のprofile可視化，測定scriptを残します．
+初回latencyを扱う場合は新しいプロセスで測り，その後に正式測定と同じ経路を一度実行します．
+正式測定を5回行い，allocation回数とallocated bytesを別列で記録します．
+各回の前に `Profile.clear()` を実行して同じ仕事量のCPUプロファイルを三回取り，同じ形式のtree，flat table，またはflame graphとして保存します．
+
+五つの時間が同じ仕事量を測っていること，プロファイルに十分なsampleがあり三回で主要な呼出し経路が再現すること，測定中にも主要出力が基準値を保つことを確認します．
+
+初回と事前実行後を分けた測定時間の生データ，中央値と分布図，allocation回数，allocated bytes，必要なら最大メモリ使用量，三回のプロファイル可視化，測定スクリプトを残します．
 
 ### Step 3：profileから変更一件を選ぶ
 
-- **作業**: profile上位のうち自分のcodeで変更できる処理を一つ選び，`@time`，BenchmarkTools，必要ならallocation profileで原因を狭めます．
-  変更前に「どのsample，allocation，時間がどう変わると予想するか」と，正しさを確認する量を書きます．
-- **確認**: 変更候補が測定対象のhot pathで実行され，関係のないI/O，plot，compile時間だけを見ていないことを確認します．
-  一件のdiffで仮説を検証できなければ変更をさらに分けます．
-- **残すもの**: hotspotの該当file・関数，profile sampleの根拠，仮説，変更するもの・固定するもの，採用しなかった候補と理由を残します．
+プロファイル上位のうち自分のコードで変更できる処理を一つ選び，`@time`，BenchmarkTools，必要ならallocation プロファイルで原因を狭めます．
+変更前に「どのsample，allocation，時間がどう変わると予想するか」と，正しさを確認する量を書きます．
+
+変更候補が測定対象の処理時間の大きい実行経路で実行され，関係のないI/O，plot，コンパイル時間だけを見ていないことを確認します．
+一件のdiffで仮説を検証できなければ変更をさらに分けます．
+
+処理時間の大きい箇所の該当ファイル・関数，プロファイルのサンプルの根拠，仮説，変更するもの・固定するもの，採用しなかった候補と理由を残します．
 
 ### Step 4：変更後の正しさを先に再検証する
 
-- **作業**: 選んだ変更を一件だけ実装し，性能測定を行う前に，基準版と同じtest，既知解，保存量，残差，主要出力の比較を実行します．
-  浮動小数点の演算順序が変わる場合は，許容範囲の根拠と差の分布を記録します．
-- **確認**: 全testとdomain固有の検証が基準版と同じ判断で合格し，結果の差を説明できることを確認します．
-  不合格ならspeedupを成功として報告せず，変更を戻すか正しさの問題として調べます．
-- **残すもの**: 変更diff，test log，before/afterの主要出力，誤差・残差・保存量の比較，go/no-go判断を残します．
+選んだ変更を一件だけ実装し，性能測定を行う前に，基準版と同じテスト，既知解，保存量，残差，主要出力の比較を実行します．
+浮動小数点の演算順序が変わる場合は，許容範囲の根拠と差の分布を記録します．
+
+全テストと対象問題に固有の検証が，基準版と同じ判定基準で合格することを確認してください．
+結果に差があれば，その理由を説明します．
+不合格ならspeedupを成功として報告せず，変更を戻すか正しさの問題として調べます．
+
+変更diff，テストログ，before/afterの主要出力，誤差・残差・保存量の比較，go/no-go判断を残します．
 
 ### Step 5：同じ契約で再測定し，規模依存を調べる
 
-- **作業**: 合格した変更版を基準版と同じprocess，warm-up，入力，仕事量，5回測定，Profile三回で再測定します．
-  $S_0$ の比較後，実測時間とmemory量から $S_1$，必要なら $S_2$ へ一段ずつ進みます．
-- **確認**: before/afterで仕事量，出力，sample・eval数，thread条件が一致し，時間分布の重なり，median，allocation，throughput，profileの移動が同じ方向を示すか確認します．
-  差が揺らぎの範囲なら「差を確認できない」と結論します．
-- **残すもの**: 同じ軸の時間分布，before/after表，同じ形式のprofile可視化，problem-sizeまたはscaling図，全条件のcorrectness結果と測定logを残します．
+合格した変更版を基準版と同じプロセス，事前実行，入力，仕事量，5回測定，Profile三回で再測定します．
+$S_0$ の比較後，実測時間とメモリ量から $S_1$，必要なら $S_2$ へ一段ずつ進みます．
+
+before/afterで仕事量，出力，sample・eval数，スレッド条件が一致し，時間分布の重なり，中央値，allocation，throughput，プロファイルの移動が同じ方向を示すか確認します．
+差が揺らぎの範囲なら「差を確認できない」と結論します．
+
+同じ軸の時間分布，before/after表，同じ形式のプロファイル可視化，problem-sizeまたはscaling図，全条件の正しさの検証結果と測定ログを残します．
 
 ### Step 6：問いへの回答と再現手順をまとめる
 
-- **作業**: profileで見つけた原因，変更一件，correctness regression，再測定，規模依存を順に結び，[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿って問いへ答えます．
-  高速化しなかった場合も，測定範囲，noise，残ったhotspot，適用限界を説明します．
-- **確認**: 第三者が基準・変更commit，環境，入力，実行順，warm-up，測定回数，図表生成を追跡できるか確認します．
-  latencyとthroughput，allocation回数とallocated bytes・peak memoryを別の量として読めるかも確認します．
-- **残すもの**: before/afterのprofile可視化，時間とmemoryの比較表，problem-sizeまたはscaling図，correctness再検証結果，問いへの回答，再生成script，既知の限界を残します．
+プロファイルで見つけた原因，変更一件，正しさの再検証，再測定，規模依存を順に結び，[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿って問いへ答えます．
+高速化しなかった場合も，測定範囲，測定の揺らぎ，残った処理時間の大きい箇所，適用限界を説明します．
+
+latencyとthroughput，allocation回数とallocated bytes・最大メモリ使用量を別の量として読めるかも確認します．
+
+before/afterのプロファイル可視化，時間とメモリの比較表，problem-sizeまたはscaling図，正しさの再検証結果，問いへの回答，再生成スクリプト，既知の限界を残します．
+
+[共通の記録項目](../../assignments/final-project.qmd#project-records)を揃え，[発表前の確認](../../assignments/final-project.qmd#presentation-check)を行ってください．
 
 ## 発展課題
 

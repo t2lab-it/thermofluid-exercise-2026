@@ -8,7 +8,7 @@ title: "1次元線形移流方程式"
 ## 目的
 
 1次元線形移流方程式の数値計算を実装し，上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します．
-branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を正本として使ってください．
+branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
 
 ## 学生リポジトリ内の場所
 
@@ -19,7 +19,8 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 開始
 
-前の数値微分課題（提出単位: F03-F04）をmergeし，更新済みで変更のない`main`から始めます．開始前の確認とN01の開始は[学生向け課題ワークフローの「課題を開始する」](../guides/workflow.qmd#start-exercise)に従ってください．
+F03-F04をmergeし，更新済みで変更のない`main`から始めます．
+[課題の開始手順](../guides/workflow.qmd#start-exercise)の`TASK_ID`を`N01`へ置き換えてください．
 
 ## 座標・添字・差分の確認
 
@@ -58,7 +59,8 @@ $$
 
 ## 実行とテスト
 
-`run.jl`を実行して課題内の`results/`へ次の3ファイルを生成し，内容を確認します．公式出力の確認，テスト，学習ログ，commitの順序は[学生向け課題ワークフローの「公式出力を確認する」](../guides/workflow.qmd#official-results)，[「テスト」](../guides/workflow.qmd#tests)，[「学習ログ，diff，commit」](../guides/workflow.qmd#commit)に従ってください．
+[共通の実行手順](../guides/workflow.qmd#exercise-work)で`run.jl`を実行すると，次の3ファイルが生成されます．
+内容を確認し，[公式出力の配置・サイズの確認](../guides/workflow.qmd#official-results)を行ってください．
 
 ~~~text
 exercises/N01_linear_advection/results/upwind.png
@@ -67,11 +69,35 @@ exercises/N01_linear_advection/results/summary.toml
 ~~~
 
 図中の`Initial`は初期値，`Final`は最終値です．`Upwind`は上流差分，`Centered`は中心差分を表します．
-PNGが開けること，`summary.toml`が実行結果と一致すること，課題ページと[数値検証の基準](../guides/testing.qmd#公開基準値と比べる)にある符号・範囲・オーバーシュートまたはアンダーシュート・実効CFL・最終時刻を確認します．
+次を確認してください．
 
-![安定な上流差分法 + Euler法の公式出力](../assets/figures/N01-upwind.png){fig-alt="上流差分法 + Euler法で移流した矩形波"}
+- PNGが開き，`summary.toml`の値が同じ実行結果と一致する．
+- 上流差分法の最小・最大が初期範囲内に収まり，中心差分法 + Euler法にオーバーシュートまたはアンダーシュートがある．
+- 実効CFLが`c * dt / dx`に一致する．
+- `isapprox(steps * dt, t_final; atol=100eps())`で，最終時刻へ到達する．
 
-![意図的に不安定な中心差分法 + Euler法の公式出力](../assets/figures/N01-centered-euler.png){fig-alt="中心差分法 + Euler法で発生する数値振動"}
+具体的な値は，下の[公開基準値](#reference-results)と比べます．
+
+## 公開基準値と比べる {#reference-results}
+
+まず，最小値と最大値の**符号**，初期値に対する**範囲**，オーバーシュート・アンダーシュートの**フラグ**を比べます．
+数値の差は，丸め誤差を考慮して比較してください．
+これにより，計算方法や境界条件の大きな違いを，丸め誤差の違いと混同しにくくなります．
+
+次の値は，公開基準値の`nx=81`，`dx=0.025`，`cfl=0.5`，`dt=0.0125`，`steps=40`に対応する値です．
+
+::: {.table-responsive}
+| 手法 | `minimum` | `maximum` | `overshoot` | `undershoot` |
+|---|---:|---:|---:|---:|
+| upwind + Euler | 1.0 | 1.9993204517450067 | 0.0 | 0.0 |
+| 中心差分 + Euler | -10.420010468371677 | 13.492726642559711 | 11.492726642559711 | 11.420010468371677 |
+:::
+
+![上流差分法 + Euler法の公開基準値](../assets/n01-reference/upwind.png){fig-alt="初期値と上流差分法 + Euler法の最終値を比較したグラフ"}
+
+![中心差分法 + Euler法の公開基準値](../assets/n01-reference/centered-euler.png){fig-alt="初期値と中心差分法 + Euler法の最終値を比較し，振動を示したグラフ"}
+
+真偽フラグを含む機械可読な値は[`summary.toml`](../assets/n01-reference/summary.toml)でも確認できます．
 
 ## `tests.jl`と学習ログ
 

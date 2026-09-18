@@ -71,11 +71,9 @@ Cloning into 'REPOSITORY'...
 
 $ cd YOUR_COURSE_REPOSITORY
 （成功時は出力なし）
-
-$ julia --project=. -e 'using Pkg; Pkg.instantiate()'
-（初回はパッケージの導入・プリコンパイル状況を表示．復元済みなら出力がない場合もあります）
 ```
-`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用のJulia環境を復元します．
+`exercises/`や`scripts/`が見えることを確認してください．
+Juliaのパッケージ環境は，[環境診断（F00）](../assignments/F00.qmd)で復元します．
 
 続いて[コーディングエージェント](agents.qmd)と[課題ワークフロー](../guides/workflow.qmd)を確認し，[環境診断（F00）](../assignments/F00.qmd)を実行してください．
 GitHub CLIを使いたい人は，準備後に[任意の発展資料](../advanced/github-cli.qmd)を参照してください．

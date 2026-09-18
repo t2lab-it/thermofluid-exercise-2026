@@ -182,53 +182,68 @@ CPUで細かい条件を完了できない場合は，公式level 6と一段粗�
 
 ## 進め方
 
+[共通手順](../../assignments/final-project.qmd#project-workflow)でプロジェクトリポジトリを準備してから，以下に取り組んでください．
+
 ### Step 1：上流資料と再現environmentを固定する
 
-- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
-  `Trixi v0.17.2`，公式example path，release commit，MIT Licenseを開始候補にし，自分のprojectで `Project.toml` と `Manifest.toml` を解決します．
-- **確認**: 新しいJulia processでJulia・Trixi・OrdinaryDiffEq関連packageのversionを表示し，公式exampleを変更せず$t=0.2$まで実行します．
-  上流tagと授業側の変更を区別します．
-- **残すもの**: 上流URL・path・tag・commit・license，environment files，version表示，実行command，summary logを残します．
+プロジェクトリポジトリで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
+`Trixi v0.17.2`，公式例のパス，release commit，MIT Licenseを開始候補にし，自分のプロジェクトで `Project.toml` と `Manifest.toml` を解決します．
+
+新しいJuliaプロセスでJulia・Trixi・OrdinaryDiffEq関連パッケージの版を表示し，公式例を変更せず$t=0.2$まで実行します．
+上流tagと授業側の変更を区別します．
+
+上流URL・パス・tag・commit・ライセンス，環境ファイル，バージョン情報，実行コマンド，要約ログを残します．
 
 ### Step 2：公式modified Sod例を再現し，profileを保存する
 
-- **作業**: $\gamma$，左右状態，$x_0$，領域，境界，level，次数，表面・体積流束，SSPRK43，adaptive設定，tolerance，$t_*$を表へ書き出します．
-  `sol`から同じ座標順の$\rho,u,p$ profileとnative-node診断を保存します．
-- **確認**: 初期状態が公式sourceと一致し，希薄波，接触不連続，衝撃波を同じscaleの図で識別でき，$\rho,p$が正で非有限値がないことを確かめます．
-- **残すもの**: 基準script，設定表，raw profile，全体図と三つの波の拡大図，$\min\rho$，$\min p$，step・RHS回数を残します．
+$\gamma$，左右状態，$x_0$，領域，境界，level，次数，表面・体積流束，SSPRK43，adaptive設定，tolerance，$t_*$を表へ書き出します．
+`sol`から同じ座標順の$\rho,u,p$ プロファイルとnative-node診断を保存します．
+
+初期状態が公式ソースと一致し，希薄波，接触不連続，衝撃波を同じ尺度の図で識別でき，$\rho,p$が正で非有限値がないことを確かめます．
+
+基準スクリプト，設定表，分布の生データ，全体図と三つの波の拡大図，$\min\rho$，$\min p$，ステップ・RHS回数を残します．
 
 ### Step 3：自己整合性と評価契約を確認する
 
-- **作業**: native quadratureで$\boldsymbol{Q}_h$と境界流束込み保存収支を計算します．
-  adaptive steppingの記録を残し，必要ならCFL制御branchで採用CFLとCFL/2を比較します．
-  可視化gridと誤差積分gridを固定します．
-- **確認**: $\boldsymbol{R}_{\mathrm{bal}}$，最小密度・圧力，波形，主要指標が時間刻みと評価gridの一段厳しい条件で安定することを確かめます．
-  既定 `AnalysisCallback` のerrorをexact解の誤差と混同しません．
-- **残すもの**: 保存収支の時系列または表，正値性・非有限値log，時間刻み設定，grid依存表，診断testまたは再計算scriptを残します．
+native quadratureで$\boldsymbol{Q}_h$と境界流束込み保存収支を計算します．
+adaptive steppingの記録を残し，必要ならCFL制御branchで採用CFLとCFL/2を比較します．
+可視化gridと誤差積分gridを固定します．
+
+$\boldsymbol{R}_{\mathrm{bal}}$，最小密度・圧力，波形，主要指標が時間刻みと評価gridの一段厳しい条件で安定することを確かめます．
+既定 `AnalysisCallback` のerrorを厳密解の誤差と混同しません．
+
+保存収支の時系列または表，正値性・非有限値ログ，時間刻み設定，grid依存表，診断テストまたは再計算スクリプトを残します．
 
 ### Step 4：exact Riemann解と照合する
 
-- **作業**: Toroの手順または固定commitの独立solverで，同じ左右状態，$\gamma$，$x_0$，$t_*$の中間状態，波速，$\rho,u,p$を計算します．
-  root solve，sampling，積分法を記録し，sample数を増やした結果または別実装と照合します．
-- **確認**: 希薄波端，接触不連続，衝撃波の位置と状態を数値解へ重ね，各変数の$\varepsilon_1$，$O_q^+$，$O_q^-$を再生成できることを確かめます．
-  参照codeをcopyした場合はBSD licenseを残します．
-- **残すもの**: exact解scriptと出典，波速・中間状態表，overlay図，波ごとの拡大図，誤差・振動表を残します．
+Toroの手順または固定commitの独立ソルバで，同じ左右状態，$\gamma$，$x_0$，$t_*$の中間状態，波速，$\rho,u,p$を計算します．
+root solve，サンプリング，積分法を記録し，sample数を増やした結果または別実装と照合します．
+
+希薄波端，接触不連続，衝撃波の位置と状態を数値解へ重ね，各変数の$\varepsilon_1$，$O_q^+$，$O_q^-$を再生成できることを確かめます．
+参照コードをコピーした場合はBSD ライセンスを残します．
+
+厳密解のスクリプトと出典，波速・中間状態表，重ね描き図，波ごとの拡大図，誤差・振動表を残します．
 
 ### Step 5：一軸比較を実行し，規模と費用を確定する
 
-- **作業**: 標準の問いでは，検証済みlevel 6と，`initial_refinement_level`だけを一段変えた条件を実行します．
-  全条件を同じ$t_*$，postprocessing，図のscaleで処理し，初回compile，二回目のwall time，memory，出力容量を分けて測ります．
-- **確認**: 両条件が保存，正値性，時間刻み，外部照合を通り，波位置，$L_1$誤差，振動の差を数値で示せることを確認します．
-  細分化による差が評価gridや時間刻みの差ではないかも確認します．
-- **残すもの**: exact解を重ねた条件比較図，DOF対$L_1$誤差図，保存・正値性・振動・費用表，raw data，図表生成scriptを残します．
+標準の問いでは，検証済みlevel 6と，`initial_refinement_level`だけを一段変えた条件を実行します．
+全条件を同じ$t_*$，postprocessing，図の尺度で処理し，初回コンパイル，二回目のwall time，メモリ，出力容量を分けて測ります．
+
+両条件が保存，正値性，時間刻み，外部照合を通り，波位置，$L_1$誤差，振動の差を数値で示せることを確認します．
+細分化による差が評価gridや時間刻みの差ではないかも確認します．
+
+厳密解を重ねた条件比較図，DOF対$L_1$誤差図，保存・正値性・振動・費用表，生データ，図表生成スクリプトを残します．
 
 ### Step 6：波構造・誤差・保存・費用を問いへの回答にまとめる
 
-- **作業**: [共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，公式例再現，自己整合性，external exact解，一軸比較を一つの論理へつなぎます．
-  希薄波，接触，衝撃波で見える誤差の違いと，正値性・保存・散逸・分散・費用のtrade-offを説明します．
-- **確認**: 第三者がrepositoryとcommit，environment，入力，実行順，参照解，raw data，図表生成を追跡できるか確認します．
-  軸，変数，時刻，単位，誤差norm，保存残差，over/undershootの定義を資料内で一意にします．
-- **残すもの**: exact解overlay，三つの波の拡大図，一軸比較図，主要条件・指標・費用表，問いへの回答，限界，CPU縮小case，再生成手順を発表資料とproject repositoryへ残します．
+[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，公式例再現，自己整合性，独立に求めた厳密解，一軸比較を一つの論理へつなぎます．
+希薄波，接触，衝撃波で見える誤差の違いと，正値性・保存・散逸・分散・費用のトレードオフを説明します．
+
+軸，変数，時刻，単位，誤差ノルム，保存残差，オーバーシュート・アンダーシュートの定義を資料内で一意にします．
+
+厳密解の重ね描き図，三つの波の拡大図，一軸比較図，主要条件・指標・費用表，問いへの回答，限界，CPU縮小ケース，再生成手順を発表資料とプロジェクトリポジトリへ残します．
+
+[共通の記録項目](../../assignments/final-project.qmd#project-records)を揃え，[発表前の確認](../../assignments/final-project.qmd#presentation-check)を行ってください．
 
 ## 発展課題
 

@@ -227,53 +227,68 @@ CPUで $128\times64$ の必要な積分を完了できない場合は，$64\time
 
 ## 進め方
 
+[共通手順](../../assignments/final-project.qmd#project-workflow)でプロジェクトリポジトリを準備してから，以下に取り組んでください．
+
 ### Step 1：上流資料と再現environmentを固定する
 
-- **作業**: forkしたprojectで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
-  `Oceananigans v0.110.15`，公式example path，tag commit，MIT Licenseを開始候補にし，projectの `Project.toml` と `Manifest.toml` を解決します．
-- **確認**: 新しいJulia processでJulia・Oceananigans・CairoMakie・JLD2のversionを表示し，上流sourceと自分のscriptの差を説明できるか確認します．
-- **残すもの**: 上流URL・path・tag・commit・license，environment files，version表示，実行command，変更記録を残します．
+プロジェクトリポジトリで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
+`Oceananigans v0.110.15`，公式例のパス，tag commit，MIT Licenseを開始候補にし，プロジェクトの `Project.toml` と `Manifest.toml` を解決します．
+
+新しいJuliaプロセスでJulia・Oceananigans・CairoMakie・JLD2の版を表示し，上流ソースと自分のスクリプトの差を説明できるか確認します．
+
+上流URL・パス・tag・commit・ライセンス，環境ファイル，バージョン情報，実行コマンド，変更記録を残します．
 
 ### Step 2：公式水平対流例を再現し，raw fieldを保存する
 
-- **作業**: $H,L_x,N_x,N_z,b_\star,Ra,Pr,\nu,\kappa$，境界，WENO，Runge--Kutta 3，CFL，停止時刻，出力間隔を表へ書き出し，公式 $Ra=10^8$ 例をCPUで実行します．
-  $b$，speed，$\zeta$とhaloを含む再計算可能な出力を保存します．
-- **確認**: $t=40$まで有限値で進み，上面強制，free-slip壁，JLD2の時刻・格子・field，$Nu,K$時系列を再読込できることを確かめます．
-  公式のwall timeは自分の環境の予測値に使いません．
-- **残すもの**: 基準script，設定表，summary log，raw JLD2，$b,\zeta,\chi$図，$Nu,K$時系列，初回と二回目のprofileを残します．
+$H,L_x,N_x,N_z,b_\star,Ra,Pr,\nu,\kappa$，境界，WENO，Runge--Kutta 3，CFL，停止時刻，出力間隔を表へ書き出し，公式 $Ra=10^8$ 例をCPUで実行します．
+$b$，speed，$\zeta$とhaloを含む再計算可能な出力を保存します．
+
+$t=40$まで有限値で進み，上面強制，free-slip壁，JLD2の時刻・格子・場，$Nu,K$時系列を再読込できることを確かめます．
+公式のwall timeは自分の環境の予測値に使いません．
+
+基準スクリプト，設定表，要約ログ，JLD2形式の生データ，$b,\zeta,\chi$図，$Nu,K$時系列，初回と二回目のプロファイルを残します．
 
 ### Step 3：非圧縮拘束，収支，時間窓を確認する
 
-- **作業**: 同じfieldから $\nabla_h\cdot\boldsymbol{u}_h$，$\psi$，$K$，$\chi$，$R_{b^2}$を計算します．
-  CFL 0.7と0.35，代表条件の隣接格子を比較し，$Nu,K,\Psi$の候補窓を前半・後半へ分けます．
-- **確認**: 発散，収支，主要指標，平均profile，場の解釈が時間刻みと格子で安定し，複数窓のdriftが条件差を覆わないことを確かめます．
-  未到達なら積分延長または過渡結果への範囲縮小を決めます．
-- **残すもの**: 発散norm，浮力分散収支の時系列または表，CFL・格子感度表，$\Psi$計算script，採用・棄却した平均窓と理由を残します．
+同じ場から $\nabla_h\cdot\boldsymbol{u}_h$，$\psi$，$K$，$\chi$，$R_{b^2}$を計算します．
+CFL 0.7と0.35，代表条件の隣接格子を比較し，$Nu,K,\Psi$の候補窓を前半・後半へ分けます．
+
+発散，収支，主要指標，平均プロファイル，場の解釈が時間刻みと格子で安定し，複数窓のdriftが条件差を覆わないことを確かめます．
+未到達なら積分延長または過渡結果への範囲縮小を決めます．
+
+発散ノルム，浮力分散収支の時系列または表，CFL・格子感度表，$\Psi$計算スクリプト，採用・棄却した平均窓と理由を残します．
 
 ### Step 4：解析的拡散解とNusselt診断を照合する
 
-- **作業**: 同じ $L_x,H,b_s,\kappa$ の $b_{\mathrm{diff}}$ と $\chi_{\mathrm{diff}}$ を独立に実装し，simulationと同じcell・face位置，離散勾配，積分法で評価します．
-  volume散逸と上面fluxから得る収支も照合します．
-- **確認**: $b_{\mathrm{diff}}$が上面値と他面zero-fluxを満たし，格子を細かくすると計算した $Nu$ が1へ近づくことを確認します．
-  文献の異なるaspect ratio，速度境界，$Ra,Pr$の数値を混ぜません．
-- **残すもの**: 解析式と出典，評価script，$b_{\mathrm{diff}}$の図，格子対 $Nu-1$ の表または図，surface・volume収支の照合を残します．
+同じ $L_x,H,b_s,\kappa$ の $b_{\mathrm{diff}}$ と $\chi_{\mathrm{diff}}$ を独立に実装し，simulationと同じcell・face位置，離散勾配，積分法で評価します．
+volume散逸と上面fluxから得る収支も照合します．
+
+$b_{\mathrm{diff}}$が上面値と他面zero-fluxを満たし，格子を細かくすると計算した $Nu$ が1へ近づくことを確認します．
+文献の異なるaspect ratio，速度境界，$Ra,Pr$の数値を混ぜません．
+
+解析式と出典，評価スクリプト，$b_{\mathrm{diff}}$の図，格子対 $Nu-1$ の表または図，surface・volume収支の照合を残します．
 
 ### Step 5：一軸比較を実行し，規模と費用を確定する
 
-- **作業**: 標準では検証済み $Ra=10^8$ と追加候補 $Ra=10^7$ を実行します．
-  両条件をそれぞれ平均可能な状態まで進め，同じ無次元窓長，postprocessing，図のscaleで処理します．
-  初回compile，二回目のwall time，step数，peak memory，JLD2容量を分けて測ります．
-- **確認**: 両条件が発散，収支，時間刻み，格子，拡散基準を通り，$Nu$，$\Psi$，$K$，$\delta_\chi/H$の差が平均窓のdriftより明確かを確認します．
-  完了不能なら過渡結果とCPU縮小caseの役割を分けます．
-- **残すもの**: 同じscaleの $b,\zeta,\chi$比較図，時系列と鉛直profile，主要条件・指標・費用表，raw data，図表生成scriptを残します．
+標準では検証済み $Ra=10^8$ と追加候補 $Ra=10^7$ を実行します．
+両条件をそれぞれ平均可能な状態まで進め，同じ無次元窓長，postprocessing，図の尺度で処理します．
+初回コンパイル，二回目のwall time，ステップ数，最大メモリ使用量，JLD2容量を分けて測ります．
+
+両条件が発散，収支，時間刻み，格子，拡散基準を通り，$Nu$，$\Psi$，$K$，$\delta_\chi/H$の差が平均窓のdriftより明確かを確認します．
+完了不能なら過渡結果とCPU縮小ケースの役割を分けます．
+
+同じ尺度の $b,\zeta,\chi$比較図，時系列と鉛直プロファイル，主要条件・指標・費用表，生データ，図表生成スクリプトを残します．
 
 ### Step 6：循環，境界層，輸送，費用を問いへの回答にまとめる
 
-- **作業**: [共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，公式例再現，自己整合性，解析的外部基準，一軸比較を一つの論理へつなぎます．
-  差をRayleigh数の効果と断定できる範囲，二次元・free-slip・有限格子・有限平均窓の限界を整理します．
-- **確認**: 第三者がrepositoryとcommit，environment，入力，実行順，raw field，診断定義，平均窓，図表生成を追跡できるか確認します．
-  軸，scale，色範囲，$Nu$・$\Psi$・$K$・$\delta_\chi$・収支残差の定義を資料内で一意にします．
-- **残すもの**: 外部拡散基準図，一軸のfield・profile・時系列比較，主要条件・指標・費用表，自己検証，問いへの回答，限界，CPU縮小case，再生成手順を発表資料とproject repositoryへ残します．
+[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，公式例再現，自己整合性，解析的外部基準，一軸比較を一つの論理へつなぎます．
+差をRayleigh数の効果と断定できる範囲，二次元・free-slip・有限格子・有限平均窓の限界を整理します．
+
+軸，尺度，色範囲，$Nu$・$\Psi$・$K$・$\delta_\chi$・収支残差の定義を資料内で一意にします．
+
+外部拡散基準図，一軸の場・プロファイル・時系列比較，主要条件・指標・費用表，自己検証，問いへの回答，限界，CPU縮小ケース，再生成手順を発表資料とプロジェクトリポジトリへ残します．
+
+[共通の記録項目](../../assignments/final-project.qmd#project-records)を揃え，[発表前の確認](../../assignments/final-project.qmd#presentation-check)を行ってください．
 
 ## 発展課題
 
