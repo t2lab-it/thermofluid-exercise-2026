@@ -33,10 +33,16 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 診断は次の二群を分けて表示します．
 
-1. **機械観測**: runtime（WSL2 / native Linux / macOS），pwdが正式なworkspaceにあること，Julia が正確に 1.13.0 であること，Git が呼び出せること．
-2. **手動確認**: VS CodeとJulia拡張機能が接続中の環境で動くこと（WindowsではRemote - WSL），GitHubで学生リポジトリを閲覧できること，および対応エージェントの一つでファイル編集とコマンド実行ができること．
+1. **機械観測**:
+   - runtime（WSL2 / native Linux / macOS）
+   - pwdが正式なworkspaceにある
+   - Julia が正確に 1.13.0 である
+   - Git が呼び出せる
+2. **手動確認**:
+   - VS CodeとJulia拡張機能が接続中の環境で動く（WindowsではRemote - WSL）
+   - GitHubで学生リポジトリを閲覧できる
+   - 対応エージェントの一つでファイル編集とコマンド実行ができる
 
-Windowsでは，native Windows，WSL1，Git Bash，/mnt/c以下のworkspaceを合格にしません．
 手動確認は実際に自分で確かめてからプロンプトへ回答してください．
 すべての必須項目が通るまで進捗ファイルは更新されません．
 
@@ -55,7 +61,7 @@ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github 
 ~~~
 
 成功すると `F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。` が表示されます．
-出力にはruntime，pwd，Julia，Git，手動確認の結果が残ります．公式生成物はありません．
+出力にはruntime，pwd，Julia，Git，手動確認の結果が残ります．
 
 ## 完了条件
 

@@ -68,6 +68,7 @@ git status --short
 git diff
 git add PATHS_YOU_INTEND_TO_SUBMIT
 git diff --cached
+julia --project=. -e 'using Pkg; Pkg.test()'
 git commit -m "feat: complete TASK_ID"
 ```
 
@@ -119,4 +120,4 @@ git status --short
 
 次の課題は，変更のないmainから開始します．
 
-mainで作業・commit・pushしてしまった場合は，自分で履歴を書き換えず，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)へ進んでください．
+mainで作業・commit・pushしてしまった場合は，自分で履歴を書き換えず，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)を確認してください．

@@ -7,21 +7,18 @@ title: "最初のbranchとpull request"
 
 ## 目的
 
-小さなJuliaコードを変更し，ローカルテストで確かめ，その変更を一つのbranchと一つのpull request（PR）でmainへ戻す一連の流れを経験します．
+小さなJuliaコードを新しいbranch上で変更し，差分をローカルテストで検証し，pull request（PR）を出してmainへ統合する一連の流れを経験します．
+[共通課題ワークフロー](../guides/workflow.qmd)にしたがって作業します．
 
 ## 学生リポジトリ内の場所
-
-自分が複製したローカルの `exercises/F01_first_pull_request/` を開きます．通常編集するのは `run.jl`，`tests.jl`，`learning_log.md` の3ファイルです．
 
 - 編集するコード: `exercises/F01_first_pull_request/run.jl`
 - 配布済み必須テスト・自作テスト: `exercises/F01_first_pull_request/tests.jl`
 - 提出する学習ログ: `exercises/F01_first_pull_request/learning_log.md`
 
-長い手順と判断基準の正本は，このページと[共通課題ワークフロー](../guides/workflow.qmd)です．
-
 ## 開始前の確認
 
-最初の環境診断（課題ID: F00）が完了し，現在課題が「最初のbranchとpull request」（課題ID: F01）であることを確認します．
+最初の環境診断（課題ID: F00）が完了し，現在課題が「最初のbranchとpull request」（課題ID: F01）であることを確認してください．
 
 ```bash
 julia --project=. scripts/course.jl status
@@ -31,7 +28,7 @@ git branch --show-current
 
 `現在の提出単位: F01`，現在branchが`main`であることを確認してください．
 最初の環境診断からこの課題へ進んだ直後は，`course_progress.toml`だけが変更済みと表示されるのが正常です．
-それ以外の変更が表示された場合は，branchを作る前に教員・TAへ相談します．
+それ以外の変更が表示された場合は，branchを作る前に教員・TAへ相談してください．
 
 ## 1. branchを手動で作る
 
@@ -40,11 +37,11 @@ git switch -c exercise/F01-first-pull-request
 git branch --show-current
 ```
 
-二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認します．
+二つ目のコマンドが`exercise/F01-first-pull-request`を返すことを確認してください．
 
 ## 2. 実装する
 
-`exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装します．
+`exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装してください．
 `strip`で名前の前後の空白を除き，空白だけの名前は既存の処理で拒否します．
 それ以外は，空白を除いた名前を使う`Hello, name!`という`String`を返します．
 以下のコマンドで実行します．
@@ -53,7 +50,7 @@ git branch --show-current
 julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
 ```
 
-変更前後に`git diff`を読み，自分が意図したファイルだけが変わっていることを確認します．
+変更前後に`git diff`を読み，自分が意図したファイルだけが変わっていることを確認してください．
 
 ## 3. テストする
 
@@ -61,18 +58,18 @@ julia --project=. exercises/F01_first_pull_request/run.jl "自分の名前"
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-`exercises/F01_first_pull_request/tests.jl`の配布済み必須テストを読みます．必須テストは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を確かめます．実装前の失敗と実装後の成功を確認し，自作テストのTODOだけを，必須とは異なる名前と期待文字列を使うテストへ置き換えます．
-各テストが何を保証し，何を保証しないかを学習ログに一文ずつ書きます．
+`exercises/F01_first_pull_request/tests.jl`の配布済み必須テストを読みます．
+必須テストは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を検証します．
+実装前の失敗と実装後の成功を確認し，自作テストのTODOを実装した名前と期待文字列を使うテストへ置き換えてください．
+これらのテストが何を保証し，何を保証しないかを学習ログにまとめてください．
 
 ## 4. 公式出力を確認する
 
-この最初のbranch課題に公式生成物はありません．
 ターミナルの実行結果とテスト成功が，この課題の実行確認です．
 
 ## 5. 学習ログを書く
 
-`exercises/F01_first_pull_request/learning_log.md`へ直接記入します．コピーは不要です．
-少なくとも次を記録します．
+`exercises/F01_first_pull_request/learning_log.md`へ，以下の項目を記録してください．
 
 - 実装した変更
 - 実行したテストと保証範囲
@@ -100,11 +97,11 @@ git push -u origin exercise/F01-first-pull-request
 ```
 
 リモートに`push`した後，GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作ります．
-PR本文に課題ID，テスト結果，学習ログ，diffで確認した内容を記載します．
+PR本文に課題ID，テスト結果，学習ログ，diffで確認した内容を記載してください．
 
 ## 8. GitHub Actionsとdiffを確認する
 
-PRのCIが成功したことと差分を確認します．
+PRのCIが成功したことと差分を確認してください．
 特に，以下の項目を自身で確認してください：
 
 - 課題と無関係なファイルがない．
