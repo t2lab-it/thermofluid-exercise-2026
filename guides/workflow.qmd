@@ -24,24 +24,6 @@ git rev-parse --show-toplevel
 WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxではnative Linuxで実行します．
 環境の準備は[受講環境の準備](../setup/index.qmd)，cloneとGitHubの設定は[Git・GitHub](../setup/git-github.qmd)を参照してください．
 
-## コマンドの役割を分ける {#command-roles}
-
-似たコマンドでも役割が異なります．
-`preflight`は環境とF00の完了条件，`status`は進捗の表示，`Pkg.test()`はテストの実行です．
-テストが成功しても課題は自動で開始・完了せず，branchも作られません．
-
-| コマンド | 役割 | 進捗・branchへの影響 |
-|---|---|---|
-| `julia --project=. scripts/course.jl preflight` | F00の機械的な環境診断だけを行う | 手動確認がないため，F00を完了にしない |
-| `julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent AGENT_ID` | 実際に確認した手動項目を記録してF00を完了する | 成功すると完了済みがF00，現在がF01になる |
-| `julia --project=. scripts/course.jl status` | 現在課題，完了済み課題，branchなどを表示する | 状態を変更しない |
-| `julia --project=. scripts/course.jl start TASK_ID` | F02以降の提出単位を開始する | 前提を満たせば進捗を進め，課題branchを作る |
-| `julia --project=. -e 'using Pkg; Pkg.test()'` | `course_progress.toml`に基づき，現在課題と完了済み課題のテストを実行する | 状態を変更しない |
-| `julia --project=. scripts/course.jl check-results` | 公式出力の配置とサイズを確認する | 状態を変更しない |
-
-`AGENT_ID`は`copilot`，`codex`，`amazon-q`のいずれかです．
-手動確認を実際に完了したエージェントを一つだけ指定します．
-
 ## 初回セットアップとF00のpreflight {#f00-preflight}
 
 ### 1. Julia環境を復元する
