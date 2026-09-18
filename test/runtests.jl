@@ -72,7 +72,6 @@ function write_complete_contract_fixture(root::AbstractString)
     contracts_path = joinpath(public, "assignments", "contracts.toml")
     cp(contracts_source, contracts_path)
 
-    workflow_commands = String[]
     for (id, contract) in contracts
         run_path = contract["run_path"]
         mkpath(dirname(joinpath(student, run_path)))
@@ -82,14 +81,12 @@ function write_complete_contract_fixture(root::AbstractString)
         page = "`$run_path`\n"
         if id in ("F00", "F01")
             page *= "\n`$(contract["start_command"])`\n"
-        else
-            push!(workflow_commands, "`$(contract["start_command"])`")
         end
         write(joinpath(public, contract["site_path"]), page)
     end
     write(
         joinpath(public, "guides", "workflow.qmd"),
-        join(sort!(unique(workflow_commands)), "\n") * "\n",
+        "`julia --project=. scripts/course.jl start TASK_ID`\n",
     )
 
     return (; contracts=contracts_path, public, student)
@@ -229,11 +226,11 @@ end
         workflow = read(workflow_path, String)
         write(workflow_path, replace(
             workflow,
-            "`julia --project=. scripts/course.jl start F02`\n" => "",
+            "scripts/course.jl start TASK_ID" => "scripts/course.jl status",
         ))
         passed, output = verify_fixture(fixture)
         @test !passed
-        @test occursin("workflow start command mismatch for F02", output)
+        @test occursin("missing workflow start command template", output)
     end
 
     mktempdir() do root

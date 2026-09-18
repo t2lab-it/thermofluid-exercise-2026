@@ -12,7 +12,8 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 
 ## 先に読むページ
 
-[受講環境の準備](../setup/index.qmd)を先に読みます．このページにF00の手順をまとめています．
+[受講環境の準備](../setup/index.qmd)を先に読みます．
+このページにF00の手順をまとめています．
 
 ## 学生リポジトリ内の場所
 
@@ -23,26 +24,43 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 
 ## 実行場所
 
-すべてのコマンドを，`Project.toml`，`Manifest.toml`，`exercises/`，`scripts/`がある学生リポジトリのルートで実行します．
+次のコマンドで作業場所が学生用リポジトリのルートであることを確認してください．
+
+~~~bash
+ls -d */
+~~~
+
+で`exercises/`や`scripts/`などのディレクトリが見えることを確認してください．
+続いて，
 
 ~~~bash
 pwd
 git rev-parse --show-toplevel
 ~~~
 
-二つの出力が学生リポジトリの同じルートを示すことを確認します．
+の出力が同じファイルパス（学生リポジトリのルート）を示すことを確認します．
 
 ## 1. Julia環境を復元する
 
-clone後，学生リポジトリのルートで実行します．
+cloneした学生リポジトリのルートで以下のコマンドを実行します．
 
 ~~~bash
 julia --version
 git --version
+~~~
+
+Juliaは`1.13.0`を使います．
+gitのバージョンは本演習では指定しませんが，新しいものが良いでしょう．
+一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
+
+次のコマンドで，課題で用いるパッケージの依存環境が導入されます．
+
+~~~bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ~~~
 
-Juliaは`1.13.0`を使います．`Pkg.instantiate()`は配布された`Project.toml`と`Manifest.toml`から課題用環境を復元します．
+その実体は`Project.toml`と`Manifest.toml`に記述されています．
+気になる人は中を見てみるとよいでしょう．
 
 ## 2. F00の機械診断
 
@@ -64,19 +82,16 @@ julia --project=. scripts/course.jl preflight
    - GitHubで学生リポジトリを閲覧できる
    - 対応エージェントの一つでファイル編集とコマンド実行ができる
 
-F00の提供テストを確認する場合は，次を実行します．
-
-~~~bash
-julia --project=. -e 'using Pkg; Pkg.test()'
-~~~
-
 ## 3. 手動確認を完了として記録する
 
-GitHubへサインインして学生リポジトリを開けることを確認します．
-VS Codeで学生リポジトリを開き，WindowsではRemote - WSL接続とJulia拡張機能がWSL2側へ接続していることを確認します．
-次に，正式対応エージェントを一つ選び，scratch/F00-agent-check.txtの作成と短い確認文の追記，安全なローカルコマンドの実行を依頼します．
 
-手動確認を終えたら，選んだエージェントに対応するコマンドを一つ選んで実行します．
+次の項目を自分で確認します．
+
+- VS CodeとJulia拡張機能が接続中の環境で動く（WindowsではRemote - WSL）．
+- GitHubで自分の学生リポジトリを閲覧できる．
+- 対応エージェントの一つで，ファイル編集と安全なローカルコマンド実行ができる．
+
+確認したエージェントに対応するコマンドを一つ選んで実行します．
 
 ~~~bash
 julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot
@@ -84,8 +99,15 @@ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github 
 julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent amazon-q
 ~~~
 
-成功メッセージの `F00が完了しました。現在の課題はF01です。` を確認し，[F01課題](F01.qmd)へ進んでください．
-出力にはruntime，pwd，Julia，Git，手動確認の結果が残ります．
+`F00が完了しました。現在の課題はF01です。`という出力を確認してください．
+これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
+
+この時点から，F01課題で受講者が実装する`tests.jl`が`Pkg.test()`の実行対象になります．
+テストが未実装のため，ここで`Pkg.test()`を実行するとエラーになることを確かめてください．
+
+~~~bash
+julia --project=. -e 'using Pkg; Pkg.test()'
+~~~
 
 ## 4. F01へ進んだことを確認する
 
@@ -96,7 +118,7 @@ git branch --show-current
 ~~~
 
 `status`の現在課題がF01であること，branchが`main`であることを確認します．
-F00完了時の`course_progress.toml`はF01のbranchへ引き継ぎます．
+F00完了直後は`course_progress.toml`が変更済みと表示されることがあります．
 
 ## 完了条件
 

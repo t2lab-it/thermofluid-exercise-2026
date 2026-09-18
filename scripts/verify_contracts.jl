@@ -3,7 +3,6 @@ using TOML
 const CANONICAL_BASE = "https://t2lab-it.github.io/thermofluid-exercise-2026/"
 const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01"])
 const SELF_CONTAINED_ASSIGNMENT_IDS = Set(["F00", "F01"])
-const WORKFLOW_ASSIGNMENT_IDS = setdiff(REQUIRED_IDS, SELF_CONTAINED_ASSIGNMENT_IDS)
 const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
 
 function fail(message::AbstractString)
@@ -79,6 +78,10 @@ function verify_contracts(contracts_path, public_root, student_root)
     else
         read(workflow_file, String)
     end
+    if workflow !== nothing
+        occursin("julia --project=. scripts/course.jl start TASK_ID", workflow) ||
+            (ok &= fail("missing workflow start command template"))
+    end
     seen_site = Set{String}()
     seen_run = Set{String}()
     seen_url = Set{String}()
@@ -136,13 +139,10 @@ function verify_contracts(contracts_path, public_root, student_root)
             occursin(run_path, page) ||
                 (ok &= fail("site page run path mismatch for $id"))
             # F00/F01 are self-contained; later assignment pages delegate
-            # their start commands to guides/workflow.qmd.
+            # to the shared start TASK_ID template in guides/workflow.qmd.
             if id in SELF_CONTAINED_ASSIGNMENT_IDS
                 occursin(command, page) ||
                     (ok &= fail("site page start command mismatch for $id"))
-            elseif id in WORKFLOW_ASSIGNMENT_IDS && workflow !== nothing
-                occursin(command, workflow) ||
-                    (ok &= fail("workflow start command mismatch for $id"))
             end
         end
     end
