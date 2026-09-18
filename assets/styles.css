@@ -200,3 +200,48 @@ button:focus-visible {
     width: 100%;
   }
 }
+
+/* Prompts are presentation only: neither selection nor Quarto's copy button
+   includes them. Output has its own block and no copy button. */
+.console-example {
+  margin-block: 1rem;
+}
+.console-input {
+  position: relative;
+}
+.console-input::before {
+  content: "$";
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 0.65rem;
+  inset-inline-start: 0.75rem;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.875em;
+  line-height: 1.25;
+  color: var(--bs-secondary-color);
+  pointer-events: none;
+  user-select: none;
+}
+.console-julia::before {
+  content: "julia>";
+}
+.console-input pre.sourceCode {
+  padding-inline-start: 2.25rem;
+}
+.console-julia pre.sourceCode {
+  padding-inline-start: 5rem;
+}
+.console-input div.sourceCode {
+  margin-bottom: 0;
+}
+.console-output {
+  margin-top: 0;
+  padding: 0.65rem 0.75rem;
+  border-inline-start: 2px solid var(--bs-border-color);
+  background: transparent;
+}
+.console-output,
+.console-output code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

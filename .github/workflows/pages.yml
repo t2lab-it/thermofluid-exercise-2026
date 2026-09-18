@@ -39,7 +39,9 @@ jobs:
           version: '1.9.31'
 
       - name: Run tests
-        run: julia --project=. test/runtests.jl
+        run: |
+          julia --project=. test/runtests.jl
+          python3 test/console_examples_test.py
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
