@@ -17,8 +17,7 @@ title: "課題のbranch・PRワークフロー"
 1. 課題branchを作る．
 2. 実装する．
 3. ローカルテストを実行する．
-4. 公式出力を再生成・確認する．
-   課題に公式出力がなければ，そのことを確認する．
+4. 公式出力が指定された課題では，再生成して確認する．
 5. 学習ログを書く．
 6. commitする．
 7. 自分でpushする．
@@ -33,7 +32,10 @@ F03-F04，N05-N06，N08-N09は，それぞれ二つの内容を一つの提出�
 
 ## 課題を開始する
 
-### 手動
+前の提出単位をmergeし，ローカルの`main`を更新してから開始してください．
+F01だけは，F00で更新された`course_progress.toml`を引き継ぎます．
+
+### F01：手動でbranchを作る
 
 ```bash
 git status --short
@@ -41,7 +43,7 @@ git diff -- course_progress.toml
 git switch -c exercise/F01-first-pull-request
 ```
 
-### 補助スクリプト
+### F02以降：補助コマンドで開始する
 
 ```bash
 git status --short
@@ -49,19 +51,26 @@ git branch --show-current
 julia --project=. scripts/course.jl start F02
 ```
 
-次の提出単位だけを開始できます．必要なスターター，配布済み必須テストと学生記入欄を含む`tests.jl`，学習ログ，必須提供ファイルが未配布の場合は，branchと進捗を変更せず終了します．現在の課題を続け，教員に配布状況を確認してください．
+`F02`は課題ページの提出単位へ置き換えてください．次の提出単位だけを開始できます．
+
+::: {.callout-note title="開始に必要なファイルが未配布の場合"}
+補助コマンドはbranchと進捗を変更せず終了します．現在の課題を続け，教員・TAに配布状況を確認してください．
+:::
 
 ## 実装する
 
 各公開課題ページで，編集対象，実装契約，実行コマンド，テスト，公式出力，完了条件を確認します．
-その後，自分が複製したローカルの課題フォルダを開きます．編集するのは`run.jl`，`tests.jl`，`learning_log.md`です．F01，F02，F03-F04では必須テストが配布済みで，自作TODOの入力・期待値・Juliaコードを自分で書きます．N01では五つの必須TODOと一つの自作TODOを自分で書きます．
+課題フォルダの`run.jl`，`tests.jl`，`learning_log.md`を編集してください．
+配布済みテストと自分で書くテストの扱いは[テストと数値検証](testing.qmd#exercise-tests)を参照してください．
 
 ### 学習ログ
 
-課題内の`learning_log.md`へ直接記入します．開始コマンドによるコピーや上書きはありません．学習ログには，実装，テストの意味，結果，diff確認，つまずき，判断を簡潔に残します．
-AIを利用した際は，[AI利用と安全](ai-usage.qmd)を参考に利用内容を簡潔に記録してください．理解度チェックを行った場合は，対話全文をUTF-8テキストでLETUSへ提出し，学習ログには提出済みの確認と学んだ点だけを記録します．
+課題内の`learning_log.md`へ，実装，テストの意味，結果，diff確認，つまずき，判断を記録してください．
+AI利用の要約と理解度チェックの提出方法は[AI利用と安全](ai-usage.qmd)に従います．学習ログにはLETUS提出済みの確認と学んだ点を残してください．
 
 ### commit前の確認
+
+編集したファイルを保存し，JuliaファイルにはVS Codeの自動整形を適用してください．
 
 ```bash
 git status --short
@@ -76,7 +85,7 @@ git commit -m "feat: complete TASK_ID"
 
 ## mainに統合する
 
-### push・PR・GitHub Actions
+### push・PR・GitHub Actions {#submit-pr}
 
 branch名を確認してから，自分でpushします．
 
@@ -86,10 +95,10 @@ git push -u origin YOUR_EXERCISE_BRANCH
 ```
 
 続いて，GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを作り，PRテンプレートを埋めます．
-PRには提出単位と作業branch上の学習ログURLを記入し，LETUSへ理解度チェックの全文を提出したことを含む提出前確認を行います．数値・考察・AI利用・出典・LETUSへ提出した対話全文をPRへ転記する必要はありません．
+PRには提出単位と作業branch上の学習ログURLを記入し，テンプレートの提出前確認を行ってください．数値結果・考察・AI利用・出典は学習ログを参照します．
 GitHub Actionsが失敗した場合はログから原因を探し，修正して同じPRへpushします．
 
-### diffとセルフレビュー
+### diffとセルフレビュー {#self-review}
 
 ```bash
 git diff main...HEAD

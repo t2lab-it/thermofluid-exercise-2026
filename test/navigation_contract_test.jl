@@ -593,12 +593,12 @@ end
     end
 end
 
-@testset "lesson and assignment pages use sidebar navigation only" begin
-    for id in REQUIRED_COURSE_ORDER
-        lesson = read(joinpath(NAVIGATION_SITE_ROOT, "lessons", "$id.qmd"), String)
-        assignment = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
-        @test !occursin("../assignments/", lesson)
-        @test !occursin("../lessons/", assignment)
+@testset "assignment instructions link to the shared workflow" begin
+    workflow = normpath(joinpath(NAVIGATION_SITE_ROOT, "guides", "workflow.qmd"))
+    for id in ("F01", "F02", "F03", "F04", "N01")
+        path = joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd")
+        targets = qmd_link_targets(read(path, String))
+        @test any(target -> normpath(resolve_qmd_target(path, target)) == workflow, targets)
     end
 end
 
@@ -631,16 +631,17 @@ end
         @test occursin(F03_F04_START_COMMAND, source)
     end
 
-    for relative_path in ("assignments/F03.qmd", "lessons/F03.qmd")
-        source = read(joinpath(NAVIGATION_SITE_ROOT, relative_path), String)
-        @test occursin("3つの差分関数をすべて完成", source)
-        @test !occursin("次回に実装する三つの差分関数", source)
-        if relative_path == "lessons/F03.qmd"
-            @test occursin("配布済みの二次関数テスト", source)
-            @test !occursin("必須テストを書", source)
-        end
-        @test all(fragment -> occursin(fragment, source), ("二次関数", "三つの差分", "必須"))
-        @test occursin("mergeせず", source)
-        @test occursin("PRも完了扱いにしません", source)
+    # F03の到達点は課題ページに集約し，授業ページから参照する．
+    assignment_path = joinpath(NAVIGATION_SITE_ROOT, "assignments", "F03.qmd")
+    assignment = read(assignment_path, String)
+    for name in ("forward_difference", "backward_difference", "centered_difference")
+        @test occursin(name, assignment)
+    end
+    @test all(fragment -> occursin(fragment, assignment), ("二次関数", "三つの差分", "必須"))
+    @test occursin("mergeせず", assignment)
+    @test occursin(r"PRも完了扱いにし(?:ません|ない)", assignment)
+    lesson_path = joinpath(NAVIGATION_SITE_ROOT, "lessons", "F03.qmd")
+    @test any(qmd_link_targets(read(lesson_path, String))) do target
+        normpath(resolve_qmd_target(lesson_path, target)) == assignment_path
     end
 end
