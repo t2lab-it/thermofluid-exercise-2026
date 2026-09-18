@@ -54,11 +54,23 @@ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ### 2. F00の環境を診断する
 
 学生用リポジトリ内に，状態を確認するコマンドがいくつか用意されています．
-まず，`preflight`で機械的な環境診断（実行環境，作業場所，Julia，Git）を行えます．
+まず，`preflight`で機械的な環境診断を行えます．
 
 ~~~bash
 julia --project=. scripts/course.jl preflight
 ~~~
+
+診断は次の二群を分けて表示します．
+
+1. **機械観測**:
+   - runtime（WSL2 / native Linux / macOS）
+   - pwdが正式なworkspaceにある
+   - Julia が正確に 1.13.0 である
+   - Git が呼び出せる
+2. **手動確認**:
+   - VS CodeとJulia拡張機能が接続中の環境で動く（WindowsではRemote - WSL）
+   - GitHubで学生リポジトリを閲覧できる
+   - 対応エージェントの一つでファイル編集とコマンド実行ができる
 
 診断が成功したら手動確認へ進みます．
 
@@ -132,10 +144,6 @@ git branch --show-current
 ~~~bash
 julia --project=. scripts/course.jl start TASK_ID
 ~~~
-
-- F02では`julia --project=. scripts/course.jl start F02`を一度実行する．
-- F03では`julia --project=. scripts/course.jl start F03-F04`を一度実行し，F04まで同じbranch・PR・学習ログを使う．
-- N01ではF03-F04をmergeした後に`julia --project=. scripts/course.jl start N01`を一度実行する．
 
 ## 通常の課題作業 {#exercise-work}
 
@@ -230,11 +238,12 @@ git push -u origin YOUR_EXERCISE_BRANCH
 ~~~
 
 GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを作成し，PRテンプレートを埋めます．
+PR本文には提出単位，テスト結果，公式出力，作業branch上の学習ログURL，diffで確認した内容を記載します．
+
 `main`で作業した場合は，[mainで作業してしまったら](troubleshooting.qmd#main-branch-recovery)を確認してください．
 
-PR本文には提出単位，テスト結果，公式出力，作業branch上の学習ログURL，diffで確認した内容を記載します．
 GitHub Actionsが成功することを確認してください．
-失敗した場合はその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
+失敗した場合はエラー文を読んでその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
 
 Actionsが成功した後，GitHubの`Files changed`を読んで以下を確認します．
 
@@ -249,7 +258,7 @@ Actionsが成功した後，GitHubの`Files changed`を読んで以下を確認�
 git diff main...HEAD
 ~~~
 
-通常課題では，セルフレビュー後にGitHub上でPRをmergeします．
+通常課題では，セルフレビュー（目視での差分確認）後にGitHub上でPRをmergeします．
 教員・TAの確認が必要なチェックポイントでは，mergeする前に確認をうけてください．
 
 ## merge後にmainを更新し，次の課題を始める {#after-merge}
