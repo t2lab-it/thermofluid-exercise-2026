@@ -3,7 +3,7 @@ title: "反復解法と前処理"
 ---
 
 Laplace／Poisson方程式の離散化で現れる線形系は，格子を細かくすると未知数が増え，同じ正しさへ到達するための反復回数やmemoryも変わります．
-このページでは，製造解で検証できるDirichlet Poisson問題を一つ固定し，基準反復法，共役勾配法（CG），前処理付きCG（PCG）の収束・解の正しさ・費用を再現可能な実験から比較します．
+製造解を持つDirichlet Poisson問題で，基準反復法，共役勾配法（CG），前処理付きCG（PCG）の収束・解誤差・計算費用を比較します．
 
 ## 現象と問いの案
 
@@ -53,7 +53,7 @@ PCGの反復回数が減ってもtotal timeが短くなるとは限らないた�
 
 問い1で採用した一つの格子と手法を固定し，$\mathrm{rtol}$ だけを段階的に厳しくします．
 各計算で真の残差，直接解との差である反復誤差，製造解との差である離散化を含む誤差を別々に測ります．
-solverの内部履歴だけを使わず，終了後の $\boldsymbol{b}-A\boldsymbol{x}$ を必ず再計算します．
+終了後に $\boldsymbol{b}-A\boldsymbol{x}$ を再計算し，真の残差を確認します．
 
 横軸を真の相対残差，縦軸を解誤差またはtotal timeとした図を作ります．
 残差をさらに小さくしても製造解誤差がほとんど変わらない範囲があれば，離散化誤差より十分小さいところまで線形系を解けていると説明できます．
@@ -71,9 +71,9 @@ solverの内部履歴だけを使わず，終了後の $\boldsymbol{b}-A\boldsym
 
 ## 手法と検証
 
-作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
-
-導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．以下のパスは教材リポジトリ内の位置です．コピー元のURLとcommit，利用条件を記録してください．
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
 
 公開教材リポジトリの `launch-kits/` にある `reuse-your-solver/README.md` は，参照元commit，正しさ，入力，処理量，測定方法，回帰検証を固定する共通ガイドです．
 N08–N09までに作成した5点差分・Jacobi法・残差・製造解のcodeと既存testを，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
@@ -92,7 +92,7 @@ CGはSPDを前提とします．
 小規模では `norm(A - A') / norm(A)` などで対称性を確認し，複数の非零ベクトルで $\boldsymbol{z}^{\mathsf T}A\boldsymbol{z}>0$ を確認します．
 さらに，可能な規模ではCholesky分解が成功することを補助証拠にします．
 これらのtestは数学的証明の代わりではないため，$-\nabla^2$，内部自由度，Dirichlet消去からSPDになる理由も説明します．
-確認に失敗した系へCGをそのまま適用せず，行列組立てと境界処理を直します．
+SPDの確認に失敗した場合は，行列組立てと境界処理を直してからCGを適用します．
 
 反復解法packageを追加する場合は，自分のprojectで解決したversionとJulia versionを `Project.toml`，`Manifest.toml`，実行logへ残し，小さいSPD系でAPIと停止挙動を確認します．
 [LinearSolve.jl公式のsolver一覧](https://docs.sciml.ai/LinearSolve/stable/solvers/solvers/)は正定値系の候補として `KrylovJL_CG()` を示し，[共通solver options](https://docs.sciml.ai/LinearSolve/stable/basics/common_solver_opts/)は `abstol`，`reltol`，`maxiters`，`Pl`，`Pr` を説明しています．
@@ -175,7 +175,7 @@ $S_0$ の検証と測定に合格した後，$S_1$，必要なら $S_2$ へ一�
 各規模で正しさを先に確認し，問い2または問い3へ進む場合も標準比較を残したまま追加軸を一つだけ変えます．
 
 問題規模に対する反復回数，時間，メモリ，解誤差が実測値でつながり，手法差が測定の揺らぎより大きいかを確認します．
-資源上限や非収束へ達した条件は削除せず，停止理由と上限として記録します．
+資源上限や非収束へ達した条件も，停止理由と上限を記録します．
 
 規模に対する反復回数・setup・solve・total timeの図，メモリ表，全規模の真の残差・解誤差，追加した問いの比較図を残します．
 

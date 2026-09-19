@@ -33,7 +33,9 @@ julia version 1.13.0
 
 ## シェルとJulia REPLの区別 {#シェルとjulia-replを区別する}
 
-`$` の入力はターミナルで実行します．Julia REPLを起動したら，`julia>` の入力を実行してください．起動時のバナーは省略しています．
+`$` の入力はターミナルで実行します．
+Julia REPLを起動したら，`julia>` の入力を実行してください．
+起動時のバナーは省略しています．
 
 ```console
 $ julia --project=.
@@ -66,7 +68,7 @@ VS Code上の操作は公式資料も参照してください．
   - ターミナルやVS Codeを開き直し，`juliaup status`と`juliaup default 1.13.0`を確認する．
 - パッケージを読み込めない
   - リポジトリのルートディレクトリと現在のbranchを確認し，`Pkg.instantiate()`を再実行する．
-  `Pkg.add`で穴埋めしない．
+  依存関係は配布された`Project.toml`と`Manifest.toml`から復元する．
 - REPLでは動くがスクリプトやテストが失敗する
   - `Julia: Run File in New Process`または上のCLIで，残ったREPL状態に依存していないか確認する．
 - 保存時整形や警告表示が動かない

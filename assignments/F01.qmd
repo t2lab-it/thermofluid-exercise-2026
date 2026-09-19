@@ -13,9 +13,7 @@ understanding-check-points:
 
 ## 目的
 
-[F01授業](../lessons/F01.qmd)の内容を使って，以下に取り組みます．
-
-Juliaで書かれた"Hello, World"コードを新しいbranch上で変更し，差分をローカルテストで検証します．
+[F01授業](../lessons/F01.qmd)で学んだ操作を使い，Juliaの"Hello, World"コードを新しいbranch上で変更し，テスト・PR・mergeまで進めます．
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
 
 ## 学生リポジトリ内の場所
@@ -52,7 +50,8 @@ main
 ## 1. この課題のbranchの手動作成 {#この課題のbranchを手動で作る}
 
 F00完了後の`main`から，次のコマンドで課題用branchを作成します．
-実装は課題branchで行い，PRを通して`main`へmergeします．`main`へ直接pushしてはいけません．
+実装は課題branchで行い，PRを通して`main`へmergeします．
+`main`へ直接pushしてはいけません．
 誤って`main`で編集した場合は[復旧手順](../guides/troubleshooting.qmd#main-branch-recovery)を参照してください．
 
 ```console
@@ -105,7 +104,7 @@ Test Summary: | Pass  Total  Time
 
 ## 4. 実行結果の確認 {#実行結果を確認する}
 
-F01課題ではファイル出力はありません．
+ターミナルに表示された挨拶が，指定した名前に対応していることを確認します．
 
 {{< include /assignments/_understanding-check.qmd >}}
 
@@ -168,12 +167,7 @@ GitHub Actionsが成功することを確認してください．
 失敗した場合はエラー文を読んでその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
 
 Actionsが成功した後，GitHubの`Files changed`を読んでF01の`run.jl`，`tests.jl`，`learning_log.md`，`course_progress.toml`だけが意図した差分になっていることを確認します．
-また，以下の項目も確認してください．
-
-- 課題の必須ファイルだけが含まれている（秘密情報や不要な（個人）情報がない）．
-- 配布済み必須テストは変更されていない．
-- 自作テストに判定基準と許容誤差の根拠がある．
-- 実装，テスト，公式出力，学習ログ，PR本文の説明が一致している．
+[共通のセルフレビュー項目](../guides/workflow.qmd#submit-pr)に沿って，テストと実行結果，学習ログ，PR本文を照合してください．
 
 ## 9. mergeとmainへの復帰 {#mergeしてmainへ戻る}
 

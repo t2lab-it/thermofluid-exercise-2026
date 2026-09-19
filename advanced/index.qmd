@@ -4,7 +4,8 @@ title: "発展資料"
 
 準備に必須のSSH手順と，任意の発展資料を紹介します．
 
-- [SSHでGitHubへ接続する](github-ssh.qmd) — 個人課題用リポジトリを複製する前にSSH接続を準備します．既存のHTTPS originを切り替える手順も含みます．
+- [SSHでGitHubへ接続する](github-ssh.qmd) — 個人課題用リポジトリを複製する前にSSH接続を準備します．
+  既存のHTTPS originを切り替える手順も含みます．
 - [GitHub CLIでpull requestを操作する](github-cli.qmd) — SSH接続後に，既存PRの確認と次の実課題でのPR作成・確認をCLIで行います．
 - [CairoMakieによる可視化](cairomakie.qmd) — 1次元線形移流課題（課題ID: N01）の結果を隔離した一時環境で可視化します．
 - [PDEソルバ in Julia](package-built-solvers.qmd) — 有限差分・有限体積・有限要素のパッケージが提供する部品を比較し，最終プロジェクトで使う方法を選びます．

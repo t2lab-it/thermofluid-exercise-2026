@@ -3,7 +3,7 @@ title: "Trixi.jlによる一次元衝撃波管"
 ---
 
 衝撃波管では，一つの初期不連続から希薄波，接触不連続，衝撃波が分かれて伝わります．
-このページでは，`Trixi.jl`の公式modified Sod例を再現し，波構造と数値解を検証した後，解像度など一つの数値軸だけを変え，誤差，保存，非物理振動，計算費用を結びつけて説明します．
+`Trixi.jl`の公式modified Sod例を再現し，波構造と数値解を検証して，解像度などの条件が誤差・保存・非物理振動・計算費用へ与える影響を調べます．
 
 ## 現象と問いの案
 
@@ -91,9 +91,9 @@ CFLを半分にした差が解像度や流束の比較差に対して無視で�
 
 ## 手法と検証
 
-作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
-
-導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．以下のパスは教材リポジトリ内の位置です．コピー元のURLとcommit，利用条件を記録してください．
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
 
 `launch-kits/guided-package/README.md` を読み，下表の上流資料から基準scriptと独立な参照解を自分のprojectへ作ってください．
 

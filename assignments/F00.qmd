@@ -14,15 +14,12 @@ understanding-check-points:
 
 ## 目的
 
-[F00授業](../lessons/F00.qmd)の内容を使って，以下に取り組みます．
-
-授業で使うローカル開発環境を診断し，必要な手動確認を完了します．
+[F00授業](../lessons/F00.qmd)で学んだ開発環境を診断し，手動確認を完了します．
 WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxではnative Linuxで実行します．
 
 ## 先に読むページ
 
 [受講環境の準備](../setup/index.qmd)を先に読みます．
-このページにF00の手順をまとめています．
 
 ## 学生リポジトリ内の場所
 
@@ -52,7 +49,7 @@ $ git rev-parse --show-toplevel
 ## 1. Julia環境の復元 {#julia環境を復元する}
 
 cloneした学生リポジトリのルートで以下のコマンドを実行します．
-gitのバージョンは本演習では指定しませんが，一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
+Gitは，`git switch`が使える`2.23`以上を目安にしてください．
 
 ~~~console
 $ julia --version
@@ -62,9 +59,7 @@ $ git --version
 git version 2.43.0
 ~~~
 
-次のコマンドで，課題で用いるパッケージの依存環境が導入されます．
-その実体は`Project.toml`と`Manifest.toml`に記述されています．
-気になる人は中を見てみるとよいでしょう．
+次のコマンドで，`Project.toml`と`Manifest.toml`に記録された課題用パッケージを導入します．
 
 ~~~console
 $ julia --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -91,17 +86,8 @@ $ julia --project=. scripts/course.jl preflight
 F00の進捗は更新されませんでした。すべての機械観測と3項目の手動確認を完了してください。
 ~~~
 
-診断は次の二群を分けて表示します．
-
-1. **機械観測**:
-   - runtime（WSL2 / native Linux / macOS）
-   - pwdが正式なworkspaceにある
-   - Julia が正確に 1.13.0 である
-   - Git が呼び出せる
-2. **手動確認**:
-   - VS CodeとJulia拡張機能が接続中の環境で動く（WindowsではRemote - WSL）
-   - GitHubで学生リポジトリを閲覧できる
-   - 対応エージェントの一つでファイル編集とコマンド実行ができる
+機械観測では，runtime（WSL2 / native Linux / macOS），pwdが正式なworkspaceにあること，Juliaが1.13.0であること，Gitを呼び出せることを確認します．
+すべて`[PASS]`になったら，次の手動確認へ進みます．
 
 ## 3. 手動確認の完了記録 {#手動確認を完了として記録する}
 
