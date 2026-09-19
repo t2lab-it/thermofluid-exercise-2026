@@ -14,8 +14,6 @@ understanding-check-points:
 
 ## 目的
 
-[N01授業](../lessons/N01.qmd)の内容を使って，以下に取り組みます．
-
 1次元線形移流方程式の数値計算を実装し，上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します．
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
 
@@ -47,7 +45,8 @@ F03-F04をmergeし，更新済みで変更のない`main`から始めます．
 
 実効CFL・極値と，`summary_section`のオーバーシュート・アンダーシュートの計算も`run.jl`で確認します．
 `main`は二つの`simulate`を実行し，提供済みの`write_summary`と`make_plots`へ結果を渡して，下の3つの公式出力を作ります．
-`apply_boundary!`と時間ループは提供済みです．`provided_support.jl`には入力検証・TOML保存・描画の詳細があります．
+`apply_boundary!`と時間ループは提供済みです．
+`provided_support.jl`には入力検証・TOML保存・描画の詳細があります．
 配布された関数の呼び出し方と出力形式を保って実装してください．
 
 ## 実行とテスト
@@ -61,7 +60,8 @@ exercises/N01_linear_advection/results/centered-euler.png
 exercises/N01_linear_advection/results/summary.toml
 ~~~
 
-図中の`Initial`は初期値，`Final`は最終値です．`Upwind`は上流差分，`Centered`は中心差分を表します．
+図中の`Initial`は初期値，`Final`は最終値です．
+`Upwind`は上流差分，`Centered`は中心差分を表します．
 次を確認してください．
 
 - PNGが開き，`summary.toml`の値が同じ実行結果と一致する．

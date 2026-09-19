@@ -42,14 +42,16 @@ $ git config --global user.email "YOUR_GITHUB_EMAIL"
 
 受講者が課題に取り組むリポジトリは**公開**です．
 GitHubユーザー名やcommit・issue・pull requestなどの活動，その日時は外部から見えるため，課題に関係のない個人情報や秘密情報を書き込んではいけません．
-AIとの全対話ログも個人課題用リポジトリへcommitしてはいけません．記録・提出の方法は[AI利用と安全](../guides/ai-usage.qmd)を確認してください．
+AIとの全対話ログも個人課題用リポジトリへcommitしてはいけません．
+記録・提出の方法は[AI利用と安全](../guides/ai-usage.qmd)を確認してください．
 
 教材本文・図は`CC BY 4.0`，コードは`MIT`です．
 教材や外部資料を使うときは，ライセンスを守り，出典を学習ログやREADMEに記録します．
 
 ## 個人課題用リポジトリの複製 {#個人課題用リポジトリを複製する}
 
-SSH接続は標準の複製経路です．先に[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)を完了してください．
+SSH接続は標準の複製経路です．
+先に[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)を完了してください．
 
 1. [個人課題用テンプレートリポジトリ](https://github.com/t2lab-it/thermofluid-exercise-student-2026)にアクセスする．
 2. 'Use this template'→'Create a new repository'と進み，自分の作業用リポジトリを作成する．

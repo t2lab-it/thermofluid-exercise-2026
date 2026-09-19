@@ -46,8 +46,11 @@ understanding-check-points:
 配布された必須テストの入力と期待値を読み，何を確かめているか説明してください．
 自作テストには次の2件を実装し，未記入の`@test false`を置き換えます．
 
-- **周期総和保存**：非定数・非負配列を複数ステップ進め，初期総和と比較する．点数・ステップ数・値の大きさ・浮動小数の丸め誤差を踏まえて許容誤差を決める．
-- **循環移動と更新の整合**：周期1ステップを`S`として，`S(circshift(u,k)) ≈ circshift(S(u),k)`を比較する．非対称な非定数配列，0でない移動量，同じ`dt,dx`を使う．固定境界には適用しない．
+- **周期総和保存**：非定数・非負配列を複数ステップ進め，初期総和と比較する．
+  点数・ステップ数・値の大きさ・浮動小数の丸め誤差を踏まえて許容誤差を決める．
+- **循環移動と更新の整合**：周期1ステップを`S`として，`S(circshift(u,k)) ≈ circshift(S(u),k)`を比較する．
+  非対称な非定数配列，0でない移動量，同じ`dt,dx`を使う．
+  固定境界には適用しない．
 
 学習ログには各自作テストの入力，期待値，判定，許容誤差の根拠，検出できる／できない誤りを残します．
 
@@ -65,7 +68,8 @@ exercises/N02_nonlinear_advection/results/summary.toml
 [公式出力の確認](../guides/workflow.qmd#official-results)を行って3点をcommitします．
 実行に失敗した場合は，原因を直して再実行し，成功メッセージと3点の出力を確認してください．
 
-任意の[CFLを変える追加実験](../lessons/N02.qmd#comparison-conditions)では，Juliaで`run.jl`を読み込んで次のように実行できます．比較する二つの出力は，それぞれ別の一時ディレクトリに保存されます．
+任意の[CFLを変える追加実験](../lessons/N02.qmd#comparison-conditions)では，Juliaで`run.jl`を読み込んで次のように実行できます．
+比較する二つの出力は，それぞれ別の一時ディレクトリに保存されます．
 
 ```julia
 include("exercises/N02_nonlinear_advection/run.jl")
@@ -73,7 +77,8 @@ N02NonlinearAdvection.main(; cfl=0.5, t_final=0.1, output_dir=mktempdir())
 N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 ```
 
-指定CFLが1を超えても計算は続行しますが，値が非有限になると停止します．その場合は比較する両方の最終時刻を同じだけ短くし，使った条件と停止時の状況を学習ログに記録してください．
+指定CFLが1を超えても計算は続行しますが，値が非有限になると停止します．
+その場合は比較する両方の最終時刻を同じだけ短くし，使った条件と停止時の状況を学習ログに記録してください．
 
 ## 公開基準値との比較 {#reference-results}
 
@@ -84,7 +89,8 @@ N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 ![周期境界での非線形移流](../assets/n02-reference/periodic.png){fig-alt="周期境界，時刻1.0で右端を越えた波が左側へ戻った分布．右端は表示用の先頭値で閉じている"}
 
 左側へ戻る波の有無に注目し，固定境界と周期境界の違いを説明してください．
-数値拡散によるなまりと，非線形な波形変形を区別してください．N01との波形比較は[授業の比較条件](../lessons/N02.qmd#comparison-conditions)で実行してください．
+数値拡散によるなまりと，非線形な波形変形を区別してください．
+N01との波形比較は[授業の比較条件](../lessons/N02.qmd#comparison-conditions)で実行してください．
 [`summary.toml`](../assets/n02-reference/summary.toml)をAIに読ませて，自身が実装した結果と比較してください．
 `max_cfl`は全状態の最大実測値，`overshoot`と`undershoot`は初期極値を超えた量（超過なしなら0），`sum_change`は最終総和から初期総和を引いた符号付きの値です．
 
@@ -94,6 +100,7 @@ N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 
 - [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
 - 流束と更新式を式・配列・コードで説明し，周期添字を含む3箇所を実装した．
-- 必須4群と指定テーマ自作2つが通り，過去課題の回帰も通る．各テストの根拠と限界を説明できる．
+- 必須4群と指定テーマ自作2つが通り，過去課題の回帰も通る．
+  各テストの根拠と限界を説明できる．
 - 固定・周期の格子，時間刻み，最終時刻，CFL，有界性，周期総和，固定・周期境界の違いとN01との波形の違いを確認した．
 - 公式3出力と学習ログを確認し，[学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで完了した．

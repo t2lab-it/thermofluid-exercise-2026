@@ -114,7 +114,8 @@ r_2=\nabla_h\cdot(\nabla\times\boldsymbol{A}),\qquad
 r_3=\nabla_h\cdot(\nabla\phi)-\nabla^2\phi
 $$
 
-です．内側の $\nabla\phi$，$\nabla\times\boldsymbol{A}$ と比較対象の $\nabla^2\phi$ は解析的に計算し，外側だけを中心差分で近似します．
+です．
+内側の $\nabla\phi$，$\nabla\times\boldsymbol{A}$ と比較対象の $\nabla^2\phi$ は解析的に計算し，外側だけを中心差分で近似します．
 例えば $\boldsymbol{r}_1$ の第1成分は，解析的な $\partial\phi/\partial z$ を $y$ 方向に中心差分した値から，解析的な $\partial\phi/\partial y$ を $z$ 方向に中心差分した値を引きます．
 内側の関数を評価する座標を一方向に $\pm h$ ずらすことで，一次元の中心差分をそのまま使えます．
 
