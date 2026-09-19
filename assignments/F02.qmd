@@ -1,11 +1,20 @@
 ---
 title: "Juliaの配列・関数・テスト"
+lesson-id: F02
+understanding-check-points:
+  - "配列の要素とインデックス，eachindexを使うループ"
+  - "平均と偏差を入力契約を持つ関数として実装すること"
+  - "手計算できる具体例と，偏差の総和がほぼ0になる数学的性質を別々にテストすること"
+  - "浮動小数点数を完全一致ではなく適切な許容誤差で比較すること"
+  - "関数が入力配列を変更していないことをテストすること"
 ---
 ::: {.course-position}
 第3回・課題 2/2 · 課題ID: F02
 :::
 
 ## 目的
+
+[F02授業](../lessons/F02.qmd)の内容を使って，以下に取り組みます．
 
 温度の配列を題材に，関数へ入力契約を持たせ，ループで値を集計し，戻り値の具体例と数学的性質をテストします．
 特定の`Float64`配列だけでなく，Juliaの型を保った一般的な実数配列を扱うことを目指します．
@@ -24,27 +33,15 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 [課題の開始手順](../guides/workflow.qmd#start-exercise)の`TASK_ID`を`F02`へ置き換えてください．
 作成されるbranch名は`exercise/F02-julia-arrays-and-tests`です．
 
-## 実装するAPI
+## 実装するAPI {#api}
 
 ### `mean_temperature(values)`
 
-温度列`values`の算術平均
-
-$$
-\bar{T}=\frac{1}{N}\sum_{i=1}^{N}T_i
-$$
-
-を返します．
+温度列`values`について，[授業で定義した算術平均](../lessons/F02.qmd#problem-setup)を返します．
 
 ### `temperature_anomaly(values)`
 
-同じ長さの新しい配列を作り，各要素について
-
-$$
-T_i'=T_i-\bar{T}
-$$
-
-を返します．
+同じ長さの新しい配列を作り，[授業で定義した各要素の偏差](../lessons/F02.qmd#problem-setup)を返します．
 入力配列`values`は変更しません．
 
 ## 入力と戻り値の契約
@@ -74,8 +71,11 @@ $$
 [共通の実行手順](../guides/workflow.qmd#exercise-work)で`run.jl`を実行し，[課題単独と全体のテスト](../guides/workflow.qmd#tests)を実行してください．
 `learning_log.md`には，実行結果とテスト結果に加えて，入力条件と各テストの意味を記録します．
 
+{{< include /assignments/_understanding-check.qmd >}}
+
 ## 完了条件
 
+- [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
 - 二つの固定APIが入力契約を守る．
 - 配布済み必須テストと，上の観点から選んだ自作テストが通る．
 - 偏差の性質と入力非変更を説明できる．

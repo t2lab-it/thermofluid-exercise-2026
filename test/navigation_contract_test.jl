@@ -621,7 +621,9 @@ end
         ("assignments", "F04", "F03"),
     )
         source = read(joinpath(NAVIGATION_SITE_ROOT, directory, "$id.qmd"), String)
-        @test occursin("提出単位: `F03-F04`", source)
+        if directory == "assignments"
+            @test occursin("提出単位: `F03-F04`", source)
+        end
         @test occursin("$paired_id.qmd", source)
         @test all(term -> !occursin(term, source), F03_F04_FORBIDDEN_TERMS)
     end

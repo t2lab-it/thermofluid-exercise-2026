@@ -1,11 +1,20 @@
 ---
 title: "1次元非線形移流方程式"
+lesson-id: N02
+understanding-check-points:
+  - "線形移流方程式の一定速度と，Burgers方程式の値に依存する速度の違い"
+  - "保存形の流束後退差分と非保存形の離散化の違い"
+  - "固定と周期の格子・境界，旧配列だけを読む更新，バッファ交換の順序"
+  - "実効最大CFL，有界性，周期総和，循環移動との整合で検出できる誤りと限界"
+  - "N01との波形比較，自作2つの入力と許容誤差の根拠"
 ---
 ::: {.course-position}
 第6回・課題 · 課題ID: N02
 :::
 
 ## 取り組む課題
+
+[N02授業](../lessons/N02.qmd)の内容を使って，以下に取り組みます．
 
 [授業で定義した問題・標準条件](../lessons/N02.qmd#problem-setup)を実装し，固定・周期境界の数値結果を比較します．
 
@@ -18,6 +27,7 @@ title: "1次元非線形移流方程式"
 | 記録 | `exercises/N02_nonlinear_advection/learning_log.md` |
 
 `run.jl`の次の3箇所を実装してください．
+関数は，流束 → 周期添字 → 1ステップ → 境界 → `simulate` → `main`の順に読みます．
 
 1. `burgers_flux(u::Real)`：有限なスカラーの流束 $u^2/2$．
 2. `periodic_left_index(i::Integer,n::Integer)`：周期配列の左隣添字．
@@ -55,12 +65,15 @@ exercises/N02_nonlinear_advection/results/summary.toml
 [公式出力の確認](../guides/workflow.qmd#official-results)を行って3点をcommitします．
 実行に失敗した場合は，原因を直して再実行し，成功メッセージと3点の出力を確認してください．
 
-CFLを変える追加実験では，Juliaで`run.jl`を読み込んで次のように実行できます．出力は別の一時ディレクトリに保存されます．
+任意の[CFLを変える追加実験](../lessons/N02.qmd#comparison-conditions)では，Juliaで`run.jl`を読み込んで次のように実行できます．比較する二つの出力は，それぞれ別の一時ディレクトリに保存されます．
 
 ```julia
 include("exercises/N02_nonlinear_advection/run.jl")
+N02NonlinearAdvection.main(; cfl=0.5, t_final=0.1, output_dir=mktempdir())
 N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 ```
+
+指定CFLが1を超えても計算は続行しますが，値が非有限になると停止します．その場合は比較する両方の最終時刻を同じだけ短くし，使った条件と停止時の状況を学習ログに記録してください．
 
 ## 公開基準値と比べる {#reference-results}
 
@@ -71,14 +84,16 @@ N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 ![周期境界での非線形移流](../assets/n02-reference/periodic.png){fig-alt="周期境界，時刻1.0で右端を越えた波が左側へ戻った分布．右端は表示用の先頭値で閉じている"}
 
 左側へ戻る波の有無に注目し，固定境界と周期境界の違いを説明してください．
-数値拡散によるなまりと，非線形な波形変形を区別してください．N01との波形比較では，N01も最終時刻1.0で計算してください．
+数値拡散によるなまりと，非線形な波形変形を区別してください．N01との波形比較は[授業の比較条件](../lessons/N02.qmd#comparison-conditions)で実行してください．
 [`summary.toml`](../assets/n02-reference/summary.toml)をAIに読ませて，自身が実装した結果と比較してください．
 `max_cfl`は全状態の最大実測値，`overshoot`と`undershoot`は初期極値を超えた量（超過なしなら0），`sum_change`は最終総和から初期総和を引いた符号付きの値です．
 
+{{< include /assignments/_understanding-check.qmd >}}
+
 ## 完了条件
 
+- [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
 - 流束と更新式を式・配列・コードで説明し，周期添字を含む3箇所を実装した．
 - 必須4群と指定テーマ自作2つが通り，過去課題の回帰も通る．各テストの根拠と限界を説明できる．
 - 固定・周期の格子，時間刻み，最終時刻，CFL，有界性，周期総和，固定・周期境界の違いとN01との波形の違いを確認した．
 - 公式3出力と学習ログを確認し，[学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで完了した．
-- [授業の理解度チェック](../lessons/N02.qmd)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．

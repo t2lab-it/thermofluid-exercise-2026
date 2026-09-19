@@ -1,11 +1,20 @@
 ---
 title: "環境診断"
+lesson-id: F00
+understanding-check-points:
+  - "Julia，Git，VS Code，GitHub，コーディングエージェントが環境内で果たす役割"
+  - "機械的に確認できる項目と，受講生が手動で確認すべき項目の違い"
+  - "コマンドの実行結果から，環境の問題と課題コードの問題を切り分けること"
+  - "診断が止まったコマンド，段階，表示内容を再現できる形で記録すること"
+  - "診断結果に応じて，次に確認する操作を選ぶこと"
 ---
 ::: {.course-position}
 第1回・課題 2/2 · 課題ID: F00
 :::
 
 ## 目的
+
+[F00授業](../lessons/F00.qmd)の内容を使って，以下に取り組みます．
 
 授業で使うローカル開発環境を診断し，必要な手動確認を完了します．
 WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxではnative Linuxで実行します．
@@ -136,8 +145,11 @@ $ git branch --show-current
 main
 ~~~
 
+{{< include /assignments/_understanding-check.qmd >}}
+
 ## 完了条件
 
+- [理解度チェック](#understanding-check)の対話全文をLETUSへ提出した．
 - runtime が WSL2，native Linux，または macOS のいずれかである．
 - WindowsではWSL2 Ubuntu 24.04を使う．
 - pwdがWSL2の/home/<user>/...，native Linux/macOSのworkspaceなど正式な場所を示す．

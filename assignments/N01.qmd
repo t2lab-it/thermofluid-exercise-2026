@@ -1,11 +1,20 @@
 ---
 title: "1次元線形移流方程式"
+lesson-id: N01
+understanding-check-points:
+  - "移流方程式の各項を，分布が速度`c`で運ばれる現象と対応づけること"
+  - "格子，配列の添字，有効な内部点，左右の境界条件を対応づけること"
+  - "上流差分法＋Euler法と中心差分法＋Euler法の更新式と安定性の違い"
+  - "古い配列から新しい配列を計算し，境界条件を適用してからバッファを交換する順序"
+  - "CFL，調整後の時間刻み，最小・最大値，図，テストから安定例と不安定例を比較すること"
 ---
 ::: {.course-position}
 第6回・課題 2/2 · 課題ID: N01
 :::
 
 ## 目的
+
+[N01授業](../lessons/N01.qmd)の内容を使って，以下に取り組みます．
 
 1次元線形移流方程式の数値計算を実装し，上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します．
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
@@ -22,39 +31,23 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 F03-F04をmergeし，更新済みで変更のない`main`から始めます．
 [課題の開始手順](../guides/workflow.qmd#start-exercise)の`TASK_ID`を`N01`へ置き換えてください．
 
-## 座標・添字・差分の確認
+## 参照する問題と数値手法
 
-前の数値微分課題（課題ID: F04）で一般の差分精度と収束を確認済みです．
-ここでは同じ考え方を移流方程式の1段階の更新へ接続します．
-
-区間$[x_{\min},x_{\max}]$の`nx`点について
-
-$$
-\Delta x=\frac{x_{\max}-x_{\min}}{n_x-1},\qquad x_i=x_{\min}+(i-1)\Delta x.
-$$
-
-です．
-添字`i`と物理座標$x_i$を区別してください．
-空間微分の後退差分と中心差分は
-
-$$
-\frac{u_i-u_{i-1}}{\Delta x},\qquad \frac{u_{i+1}-u_{i-1}}{2\Delta x}
-$$
-
-であり，Juliaでは `(u[i] - u[i - 1]) / dx` と `(u[i + 1] - u[i - 1]) / (2 * dx)` に対応します．
-この課題では，これらを移流方程式の1段階の更新へ組み込みます．
+[授業の問題・標準条件](../lessons/N01.qmd#problem-setup)を使います．
+座標と添字は[格子と添字](../lessons/N01.qmd#格子と添字)，差分式は[後退差分と中心差分](../lessons/N01.qmd#後退差分と中心差分)を確認してください．
 
 ## 実装範囲
 
 `run.jl`は冒頭にある`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に読みます．
 学生が実装するのは，次の3つのTODOだけです．
 
-1. 背景1，`0.5 <= x <= 1.0`で2となる矩形初期条件
-2. 正の速度に対する上流差分 + Euler法による更新
-3. 中心差分 + Euler法による更新
+1. `rectangular_initial_condition`：[授業の矩形初期条件](../lessons/N01.qmd#初期条件)を配列へ設定する．
+2. `upwind_step!`：[上流差分 + Euler法](../lessons/N01.qmd#upwind-euler)による更新．
+3. `centered_step!`：[中心差分 + Euler法](../lessons/N01.qmd#centered-euler)による更新．
 
 実効CFL・極値と，`summary_section`のオーバーシュート・アンダーシュートの計算も`run.jl`で確認します．
 `main`は二つの`simulate`を実行し，提供済みの`write_summary`と`make_plots`へ結果を渡して，下の3つの公式出力を作ります．
+`apply_boundary!`と時間ループは提供済みです．`provided_support.jl`には入力検証・TOML保存・描画の詳細があります．
 配布された関数の呼び出し方と出力形式を保って実装してください．
 
 ## 実行とテスト
@@ -84,7 +77,7 @@ exercises/N01_linear_advection/results/summary.toml
 数値の差は，丸め誤差を考慮して比較してください．
 これにより，計算方法や境界条件の大きな違いを，丸め誤差の違いと混同しにくくなります．
 
-次の値は，公開基準値の`nx=81`，`dx=0.025`，`cfl=0.5`，`dt=0.0125`，`steps=40`に対応する値です．
+次の値は，[授業の標準条件](../lessons/N01.qmd#problem-setup)に対応する公開基準値です．
 
 ::: {.table-responsive}
 | 手法 | `minimum` | `maximum` | `overshoot` | `undershoot` |
@@ -117,8 +110,11 @@ exercises/N01_linear_advection/results/summary.toml
 学習ログには，そのテストが保証することと保証しないことを分けて記録します．
 また，`u_old, u_new = u_new, u_old`によって配列全体をコピーせずに新旧の役割を交換できる理由と，同じ配列を新旧に使ってはいけない理由を書いてください．
 
+{{< include /assignments/_understanding-check.qmd >}}
+
 ## 完了条件
 
+- [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
 - 3つのTODOを式・添字・コードで説明できる．
 - 実効CFLと最終時刻を確認した．
 - 上流差分法の有界性と中心差分法 + Euler法のオーバーシュートまたはアンダーシュートを確認した．
