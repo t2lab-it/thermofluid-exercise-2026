@@ -6,9 +6,7 @@ title: "学生向け課題ワークフロー"
 :::
 
 このページでは，学生リポジトリで課題を進めるときの手順をまとめます．
-各課題固有の情報は[各課題ページ](../assignments/index.qmd)を参照してください．
-各課題ページの理解度チェックも提出までに完了し，対話全文はLETUSへ提出します．学習ログがある課題では提出状況を記録してください．
-F03・F04は一つのPRで提出しますが，理解度チェックは各授業に対応する2回分です．
+実装・テスト・理解度チェックの条件は[各課題ページ](../assignments/index.qmd)を参照してください．
 
 ## コマンドを実行する場所 {#repository-root}
 
@@ -32,102 +30,23 @@ $ git rev-parse --show-toplevel
 
 ## 初回セットアップと「環境診断（F00）」のpreflight {#f00-preflight}
 
+初回は[F00課題](../assignments/F00.qmd)の手順で環境を診断します．
+
 ### 1. Julia環境の復元 {#julia環境を復元する}
 
-cloneした学生リポジトリのルートで以下のコマンドを実行します．
-gitのバージョンは本演習では指定しませんが，一つの目安として，`git switch`が使える`2.23`以上が望ましいです．
-
-~~~console
-$ julia --version
-julia version 1.13.0
-
-$ git --version
-git version 2.43.0
-~~~
-
-次のコマンドで，課題で用いるパッケージの依存環境が導入されます．
-その実体は`Project.toml`と`Manifest.toml`に記述されています．
-気になる人は中を見てみるとよいでしょう．
-
-~~~console
-$ julia --project=. -e 'using Pkg; Pkg.instantiate()'
-（初回はパッケージの導入・プリコンパイル状況を表示．復元済みなら出力がない場合もあります）
-~~~
+[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)で，Julia・Gitのバージョンを確認し，課題用パッケージを導入します．
 
 ### 2. F00の環境診断 {#f00の環境を診断する}
 
-学生用リポジトリ内に，状態を確認するコマンドがいくつか用意されています．
-まず，`preflight`で機械的な環境診断を行えます．
-
-~~~console
-$ julia --project=. scripts/course.jl preflight
-端末で確認した項目
-  [PASS] Runtime: （実行環境）
-  [PASS] 作業ディレクトリ (pwd): （作業場所）
-  [PASS] Julia: （Juliaのバージョン）
-  [PASS] Git: （Gitのバージョン）
-
-手動確認
-  [NOT CONFIRMED] VS Code・Julia拡張機能 (WindowsはRemote - WSL)
-  [NOT CONFIRMED] GitHubへのサインインとリポジトリへのアクセス
-  [NOT CONFIRMED] 正式対応AIエージェント: 未指定
-
-F00の進捗は更新されませんでした。すべての機械観測と3項目の手動確認を完了してください。
-~~~
-
-診断は次の二群を分けて表示します．
-
-1. **機械観測**:
-   - runtime（WSL2 / native Linux / macOS）
-   - pwdが正式なworkspaceにある
-   - Julia が正確に 1.13.0 である
-   - Git が呼び出せる
-2. **手動確認**:
-   - VS CodeとJulia拡張機能が接続中の環境で動く（WindowsではRemote - WSL）
-   - GitHubで学生リポジトリを閲覧できる
-   - 対応エージェントの一つでファイル編集とコマンド実行ができる
+[F00の機械診断](../assignments/F00.qmd#f00の機械診断)で，実行環境と作業場所を確認します．
 
 ### 3. 手動確認の完了記録 {#手動確認を完了として記録する}
 
-次の項目を自分で確認します．
-
-- VS CodeとJulia拡張機能が接続中の環境で動く（WindowsではRemote - WSL）．
-- GitHubで自分の学生リポジトリを閲覧できる．
-- 対応エージェントの一つで，ファイル編集と安全なローカルコマンド実行ができる．
-
-確認したエージェントに対応するコマンドを実行します．
-これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
-
-~~~console
-$ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot # or codex or amazon-q
-（機械観測・手動確認の表示は省略．）
-F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
-~~~
-
-この時点から，F01課題で受講者が実装する`tests.jl`が`Pkg.test()`の実行対象になります．
-テストが未実装のため，ここで`Pkg.test()`を実行するとエラーになることを確かめてください．
-
-~~~console
-$ julia --project=. -e 'using Pkg; Pkg.test()'
-（未実装の自作テストによる失敗例．途中の表示は省略）
-Expression: false
-（Test Failed とエラーが表示されます）
-~~~
+[F00の手動確認](../assignments/F00.qmd#手動確認を完了として記録する)で，VS Code・GitHub・エージェントの動作を確かめ，進捗をF01へ進めます．
 
 ### 4. F01への移行確認 {#f01へ進んだことを確認する}
 
-~~~console
-$ julia --project=. scripts/course.jl status
-現在の提出単位: F01
-完了済み: F00
-（課題ページ・実行方法などの表示は省略）
-
-$ git status --short
- M course_progress.toml
-
-$ git branch --show-current
-main
-~~~
+`course_progress.toml`の変更を引き継いで，以下の手順でF01のbranchを作成します．
 
 ## 課題の開始 {#start-exercise}
 
@@ -182,7 +101,7 @@ $ julia --project=. scripts/course.jl start TASK_ID
 
 ## 通常の課題作業 {#exercise-work}
 
-まずは各課題のページで実装契約（編集対象，学生が実装するTODO，関数の入力・戻り値，期待値，数値条件，実行方法，テスト，公式出力，完了条件）を先に確認します．
+各課題ページで，実装・テスト・出力の条件を確認します．
 学生用リポジトリには以下のファイルが準備されています．
 
 | ファイル | 役割 |
@@ -212,8 +131,7 @@ Test Summary: | Pass  Total  Time
 （テスト名・成功件数・実行時間を表示）
 ~~~
 
-そのままだと，自作テストの`@test false`が実行されて，`Pkg.test()`は失敗します．
-自身が実装する課題にあわせて適切なテストを実装できれば，`Pkg.test()`が通ります．
+未記入の`@test false`を，課題に合った入力・期待値・判定を持つテストへ置き換えてください．
 具体例，数学的性質，入力契約，失敗条件などの選び方と数値検証の詳しい説明は[テストと数値検証](testing.qmd#exercise-tests)を参照してください．
 
 ### 課題単独のテスト
@@ -255,7 +173,7 @@ $ julia --project=. scripts/course.jl check-results
 - `git diff`で意図した変更だけになっていること，つまずきと解決方法．
 - AIを使った場合の依頼内容，重要な提案，採用・修正・却下と判断理由，[AI利用と安全](ai-usage.qmd)に従った提出状況．
 
-その後，課題ファイルだけをcommitします．
+その後，提出するファイルを選んでcommitします．
 `PATHS_YOU_INTEND_TO_SUBMIT`と`TASK_ID`は実際の値へ置き換えてください．
 
 ~~~console
@@ -275,7 +193,6 @@ $ git commit -m "feat: complete TASK_ID"
 （branch名・commitの短縮ハッシュ・メッセージと，変更ファイル数を表示）
 ~~~
 
-課題に必要なパス・ファイルだけを`git add`へ指定してください．
 commitする前に，アクセストークンやAPI key，パスワード，秘密鍵など，課題と無関係な生成物や個人情報が含まれていないかを確認してください．
 
 ## push，PR，GitHub Actions，セルフレビュー {#submit-pr}
@@ -305,7 +222,7 @@ Actionsが成功した後，GitHubの`Files changed`を読んで以下を確認�
 - 自作テストに判定基準と許容誤差の根拠がある．
 - 実装，テスト，公式出力，学習ログ，PR本文の説明が一致している．
 
-なお，以下のコマンドでもPRの差分を確認できますが，GitHub上のほうが読みやすいと思います．
+ターミナルでは，次のコマンドでPRの差分を確認できます．
 
 ~~~console
 $ git diff main...HEAD

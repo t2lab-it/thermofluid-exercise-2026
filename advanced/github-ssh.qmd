@@ -45,7 +45,7 @@ Hi USERNAME! You've successfully authenticated, but GitHub does not provide shel
 この資料では既存名と衝突しにくい`id_ed25519_github`を使います．
 `YOUR_GITHUB_EMAIL`は自分のGitHub登録メールアドレスへ置き換えてください．
 
-鍵生成中にパスフレーズを求められたら，空欄にせず設定してください．
+鍵生成中にパスフレーズを求められたら設定してください．
 入力中は画面に文字が表示されないことに注意してください．
 
 ### Windows (WSL2 Ubuntu 24.04)
