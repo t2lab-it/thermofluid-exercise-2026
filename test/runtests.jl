@@ -127,6 +127,7 @@ end
     @test occursin("Copyright © 2026 荒木 亮（ARAKI, Ryo）", quarto)
     for path in (
         "index.qmd", "lessons/N01.qmd", "assignments/N01.qmd",
+        "lessons/N02.qmd", "assignments/N02.qmd",
         "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
         "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
         "LICENSE-CC-BY-4.0.txt", "LICENSE-MIT.txt",
