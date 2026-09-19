@@ -29,7 +29,7 @@ function tracked_public_qmd_paths()
 end
 
 @testset "tracked public QMD paths exclude include fragments" begin
-    include_fragment = "lessons/_understanding-check.qmd"
+    include_fragment = "assignments/_understanding-check.qmd"
     @test isfile(joinpath(PUBLIC_STRUCTURE_ROOT, include_fragment))
     @test include_fragment ∉ tracked_public_qmd_paths()
     @test "lessons/F02.qmd" ∈ tracked_public_qmd_paths()

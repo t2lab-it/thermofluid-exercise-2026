@@ -1,11 +1,5 @@
 ---
 title: "Julia・Git・GitHubの最小操作"
-lesson-id: F01
-understanding-check-points:
-  - "working tree，branch，commit，remote，pull requestなどの基本的なgit・GitHub用語"
-  - "課題branchをoriginへpushし，pull requestを通してmainへmergeすること"
-  - "branch作成，実装，ローカルテスト，diff確認，commit，push，pull request，mergeの順序"
-  - "ローカルテスト，GitHub Actions，diff，セルフレビューで確認できることの違い"
 ---
 ::: {.course-position}
 第2回・授業 1/2 · 課題ID: F01
@@ -14,27 +8,43 @@ understanding-check-points:
 ## この回の到達点
 
 - 基本的なgit用語を説明できる．
-- この課題用の変更branchを作り，変更前後の`git diff`を確認できる．
-- ローカルテスト，push，GitHub Actions，セルフレビューを正しい順で実行できる．
+- working tree，commit，branch，remote，pull requestの関係を説明できる．
+- ローカルテスト，GitHub Actions，diff，セルフレビューがそれぞれ何を確かめるかを区別できる．
 
-## git/GitHubを使った開発手順
+## 変更と履歴の区別
 
-1. [準備ページ](../setup/git-github.qmd)の手順に従い，テンプレートから作成した自分の個人課題用リポジトリをローカルへ複製する．
-2. ローカルリポジトリで課題用branchを作る．
-3. コードを実装する．
-4. ローカルテストを実行する．
-5. 変更内容を確認してcommitする．
-6. 課題branchを学生用リポジトリの`origin`へpushする．
-7. 同じ学生用リポジトリ内で，課題branchから`main`へのpull requestを作る．
-8. GitHub Actionsとdiffを確認し，セルフレビューする．
-9. 必要な確認を終えた後，pull requestをmergeする．
-10. ローカルの`main`を更新する．
+ファイルの保存，commit，GitHubへの共有は，それぞれ異なる状態の変化です．
 
-実装は必ず課題branchで行い，pull request を通して`main`へmergeします．
-`main`へ直接pushしてはいけません．
-（参照：[mainで作業してしまったら](../guides/troubleshooting.qmd#main-branch-recovery)）
+| 用語 | 意味 |
+|---|---|
+| working tree | 手元で編集しているファイル群 |
+| staging area | 次のcommitに含める変更を選んだ状態 |
+| commit | 選んだ内容と親の履歴を記録したもの |
+| branch | 一連の変更を進めるcommitへの参照．commitを重ねると先端が進む |
+| remote | 履歴を共有する相手のリポジトリ．`origin`はその名前の一つ |
+| pull request（PR） | branch間の差分を示し，統合前に説明と確認を行う場所 |
 
-本課題では，この手順を自分の操作で確かめます．
-git/GitHubコマンドの詳細については[課題のbranch・PRワークフロー](../guides/workflow.qmd)ページを参照してください．
+例えば挨拶の文字列を編集して保存しても，その変更はまだ履歴に記録されていません．
+commitするとローカルの履歴に入り，pushするとremoteへ共有されます．
+pushしても別のbranchへ自動的に統合されるわけではなく，mergeによって履歴が統合されます．
+GitHub側でmergeした後も，手元の`main`は取り込むまで以前の状態です．
 
-{{< include /lessons/_understanding-check.qmd >}}
+## branchとPRによる確認単位
+
+課題ごとのbranchは，確認済みの`main`から一まとまりの変更を区別するために使います．
+PRの差分と説明を読むと，何を変更し，どんな根拠で統合できると判断したかを確認できます．
+変更前後の比較が`diff`です．計算結果が正しくても，無関係なファイルや意図しない変更を含んでいれば，その差分は目的に合っていません．
+
+## 各確認が示す証拠
+
+| 確認 | 分かること | 限界 |
+|---|---|---|
+| ローカルテスト | 手元のコードが用意された入力と判定を満たすか | 未commitの変更も含み，未検証の条件までは保証しない |
+| GitHub Actions | 共有したcommitがCIの環境でテストを通るか | 手元だけにある変更や，説明の妥当性は確認できない |
+| diff | 実際に変更されたファイルと内容 | その変更が正しく動くかは実行結果と照合する必要がある |
+| セルフレビュー | 実装・テスト・結果・説明が課題の意図と一致するか | テストや実行による証拠も併せて必要になる |
+
+このため，手元で実装とテストを確かめてから共有し，共有した差分とActionsの結果を確認して統合する，という順序に意味があります．
+実際の操作と提出条件は[F01課題](../assignments/F01.qmd)，共通のコマンドは[課題ワークフロー](../guides/workflow.qmd)にあります．
+
+[F01課題の理解度チェック](../assignments/F01.qmd#understanding-check)で，この授業の内容を確認してください．

@@ -1,11 +1,19 @@
 ---
 title: "最初のbranchとpull request"
+lesson-id: F01
+understanding-check-points:
+  - "working tree，branch，commit，remote，pull requestなどの基本的なgit・GitHub用語"
+  - "課題branchをoriginへpushし，pull requestを通してmainへmergeすること"
+  - "branch作成，実装，ローカルテスト，diff確認，commit，push，pull request，mergeの順序"
+  - "ローカルテスト，GitHub Actions，diff，セルフレビューで確認できることの違い"
 ---
 ::: {.course-position}
 第2回・課題 2/2 · 課題ID: F01
 :::
 
 ## 目的
+
+[F01授業](../lessons/F01.qmd)の内容を使って，以下に取り組みます．
 
 Juliaで書かれた"Hello, World"コードを新しいbranch上で変更し，差分をローカルテストで検証します．
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
@@ -44,6 +52,8 @@ main
 ## 1. この課題のbranchの手動作成 {#この課題のbranchを手動で作る}
 
 F00完了後の`main`から，次のコマンドで課題用branchを作成します．
+実装は課題branchで行い，PRを通して`main`へmergeします．`main`へ直接pushしてはいけません．
+誤って`main`で編集した場合は[復旧手順](../guides/troubleshooting.qmd#main-branch-recovery)を参照してください．
 
 ```console
 $ git switch -c exercise/F01-first-pull-request
@@ -96,6 +106,8 @@ Test Summary: | Pass  Total  Time
 ## 4. 実行結果の確認 {#実行結果を確認する}
 
 F01課題ではファイル出力はありません．
+
+{{< include /assignments/_understanding-check.qmd >}}
 
 ## 5. 学習ログの記入 {#学習ログを書く}
 
@@ -183,7 +195,13 @@ $ git branch --show-current
 main
 ```
 
-これで「最初のbranchとpull request」は完了です．
+上の操作を終えたら，以下の完了条件を確認してください．
+
+## 完了条件
+
+- 実装・配布済み必須テスト・自作テスト・学習ログを確認した．
+- [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
+- 意図した変更をPRで確認してmergeし，ローカルの`main`を更新した．
 
 ## 任意のCLI発展資料
 
