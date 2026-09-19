@@ -6,7 +6,7 @@ title: "リンク集"
 参照・リンク集
 :::
 
-講義サイトの受講準備・ガイド・発展資料・課題ページとフッターに掲載している外部リンクを，ジャンル別にまとめています．同じURLは一度だけ掲載し，資料の種類と著者・提供元を添えています．
+講義サイトの受講準備・ガイド・発展資料・課題ページとフッターに掲載している外部リンクを，ジャンル別にまとめています．講義ウェブサイト内と，講義用のGitHubリポジトリ（`t2lab-it`）へのリンクは除いています．同じURLは一度だけ掲載し，資料の種類と著者・提供元を添えています．
 
 バージョンを指定した実装例や配布データは，元のページと同じリンクを掲載しています．
 
@@ -187,38 +187,6 @@ title: "リンク集"
 - [スタッガード格子による有限体積法（ドキュメント）](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/finite_volume) — CliMA / Oceananigans.jl開発チーム
 - [fractional-step解説（ドキュメント）](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/time_stepping#The-fractional-step-method) — CliMA / Oceananigans.jl開発チーム
 - [`v0.110.15`のMIT License（ライセンス）](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/LICENSE) — CliMA / Oceananigans.jl開発チーム
-
-## 講義のリポジトリ・配布資産 {#course-resources}
-
-### 個人課題用テンプレート
-
-- [個人課題用テンプレート（リポジトリ）](https://github.com/t2lab-it/thermofluid-exercise-student-2026) — 荒木亮 / t2lab-it
-
-### 準一次元ノズル
-
-- [準一次元ノズル（配布資産）](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/quasi-1d-nozzle) — 荒木亮 / t2lab-it
-- [area-mach-reference.csv（データ）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/quasi-1d-nozzle/area-mach-reference.csv) — 荒木亮 / t2lab-it
-
-### 湿潤床ダム崩壊
-
-- [湿潤床ダム崩壊（配布資産）](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/shallow-water-dam-break) — 荒木亮 / t2lab-it
-- [README.md（ドキュメント）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/README.md) — 荒木亮 / t2lab-it
-- [stoker-reference.csv（データ）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/stoker-reference.csv) — 荒木亮 / t2lab-it
-- [preflight.jl（実装例）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/preflight.jl) — 荒木亮 / t2lab-it
-
-### 一次元Stefan問題
-
-- [一次元Stefan問題（配布資産）](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/stefan-problem) — 荒木亮 / t2lab-it
-- [README.md（ドキュメント）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/README.md) — 荒木亮 / t2lab-it
-- [similarity-reference.csv（データ）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/similarity-reference.csv) — 荒木亮 / t2lab-it
-- [preflight.jl（実装例）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/preflight.jl) — 荒木亮 / t2lab-it
-
-### 自然対流キャビティ
-
-- [二次元自然対流キャビティ（配布資産）](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/natural-convection-cavity) — 荒木亮 / t2lab-it
-- [README.md（ドキュメント）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/README.md) — 荒木亮 / t2lab-it
-- [de-vahl-davis-reference.csv（データ）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/de-vahl-davis-reference.csv) — 荒木亮 / t2lab-it
-- [preflight.jl（実装例）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/preflight.jl) — 荒木亮 / t2lab-it
 
 ## ソフトウェアの読み方 {#software-reading}
 
