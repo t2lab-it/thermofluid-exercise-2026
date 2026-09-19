@@ -41,7 +41,7 @@ main
 
 上記と異なる出力が得られた場合は，教員・TAへ相談してください．
 
-## 1. この課題のbranchを手動で作る
+## 1. この課題のbranchの手動作成 {#この課題のbranchを手動で作る}
 
 F00完了後の`main`から，次のコマンドで課題用branchを作成します．
 
@@ -53,7 +53,7 @@ $ git branch --show-current
 exercise/F01-first-pull-request
 ```
 
-## 2. 実装する
+## 2. 実装 {#実装する}
 
 `exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装してください．
 修正したプログラムは以下のコマンドで実行します．
@@ -68,7 +68,7 @@ $ git diff -- exercises/F01_first_pull_request/run.jl
 
 実行結果とdiffを確認し，自分が意図したファイルだけが変わっていることを確認します．
 
-## 3. テストする
+## 3. テスト {#テストする}
 
 `exercises/F01_first_pull_request/tests.jl`の配布済み必須テストでは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を検証します．
 一方，自作テストは`@test false`となっており，そのままでは失敗します．
@@ -93,11 +93,11 @@ Test Summary: | Pass  Total  Time
 （テスト名・成功件数・実行時間を表示）
 ```
 
-## 4. 実行結果を確認する
+## 4. 実行結果の確認 {#実行結果を確認する}
 
 F01課題ではファイル出力はありません．
 
-## 5. 学習ログを書く
+## 5. 学習ログの記入 {#学習ログを書く}
 
 次の内容を`exercises/F01_first_pull_request/learning_log.md`へ記録します．
 
@@ -107,7 +107,7 @@ F01課題ではファイル出力はありません．
 - `git diff`で確認した内容，つまずきと解決方法
 - AIを使った場合の依頼内容，提案の採否と理由，[AI利用と安全](../guides/ai-usage.qmd)に従った提出状況
 
-## 6. commitする
+## 6. commit {#commitする}
 
 `course_progress.toml`と実際に変更したF01の課題ファイルだけをcommit対象にします．
 
@@ -135,7 +135,7 @@ $ git commit -m "feat: complete F01"
 
 アクセストークンやAPI key，パスワード，秘密鍵など，課題と無関係な生成物や個人情報が含まれていないかを確認してからcommitしてください．
 
-## 7. pushしてPRを作る
+## 7. pushとPRの作成 {#pushしてprを作る}
 
 `exercise/F01-first-pull-request` branchをoriginへpushします．
 
@@ -150,7 +150,7 @@ branch 'exercise/F01-first-pull-request' set up to track 'origin/exercise/F01-fi
 
 続いて，GitHubで`exercise/F01-first-pull-request`から`main`へのPRを作成し，PRテンプレートを埋めます．
 
-## 8. GitHub Actionsとdiffを確認する
+## 8. GitHub Actionsとdiffの確認 {#github-actionsとdiffを確認する}
 
 GitHub Actionsが成功することを確認してください．
 失敗した場合はエラー文を読んでその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
@@ -163,7 +163,7 @@ Actionsが成功した後，GitHubの`Files changed`を読んでF01の`run.jl`�
 - 自作テストに判定基準と許容誤差の根拠がある．
 - 実装，テスト，公式出力，学習ログ，PR本文の説明が一致している．
 
-## 9. mergeしてmainへ戻る
+## 9. mergeとmainへの復帰 {#mergeしてmainへ戻る}
 
 GitHub Actionsが成功してセルフレビュー（目視での差分確認）が終わったら，GitHub上でPRをmergeします．
 その後，以下のコマンドでローカルのmainブランチを最新状態にします．

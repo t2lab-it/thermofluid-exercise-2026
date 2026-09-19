@@ -13,7 +13,7 @@ Windows版VS Codeでは VS Code Remote - WSL の公式チュートリアルに�
 macOSとnative Linuxでは，それぞれの標準ターミナルとVS Codeを使います．
 :::
 
-## JuliaupでJuliaを導入する
+## JuliaupによるJuliaの導入 {#juliaupでjuliaを導入する}
 
 公式の[インストール案内](https://julialang.org/downloads/)を参考に，Juliaのバージョンを管理するJuliaupを導入してください．
 その後，新しいターミナルを開いて以下のコマンドを実行し，本演習で使う **Julia ver.1.13.0** を追加してください．
@@ -31,7 +31,7 @@ julia version 1.13.0
 
 最後のコマンドで `julia version 1.13.0` が出力されることを確認してください．
 
-## シェルとJulia REPLを区別する
+## シェルとJulia REPLの区別 {#シェルとjulia-replを区別する}
 
 `$` の入力はターミナルで実行します．Julia REPLを起動したら，`julia>` の入力を実行してください．起動時のバナーは省略しています．
 
@@ -48,7 +48,7 @@ julia> exit()
 （Juliaが終了し，シェルへ戻ります）
 ```
 
-## VS Codeと拡張機能を整える
+## VS Codeと拡張機能の準備 {#vs-codeと拡張機能を整える}
 
 VS Codeをインストールしたら，拡張機能`julialang.language-julia`を必ず導入します．
 学生リポジトリの`.vscode/`には，Juliaファイルの4空白インデント，括弧の色分け，末尾空白の除去，保存時の自動整形，`linter`を有効にする授業用設定があります．
@@ -60,7 +60,7 @@ VS Code上の操作は公式資料も参照してください．
 - [formatter](https://www.julia-vscode.org/docs/latest/userguide/formatter/)
 - [linter](https://www.julia-vscode.org/docs/stable/userguide/linter/)
 
-## 問題が起きたとき
+## 問題発生時の対応 {#問題が起きたとき}
 
 - `julia --version`が異なる
   - ターミナルやVS Codeを開き直し，`juliaup status`と`juliaup default 1.13.0`を確認する．
