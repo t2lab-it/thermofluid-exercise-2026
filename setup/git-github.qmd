@@ -53,7 +53,7 @@ SSH接続は標準の複製経路です．先に[SSHでGitHubへ接続する](..
 
 1. [個人課題用テンプレートリポジトリ](https://github.com/t2lab-it/thermofluid-exercise-student-2026)にアクセスする．
 2. 'Use this template'→'Create a new repository'と進み，自分の作業用リポジトリを作成する．
-   その際，名前は`thermofluid-exercise-2026-<自分のusername>`とする．
+   Ownerは自分のアカウント，名前は`thermofluid-exercise-2026-<自分のusername>`，公開範囲はPublicとする．
 3. 作成した自分のリポジトリの **Code** → **SSH** からURLをコピーする．
 4. 作業ディレクトリへ移動し，以下のコマンドを実行する．
 
