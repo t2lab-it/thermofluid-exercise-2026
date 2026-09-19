@@ -40,7 +40,7 @@ $ git config --global user.email "YOUR_GITHUB_EMAIL"
 
 ## 個人課題用リポジトリの公開範囲
 
-受講者が課題に取り組むリポジトリは原則として**公開**です．公開参加が難しい場合は，作成前にLETUSの個別連絡で教員へ相談してください．承認済みの非公開例外でも，課題・テスト・レビュー・提出時期・評価・支援は同じです．
+受講者が課題に取り組むリポジトリは**公開**です．
 GitHubユーザー名やcommit・issue・pull requestなどの活動，その日時は外部から見えるため，課題に関係のない個人情報や秘密情報を書き込んではいけません．
 AIとの全対話ログも個人課題用リポジトリへcommitしてはいけません．記録・提出の方法は[AI利用と安全](../guides/ai-usage.qmd)を確認してください．
 
@@ -53,7 +53,7 @@ SSH接続は標準の複製経路です．先に[SSHでGitHubへ接続する](..
 
 1. [個人課題用テンプレートリポジトリ](https://github.com/t2lab-it/thermofluid-exercise-student-2026)にアクセスする．
 2. 'Use this template'→'Create a new repository'と進み，自分の作業用リポジトリを作成する．
-   Ownerは自分のアカウント，名前は`thermofluid-exercise-2026-<自分のusername>`，公開範囲はPublicとする．承認済みの非公開例外ではPrivateを選び，教員・レビュー担当者のアクセス方法を個別に確認する．
+   Ownerは自分のアカウント，名前は`thermofluid-exercise-2026-<自分のusername>`，公開範囲はPublicとする．
 3. 作成した自分のリポジトリの **Code** → **SSH** からURLをコピーする．
 4. 作業ディレクトリへ移動し，以下のコマンドを実行する．
 
