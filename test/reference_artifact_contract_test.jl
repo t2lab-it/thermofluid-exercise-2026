@@ -74,21 +74,21 @@ end
         end
         s=TOML.parsefile(joinpath(root,"summary.toml"))
         @test s["course_id"]=="N02" && s["domain"]==[0.,2.]
-        @test s["requested_cfl"]==s["t_final"]==0.5
+        @test s["requested_cfl"]==0.5 && s["t_final"]==1.0
         for (name,nx) in (("fixed",81),("periodic",80))
             r=s[name]
-            @test r["nx"]==nx && r["steps"]==80
+            @test r["nx"]==nx && r["steps"]==160
             @test r["dx"]==0.025 && r["dt"]==0.00625 && r["max_cfl"]==0.5
             @test all(isfinite,values(r))
-            @test r["initial_minimum"]==r["minimum"]==1.
+            @test r["initial_minimum"]==1. && 1. <= r["minimum"] < 1.000001
             @test r["initial_maximum"]==2.
-            @test r["maximum"] ≈ 1.9687726868657076
+            @test r["maximum"] ≈ (name=="fixed" ? 1.4942095043070338 : 1.8163945680355078)
             @test r["overshoot"]==r["undershoot"]==0.
         end
         @test !haskey(s["fixed"],"sum_change")
         p=s["periodic"]
         @test p["initial_sum"]==101.
         @test p["sum_change"]==p["final_sum"]-p["initial_sum"]
-        @test abs(p["sum_change"]) <= 80*80*2*eps(Float64)
+        @test abs(p["sum_change"]) <= p["steps"]*p["nx"]*2*eps(Float64)
     end
 end

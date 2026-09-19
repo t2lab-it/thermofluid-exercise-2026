@@ -1,7 +1,7 @@
 course_id = "N02"
 domain = [0.0, 2.0]
 requested_cfl = 0.5
-t_final = 0.5
+t_final = 1.0
 
 [fixed]
 dt = 0.00625
@@ -9,25 +9,25 @@ dx = 0.025
 initial_maximum = 2.0
 initial_minimum = 1.0
 max_cfl = 0.5
-maximum = 1.9687726868657076
+maximum = 1.4942095043070338
 minimum = 1.0
 nx = 81
 overshoot = 0.0
-steps = 80
+steps = 160
 undershoot = 0.0
 
 [periodic]
 dt = 0.00625
 dx = 0.025
-final_sum = 100.99999999999999
+final_sum = 101.00000000000003
 initial_maximum = 2.0
 initial_minimum = 1.0
 initial_sum = 101.0
 max_cfl = 0.5
-maximum = 1.9687726868657076
-minimum = 1.0
+maximum = 1.8163945680355078
+minimum = 1.0000002582164118
 nx = 80
 overshoot = 0.0
-steps = 80
-sum_change = -1.4210854715202004e-14
+steps = 160
+sum_change = 2.842170943040401e-14
 undershoot = 0.0

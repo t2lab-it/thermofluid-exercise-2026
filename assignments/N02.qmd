@@ -66,11 +66,12 @@ N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 
 公式出力は[授業の標準条件](../lessons/N02.qmd#problem-setup)で生成し，以下と比較してください．
 
-![固定境界での非線形移流](../assets/n02-reference/fixed-boundary.png){fig-alt="固定境界，時刻0.5で初期矩形に比べ左側が広がり右側が急峻になった分布"}
+![固定境界での非線形移流](../assets/n02-reference/fixed-boundary.png){fig-alt="固定境界，時刻1.0で波の一部が右端から流出し，左側は初期の低い値を保つ分布"}
 
-![周期境界での非線形移流](../assets/n02-reference/periodic.png){fig-alt="周期境界，時刻0.5の初期値と最終値．右端は表示用の先頭値で閉じている"}
+![周期境界での非線形移流](../assets/n02-reference/periodic.png){fig-alt="周期境界，時刻1.0で右端を越えた波が左側へ戻った分布．右端は表示用の先頭値で閉じている"}
 
-数値拡散によるなまりと，非線形な波形変形を区別してください．
+左側へ戻る波の有無に注目し，固定境界と周期境界の違いを説明してください．
+数値拡散によるなまりと，非線形な波形変形を区別してください．N01との波形比較では，N01も最終時刻1.0で計算してください．
 [`summary.toml`](../assets/n02-reference/summary.toml)をAIに読ませて，自身が実装した結果と比較してください．
 `max_cfl`は全状態の最大実測値，`overshoot`と`undershoot`は初期極値を超えた量（超過なしなら0），`sum_change`は最終総和から初期総和を引いた符号付きの値です．
 
@@ -78,6 +79,6 @@ N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 
 - 流束と更新式を式・配列・コードで説明し，周期添字を含む3箇所を実装した．
 - 必須4群と指定テーマ自作2つが通り，過去課題の回帰も通る．各テストの根拠と限界を説明できる．
-- 固定・周期の格子，時間刻み，最終時刻，CFL，有界性，周期総和，N01との波形の違いを確認した．
+- 固定・周期の格子，時間刻み，最終時刻，CFL，有界性，周期総和，固定・周期境界の違いとN01との波形の違いを確認した．
 - 公式3出力と学習ログを確認し，[学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで完了した．
 - [授業の理解度チェック](../lessons/N02.qmd)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
