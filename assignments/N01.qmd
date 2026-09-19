@@ -14,8 +14,6 @@ understanding-check-points:
 
 ## 目的
 
-[N01授業](../lessons/N01.qmd)の内容を使って，以下に取り組みます．
-
 1次元線形移流方程式の数値計算を実装し，上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します．
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
 
