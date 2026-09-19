@@ -73,13 +73,13 @@ Test Summary: | Pass  Total  Time
 
 commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新の順序は[学習ログ，diff，commit](workflow.qmd#commit)から[merge後](workflow.qmd#after-merge)までを参照してください．
 
-## テンプレートの更新を取り込む {#template-updates}
+## テンプレートの更新の取り込み {#template-updates}
 
 教員から学生用テンプレートの更新案内があったときに使います．
 `origin`は自分のGitHubリポジトリです．`git pull origin main`だけでは，教員側のテンプレートの更新は入りません．
 ここではテンプレートを`upstream`として登録し，自分の更新用branchへ取り込みます．
 
-### 初回だけ：テンプレートを登録する
+### 初回のみ：テンプレートの登録 {#初回だけテンプレートを登録する}
 
 ~~~console
 $ git remote -v
@@ -98,7 +98,7 @@ https://github.com/t2lab-it/thermofluid-exercise-student-2026.git
 
 登録済みの場合もURLを確認します．別のリポジトリを指している場合は，そのまま進めず教員・TAへ相談してください．
 
-### 更新のたびに：作業を保存して取り込む
+### 更新時の作業の保存と取り込み {#更新のたびに作業を保存して取り込む}
 
 作業中の課題は先に保存・commitし，通常のPR手順でmainへのmergeまで済ませてください．
 課題の途中で更新が必要な場合は，取り込み先のbranchを教員・TAと確認してください．

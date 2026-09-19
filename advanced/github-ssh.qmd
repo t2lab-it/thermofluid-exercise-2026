@@ -24,7 +24,7 @@ SSH鍵を準備してGitHubへの接続を確認し，個人課題用リポジ�
 既存の鍵ファイルが存在する場合，それらを削除・上書きしないでください．
 :::
 
-## 既存のSSH接続を先に確認する
+## 既存のSSH接続の事前確認 {#既存のssh接続を先に確認する}
 
 ```console
 $ ssh -T git@github.com
@@ -39,7 +39,7 @@ Hi USERNAME! You've successfully authenticated, but GitHub does not provide shel
 認証成功メッセージに自分のGitHubユーザー名が表示された場合は，鍵の作成と登録を省略できます．
 初めてcloneする人は[個人課題用リポジトリの複製](../setup/git-github.qmd#個人課題用リポジトリを複製する)へ戻り，HTTPSでclone済みの人は[originの切替え](#ssh-origin)へ進んでください．
 
-## 接続できない場合だけ鍵を準備する
+## 接続できない場合のみの鍵の準備 {#接続できない場合だけ鍵を準備する}
 
 まず既存の`.ssh`ディレクトリを確認します．
 この資料では既存名と衝突しにくい`id_ed25519_github`を使います．
@@ -128,14 +128,14 @@ Host github.com
 
 OS別手順の更新や異なる環境については，[GitHub公式の鍵生成・ssh-agent手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)を参照してください．
 
-## 公開鍵だけをGitHubへ登録する
+## GitHubへの公開鍵のみの登録 {#公開鍵だけをgithubへ登録する}
 
 前節の最後に表示した`id_ed25519_github.pub`の内容だけをコピーします．
 
 GitHubで自分のプロフィール画像から **Settings** → **SSH and GPG keys** → **New SSH key**へ進み，用途が分かるtitleを付けてAuthentication Keyとして公開鍵を登録します．
 画面が異なる場合は[GitHub公式の公開鍵登録手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)を確認します．
 
-## SSH接続を再確認する
+## SSH接続の再確認 {#ssh接続を再確認する}
 
 ```console
 $ ssh -T git@github.com
@@ -145,7 +145,7 @@ Hi USERNAME! You've successfully authenticated, but GitHub does not provide shel
 成功メッセージに，接続したい自分のGitHubユーザー名が含まれることを確認します．
 別のユーザー名が出た場合は，教員・TAへ相談してください．
 
-## 既存のcloneのoriginをSSHへ切り替える {#ssh-origin}
+## 既存のcloneのoriginのSSHへの切り替え {#ssh-origin}
 
 すでにHTTPSで複製済みの学生リポジトリだけが対象です．初めて複製する場合は，この節を飛ばして，SSH接続の確認後に教材のclone手順へ戻ります．
 学生リポジトリを開き，**Code** → **SSH**から取得したURLを用いて以下のコマンドを実行してください．
@@ -171,7 +171,7 @@ $ git fetch origin
 
 `git remote -v`で取得先とpush先が同じSSH URLであること，`git fetch origin`で取得に成功することを確認してください．
 
-## トラブルを切り分ける
+## トラブルの切り分け {#トラブルを切り分ける}
 
 | 状況 | 読み取り中心の確認 |
 |---|---|

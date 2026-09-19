@@ -62,7 +62,7 @@ include("exercises/N02_nonlinear_advection/run.jl")
 N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 ```
 
-## 公開基準値と比べる {#reference-results}
+## 公開基準値との比較 {#reference-results}
 
 公式出力は[授業の標準条件](../lessons/N02.qmd#problem-setup)で生成し，以下と比較してください．
 
