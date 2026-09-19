@@ -33,7 +33,9 @@ julia version 1.13.0
 
 ## シェルとJulia REPLの区別 {#シェルとjulia-replを区別する}
 
-`$` の入力はターミナルで実行します．Julia REPLを起動したら，`julia>` の入力を実行してください．起動時のバナーは省略しています．
+`$` の入力はターミナルで実行します．
+Julia REPLを起動したら，`julia>` の入力を実行してください．
+起動時のバナーは省略しています．
 
 ```console
 $ julia --project=.

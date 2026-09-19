@@ -12,7 +12,8 @@ macOSとnative Linuxでは各OSの標準ターミナルで実行します．
 
 ## このページの到達点
 
-SSH鍵を準備してGitHubへの接続を確認し，個人課題用リポジトリをSSH URLで複製できる状態にします．すでにHTTPSで複製済みの場合は，最後にoriginをSSH URLへ安全に切り替えます．
+SSH鍵を準備してGitHubへの接続を確認し，個人課題用リポジトリをSSH URLで複製できる状態にします．
+すでにHTTPSで複製済みの場合は，最後にoriginをSSH URLへ安全に切り替えます．
 
 ## 実行前の安全確認
 
@@ -147,7 +148,8 @@ Hi USERNAME! You've successfully authenticated, but GitHub does not provide shel
 
 ## 既存のcloneのoriginのSSHへの切り替え {#ssh-origin}
 
-すでにHTTPSで複製済みの学生リポジトリだけが対象です．初めて複製する場合は，この節を飛ばして，SSH接続の確認後に教材のclone手順へ戻ります．
+すでにHTTPSで複製済みの学生リポジトリだけが対象です．
+初めて複製する場合は，この節を飛ばして，SSH接続の確認後に教材のclone手順へ戻ります．
 学生リポジトリを開き，**Code** → **SSH**から取得したURLを用いて以下のコマンドを実行してください．
 
 ```console

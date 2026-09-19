@@ -50,7 +50,8 @@ main
 ## 1. この課題のbranchの手動作成 {#この課題のbranchを手動で作る}
 
 F00完了後の`main`から，次のコマンドで課題用branchを作成します．
-実装は課題branchで行い，PRを通して`main`へmergeします．`main`へ直接pushしてはいけません．
+実装は課題branchで行い，PRを通して`main`へmergeします．
+`main`へ直接pushしてはいけません．
 誤って`main`で編集した場合は[復旧手順](../guides/troubleshooting.qmd#main-branch-recovery)を参照してください．
 
 ```console

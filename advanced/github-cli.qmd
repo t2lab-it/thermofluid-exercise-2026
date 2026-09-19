@@ -171,7 +171,8 @@ $ gh pr checks
 （検査名・pass / fail / pending などの状態・詳細URLを表示）
 ```
 
-`gh pr view`でタイトル・本文と，`base`が`main`，`head`が現在の課題branchであることを確認します．`gh pr diff`で全変更を，`gh pr checks`でCI状態を確認します．
+`gh pr view`でタイトル・本文と，`base`が`main`，`head`が現在の課題branchであることを確認します．
+`gh pr diff`で全変更を，`gh pr checks`でCI状態を確認します．
 `checks`が`pending`なら，時間を置いて再実行します．
 
 検査が失敗した場合は検査名とリンクを開き，可能ならローカルで再現します．

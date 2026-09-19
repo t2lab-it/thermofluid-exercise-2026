@@ -36,7 +36,8 @@ origin  git@github.com:OWNER/REPOSITORY.git (fetch)
 origin  git@github.com:OWNER/REPOSITORY.git (push)
 ```
 
-4. WindowsならWSL2 Ubuntu 24.04内で実行したか，pwdが/home/<user>/...か，uname -aにWSL2が含まれるかを確認する．macOS・native LinuxではOS名を記録する．
+4. WindowsならWSL2 Ubuntu 24.04内で実行したか，pwdが/home/<user>/...か，uname -aにWSL2が含まれるかを確認する．
+   macOS・native LinuxではOS名を記録する．
 5. OS，期待した結果，実際の結果，失敗直前に行った操作をメモする．
 6. 秘密情報や個人情報が含まれていないことを確認する．
 

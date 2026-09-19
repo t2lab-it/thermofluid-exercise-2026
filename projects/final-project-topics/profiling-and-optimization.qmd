@@ -60,7 +60,8 @@ warm-up後は同じ処理を固定回数だけ繰り返し，合計仕事量を�
 道具は役割を分けて使います．
 
 - [`@time`を含むJulia公式Performance Tips](https://docs.julialang.org/en/v1/manual/performance-tips/)は，最初の呼出しにコンパイルが含まれることと，時間とheap allocationを手早く確認する方法を説明しています．
-  `@time`は初回と二回目の違いを見るsmoke checkに使います．正式な比較では，下記の反復測定を行います．
+  `@time`は初回と二回目の違いを見るsmoke checkに使います．
+  正式な比較では，下記の反復測定を行います．
 - [Julia公式Profiling manual](https://docs.julialang.org/en/v1/manual/profile/)に従い，測定対象を一度実行してから `Profile.clear()` と `Profile.@profile` を使います．
   `Profile`は周期的なbacktraceのsample数からhotspotを探す道具であり，各行の正確な実行時間を直接測る道具ではありません．
   同じ仕事量で各回の前にbufferをclearしてprofileを三回取り，繰り返し現れる処理を変更候補にします．

@@ -38,7 +38,8 @@ VS Code の Extensions で `Amazon Q` を検索し，Amazon Q DeveloperのVS Cod
 選んだエージェントで次を確認してください．
 
 1. `julia --version` の実行を依頼し，`1.13.0` が表示されることを確認する．
-2. `scratch/F00-agent-check.txt` に一行書くよう依頼し，ファイルを開いて内容を確認する．既存ファイルがある場合は上書きせず，別名を使う．
+2. `scratch/F00-agent-check.txt` に一行書くよう依頼し，ファイルを開いて内容を確認する．
+   既存ファイルがある場合は上書きせず，別名を使う．
 3. 確認用に作ったファイルを削除する．
 
 AI利用時の記録と注意事項は[AI利用と安全](../guides/ai-usage.qmd)を確認してください．
