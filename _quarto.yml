@@ -34,6 +34,8 @@ website:
             text: トラブル対応
           - href: guides/glossary.qmd
             text: 用語集
+          - href: guides/links.qmd
+            text: リンク集
           - href: guides/final-project-handoff.qmd
             text: 最終プロジェクトへの移行
       - text: 発展資料
@@ -130,6 +132,8 @@ website:
           text: "最終プロジェクトへの移行"
         - href: guides/glossary.qmd
           text: "用語集"
+        - href: guides/links.qmd
+          text: "リンク集"
     - id: advanced
       title: "任意の発展資料"
       style: docked
