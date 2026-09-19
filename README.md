@@ -58,13 +58,13 @@ julia --project=. scripts/verify_contracts.jl \
 
 ## 学生・プロジェクトリポジトリの公開契約
 
-学生用テンプレートは公開、最終プロジェクト用テンプレートも公開予定です（現時点では非公開）。
+学生用テンプレートは公開済みです。
 個人課題用は学生が公開テンプレートの `Use this template` で自分のアカウントに作成し、SSHでcloneします。
 作成するリポジトリは公開します。
 LMSの成績・出欠・個別フィードバックなどの非公開データはGitに置きません。
 
-教員が発行する最終プロジェクト用リポジトリは、`rehearsal`と`production`の承認段階を経て運用します。
-学生向けの詳細は[Git と GitHub](setup/git-github.qmd)を正本とします。
+最終プロジェクトは学生自身が公開リポジトリを作成し、AIと協働して必要な環境を整えます。
+[環境構築とコード移行](guides/final-project-handoff.qmd)を参照してください。
 ## ライセンス
 
 Copyright © 2026 荒木 亮（ARAKI, Ryo）

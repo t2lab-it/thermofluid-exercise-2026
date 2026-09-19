@@ -1,0 +1,69 @@
+schema_version = 1
+
+[themes.quasi-1d-nozzle]
+kind = "build-a-solver"
+public_page = "projects/final-project-topics/quasi-1d-nozzle.qmd"
+asset_mode = "theme-pack"
+asset_path = "launch-kits/assets/quasi-1d-nozzle"
+fast_preflight = ["julia", "--startup-file=no", "preflight.jl"]
+
+[themes.stefan-problem]
+kind = "build-a-solver"
+public_page = "projects/final-project-topics/stefan-problem.qmd"
+asset_mode = "theme-pack"
+asset_path = "launch-kits/assets/stefan-problem"
+fast_preflight = ["julia", "--startup-file=no", "preflight.jl"]
+
+[themes.shallow-water-dam-break]
+kind = "build-a-solver"
+public_page = "projects/final-project-topics/shallow-water-dam-break.qmd"
+asset_mode = "theme-pack"
+asset_path = "launch-kits/assets/shallow-water-dam-break"
+fast_preflight = ["julia", "--startup-file=no", "preflight.jl"]
+
+[themes.natural-convection-cavity]
+kind = "build-a-solver"
+public_page = "projects/final-project-topics/natural-convection-cavity.qmd"
+asset_mode = "theme-pack"
+asset_path = "launch-kits/assets/natural-convection-cavity"
+fast_preflight = ["julia", "--startup-file=no", "preflight.jl"]
+
+[themes.inverse-heat-source]
+kind = "build-a-solver"
+public_page = "projects/final-project-topics/inverse-heat-source.qmd"
+asset_mode = "theme-pack"
+
+[themes.incompressible-navier-stokes]
+kind = "build-a-solver"
+public_page = "projects/final-project-topics/incompressible-navier-stokes.qmd"
+asset_mode = "theme-pack"
+
+[themes.profiling-and-optimization]
+kind = "reuse-your-solver"
+public_page = "projects/final-project-topics/profiling-and-optimization.qmd"
+asset_mode = "shared-kit"
+
+[themes.gpu-porting]
+kind = "reuse-your-solver"
+public_page = "projects/final-project-topics/gpu-porting.qmd"
+asset_mode = "shared-kit"
+
+[themes.iterative-solvers]
+kind = "reuse-your-solver"
+public_page = "projects/final-project-topics/iterative-solvers.qmd"
+asset_mode = "shared-kit"
+
+[themes.waterlily-cylinder-flow]
+kind = "guided-package"
+public_page = "projects/final-project-topics/waterlily-cylinder-flow.qmd"
+asset_mode = "theme-pack"
+
+[themes.trixi-shock-tube]
+kind = "guided-package"
+public_page = "projects/final-project-topics/trixi-shock-tube.qmd"
+asset_mode = "theme-pack"
+
+[themes.oceananigans-horizontal-convection]
+kind = "guided-package"
+public_page = "projects/final-project-topics/oceananigans-horizontal-convection.qmd"
+asset_mode = "theme-pack"

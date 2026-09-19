@@ -86,11 +86,15 @@ $h_R=0.1\ \mathrm{m}$ の配布CSVを $h_R=0.2\ \mathrm{m}$ の参照として�
 
 ## 手法と検証
 
-[湿潤床ダム崩壊の配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/shallow-water-dam-break)には，次の三つがあります．
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
 
-- [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/README.md): 固定する縮小ケース，方程式，Stokerの中間状態，学生が決める範囲
-- [stoker-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/stoker-reference.csv): $t=0.5\ \mathrm{s}$ の22点における位置，水深，流速
-- [preflight.jl](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/preflight.jl): CSV列，有限値，正の水深，波領域の順序を確認するCPU向け事前診断
+[湿潤床ダム崩壊の配布資産](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits/assets/shallow-water-dam-break)には，次の三つがあります．
+
+- [README.md](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/shallow-water-dam-break/README.md): 固定する縮小ケース，方程式，Stokerの中間状態，学生が決める範囲
+- [stoker-reference.csv](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/shallow-water-dam-break/stoker-reference.csv): $t=0.5\ \mathrm{s}$ の22点における位置，水深，流速
+- [preflight.jl](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/shallow-water-dam-break/preflight.jl): CSV列，有限値，正の水深，波領域の順序を確認するCPU向け事前診断
 
 資産ディレクトリで次を実行します．
 

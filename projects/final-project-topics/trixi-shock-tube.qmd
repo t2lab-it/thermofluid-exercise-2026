@@ -91,6 +91,10 @@ CFLを半分にした差が解像度や流束の比較差に対して無視で�
 
 ## 手法と検証
 
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
+
 `launch-kits/guided-package/README.md` を読み，下表の上流資料から基準scriptと独立な参照解を自分のprojectへ作ってください．
 
 ::: {.table-responsive}
@@ -185,7 +189,7 @@ CPUで細かい条件を完了できない場合は，公式level 6と一段粗�
 
 ### Step 1：上流資料と再現environmentの固定 {#step-1上流資料と再現environmentを固定する}
 
-プロジェクトリポジトリで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
+公開教材リポジトリの `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
 `Trixi v0.17.2`，公式例のパス，release commit，MIT Licenseを開始候補にし，自分のプロジェクトで `Project.toml` と `Manifest.toml` を解決します．
 
 新しいJuliaプロセスでJulia・Trixi・OrdinaryDiffEq関連パッケージの版を表示し，公式例を変更せず$t=0.2$まで実行します．
