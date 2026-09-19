@@ -71,7 +71,8 @@ sidebar: course
 
 ### プロジェクトリポジトリを準備する {#project-repository}
 
-[`thermofluid-project-base-2026`](https://github.com/t2lab-it/thermofluid-project-base-2026)をforkし，独立したプロジェクトリポジトリを作成してください．
+教員が非公開テンプレート`thermofluid-project-base-2026`からプロジェクトリポジトリを作成し，参加者を招待します．
+案内されたリポジトリへの招待を承認し，SSHでcloneしてください．
 学生リポジトリはN09までの課題成果を保ち，プロジェクトの計画・実装・結果・発表資料は移行先へ置きます．
 授業のコードを再利用する場合は，[最終プロジェクトへのコード移行](../guides/final-project-handoff.qmd)に従ってください．
 
