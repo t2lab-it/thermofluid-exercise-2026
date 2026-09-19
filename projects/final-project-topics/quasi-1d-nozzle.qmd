@@ -78,10 +78,13 @@ NASA CDVの $\gamma=1.4$ 基準との外部比較を済ませてからこの問�
 ## 手法と検証
 
 作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
-このページの[準一次元ノズル用配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/quasi-1d-nozzle)には，次の三つだけがあります．
+
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．以下のパスは教材リポジトリ内の位置です．コピー元のURLとcommit，利用条件を記録してください．
+
+このページの[準一次元ノズル用配布資産](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits/assets/quasi-1d-nozzle)には，次の三つだけがあります．
 
 - **README.md**: 参照資産の用途，NASA資料，学生が自分で決める範囲を説明する文書
-- [area-mach-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/quasi-1d-nozzle/area-mach-reference.csv): $\gamma=1.4$ における $A/A^*$ と亜音速・超音速分枝の高精度参照値
+- [area-mach-reference.csv](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/quasi-1d-nozzle/area-mach-reference.csv): $\gamma=1.4$ における $A/A^*$ と亜音速・超音速分枝の高精度参照値
 - **preflight.jl**: CSVの列，単調性，分枝，面積–Mach数残差だけを確認するCPU向け事前診断
 
 問い，面積関数，離散化，ソルバの構成，評価指標，可視化，解釈は自分で決めます．

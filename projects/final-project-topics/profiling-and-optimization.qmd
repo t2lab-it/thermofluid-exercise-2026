@@ -55,7 +55,10 @@ warm-up後は同じ処理を固定回数だけ繰り返し，合計仕事量を�
 ## 手法と検証
 
 作業場所と提出方法は[最終プロジェクトの共通手順](../../assignments/final-project.qmd#project-workflow)に従ってください．
-配布リポジトリの `launch-kits/reuse-your-solver/README.md` に沿って，参照元commit，入力，仕事量，測定条件，回帰検証を記録します．
+
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．以下のパスは教材リポジトリ内の位置です．コピー元のURLとcommit，利用条件を記録してください．
+
+公開教材リポジトリの `launch-kits/reuse-your-solver/README.md` に沿って，参照元commit，入力，仕事量，測定条件，回帰検証を記録します．
 正しさを確認済みの自分のCPUソルバと検証記録を，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
 道具は役割を分けて使います．
@@ -106,7 +109,7 @@ $S_0$ を「同じhot pathを通り，正しさを確認済みの最小入力」
 
 ### Step 1：検証済みsolverと測定契約の固定 {#step-1検証済みsolverと測定契約を固定する}
 
-プロジェクトリポジトリで `launch-kits/reuse-your-solver/` にある `README.md` を読み，正しさを確認済みのCPUソルバを一つ選びます．
+公開教材リポジトリの `launch-kits/reuse-your-solver/` にある `README.md` を読み，正しさを確認済みのCPUソルバを一つ選びます．
 参照元リポジトリとcommit，実行コマンド，入力，$S_0$，仕事量，終了条件，出力，Julia・パッケージ，スレッド条件，初回・事前実行・正式測定の範囲と回数を測定契約へ書きます．
 
 基準commitをcheckoutした状態で既存テストと既知解の比較を再実行し，同じコマンドから同じ主要出力を得られることを確認します．
