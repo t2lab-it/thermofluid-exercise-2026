@@ -72,3 +72,119 @@ Test Summary: | Pass  Total  Time
 | `git log --oneline -5` | 直近のcommitを確認する |
 
 commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新の順序は[学習ログ，diff，commit](workflow.qmd#commit)から[merge後](workflow.qmd#after-merge)までを参照してください．
+
+## テンプレートの更新の取り込み {#template-updates}
+
+教員から学生用テンプレートの更新案内があったときに使います．
+`origin`は自分のGitHubリポジトリです．`git pull origin main`だけでは，教員側のテンプレートの更新は入りません．
+ここではテンプレートを`upstream`として登録し，自分の更新用branchへ取り込みます．
+
+### 初回のみ：テンプレートの登録 {#初回だけテンプレートを登録する}
+
+~~~console
+$ git remote -v
+（登録済みのremote名とURLを表示）
+~~~
+
+`origin`が自分のリポジトリであることを確認します．`upstream`が未登録の場合だけ，次を実行してください．
+
+~~~console
+$ git remote add upstream https://github.com/t2lab-it/thermofluid-exercise-student-2026.git
+（成功時は出力なし）
+
+$ git remote get-url upstream
+https://github.com/t2lab-it/thermofluid-exercise-student-2026.git
+~~~
+
+登録済みの場合もURLを確認します．別のリポジトリを指している場合は，そのまま進めず教員・TAへ相談してください．
+
+### 更新時の作業の保存と取り込み {#更新のたびに作業を保存して取り込む}
+
+作業中の課題は先に保存・commitし，通常のPR手順でmainへのmergeまで済ませてください．
+課題の途中で更新が必要な場合は，取り込み先のbranchを教員・TAと確認してください．
+
+~~~console
+$ git status --short
+（変更がなければ出力なし）
+~~~
+
+ファイルが表示された場合は，未commitの変更や未追跡ファイルを整理してから進みます．
+以下の`update/template-YYYYMMDD`は，日付などを入れた未使用のbranch名に置き換えてください．
+
+~~~console
+$ git switch main
+Switched to branch 'main'
+
+$ git pull --ff-only origin main
+（更新状況を表示）
+
+$ git switch -c update/template-YYYYMMDD
+Switched to a new branch 'update/template-YYYYMMDD'
+
+$ git fetch upstream
+（テンプレートの取得状況を表示）
+
+$ git merge --no-commit --no-ff --allow-unrelated-histories upstream/main
+（確認のためcommit前で停止．競合があれば対象ファイルを表示）
+~~~
+
+`Already up to date.`と表示された場合は，取り込む更新がありません．この場合はcommit・PRは不要です．
+
+`Use this template`で作ったリポジトリはテンプレートと履歴が独立しているため，初回の取り込みには`--allow-unrelated-histories`が必要です．
+初回は，変更した解答や進捗ファイルが`add/add`競合になることがあります．2回目以降も同じコマンドを使えます．
+更新PRは**Create a merge commit**でmergeしてください．SquashやRebaseではテンプレートとの履歴のつながりが残らず，次回も同じ競合が起こり得ます．
+
+### 競合の解消・確認・PR
+
+~~~console
+$ git status
+（取り込み状況と競合ファイルを表示）
+
+$ git diff --name-only --diff-filter=U
+（未解決の競合ファイル名を表示．なければ出力なし）
+~~~
+
+競合があればVS Codeで対象ファイルを開き，自分の解答・自作テスト・学習ログ・`course_progress.toml`の進捗を残しながら，配布側の修正を反映します．
+「現在の変更」「入力側の変更」を全ファイルへ一括適用せず，両方の内容を確認してください．
+競合マーカー（`<<<<<<<`，`=======`，`>>>>>>>`）を取り除き，解決したファイルごとに`git add ファイルのパス`を実行します．
+判断できない場合は教員・TAへ相談してください．commit前の取り込みを中止するには，次を使います．
+
+~~~console
+$ git merge --abort
+（merge開始前の状態へ戻る．競合解消中の編集も取り消す）
+~~~
+
+取り込みを続ける場合は，未解決の競合がないことを確認し，差分とテストを確認します．
+
+~~~console
+$ git diff --cached --stat
+（取り込む変更の一覧を表示）
+
+$ git diff --cached
+（取り込む変更内容を表示）
+
+$ git diff --cached --check
+（空白の問題や残った競合マーカーがなければ出力なし）
+
+$ julia --project=. -e 'using Pkg; Pkg.instantiate()'
+（Julia環境の復元状況を表示）
+
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+（現在課題と完了済み課題のテスト結果を表示）
+~~~
+
+現在課題が未完成なら，その失敗と更新に伴う不具合を区別します．完了済み課題の失敗や原因不明の失敗は，解消または教員・TAへの確認後に進めてください．
+
+~~~console
+$ git commit -m "Merge student template updates"
+（commit結果を表示）
+
+$ git push -u origin update/template-YYYYMMDD
+（自分のリポジトリへのpush結果を表示）
+~~~
+
+自分のリポジトリで更新用branchから`main`へのPRを作り，取り込んだ更新と確認結果を記録します．
+[Actionsとセルフレビュー，merge後のmain更新](workflow.qmd#after-merge)まで行ってください．
+この更新PRでは**Create a merge commit**を選びます．テンプレートの`upstream`へpushする必要はありません．
+
+参考：[GitHubのテンプレートとforkの違い](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)，[Gitのmergeオプションと中止方法](https://git-scm.com/docs/git-merge)．

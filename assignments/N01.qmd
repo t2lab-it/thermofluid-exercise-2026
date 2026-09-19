@@ -71,7 +71,7 @@ exercises/N01_linear_advection/results/summary.toml
 
 具体的な値は，下の[公開基準値](#reference-results)と比べます．
 
-## 公開基準値と比べる {#reference-results}
+## 公開基準値との比較 {#reference-results}
 
 まず，最小値と最大値の**符号**，初期値に対する**範囲**，オーバーシュート・アンダーシュートの**フラグ**を比べます．
 数値の差は，丸め誤差を考慮して比較してください．

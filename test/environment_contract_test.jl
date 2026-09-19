@@ -55,8 +55,8 @@ read_environment(relative) =
     @test occursin("### macOS", ssh)
     @test occursin("### Linux", ssh)
     @test occursin("git remote set-url origin git@github.com:OWNER/REPOSITORY.git", ssh)
-    @test findfirst("## 既存のSSH接続を先に確認する", ssh) <
-        findfirst("## 既存のcloneのoriginをSSHへ切り替える", ssh)
+    @test findfirst("## 既存のSSH接続の事前確認", ssh) <
+        findfirst("## 既存のcloneのoriginのSSHへの切り替え", ssh)
     @test !occursin("## 現在の接続方法を記録する", ssh)
     @test occursin("既存のclone", ssh)
 

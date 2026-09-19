@@ -27,7 +27,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 - 配布済み必須テスト・自作テスト: `exercises/F02_julia_arrays_and_tests/tests.jl`
 - 提出する学習ログ: `exercises/F02_julia_arrays_and_tests/learning_log.md`
 
-## 課題を開始する
+## 課題の開始 {#課題を開始する}
 
 F01をmergeし，更新済みで変更のない`main`から始めます．
 [課題の開始手順](../guides/workflow.qmd#start-exercise)の`TASK_ID`を`F02`へ置き換えてください．

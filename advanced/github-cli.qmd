@@ -16,7 +16,7 @@ GitHub CLI（`gh`）を導入・認証し，既存のPRをCLIで読み，新し�
 GitHubトークン，ブラウザに表示される確認コード，SSH秘密鍵を，他人，pull request，公開チャット，コーディングエージェントへ貼り付けないでください．
 :::
 
-## GitHub CLIを導入する
+## GitHub CLIの導入 {#github-cliを導入する}
 
 ### Windows (WSL2 Ubuntu)
 
@@ -52,7 +52,7 @@ $ gh --version
 gh version 2.x.y（実際のバージョンが表示されます）
 ```
 
-## GitHub CLIを認証する
+## GitHub CLIの認証 {#github-cliを認証する}
 
 すでに作成したSSH鍵を再利用します．
 学生リポジトリのルートディレクトリで次を実行します．
@@ -74,7 +74,7 @@ OWNER/REPOSITORY
 `gh auth status`でホストが`github.com`，ユーザー名が意図した自分のアカウント，GitプロトコルがSSHであることを確認します．
 `gh repo view`では，現在のディレクトリが学生リポジトリとして認識されることを確認します．
 
-## 既存のpull requestをCLIで読む
+## CLIによる既存のpull requestの確認 {#既存のpull-requestをcliで読む}
 
 ```console
 $ gh pr list --state all
@@ -94,7 +94,7 @@ $ gh pr checks PR_NUMBER  # Checks
 （指定PRの検査名・pass / fail / pending などの状態・詳細URLを表示）
 ```
 
-## 課題をpush前まで進める
+## push前までの課題作業 {#課題をpush前まで進める}
 
 [共通課題ワークフロー](../guides/workflow.qmd)に従い，実装，テスト，学習ログ，diff確認，commitまで完了してください．
 その後，課題branch上で次を確認します．
@@ -112,7 +112,7 @@ $ git diff main...HEAD
 
 未commitの変更がなく，現在のbranchと差分が提出内容に合っていることを確認してください．
 
-## 課題branchをpushする
+## 課題branchのpush {#課題branchをpushする}
 
 以下のコマンドを，`BRANCH`を`git branch --show-current`で確認した現在の課題branch名へ置き換えたうえで実行します．
 
@@ -124,7 +124,7 @@ branch 'BRANCH' set up to track 'origin/BRANCH'.
 
 pushの出力と`upstream`設定を確認してから次へ進みます．
 
-## pull request本文を準備する
+## pull request本文の準備 {#pull-request本文を準備する}
 
 VS Codeで，学生リポジトリの`.github/pull_request_template.md`を`scratch/pr-body.md`へコピーし，記入してください．
 提出単位，作業branch上の学習ログURL，提出前の確認項目は，ブラウザでPRを作る場合と共通です．
@@ -140,7 +140,7 @@ $ git status --short
 `scratch/pr-body.md`が表示されないことを確認します．
 表示される場合は，`scratch/*`の除外設定を教員・TAと確認してください．
 
-## pull requestを作成する
+## pull requestの作成 {#pull-requestを作成する}
 
 `BRANCH`と`YOUR PR TITLE`を置き換え，次を実行します．
 
@@ -162,7 +162,7 @@ $ gh pr view
 （PRのタイトル・状態・base/head・本文・URLなどを表示）
 ```
 
-## 作成したpull requestを確認する
+## 作成したpull requestの確認 {#作成したpull-requestを確認する}
 
 作成したPRの内容と検査結果を確認します．
 
@@ -191,7 +191,7 @@ $ gh pr view --web
 （PRのURLをブラウザで開きます）
 ```
 
-## トラブルを切り分ける
+## トラブルの切り分け {#トラブルを切り分ける}
 
 | 状況 | 読み取り中心の確認 |
 |---|---|

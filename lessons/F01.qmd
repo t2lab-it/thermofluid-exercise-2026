@@ -11,7 +11,7 @@ title: "Julia・Git・GitHubの最小操作"
 - working tree，commit，branch，remote，pull requestの関係を説明できる．
 - ローカルテスト，GitHub Actions，diff，セルフレビューがそれぞれ何を確かめるかを区別できる．
 
-## 変更と履歴を区別する
+## 変更と履歴の区別
 
 ファイルの保存，commit，GitHubへの共有は，それぞれ異なる状態の変化です．
 
@@ -29,7 +29,7 @@ commitするとローカルの履歴に入り，pushするとremoteへ共有さ�
 pushしても別のbranchへ自動的に統合されるわけではなく，mergeによって履歴が統合されます．
 GitHub側でmergeした後も，手元の`main`は取り込むまで以前の状態です．
 
-## branchとPRで確認の単位を作る
+## branchとPRによる確認単位
 
 課題ごとのbranchは，確認済みの`main`から一まとまりの変更を区別するために使います．
 PRの差分と説明を読むと，何を変更し，どんな根拠で統合できると判断したかを確認できます．
