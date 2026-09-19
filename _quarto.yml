@@ -93,10 +93,14 @@ website:
               href: lessons/F04.qmd
             - text: "第5回 課題: 数値微分によるベクトル公式の検証"
               href: assignments/F04.qmd
-            - text: "第6回 授業: 一次元線形・非線形移流"
+            - text: "第6回 授業: 移流方程式と安定性"
               href: lessons/N01.qmd
             - text: "第6回 課題: 1次元線形移流方程式"
               href: assignments/N01.qmd
+            - text: "第6回 授業: 保存形Burgers方程式と非線形移流"
+              href: lessons/N02.qmd
+            - text: "第6回 課題: 1次元非線形移流方程式"
+              href: assignments/N02.qmd
             - text: "第7回 一次元拡散・移流拡散"
             - text: "第8回 授業: 共通化から二次元移流へ"
             - text: "第9回 授業: 二次元拡散・移流拡散"
