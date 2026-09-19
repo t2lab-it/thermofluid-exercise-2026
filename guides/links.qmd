@@ -6,7 +6,7 @@ title: "リンク集"
 参照・リンク集
 :::
 
-講義サイトの受講準備・ガイド・発展資料・課題ページとフッターに掲載している外部リンクを，ジャンル別にまとめています．同じURLは一度だけ掲載しています．
+講義サイトの受講準備・ガイド・発展資料・課題ページとフッターに掲載している外部リンクを，ジャンル別にまとめています．同じURLは一度だけ掲載し，資料の種類と著者・提供元を添えています．
 
 バージョンを指定した実装例や配布データは，元のページと同じリンクを掲載しています．
 
@@ -14,216 +14,216 @@ title: "リンク集"
 
 ### Julia・VS Code
 
-- [Juliaのインストール案内](https://julialang.org/downloads/)
-- [VS CodeでのJuliaコードの実行](https://www.julia-vscode.org/docs/latest/userguide/runningcode/)
-- [Julia拡張のformatter](https://www.julia-vscode.org/docs/latest/userguide/formatter/)
-- [Julia拡張のlinter](https://www.julia-vscode.org/docs/stable/userguide/linter/)
-- [富谷昭夫，数値計算が専門でない理系向けの最小 Julia 入門](https://github.com/akio-tomiya/intro_julia_minimum/blob/main/short_intro_julia.ipynb)
+- [Juliaのインストール案内（ドキュメント）](https://julialang.org/downloads/) — Julia開発チーム
+- [VS CodeでのJuliaコードの実行（ドキュメント）](https://www.julia-vscode.org/docs/latest/userguide/runningcode/) — Julia VS Code開発チーム
+- [Julia拡張のformatter（ドキュメント）](https://www.julia-vscode.org/docs/latest/userguide/formatter/) — Julia VS Code開発チーム
+- [Julia拡張のlinter（ドキュメント）](https://www.julia-vscode.org/docs/stable/userguide/linter/) — Julia VS Code開発チーム
+- [数値計算が専門でない理系向けの最小Julia入門（教材）](https://github.com/akio-tomiya/intro_julia_minimum/blob/main/short_intro_julia.ipynb) — 富谷昭夫
 
 ### Windows・WSL
 
-- [Microsoft公式のWSLインストール手順](https://learn.microsoft.com/en-us/windows/wsl/install)
-- [VS Code Remote - WSL の公式チュートリアル](https://code.visualstudio.com/docs/remote/wsl-tutorial)
+- [WSLインストール手順（ドキュメント）](https://learn.microsoft.com/en-us/windows/wsl/install) — Microsoft
+- [VS Code Remote - WSL のチュートリアル（ドキュメント）](https://code.visualstudio.com/docs/remote/wsl-tutorial) — Microsoft
 
 ## Git・GitHub {#git-github}
 
 ### 基本操作・アカウント
 
-- [Gitのインストール](https://git-scm.com/book/ja/v2/%E4%BD%BF%E3%81%84%E5%A7%8B%E3%82%81%E3%82%8B-Git%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-- [アカウント作成手順](https://docs.github.com/ja/get-started/start-your-journey/creating-an-account-on-github)
-- [渡辺 宙志，計算物理屋のためのGit/GitHub入門](https://github.com/cpss2026-git/cpss2026-git.github.io)
-- [GitHubのテンプレートとforkの違い](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)
-- [Gitのmergeオプションと中止方法](https://git-scm.com/docs/git-merge)
+- [Pro Git：Gitのインストール（書籍）](https://git-scm.com/book/ja/v2/%E4%BD%BF%E3%81%84%E5%A7%8B%E3%82%81%E3%82%8B-Git%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB) — Scott Chacon・Ben Straub / 日本語訳コミュニティ
+- [アカウント作成手順（ドキュメント）](https://docs.github.com/ja/get-started/start-your-journey/creating-an-account-on-github) — GitHub
+- [計算物理屋のためのGit/GitHub入門（教材リポジトリ）](https://github.com/cpss2026-git/cpss2026-git.github.io) — 渡辺宙志
+- [GitHubのテンプレートとforkの違い（ドキュメント）](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) — GitHub
+- [Gitのmergeオプションと中止方法（ドキュメント）](https://git-scm.com/docs/git-merge) — Git開発チーム
 
 ### SSH接続
 
-- [GitHub公式SSH鍵のフィンガープリント](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints)
-- [GitHub公式の鍵生成・ssh-agent手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-- [GitHub公式の公開鍵登録手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+- [GitHubのSSH鍵のフィンガープリント（ドキュメント）](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints) — GitHub
+- [SSH鍵の生成・ssh-agent手順（ドキュメント）](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) — GitHub
+- [GitHubへの公開鍵登録手順（ドキュメント）](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) — GitHub
 
 ### GitHub CLI
 
-- [GitHub CLI公式Linux手順](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
-- [GitHub CLI公式macOS手順](https://github.com/cli/cli/blob/trunk/docs/install_macos.md)
+- [GitHub CLIのLinuxインストール手順（ドキュメント）](https://github.com/cli/cli/blob/trunk/docs/install_linux.md) — GitHub
+- [GitHub CLIのmacOSインストール手順（ドキュメント）](https://github.com/cli/cli/blob/trunk/docs/install_macos.md) — GitHub
 
 ## 数値計算パッケージ {#numerical-packages}
 
 ### PDEソルバの構築
 
-- [Chmy.jl](https://github.com/PTsolvers/Chmy.jl)
-- [Chmy.jl公式資料](https://ptsolvers.github.io/Chmy.jl/)
-- [ParallelStencil.jl](https://github.com/omlins/ParallelStencil.jl)
-- [VoronoiFVM.jl](https://github.com/WIAS-PDELib/VoronoiFVM.jl)
-- [VoronoiFVM.jl公式資料](https://wias-pdelib.github.io/VoronoiFVM.jl/stable/)
-- [FiniteVolumeMethod.jl](https://github.com/SciML/FiniteVolumeMethod.jl)
-- [FiniteVolumeMethod.jl公式資料](https://docs.sciml.ai/FiniteVolumeMethod/)
-- [Gridap.jl](https://github.com/gridap/Gridap.jl)
-- [Gridap.jl公式資料](https://gridap.github.io/Gridap.jl/stable/)
-- [Ferrite.jl](https://github.com/Ferrite-FEM/Ferrite.jl)
-- [Ferrite.jl公式資料](https://ferrite-fem.github.io/Ferrite.jl/stable/)
-- [ExtendableFEM.jl](https://github.com/WIAS-PDELib/ExtendableFEM.jl)
-- [ExtendableFEM.jl公式資料](https://wias-pdelib.github.io/ExtendableFEM.jl/stable/)
+- [Chmy.jl（リポジトリ）](https://github.com/PTsolvers/Chmy.jl) — PTsolvers / Chmy.jl開発チーム
+- [Chmy.jl（ドキュメント）](https://ptsolvers.github.io/Chmy.jl/) — PTsolvers / Chmy.jl開発チーム
+- [ParallelStencil.jl（リポジトリ）](https://github.com/omlins/ParallelStencil.jl) — ParallelStencil.jl開発チーム
+- [VoronoiFVM.jl（リポジトリ）](https://github.com/WIAS-PDELib/VoronoiFVM.jl) — WIAS-PDELib / VoronoiFVM.jl開発チーム
+- [VoronoiFVM.jl（ドキュメント）](https://wias-pdelib.github.io/VoronoiFVM.jl/stable/) — WIAS-PDELib / VoronoiFVM.jl開発チーム
+- [FiniteVolumeMethod.jl（リポジトリ）](https://github.com/SciML/FiniteVolumeMethod.jl) — SciML / FiniteVolumeMethod.jl開発チーム
+- [FiniteVolumeMethod.jl（ドキュメント）](https://docs.sciml.ai/FiniteVolumeMethod/) — SciML / FiniteVolumeMethod.jl開発チーム
+- [Gridap.jl（リポジトリ）](https://github.com/gridap/Gridap.jl) — Gridap開発チーム
+- [Gridap.jl（ドキュメント）](https://gridap.github.io/Gridap.jl/stable/) — Gridap開発チーム
+- [Ferrite.jl（リポジトリ）](https://github.com/Ferrite-FEM/Ferrite.jl) — Ferrite-FEM開発チーム
+- [Ferrite.jl（ドキュメント）](https://ferrite-fem.github.io/Ferrite.jl/stable/) — Ferrite-FEM開発チーム
+- [ExtendableFEM.jl（リポジトリ）](https://github.com/WIAS-PDELib/ExtendableFEM.jl) — WIAS-PDELib / ExtendableFEM.jl開発チーム
+- [ExtendableFEM.jl（ドキュメント）](https://wias-pdelib.github.io/ExtendableFEM.jl/stable/) — WIAS-PDELib / ExtendableFEM.jl開発チーム
 
 ### 流体ソルバ
 
-- [WaterLily.jl](https://github.com/WaterLily-jl/WaterLily.jl)
-- [WaterLily.jl公式資料](https://waterlily-jl.github.io/WaterLily.jl/stable/)
-- [Trixi.jl](https://github.com/trixi-framework/Trixi.jl)
-- [Trixi.jl公式資料](https://trixi-framework.org/TrixiDocumentation/stable/)
-- [TrixiShallowWater.jl](https://github.com/trixi-framework/TrixiShallowWater.jl)
-- [TrixiShallowWater.jl公式資料](https://trixi-framework.org/TrixiShallowWater.jl/)
-- [Oceananigans.jl](https://github.com/CliMA/Oceananigans.jl)
-- [Oceananigans.jl公式資料](https://clima.github.io/OceananigansDocumentation/stable/)
-- [GeophysicalFlows.jl](https://github.com/FourierFlows/GeophysicalFlows.jl)
-- [GeophysicalFlows.jl公式資料](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/)
-- [DispersiveShallowWater.jl](https://github.com/NumericalMathematics/DispersiveShallowWater.jl)
-- [DispersiveShallowWater.jl公式資料](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/)
+- [WaterLily.jl（リポジトリ）](https://github.com/WaterLily-jl/WaterLily.jl) — WaterLily.jl開発チーム
+- [WaterLily.jl（ドキュメント）](https://waterlily-jl.github.io/WaterLily.jl/stable/) — WaterLily.jl開発チーム
+- [Trixi.jl（リポジトリ）](https://github.com/trixi-framework/Trixi.jl) — Trixi.jl開発チーム
+- [Trixi.jl（ドキュメント）](https://trixi-framework.org/TrixiDocumentation/stable/) — Trixi.jl開発チーム
+- [TrixiShallowWater.jl（リポジトリ）](https://github.com/trixi-framework/TrixiShallowWater.jl) — TrixiShallowWater.jl開発チーム
+- [TrixiShallowWater.jl（ドキュメント）](https://trixi-framework.org/TrixiShallowWater.jl/) — TrixiShallowWater.jl開発チーム
+- [Oceananigans.jl（リポジトリ）](https://github.com/CliMA/Oceananigans.jl) — CliMA / Oceananigans.jl開発チーム
+- [Oceananigans.jl（ドキュメント）](https://clima.github.io/OceananigansDocumentation/stable/) — CliMA / Oceananigans.jl開発チーム
+- [GeophysicalFlows.jl（リポジトリ）](https://github.com/FourierFlows/GeophysicalFlows.jl) — FourierFlows / GeophysicalFlows.jl開発チーム
+- [GeophysicalFlows.jl（ドキュメント）](https://fourierflows.github.io/GeophysicalFlowsDocumentation/stable/) — FourierFlows / GeophysicalFlows.jl開発チーム
+- [DispersiveShallowWater.jl（リポジトリ）](https://github.com/NumericalMathematics/DispersiveShallowWater.jl) — DispersiveShallowWater.jl開発チーム
+- [DispersiveShallowWater.jl（ドキュメント）](https://numericalmathematics.github.io/DispersiveShallowWater.jl/stable/) — DispersiveShallowWater.jl開発チーム
 
 ### 反復解法・前処理
 
-- [LinearSolve.jl公式のsolver一覧](https://docs.sciml.ai/LinearSolve/stable/solvers/solvers/)
-- [LinearSolve.jlの共通solver options](https://docs.sciml.ai/LinearSolve/stable/basics/common_solver_opts/)
-- [LinearSolve.jlのpreconditioner interface](https://docs.sciml.ai/LinearSolve/stable/basics/Preconditioners/)
-- [IterativeSolvers.jl公式CG](https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/cg/)
+- [LinearSolve.jlのソルバ一覧（ドキュメント）](https://docs.sciml.ai/LinearSolve/stable/solvers/solvers/) — SciML / LinearSolve.jl開発チーム
+- [LinearSolve.jlの共通solver options（ドキュメント）](https://docs.sciml.ai/LinearSolve/stable/basics/common_solver_opts/) — SciML / LinearSolve.jl開発チーム
+- [LinearSolve.jlのpreconditioner interface（ドキュメント）](https://docs.sciml.ai/LinearSolve/stable/basics/Preconditioners/) — SciML / LinearSolve.jl開発チーム
+- [IterativeSolvers.jlの共役勾配法（CG）（ドキュメント）](https://iterativesolvers.julialinearalgebra.org/stable/linear_systems/cg/) — JuliaLinearAlgebra / IterativeSolvers.jl開発チーム
 
 ## 性能測定・GPU計算 {#performance}
 
 ### 性能測定・最適化
 
-- [`@time`を含むJulia公式Performance Tips](https://docs.julialang.org/en/v1/manual/performance-tips/)
-- [Julia公式Profiling manual](https://docs.julialang.org/en/v1/manual/profile/)
-- [BenchmarkTools公式manual](https://juliaci.github.io/BenchmarkTools.jl/stable/manual/)
+- [JuliaのPerformance Tips（`@time`など）（ドキュメント）](https://docs.julialang.org/en/v1/manual/performance-tips/) — Julia開発チーム
+- [Juliaのプロファイリング（ドキュメント）](https://docs.julialang.org/en/v1/manual/profile/) — Julia開発チーム
+- [BenchmarkTools.jlのマニュアル（ドキュメント）](https://juliaci.github.io/BenchmarkTools.jl/stable/manual/) — JuliaCI / BenchmarkTools.jl開発チーム
 
 ### GPUへの移植
 
-- [CUDA.jl公式Installation](https://cuda.juliagpu.org/stable/installation/overview/)
-- [CUDA.jl公式Workflow](https://cuda.juliagpu.org/stable/usage/workflow/)
-- [CUDA.jlのKernel programming](https://cuda.juliagpu.org/stable/development/kernel/)
-- [CUDA.jlのBenchmarking & profiling](https://cuda.juliagpu.org/stable/development/profiling/)
-- [CUDA.jlのMemory management](https://cuda.juliagpu.org/stable/usage/memory/)
+- [CUDA.jlのインストール（ドキュメント）](https://cuda.juliagpu.org/stable/installation/overview/) — JuliaGPU / CUDA.jl開発チーム
+- [CUDA.jlのワークフロー（ドキュメント）](https://cuda.juliagpu.org/stable/usage/workflow/) — JuliaGPU / CUDA.jl開発チーム
+- [CUDA.jlのKernel programming（ドキュメント）](https://cuda.juliagpu.org/stable/development/kernel/) — JuliaGPU / CUDA.jl開発チーム
+- [CUDA.jlのBenchmarking & profiling（ドキュメント）](https://cuda.juliagpu.org/stable/development/profiling/) — JuliaGPU / CUDA.jl開発チーム
+- [CUDA.jlのMemory management（ドキュメント）](https://cuda.juliagpu.org/stable/usage/memory/) — JuliaGPU / CUDA.jl開発チーム
 
 ## 流体力学・検証問題 {#fluid-dynamics}
 
 ### 準一次元ノズル
 
-- [NASA の等エントロピー関係](https://www.grc.nasa.gov/www/k-12/airplane/isentrop.html)
-- [NASA CDVノズル検証ケース](https://www.grc.nasa.gov/www/wind/valid/cdv/cdv.html)
-- [NASA CDVの軸方向Mach数データ](https://www.grc.nasa.gov/www/wind/valid/cdv/axial.Mex.p16.gen)
+- [NASA の等エントロピー関係（ドキュメント）](https://www.grc.nasa.gov/www/k-12/airplane/isentrop.html) — NASA Glenn Research Center
+- [NASA CDVノズル検証ケース（ドキュメント）](https://www.grc.nasa.gov/www/wind/valid/cdv/cdv.html) — NASA Glenn Research Center
+- [NASA CDVの軸方向Mach数データ（データ）](https://www.grc.nasa.gov/www/wind/valid/cdv/axial.Mex.p16.gen) — NASA Glenn Research Center
 
 ### 浅水方程式・ダム崩壊
 
-- [SWASHESのStoker湿潤床解](https://arxiv.org/html/1110.0288v7#S4.SS1.SSS1)
+- [SWASHESのStoker湿潤床解（論文）](https://arxiv.org/html/1110.0288v7#S4.SS1.SSS1) — Olivier Delestre ほか
 
 ### 非圧縮性Navier–Stokes方程式
 
-- [Shirani・Ferziger・ReynoldsのNASA技術報告](https://ntrs.nasa.gov/citations/19820003521)
-- [Arakawaの原論文](https://doi.org/10.1016/0021-9991%2866%2990015-5)
-- [Ghiaらのキャビティ流れの原論文](https://doi.org/10.1016/0021-9991%2882%2990058-4)
+- [Mixing of a passive scalar in isotropic and sheared homogeneous turbulence（技術報告）](https://ntrs.nasa.gov/citations/19820003521) — E. Shirani・J. H. Ferziger・W. C. Reynolds
+- [二次元非圧縮性流れの保存的な離散化（論文）](https://doi.org/10.1016/0021-9991%2866%2990015-5) — Akio Arakawa
+- [高Reynolds数キャビティ流れの数値解（論文）](https://doi.org/10.1016/0021-9991%2882%2990058-4) — U. Ghia・K. N. Ghia・C. T. Shin
 
 ### 円柱まわり流れ
 
-- [PosdziechとGrundmannの円柱benchmark](https://doi.org/10.1016/j.jfluidstructs.2006.09.004)
-- [WeymouthとFontの2025年論文](https://doi.org/10.1016/j.cpc.2025.109748)
+- [二次元円柱まわり流れのベンチマーク（論文）](https://doi.org/10.1016/j.jfluidstructs.2006.09.004) — O. Posdziech・R. Grundmann
+- [WaterLily.jlの設計と性能（論文）](https://doi.org/10.1016/j.cpc.2025.109748) — Gabriel D. Weymouth・Bernat Font
 
 ### 衝撃波管・Riemann問題
 
-- [Toroのexact Riemann solverの手順](https://doi.org/10.1007/b79761)
-- [ClawpackのEuler解説](https://www.clawpack.org/riemann_book/html/Euler.html)
-- [`riemann_book`の `exact_solvers/euler.py`](https://github.com/clawpack/riemann_book/blob/5b171f11fd7a3e810ee7a74a4d9f2dff01d65a6e/exact_solvers/euler.py)
-- [BSD-3-Clause License](https://github.com/clawpack/riemann_book/blob/5b171f11fd7a3e810ee7a74a4d9f2dff01d65a6e/LICENSE-CODE)
+- [Riemann Solvers and Numerical Methods for Fluid Dynamics（書籍）](https://doi.org/10.1007/b79761) — Eleuterio F. Toro
+- [Riemann Problems and Jupyter Solutions：Euler方程式（教材）](https://www.clawpack.org/riemann_book/html/Euler.html) — David I. Ketcheson・Randall J. LeVeque・Mauricio J. del Razo
+- [`riemann_book`の `exact_solvers/euler.py`（実装例）](https://github.com/clawpack/riemann_book/blob/5b171f11fd7a3e810ee7a74a4d9f2dff01d65a6e/exact_solvers/euler.py) — David I. Ketcheson・Randall J. LeVeque・Mauricio J. del Razo
+- [riemann_bookのBSD-3-Clause License（ライセンス）](https://github.com/clawpack/riemann_book/blob/5b171f11fd7a3e810ee7a74a4d9f2dff01d65a6e/LICENSE-CODE) — David I. Ketcheson・Randall J. LeVeque・Mauricio J. del Razo
 
 ### 水平対流
 
-- [OceananigansのJOSS論文](https://doi.org/10.21105/joss.02018)
-- [Rochaらの水平対流Nusselt数論文](https://doi.org/10.1017/jfm.2020.269)
+- [Oceananigans.jl: Fast and friendly geophysical fluid dynamics on GPUs（論文）](https://doi.org/10.21105/joss.02018) — Ali Ramadhan ほか
+- [The Nusselt numbers of horizontal convection（論文）](https://doi.org/10.1017/jfm.2020.269) — Cesar B. Rocha ほか
 
 ## 熱伝導・相変化・逆問題 {#heat-transfer}
 
 ### Stefan問題・相変化
 
-- [一相Stefan問題の相似解](https://doi.org/10.3390/fractalfract9070397)
-- [Voller, Cross, Markatos のエンタルピー法](https://doi.org/10.1002/nme.1620240119)
+- [一相Stefan問題の自由境界の係数計算（論文）](https://doi.org/10.3390/fractalfract9070397) — Nahuel Caruso・Sabrina Roscani・Lucas Venturato・Vaughan Voller
+- [An enthalpy method for convection/diffusion phase change（論文）](https://doi.org/10.1002/nme.1620240119) — V. R. Voller・M. Cross・N. C. Markatos
 
 ### 自然対流キャビティ
 
-- [de Vahl Davis (1983) の原論文](https://doi.org/10.1002/fld.1650030305)
+- [正方形キャビティ内の自然対流ベンチマーク（論文）](https://doi.org/10.1002/fld.1650030305) — G. de Vahl Davis
 
 ### 熱源推定・数値検証
 
-- [DOLFINxのPoisson公式例](https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_poisson.html)
-- [MOOSEのMethod of Manufactured Solutions公式資料](https://mooseframework.inl.gov/moose/getting_started/examples_and_tutorials/tutorial03_verification/step04_mms.html)
-- [The inverse crime](https://arxiv.org/abs/math-ph/0401050)
-- [Raueほか (2009) の原論文](https://doi.org/10.1093/BIOINFORMATICS/BTP358)
-- [Flinth and Hashemiの原論文](https://arxiv.org/abs/1710.02016)
+- [DOLFINx：Poisson方程式の実装例（ドキュメント）](https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_poisson.html) — FEniCS / DOLFINx開発チーム
+- [MOOSE：Method of Manufactured Solutions（ドキュメント）](https://mooseframework.inl.gov/moose/getting_started/examples_and_tutorials/tutorial03_verification/step04_mms.html) — MOOSE開発チーム
+- [The inverse crime（論文）](https://arxiv.org/abs/math-ph/0401050) — Armand Wirgin
+- [プロファイル尤度による構造的・実用的識別可能性の解析（論文）](https://doi.org/10.1093/BIOINFORMATICS/BTP358) — A. Raue ほか
+- [Thermal Source Localization Through Infinite-Dimensional Compressed Sensing（論文）](https://arxiv.org/abs/1710.02016) — Axel Flinth・Ali Hashemi
 
 ## ソルバの実装例・API・利用条件 {#solver-examples}
 
 ### WaterLily.jl
 
-- [2026-06-26公開の `v1.8.0`](https://github.com/WaterLily-jl/WaterLily.jl/releases/tag/v1.8.0)
-- [tagの `Project.toml`](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/Project.toml)
-- [`WaterLily.jl`のMIT License](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/LICENSE.md)
-- [`WaterLily-Examples/examples/TwoD_Circle.jl`](https://github.com/WaterLily-jl/WaterLily-Examples/blob/main/examples/TwoD_Circle.jl)
-- [同repositoryのGPL-3.0 License](https://github.com/WaterLily-jl/WaterLily-Examples/blob/main/LICENSE)
+- [WaterLily.jl v1.8.0（リリース情報）](https://github.com/WaterLily-jl/WaterLily.jl/releases/tag/v1.8.0) — WaterLily.jl開発チーム
+- [WaterLily.jl v1.8.0：`Project.toml`（依存関係）](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/Project.toml) — WaterLily.jl開発チーム
+- [`WaterLily.jl`のMIT License（ライセンス）](https://github.com/WaterLily-jl/WaterLily.jl/blob/v1.8.0/LICENSE.md) — WaterLily.jl開発チーム
+- [`WaterLily-Examples/examples/TwoD_Circle.jl`（実装例）](https://github.com/WaterLily-jl/WaterLily-Examples/blob/main/examples/TwoD_Circle.jl) — WaterLily.jl開発チーム
+- [WaterLily-ExamplesのGPL-3.0 License（ライセンス）](https://github.com/WaterLily-jl/WaterLily-Examples/blob/main/LICENSE) — WaterLily.jl開発チーム
 
 ### Trixi.jl
 
-- [Trixi.jlの時間積分](https://trixi-framework.org/TrixiDocumentation/stable/time_integration/)
-- [`v0.17.2`の `elixir_euler_modified_sod.jl`](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/examples/tree_1d_dgsem/elixir_euler_modified_sod.jl)
-- [2026-08-08公開の `v0.17.2`](https://github.com/trixi-framework/Trixi.jl/releases/tag/v0.17.2)
-- [tagの `Project.toml`](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/Project.toml)
-- [`Trixi.jl`のMIT License](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/LICENSE.md)
-- [Trixi.jlの一次元可視化](https://trixi-framework.org/TrixiDocumentation/stable/visualization/)
-- [Trixi.jlのcallbacks](https://trixi-framework.org/TrixiDocumentation/stable/callbacks/)
-- [Trixi.jlのAnalysisCallbackにおけるerrorの定義](https://trixi-framework.org/TrixiDocumentation/stable/callbacks/#Analyzing-the-numerical-solution)
-- [Trixi.jlのshock-capturing tutorial](https://trixi-framework.org/TrixiDocumentation/stable/tutorials/shock_capturing/)
+- [Trixi.jlの時間積分（ドキュメント）](https://trixi-framework.org/TrixiDocumentation/stable/time_integration/) — Trixi.jl開発チーム
+- [`v0.17.2`の `elixir_euler_modified_sod.jl`（実装例）](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/examples/tree_1d_dgsem/elixir_euler_modified_sod.jl) — Trixi.jl開発チーム
+- [Trixi.jl v0.17.2（リリース情報）](https://github.com/trixi-framework/Trixi.jl/releases/tag/v0.17.2) — Trixi.jl開発チーム
+- [Trixi.jl v0.17.2：`Project.toml`（依存関係）](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/Project.toml) — Trixi.jl開発チーム
+- [`Trixi.jl`のMIT License（ライセンス）](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/LICENSE.md) — Trixi.jl開発チーム
+- [Trixi.jlの一次元可視化（ドキュメント）](https://trixi-framework.org/TrixiDocumentation/stable/visualization/) — Trixi.jl開発チーム
+- [Trixi.jlのcallbacks（ドキュメント）](https://trixi-framework.org/TrixiDocumentation/stable/callbacks/) — Trixi.jl開発チーム
+- [Trixi.jlのAnalysisCallbackにおけるerrorの定義（ドキュメント）](https://trixi-framework.org/TrixiDocumentation/stable/callbacks/#Analyzing-the-numerical-solution) — Trixi.jl開発チーム
+- [Trixi.jlのshock-capturing tutorial（ドキュメント）](https://trixi-framework.org/TrixiDocumentation/stable/tutorials/shock_capturing/) — Trixi.jl開発チーム
 
 ### Oceananigans.jl
 
-- [`v0.110.15`の `examples/horizontal_convection.jl`](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/examples/horizontal_convection.jl)
-- [公式example解説](https://clima.github.io/OceananigansDocumentation/stable/literated/horizontal_convection)
-- [2026-08-12公開の `v0.110.15`](https://github.com/CliMA/Oceananigans.jl/releases/tag/v0.110.15)
-- [tagの `Project.toml`](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/Project.toml)
-- [公式のstaggered有限体積法](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/finite_volume)
-- [fractional-step解説](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/time_stepping#The-fractional-step-method)
-- [`v0.110.15`のMIT License](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/LICENSE)
+- [`v0.110.15`の `examples/horizontal_convection.jl`（実装例）](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/examples/horizontal_convection.jl) — CliMA / Oceananigans.jl開発チーム
+- [水平対流の実装例解説（ドキュメント）](https://clima.github.io/OceananigansDocumentation/stable/literated/horizontal_convection) — CliMA / Oceananigans.jl開発チーム
+- [Oceananigans.jl v0.110.15（リリース情報）](https://github.com/CliMA/Oceananigans.jl/releases/tag/v0.110.15) — CliMA / Oceananigans.jl開発チーム
+- [Oceananigans.jl v0.110.15：`Project.toml`（依存関係）](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/Project.toml) — CliMA / Oceananigans.jl開発チーム
+- [スタッガード格子による有限体積法（ドキュメント）](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/finite_volume) — CliMA / Oceananigans.jl開発チーム
+- [fractional-step解説（ドキュメント）](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/time_stepping#The-fractional-step-method) — CliMA / Oceananigans.jl開発チーム
+- [`v0.110.15`のMIT License（ライセンス）](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/LICENSE) — CliMA / Oceananigans.jl開発チーム
 
 ## 講義のリポジトリ・配布資産 {#course-resources}
 
 ### 個人課題用テンプレート
 
-- [個人課題用テンプレートリポジトリ](https://github.com/t2lab-it/thermofluid-exercise-student-2026)
+- [個人課題用テンプレート（リポジトリ）](https://github.com/t2lab-it/thermofluid-exercise-student-2026) — 荒木亮 / t2lab-it
 
 ### 準一次元ノズル
 
-- [準一次元ノズル用配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/quasi-1d-nozzle)
-- [area-mach-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/quasi-1d-nozzle/area-mach-reference.csv)
+- [準一次元ノズル（配布資産）](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/quasi-1d-nozzle) — 荒木亮 / t2lab-it
+- [area-mach-reference.csv（データ）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/quasi-1d-nozzle/area-mach-reference.csv) — 荒木亮 / t2lab-it
 
 ### 湿潤床ダム崩壊
 
-- [湿潤床ダム崩壊の配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/shallow-water-dam-break)
-- [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/README.md)
-- [stoker-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/stoker-reference.csv)
-- [preflight.jl](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/preflight.jl)
+- [湿潤床ダム崩壊（配布資産）](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/shallow-water-dam-break) — 荒木亮 / t2lab-it
+- [README.md（ドキュメント）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/README.md) — 荒木亮 / t2lab-it
+- [stoker-reference.csv（データ）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/stoker-reference.csv) — 荒木亮 / t2lab-it
+- [preflight.jl（実装例）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/shallow-water-dam-break/preflight.jl) — 荒木亮 / t2lab-it
 
 ### 一次元Stefan問題
 
-- [一次元Stefan問題の配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/stefan-problem)
-- [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/README.md)
-- [similarity-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/similarity-reference.csv)
-- [preflight.jl](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/preflight.jl)
+- [一次元Stefan問題（配布資産）](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/stefan-problem) — 荒木亮 / t2lab-it
+- [README.md（ドキュメント）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/README.md) — 荒木亮 / t2lab-it
+- [similarity-reference.csv（データ）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/similarity-reference.csv) — 荒木亮 / t2lab-it
+- [preflight.jl（実装例）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/preflight.jl) — 荒木亮 / t2lab-it
 
 ### 自然対流キャビティ
 
-- [二次元自然対流キャビティの配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/natural-convection-cavity)
-- [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/README.md)
-- [de-vahl-davis-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/de-vahl-davis-reference.csv)
-- [preflight.jl](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/preflight.jl)
+- [二次元自然対流キャビティ（配布資産）](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/natural-convection-cavity) — 荒木亮 / t2lab-it
+- [README.md（ドキュメント）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/README.md) — 荒木亮 / t2lab-it
+- [de-vahl-davis-reference.csv（データ）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/de-vahl-davis-reference.csv) — 荒木亮 / t2lab-it
+- [preflight.jl（実装例）](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/preflight.jl) — 荒木亮 / t2lab-it
 
 ## ソフトウェアの読み方 {#software-reading}
 
-- [大規模ソフトウェアを手探る](https://doss.eidos.ic.i.u-tokyo.ac.jp/)
+- [大規模ソフトウェアを手探る（講義資料）](https://doss.eidos.ic.i.u-tokyo.ac.jp/) — 田浦健次朗（東京大学）
 
 ## 教材のライセンス {#license}
 
-- [Creative Commons Attribution 4.0 International（CC BY 4.0）](https://creativecommons.org/licenses/by/4.0/)
+- [Creative Commons Attribution 4.0 International（CC BY 4.0）（ライセンス）](https://creativecommons.org/licenses/by/4.0/) — Creative Commons
