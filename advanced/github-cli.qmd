@@ -196,6 +196,7 @@ $ gh pr view --web
 | `base`または`head`が違う | `gh pr view`で`baseRefName`と`headRefName`に相当する表示を確認する |
 | `checks`が`pending` | 時間を置いて`gh pr checks`を再実行する |
 | `checks`が失敗する | `gh pr checks`の検査名とURLを確認し，ローカル再現を試す |
+: {tbl-colwidths="[22, 78]"}
 
 ## 完了条件
 
