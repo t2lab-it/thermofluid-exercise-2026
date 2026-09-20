@@ -6,6 +6,7 @@ isdefined(@__MODULE__, :parse_qmd_document) ||
     include(joinpath(@__DIR__, "support", "qmd_contracts.jl"))
 
 const ASSIGNMENT_IDENTIFIERS = Dict(
+    "N03" => ["diffusion_step!", "apply_boundary!", "thermal_content", "exercises/N03_diffusion/tests.jl"],
     "N02" => ["burgers_flux", "periodic_left_index", "nonlinear_upwind_step!", "exercises/N02_nonlinear_advection/tests.jl"],
     "F00" => String[],
     "F01" => ["student_greeting", "exercises/F01_first_pull_request/tests.jl"],

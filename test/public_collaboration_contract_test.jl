@@ -42,7 +42,7 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
 end
 
 @testset "each assignment owns its lesson understanding check" begin
-    for id in ("F00", "F01", "F02", "F03", "F04", "N01", "N02")
+    for id in ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03")
         assignment = read_public("assignments/$id.qmd")
         lesson = read_public("lessons/$id.qmd")
         @test occursin(Regex("(?m)^lesson-id: " * id * "\$"), assignment)

@@ -92,3 +92,35 @@ end
         @test abs(p["sum_change"]) <= p["steps"]*p["nx"]*2*eps(Float64)
     end
 end
+
+@testset "N03 reference numerics and artifacts" begin
+    root=joinpath(REFERENCE_ARTIFACT_ROOT,"assets","n03-reference")
+    names=("boundary-comparison.png","heat-content.png","convergence.png","summary.toml")
+    @test all(n->isfile(joinpath(root,n)),names)
+    if all(n->isfile(joinpath(root,n)),names)
+        @test sum(filesize(joinpath(root,n)) for n in names)<=10*1024^2
+        for n in names[1:3]
+            @test 10_000<filesize(joinpath(root,n))<=5*1024^2
+            @test png_dimensions(joinpath(root,n))==(width=800,height=500)
+        end
+        s=TOML.parsefile(joinpath(root,"summary.toml"))
+        @test s["course_id"]=="N03" && s["domain"]==[0.,2.]
+        @test s["diffusivity"]==0.1 && s["requested_fo"]==0.4 && s["t_final"]==1.
+        @test occursin("dimensionless",s["units"])
+        for b in ("fixed","insulated")
+            r=s[b]; c=s["convergence"][b]
+            @test r["nx"]==81 && r["steps"]==400
+            @test r["dx"]==0.025 && r["dt"]==0.0025 && r["fo"]≈0.4
+            @test all(isfinite,values(r))
+            @test r["initial_heat"]≈0.525
+            @test r["heat_change"]==r["final_heat"]-r["initial_heat"]
+            @test 0<=r["minimum"]<=r["maximum"]<=1.
+            @test c["nx"]==[41,81,161]
+            @test 0<c["errors"][3]<c["errors"][2]<c["errors"][1]
+            @test all(p->1.8<p<2.2,c["orders"])
+            @test c["orders"]≈log2.(c["errors"][1:2]./c["errors"][2:3])
+        end
+        @test s["fixed"]["final_heat"]≈0.461840713264 atol=1e-12
+        @test abs(s["insulated"]["heat_change"])<1e-12
+    end
+end
