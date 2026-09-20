@@ -1,5 +1,5 @@
 ---
-title: "1次元移流拡散の選択実装と総合検証"
+title: "一次元移流拡散の実装と検証"
 lesson-id: N04
 understanding-check-points:
   - "選択モデルの式・物理量・移流流束の対応"
@@ -29,9 +29,7 @@ N03完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
 | 選択理由と検証の記録 | `exercises/N04_advection_diffusion/learning_log.md` |
 
 `run.jl`の`SELECTED_MODEL`を`:unselected`から`:linear`または`:nonlinear`へ変更してください．
-この定数が実行とテストの選択元です．
-未選択でのincludeはできますが，実行・テストは選択を促して失敗します．
-選択した流束と共通の刻み・更新の3箇所を完成させ，他方の流束はTODOのままで構いません．
+選択した流束と共通の刻み・更新の3箇所を完成させます．
 
 | 学生API | 実装・契約 |
 |---|---|
@@ -39,15 +37,11 @@ N03完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
 | `stable_timestep(max_speed, dx, diffusivity; safety=0.8)` | 合成安定条件から正の有限な刻みを返す |
 | `advection_diffusion_step!(u_new, u_old, dt, dx, diffusivity; model=SELECTED_MODEL, advection=true, speed=1.0)` | 周期全点を同じ旧配列から更新し，新配列を返す |
 
-新旧配列は独立・同長・1始まりの浮動小数ベクトルで，旧配列を書き換えません．
-`advection=false`では流束を評価せず，`diffusivity=0`では拡散項を0にします．
-非線形の`speed`設定は参照せず，速度は解`u`から決まります．
-入力検証を残し，線形の非正速度・非線形移流の負速度・無効な刻みや配列を拒否してください．
+`u_old`の値を使って，全点の結果を`u_new`へ書き込みます．
+`advection=false`で拡散のみ，`diffusivity=0`で移流のみを計算できるようにします．
 
 `provided_support.jl`は入力検証，`initial_condition`，`analytic_solution`，`conserved_integral`，診断・描画・保存を提供します．
-`simulate(; model=SELECTED_MODEL, advection=true, nx=80, diffusivity=0.1, speed=1.0, safety=0.8, t_final=1.0, initial=:pulse, dt=nothing)`は提供済みの時間積分です．
-`dt`指定は刻みの上限で，最終時刻へ調整しますが，合成安定上限を超える指定を黙って縮小しません．
-`main(; model=SELECTED_MODEL, output_dir=DEFAULT_OUTPUT_DIR)`は選択モデルの3条件と収束を計算します．
+`simulate`は時間積分を，`main`は選択モデルの3条件と格子収束の計算・出力を行います．
 これらを読み，式・旧配列・診断値・バッファ交換の対応を説明してください．
 
 ## 必須4群と自作2件
@@ -68,15 +62,11 @@ N03完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
   [対応する解析解](../lessons/N04.qmd#convergence)との最大絶対誤差の減少と観測次数を確認します．
   標準条件の次数の受入範囲は0.8より大きく1.2より小さい範囲です．
 
-配布状態の自作2件は明示的に失敗します．
-必須4群だけの成功では完成ではありません．
-保存だけでは更新なしも通ることなど，それぞれが検出できない誤りも記録してください．
-解析解の新たな導出は不要で，既習の誤差評価を適用します．
+各テストの期待値と許容誤差の根拠，検出できる誤りと限界を学習ログへ記録してください．
 
 ## 公式出力と比較 {#reference-results}
 
 [共通の実行手順](../guides/workflow.qmd#exercise-work)で，選択モデルの公式4出力を生成します．
-`output_dir`は`results`に相当する親パスで，`main`がモデル別フォルダを付けます．
 
 ~~~text
 exercises/N04_advection_diffusion/results/<model>/comparison.png
@@ -86,9 +76,7 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 ~~~
 
 `<model>`は`linear`または`nonlinear`です．
-3条件は同じ初期値・格子・最終時刻に加え，統合条件で求めた共通の刻みを使います．
 保存図は初期積分からの変化を $10^{-14}$ 単位で示します．
-微小な差の符号や丸めの細部より，保存誤差のスケールを比較してください．
 
 ::: {.panel-tabset}
 ## 線形の基準
@@ -112,16 +100,8 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 [非線形のsummary.toml](../assets/n04-reference/nonlinear/summary.toml)と照合します．
 :::
 
-`summary.toml`の`model`・`units`・`initial`・`boundary`と自分の選択が一致することを確認します．
-各条件の`requested_safety`は指定余裕，`max_cfl`・`fo`・`max_stability_number`は実効診断です．
-`initial_integral`・`final_integral`・`integral_change`は周期積分，`minimum`・`maximum`は初期を含む全時刻の極値です．
-`convergence`には解析モードの格子列・格子幅・誤差・次数が入ります．
-線形の積分と非線形速度の積分の物理的意味を区別してください．
-
-生成失敗時には成功を表示せず，既存の公式結果・別モデル・無関係ファイルを保ちます．
-古い図の存在だけで今回の計算が成功したと判断しないでください．
-[公式出力の確認](../guides/workflow.qmd#official-results)に従い，1ファイル5 MiB，N04全体10 MiB，全課題100 MiBの上限を守ります．
-両モデルに取り組んでもN04全体の上限は同じです．
+`summary.toml`で，選択モデル・条件，CFL・Fo，周期積分の変化，最大・最小値，解析誤差・観測次数を図と照合してください．
+生成ファイルは[公式出力の確認](../guides/workflow.qmd#official-results)に従って確認します．
 
 {{< include /assignments/_understanding-check.qmd >}}
 
@@ -135,5 +115,3 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 - 一次元総合確認で式・コード・テスト・結果の対応を説明し，[学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで完了した．
 
 他方のモデルや固定・流出境界は[発展](../lessons/N04.qmd#発展)です．
-固定・流出では移流と拡散の両フラックスを含む境界収支を検証します．
-他方のモデルの完成や，両モデル分のPR・理解度チェックは必修ではありません．
