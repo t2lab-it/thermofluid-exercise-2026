@@ -20,8 +20,8 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 学生リポジトリ内の場所
 
-- 編集するコード: `exercises/F02_julia_arrays_and_tests/run.jl`
-- 配布済み必須テスト・自作テスト: `exercises/F02_julia_arrays_and_tests/tests.jl`
+- 編集するコード: [`exercises/F02_julia_arrays_and_tests/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl)
+- 配布済み必須テスト・自作テスト: [`exercises/F02_julia_arrays_and_tests/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/tests.jl)
 - 提出する学習ログ: `exercises/F02_julia_arrays_and_tests/learning_log.md`
 
 ## 課題の開始 {#課題を開始する}
@@ -32,11 +32,11 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 
 ## 実装するAPI {#api}
 
-### `mean_temperature(values)`
+### [`mean_temperature(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L13-L17)
 
 温度列`values`について，[授業で定義した算術平均](../lessons/F02.qmd#problem-setup)を返します．
 
-### `temperature_anomaly(values)`
+### [`temperature_anomaly(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)
 
 同じ長さの新しい配列を作り，[授業で定義した各要素の偏差](../lessons/F02.qmd#problem-setup)を返します．
 入力配列`values`は変更しません．
@@ -48,17 +48,17 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 - `values`は空でない実数の一次元配列とする．
 - すべての値が有限，つまり`NaN`でも`Inf`でもないことを確認する．
 - 整数，`Float32`，その他の実数型を含む`AbstractVector`で意味のある結果を返す．
-- `temperature_anomaly`は入力と同じ長さの新しい配列を返し，入力を変更しない．
+- [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)は入力と同じ長さの新しい配列を返し，入力を変更しない．
 - 不正な入力は明示的に拒否する．
 
 ## テストする観点
 
-`tests.jl`には，次の四つを確かめる必須テストが配布済みです．
+[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/tests.jl)には，次の四つを確かめる必須テストが配布済みです．
 各入力と期待値を読み，手計算でも結果を確かめます．
 
 1. 一つの有限値配列について，平均と偏差配列が一致する．
 2. 偏差の総和が丸め誤差の範囲で0になる．
-3. `temperature_anomaly`の呼び出し前後で入力配列が同じである．
+3. [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)の呼び出し前後で入力配列が同じである．
 4. 空配列，`NaN`，`Inf`から一つ選び，対象APIが拒否する．
 
 自作TODOでは，戻り値の型，別の数学的性質，または必須とは異なる不正入力から一つ選んでください．
@@ -66,7 +66,7 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 
 ## 実行とテスト
 
-[共通の実行手順](../guides/workflow.qmd#exercise-work)で`run.jl`を実行し，[課題単独と全体のテスト](../guides/workflow.qmd#tests)を実行してください．
+[共通の実行手順](../guides/workflow.qmd#exercise-work)で[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl)を実行し，[課題単独と全体のテスト](../guides/workflow.qmd#tests)を実行してください．
 `learning_log.md`には，実行結果とテスト結果に加えて，入力条件と各テストの意味を記録します．
 
 {{< include /assignments/_understanding-check.qmd >}}

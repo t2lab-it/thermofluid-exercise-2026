@@ -23,9 +23,9 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 学生リポジトリ内の場所
 
-- 解析関数: `exercises/F03-F04_vector_calculus/F03.jl`
-- 差分関数の実装・実行: `exercises/F03-F04_vector_calculus/run.jl`
-- 配布済み必須テスト・自作テスト: `exercises/F03-F04_vector_calculus/tests.jl`
+- 解析関数: [`exercises/F03-F04_vector_calculus/F03.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl)
+- 差分関数の実装・実行: [`exercises/F03-F04_vector_calculus/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl)
+- 配布済み必須テスト・自作テスト: [`exercises/F03-F04_vector_calculus/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/tests.jl)
 - 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
 
 ## 開始
@@ -56,15 +56,15 @@ $$
 
 ## 数値検証に使うスカラー場とベクトル場
 
-F03–F04の数値検証では，`exercises/F03-F04_vector_calculus/F03.jl`に定義済みの次の関数を使います．
-スカラー場 `scalar_field(point)` は
+F03–F04の数値検証では，[`exercises/F03-F04_vector_calculus/F03.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl)に定義済みの次の関数を使います．
+スカラー場 [`scalar_field(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L6) は
 
 $$
 \phi(x,y,z)=\sin x\cos y\,e^z
 $$
 
 です．
-ベクトル場 `vector_field(point)` は
+ベクトル場 [`vector_field(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L8-L12) は
 
 $$
 \boldsymbol{A}(x,y,z)=
@@ -85,12 +85,12 @@ $$
 
 ## 実装範囲
 
-`gradient_scalar(point)`，`curl_vector(point)`，`divergence_vector(point)`，`gradient_divergence_vector(point)`，`laplacian_vector(point)`は解析的な微分結果として提供済みです．
-学生が実装するのは，`exercises/F03-F04_vector_calculus/run.jl`内の次の3関数だけです．
+[`gradient_scalar(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L22-L28)，[`curl_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L31-L38)，[`divergence_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L45-L48)，[`gradient_divergence_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L50-L53)，[`laplacian_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L55-L58)は解析的な微分結果として提供済みです．
+学生が実装するのは，[`exercises/F03-F04_vector_calculus/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl)内の次の3関数だけです．
 
-- `forward_difference(f, x, h)`
-- `backward_difference(f, x, h)`
-- `centered_difference(f, x, h)`
+- [`forward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L37-L41)
+- [`backward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L43-L47)
+- [`centered_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L49-L53)
 
 ## 発展：積の回転と移流項の変形
 
@@ -163,8 +163,8 @@ $$
 
 - [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
 - 四公式の成分証明と，混合偏微分を交換する条件を学習ログへ記録する．
-- `forward_difference`，`backward_difference`，`centered_difference`を完成する．
-- `tests.jl`の配布済み必須テストを実行し，二次関数で三つの差分の違いを確認する．
+- [`forward_difference`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L37-L41)，[`backward_difference`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L43-L47)，[`centered_difference`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L49-L53)を完成する．
+- [`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/tests.jl)の配布済み必須テストを実行し，二次関数で三つの差分の違いを確認する．
 
 ::: {.callout-note title="F04まで同じ提出単位を続ける"}
 収束次数の解釈と自作テストのTODOは[F04課題](F04.qmd)で完成させます．

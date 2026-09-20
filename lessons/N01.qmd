@@ -258,7 +258,7 @@ $$
 配列全体を比べると，更新式だけでなく，添字や境界条件の誤りも調べられます．
 安定・不安定の比較では，最小・最大と初期範囲からの超過量を，図の振動と対応づけます．
 
-実装範囲，提供済みの処理，`tests.jl`の記入箇所と提出物は[N01課題](../assignments/N01.qmd)を確認してください．
+実装範囲，提供済みの処理，[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/tests.jl)の記入箇所と提出物は[N01課題](../assignments/N01.qmd)を確認してください．
 
 ## 非線形移流への接続 {#次の非線形移流へ}
 

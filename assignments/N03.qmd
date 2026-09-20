@@ -21,19 +21,19 @@ N02完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
 
 | 役割 | 学生リポジトリ内の場所 |
 |---|---|
-| 実装・実行 | `exercises/N03_diffusion/run.jl` |
-| 必須4群・自作2つ | `exercises/N03_diffusion/tests.jl` |
+| 実装・実行 | [`exercises/N03_diffusion/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl) |
+| 必須4群・自作2つ | [`exercises/N03_diffusion/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/tests.jl) |
 | 記録 | `exercises/N03_diffusion/learning_log.md` |
 
-`run.jl`の3箇所を実装してください．
+[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl)の3箇所を実装してください．
 
-1. `diffusion_step!(u_new,u_old,dt,dx,diffusivity; boundary=:fixed)`の内部点更新．
-2. `apply_boundary!(u_new,u_old,r; boundary=:fixed)`の断熱端更新．
-3. `thermal_content(u,dx)`の熱量積分．
+1. [`diffusion_step!(u_new,u_old,dt,dx,diffusivity; boundary=:fixed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L43-L57)の内部点更新．
+2. [`apply_boundary!(u_new,u_old,r; boundary=:fixed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L29-L41)の断熱端更新．
+3. [`thermal_content(u,dx)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L59-L69)の熱量積分．
 
-`provided_support.jl`の入力検証・描画・保存は提供済みです．
-`diffusion_step!`は旧配列から内部点と境界を更新し，`simulate`が新旧バッファを交換します．
-初期条件，`analytic_solution`，`simulate`，`main`も読み，数式とコードの対応を学習ログに記録します．
+[`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/provided_support.jl)の入力検証・描画・保存は提供済みです．
+[`diffusion_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L43-L57)は旧配列から内部点と境界を更新し，[`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L72-L113)が新旧バッファを交換します．
+[`initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L9-L16)，[`analytic_solution`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L18-L26)，[`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L72-L113)，[`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L116-L123)も読み，数式とコードの対応を学習ログに記録します．
 
 ## 必須4群と指定テーマの自作2つ
 
@@ -56,7 +56,7 @@ N02完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
 
 ## 公式出力と公開基準値 {#reference-results}
 
-[共通の実行手順](../guides/workflow.qmd#exercise-work)で`run.jl`を実行すると，標準条件の4出力を生成します．
+[共通の実行手順](../guides/workflow.qmd#exercise-work)で[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl)を実行すると，標準条件の4出力を生成します．
 
 ~~~text
 exercises/N03_diffusion/results/boundary-comparison.png
@@ -81,7 +81,7 @@ exercises/N03_diffusion/results/summary.toml
 
 ## 任意の安定条件超過実験
 
-実装が完成したら，[授業の比較条件](../lessons/N03.qmd#stability)を次のように試せます．
+実装が完成したら，[授業の比較条件](../lessons/N03.qmd#stability)に対応する[`stability_experiment`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L126-L133)を次のように試せます．
 
 ```julia
 include("exercises/N03_diffusion/run.jl")

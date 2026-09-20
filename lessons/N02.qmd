@@ -49,7 +49,7 @@ $$
 
 どちらも格子間隔は0.025で，`nx`は各境界における格子点数です．
 周期格子は右端を除く`[0,2)`に取り，先頭と末尾をつなぎます．
-周期境界で`left`を取得する関数が`periodic_left_index(i,n)`です．
+周期境界で`left`を取得する関数が[`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L15-L23)です．
 標準条件は指定CFL 0.5，最終時刻 $t=1.0$ とします．
 以下の方法で時間刻みを決めると，`dt=0.00625`で160ステップの計算になります．
 
@@ -77,7 +77,7 @@ $$
 |---|---|---|
 | $u_i^n$ | `u_old[i]` | 更新前の現在点 |
 | $u_{\mathrm{left}(i)}^n$ | `u_old[left]` | 更新前の左隣 |
-| $f(u)$ | `burgers_flux(u)` | 格子点値の流束 |
+| $f(u)$ | [`burgers_flux(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L8-L13) | 格子点値の流束 |
 | $\Delta t/\Delta x$ | `dt / dx` | 流束差に掛ける係数 |
 | $u_i^{n+1}$ | `u_new[i]` | 更新先 |
 
@@ -108,7 +108,7 @@ $$
 
 ## 更新の順序とCFL条件
 
-`nonlinear_upwind_step!`では旧配列`u_old`を読んで新配列`u_new`へ書き込み，境界条件を適用してから新旧バッファを交換します．
+[`nonlinear_upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L26-L38)では旧配列`u_old`を読んで新配列`u_new`へ書き込み，境界条件を適用してから新旧バッファを交換します．
 1ステップの全点で同じ時刻の値を読むため，更新中は旧配列を保持します．
 
 初期条件の最大速度 $a_0=\max_i|u_i^0|=2$ を使い，時間刻みを
