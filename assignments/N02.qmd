@@ -22,21 +22,21 @@ understanding-check-points:
 
 | 役割 | 学生リポジトリ内の場所 |
 |---|---|
-| 実装・実行 | `exercises/N02_nonlinear_advection/run.jl` |
-| 必須4群・自作2つ | `exercises/N02_nonlinear_advection/tests.jl` |
+| 実装・実行 | [`exercises/N02_nonlinear_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl) |
+| 必須4群・自作2つ | [`exercises/N02_nonlinear_advection/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/tests.jl) |
 | 記録 | `exercises/N02_nonlinear_advection/learning_log.md` |
 
-`run.jl`の次の3箇所を実装してください．
-関数は，流束 → 周期添字 → 1ステップ → 境界 → `simulate` → `main`の順に読みます．
+[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)の次の3箇所を実装してください．
+関数は，[`burgers_flux`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L8-L13) → [`periodic_left_index`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L15-L23) → [`nonlinear_upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L26-L38) → [`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L40-L52) → [`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L54-L79) → [`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L81-L90)の順に読みます．
 
-1. `burgers_flux(u::Real)`：有限なスカラーの流束 $u^2/2$．
-2. `periodic_left_index(i::Integer,n::Integer)`：周期配列の左隣添字．
-3. `nonlinear_upwind_step!(u_new,u_old,dt,dx; boundary=:fixed)`内の流束差分による更新式．
+1. [`burgers_flux(u::Real)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L8-L13)：有限なスカラーの流束 $u^2/2$．
+2. [`periodic_left_index(i::Integer,n::Integer)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L15-L23)：周期配列の左隣添字．
+3. [`nonlinear_upwind_step!(u_new,u_old,dt,dx; boundary=:fixed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L26-L38)内の流束差分による更新式．
 
 ## 必須4群と指定テーマの自作2つ
 
 [共通のテスト手順](../guides/workflow.qmd#tests)で課題単独と過去課題を含むテストを実行します．
-`tests.jl`に実装済なのは以下の4件です．
+[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/tests.jl)に実装済なのは以下の4件です．
 
 1. **流束と周期添字**：異なる値の流束の手計算値，先頭と先頭以外の周期左隣添字
 2. **保存形1ステップと旧配列不変**：非定数の小配列の更新結果を手計算値と比較し，旧配列が変わらないことを確認する
@@ -56,7 +56,7 @@ understanding-check-points:
 
 ## 公式出力
 
-[共通の実行手順](../guides/workflow.qmd#exercise-work)で`run.jl`を実行すると，次の3点が生成されます．
+[共通の実行手順](../guides/workflow.qmd#exercise-work)で[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)を実行すると，次の3点が生成されます．
 
 ~~~text
 exercises/N02_nonlinear_advection/results/fixed-boundary.png
@@ -69,7 +69,7 @@ exercises/N02_nonlinear_advection/results/summary.toml
 [公式出力の確認](../guides/workflow.qmd#official-results)を行って3点をcommitします．
 実行に失敗した場合は，原因を直して再実行し，成功メッセージと3点の出力を確認してください．
 
-任意の[CFLを変える追加実験](../lessons/N02.qmd#comparison-conditions)では，Juliaで`run.jl`を読み込んで次のように実行できます．
+任意の[CFLを変える追加実験](../lessons/N02.qmd#comparison-conditions)では，Juliaで[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)を読み込んで次のように実行できます．
 比較する二つの出力は，それぞれ別の一時ディレクトリに保存されます．
 
 ```julia
