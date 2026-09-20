@@ -62,7 +62,11 @@ Float32が速い，または小さいmemoryで動くことを前提にせず，�
 
 ## 手法と検証
 
-配布リポジトリの `launch-kits/` にある `reuse-your-solver/` の共通ガイドを使います．
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
+
+公開教材リポジトリの `launch-kits/` にある `reuse-your-solver/` の共通ガイドを使います．
 正しさを確認済みの自分のCPU solverと検証記録を，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
 GPUを利用できる環境を確認してからCUDA.jlを自分のproject環境へ追加し，`Project.toml` と `Manifest.toml`，JuliaとCUDA.jlのversionを残します．
@@ -116,7 +120,7 @@ GPUを利用できない，または利用確認が間に合わない場合は�
 
 ### Step 1：CPU基準版，測定契約，GPU利用条件の固定 {#step-1cpu基準版測定契約gpu利用条件を固定する}
 
-プロジェクトリポジトリで `launch-kits/` の `reuse-your-solver/README.md` を読み，正しさを確認済みのCPUソルバを一つ選びます．
+公開教材リポジトリの `launch-kits/` の `reuse-your-solver/README.md` を読み，正しさを確認済みのCPUソルバを一つ選びます．
 参照元リポジトリとcommit，実行コマンド，入力，$S_0$，仕事量，終了条件，精度，主要出力，測定範囲を記録します．
 GPUを使う場合は，利用できる環境，アカウント，実行方法，時間・メモリ・結果回収の条件を教員またはTAへ確認します．
 

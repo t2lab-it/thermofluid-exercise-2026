@@ -79,11 +79,15 @@ $$
 
 ## 手法と検証
 
-[一次元Stefan問題の配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/stefan-problem)で基準条件を確かめ，自分の実装を始めます．
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
 
-- [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/README.md): 固定する縮小ケース，相似式，学生が自分で決める範囲
-- [similarity-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/similarity-reference.csv): 時刻，相似界面位置，左右境界温度からなる基準CSV
-- [preflight.jl](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/stefan-problem/preflight.jl): CSV列・単調性，物性からの $\alpha$ と $\mathrm{Ste}$，$\lambda$，界面式を確認するCPU向け事前診断
+[一次元Stefan問題の配布資産](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits/assets/stefan-problem)で基準条件を確かめ，自分の実装を始めます．
+
+- [README.md](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/stefan-problem/README.md): 固定する縮小ケース，相似式，学生が自分で決める範囲
+- [similarity-reference.csv](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/stefan-problem/similarity-reference.csv): 時刻，相似界面位置，左右境界温度からなる基準CSV
+- [preflight.jl](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/stefan-problem/preflight.jl): CSV列・単調性，物性からの $\alpha$ と $\mathrm{Ste}$，$\lambda$，界面式を確認するCPU向け事前診断
 
 開始時には，資産ディレクトリで次を実行します．
 

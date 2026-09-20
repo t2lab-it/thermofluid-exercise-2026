@@ -76,6 +76,10 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 
 ## 手法と検証
 
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
+
 `launch-kits/guided-package/README.md` を読み，下表の公式資料から自分のprojectへ再現可能な開始例を作ってください．
 
 ::: {.table-responsive}
@@ -137,7 +141,7 @@ CPUだけで長いsamplingを完了できない場合は，公式quickstart規�
 
 ### Step 1：公式資料と再現environmentの固定 {#step-1公式資料と再現environmentを固定する}
 
-プロジェクトリポジトリで `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
+公開教材リポジトリの `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
 `WaterLily.jl`のstable quickstartと `v1.8.0` tagを開始候補にし，Julia 1.13.0の自分のプロジェクトへ依存関係を追加して `Project.toml` と `Manifest.toml` を解決します．
 公式例をコピーする場合はリポジトリ，パス，commit，ライセンス，授業側の変更を記録します．
 

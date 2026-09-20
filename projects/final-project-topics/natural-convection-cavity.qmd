@@ -101,11 +101,15 @@ $\mathrm{Ra}=10^3,10^4$ について，各二格子の温度等値線と流線�
 
 ## 手法と検証
 
-[二次元自然対流キャビティの配布資産](https://github.com/t2lab-it/thermofluid-project-base-2026/tree/main/launch-kits/assets/natural-convection-cavity)には，次の三つがあります．
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
 
-- [README.md](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/README.md): 領域，境界条件，格子規約，ベンチマーク量の定義，学生が決める範囲
-- [de-vahl-davis-reference.csv](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/de-vahl-davis-reference.csv): 原論文Table Vから転記した $\mathrm{Ra}=10^3,10^4$ の平均Nusselt数，中心線最大速度と位置
-- [preflight.jl](https://github.com/t2lab-it/thermofluid-project-base-2026/blob/main/launch-kits/assets/natural-convection-cavity/preflight.jl): CSVの列・値とREADMEのPr，境界，格子契約を確認するCPU向け事前診断
+[二次元自然対流キャビティの配布資産](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits/assets/natural-convection-cavity)には，次の三つがあります．
+
+- [README.md](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/natural-convection-cavity/README.md): 領域，境界条件，格子規約，ベンチマーク量の定義，学生が決める範囲
+- [de-vahl-davis-reference.csv](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/natural-convection-cavity/de-vahl-davis-reference.csv): 原論文Table Vから転記した $\mathrm{Ra}=10^3,10^4$ の平均Nusselt数，中心線最大速度と位置
+- [preflight.jl](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/launch-kits/assets/natural-convection-cavity/preflight.jl): CSVの列・値とREADMEのPr，境界，格子契約を確認するCPU向け事前診断
 
 資産ディレクトリで次を実行します．
 

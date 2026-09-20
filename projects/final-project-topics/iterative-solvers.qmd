@@ -71,7 +71,11 @@ PCGの反復回数が減ってもtotal timeが短くなるとは限らないた�
 
 ## 手法と検証
 
-配布リポジトリの `launch-kits/` にある `reuse-your-solver/README.md` は，参照元commit，正しさ，入力，処理量，測定方法，回帰検証を固定する共通ガイドです．
+導入資産は[公開教材の簡易導入キット](https://github.com/t2lab-it/thermofluid-exercise-2026/tree/main/launch-kits)から必要なものだけ取得します．
+以下のパスは教材リポジトリ内の位置です．
+コピー元のURLとcommit，利用条件を記録してください．
+
+公開教材リポジトリの `launch-kits/` にある `reuse-your-solver/README.md` は，参照元commit，正しさ，入力，処理量，測定方法，回帰検証を固定する共通ガイドです．
 N08–N09までに作成した5点差分・Jacobi法・残差・製造解のcodeと既存testを，[コード移行の手順](../../guides/final-project-handoff.qmd)に従って持ち込んでください．
 
 標準ルートでは，最初の比較より前に次の契約を一つの設定または表へ固定します．
@@ -126,7 +130,7 @@ $S_0$ は「既存test，SPD確認，製造解，小規模直接解を短時間�
 
 ### Step 1：基準solverと数値・測定契約の固定 {#step-1基準solverと数値測定契約を固定する}
 
-プロジェクトリポジトリで `launch-kits/` の `reuse-your-solver/README.md` を読み，N08–N09のJacobi法とPoisson検証を持つ参照元commitを選びます．
+公開教材リポジトリの `launch-kits/` の `reuse-your-solver/README.md` を読み，N08–N09のJacobi法とPoisson検証を持つ参照元commitを選びます．
 方程式，製造解，格子，Dirichlet処理，$A,\boldsymbol{b},\boldsymbol{x}_0$，停止式，最大反復回数，測定区間を一つの設定と説明へ固定します．
 
 参照元の既存テストと $S_0$ を再実行し，境界値，真の残差，製造解誤差，実行コマンドを第三者が追跡できることを確かめます．
