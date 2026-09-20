@@ -92,6 +92,71 @@ $$
 - `backward_difference(f, x, h)`
 - `centered_difference(f, x, h)`
 
+## 発展：積の回転と移流項の変形
+
+必須の証明と差分関数の実装が終わり，時間が余った人向けの任意課題です．
+取り組んだ場合は，導出と気づいたことを同じ学習ログに追記してください．
+以下では場が $C^1$ 級であるとし，直交座標の成分で考えます．
+
+### 積の回転
+
+スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し，次の公式を証明してください．
+
+$$
+\nabla\times(\phi\boldsymbol{A})
+=\nabla\phi\times\boldsymbol{A}
++\phi(\nabla\times\boldsymbol{A}).
+$$
+
+まず第1成分 $\partial_y(\phi A_z)-\partial_z(\phi A_y)$ に積の微分を使い，残りの成分も同様に整理します．
+外積の順序を逆にすると符号が変わる点に注意してください．
+
+応用として，密度 $\rho>0$ が空間的に変化するとき，圧力による加速度について
+
+$$
+\nabla\times\left(-\frac{1}{\rho}\nabla p\right)
+=\frac{1}{\rho^2}\nabla\rho\times\nabla p
+$$
+
+を導いてください（ここでは $p$ は $C^2$ 級とします）．
+密度一定の場合と，密度勾配・圧力勾配が平行でない場合を比べ，渦度方程式に圧力由来の項が残る条件を説明してください．
+[授業の圧力項の説明](../lessons/F03.qmd#thermofluid-connections)で，一定密度を仮定した理由を確かめる課題です．
+
+### 移流項の変形
+
+速度 $\boldsymbol{u}=(u,v,w)$ と渦度 $\boldsymbol{\omega}=\nabla\times\boldsymbol{u}$ に対し，次の恒等式を証明してください．
+
+$$
+(\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
+=\nabla\left(\frac{|\boldsymbol{u}|^2}{2}\right)
+-\boldsymbol{u}\times\boldsymbol{\omega}.
+$$
+
+左辺の第1成分は $u\partial_xu+v\partial_yu+w\partial_zu$ です．
+右辺の勾配と外積を展開して比べ，残りの成分も確かめてください．
+この恒等式自体に非圧縮条件が必要かどうかも説明してください．
+
+次に，[二次元非圧縮性Navier–Stokesの課題](../projects/final-project-topics/incompressible-navier-stokes.qmd)で使う，一定密度・一定動粘性係数，外力なしの無次元運動方程式
+
+$$
+\frac{\partial\boldsymbol{u}}{\partial t}
++(\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
+=-\nabla p+\frac{1}{\mathrm{Re}}\nabla^2\boldsymbol{u}
+$$
+
+を，この恒等式で
+
+$$
+\frac{\partial\boldsymbol{u}}{\partial t}
+-\boldsymbol{u}\times\boldsymbol{\omega}
+=-\nabla\left(p+\frac{|\boldsymbol{u}|^2}{2}\right)
++\frac{1}{\mathrm{Re}}\nabla^2\boldsymbol{u}
+$$
+
+と書き換えてください．
+速度の大きさに由来する勾配を圧力の勾配とまとめると，移流項の残りが速度と渦度の外積になることを確認します．
+さらに渦なしの領域 $\boldsymbol{\omega}=\boldsymbol{0}$ では，移流項がどのような形になるか説明してください．
+
 {{< include /assignments/_understanding-check.qmd >}}
 
 ## 第4回の最低到達点
