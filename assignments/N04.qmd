@@ -112,6 +112,7 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 - 選択モデルの3条件，周期保存，合成安定条件，解析解に対する誤差・格子収束を図と数値で説明した．
 - 公式4出力と学習ログを確認し，AI提案の採否理由と確認方法を記録した．
 - [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，ログへ提出状況を記録した．
-- 一次元総合確認で式・コード・テスト・結果の対応を説明し，[学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで完了した．
+- 主要チェックポイントである一次元総合確認で式・コード・テスト・結果の対応を教員・TAへ説明し，PRのmerge前に確認を受けた．
+- [学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで完了した．
 
 他方のモデルや固定・流出境界は[発展](../lessons/N04.qmd#発展)です．
