@@ -5,7 +5,7 @@ understanding-check-points:
   - "gradient，divergence，curl，Laplacianの直交座標成分と，それぞれの入力・出力"
   - "混合偏微分の順序を交換するために必要な滑らかさの条件"
   - "`curl(grad φ) = 0`を成分展開し，混合偏微分の相殺を説明すること"
-  - "`div(curl A) = 0`と`div(grad φ) = ∇²φ`を成分表示で説明すること"
+  - "`div(curl A) = 0`，積の発散，curl curlを成分表示で証明すること"
   - "解析的な成分証明と，次回行う数値微分による確認の役割の違い"
 ---
 ::: {.course-position}
@@ -16,7 +16,7 @@ understanding-check-points:
 
 ## 目的
 
-[F03授業](../lessons/F03.qmd)で学んだ三公式を直交座標の成分で証明し，第5回の数値検証を始めます．
+[F03授業](../lessons/F03.qmd)で学んだ四公式を直交座標の成分で証明し，第5回の数値検証を始めます．
 授業の最後の20分では，下の三つの差分関数を実装し，二次関数の手計算値と比較してください．
 [F04課題](F04.qmd)まで同じbranchで継続します．
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
@@ -36,7 +36,7 @@ F02をmergeし，更新済みで変更のない`main`から始めます．
 
 ## 解析的な証明
 
-授業ページの定義から，次の三式を直交座標の成分へ展開して証明します．
+授業ページの定義から，次の四式を直交座標の成分へ展開して証明します．
 差分の定義は[授業の数値微分への接続](../lessons/F03.qmd#数値微分への接続)を参照してください．
 
 $$
@@ -45,26 +45,124 @@ $$
 $$
 
 $$
-\nabla\cdot(\nabla\phi)=\nabla^2\phi.
+\nabla\cdot(\phi\boldsymbol{A})=\boldsymbol{A}\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol{A},
 $$
 
-各証明では，どの混合偏微分を交換したかと，それを許す滑らかさの条件も学習ログへ書いてください．
+$$
+\nabla\times(\nabla\times\boldsymbol{A})=\nabla(\nabla\cdot\boldsymbol{A})-\nabla^2\boldsymbol{A}.
+$$
+
+各証明では，積の微分を使った箇所，混合偏微分の交換の有無と，必要な滑らかさの条件も学習ログへ書いてください．
+
+## 数値検証に使うスカラー場とベクトル場
+
+F03–F04の数値検証では，`exercises/F03-F04_vector_calculus/F03.jl`に定義済みの次の関数を使います．
+スカラー場 `scalar_field(point)` は
+
+$$
+\phi(x,y,z)=\sin x\cos y\,e^z
+$$
+
+です．
+ベクトル場 `vector_field(point)` は
+
+$$
+\boldsymbol{A}(x,y,z)=
+\begin{pmatrix}
+\sin y\,e^{2z}+e^x\\
+\sin z\,e^{2x}+e^y\\
+\sin x\,e^{2y}+e^z
+\end{pmatrix}
+$$
+
+です．
+どちらも全空間で滑らかで，混合偏微分の順序を交換できます．
+コードでは座標を `point = (x, y, z)` として渡します．
+これらは四公式を数値的に確かめるための検証用の場です．
+必要な滑らかさを満たす範囲で，自分でいろいろなスカラー場・ベクトル場を選び，四公式を確かめてもかまいません．
+別の関数を試すときは，比較に使う解析的な微分結果もその関数に合わせて用意してください．
+上の解析的な証明は，この関数を代入するだけでなく，必要な滑らかさを満たす一般の $\phi$ と $\boldsymbol{A}$ について行ってください．
 
 ## 実装範囲
 
-`gradient_scalar(point)`，`curl_vector(point)`，`laplacian_scalar(point)`は解析的な微分結果として提供済みです．
+`gradient_scalar(point)`，`curl_vector(point)`，`divergence_vector(point)`，`gradient_divergence_vector(point)`，`laplacian_vector(point)`は解析的な微分結果として提供済みです．
 学生が実装するのは，`exercises/F03-F04_vector_calculus/run.jl`内の次の3関数だけです．
 
 - `forward_difference(f, x, h)`
 - `backward_difference(f, x, h)`
 - `centered_difference(f, x, h)`
 
+## 発展：積の回転と移流項の変形
+
+必須の証明と差分関数の実装が終わり，時間が余った人向けの任意課題です．
+取り組んだ場合は，導出と気づいたことを同じ学習ログに追記してください．
+以下では場が $C^1$ 級であるとし，直交座標の成分で考えます．
+
+### 積の回転
+
+スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し，次の公式を証明してください．
+
+$$
+\nabla\times(\phi\boldsymbol{A})
+=\nabla\phi\times\boldsymbol{A}
++\phi(\nabla\times\boldsymbol{A}).
+$$
+
+まず第1成分 $\partial_y(\phi A_z)-\partial_z(\phi A_y)$ に積の微分を使い，残りの成分も同様に整理します．
+外積の順序を逆にすると符号が変わる点に注意してください．
+
+応用として，密度 $\rho>0$ が空間的に変化するとき，圧力による加速度について
+
+$$
+\nabla\times\left(-\frac{1}{\rho}\nabla p\right)
+=\frac{1}{\rho^2}\nabla\rho\times\nabla p
+$$
+
+を導いてください（ここでは $p$ は $C^2$ 級とします）．
+密度一定の場合と，密度勾配・圧力勾配が平行でない場合を比べ，渦度方程式に圧力由来の項が残る条件を説明してください．
+[授業の圧力項の説明](../lessons/F03.qmd#thermofluid-connections)で，一定密度を仮定した理由を確かめる課題です．
+
+### 移流項の変形
+
+速度 $\boldsymbol{u}=(u,v,w)$ と渦度 $\boldsymbol{\omega}=\nabla\times\boldsymbol{u}$ に対し，次の恒等式を証明してください．
+
+$$
+(\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
+=\nabla\left(\frac{|\boldsymbol{u}|^2}{2}\right)
+-\boldsymbol{u}\times\boldsymbol{\omega}.
+$$
+
+左辺の第1成分は $u\partial_xu+v\partial_yu+w\partial_zu$ です．
+右辺の勾配と外積を展開して比べ，残りの成分も確かめてください．
+この恒等式自体に非圧縮条件が必要かどうかも説明してください．
+
+次に，[二次元非圧縮性Navier–Stokesの課題](../projects/final-project-topics/incompressible-navier-stokes.qmd)で使う，一定密度・一定動粘性係数，外力なしの無次元運動方程式
+
+$$
+\frac{\partial\boldsymbol{u}}{\partial t}
++(\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
+=-\nabla p+\frac{1}{\mathrm{Re}}\nabla^2\boldsymbol{u}
+$$
+
+を，この恒等式で
+
+$$
+\frac{\partial\boldsymbol{u}}{\partial t}
+-\boldsymbol{u}\times\boldsymbol{\omega}
+=-\nabla\left(p+\frac{|\boldsymbol{u}|^2}{2}\right)
++\frac{1}{\mathrm{Re}}\nabla^2\boldsymbol{u}
+$$
+
+と書き換えてください．
+速度の大きさに由来する勾配を圧力の勾配とまとめると，移流項の残りが速度と渦度の外積になることを確認します．
+さらに渦なしの領域 $\boldsymbol{\omega}=\boldsymbol{0}$ では，移流項がどのような形になるか説明してください．
+
 {{< include /assignments/_understanding-check.qmd >}}
 
 ## 第4回の最低到達点
 
 - [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
-- 三公式の成分証明と，混合偏微分を交換する条件を学習ログへ記録する．
+- 四公式の成分証明と，混合偏微分を交換する条件を学習ログへ記録する．
 - `forward_difference`，`backward_difference`，`centered_difference`を完成する．
 - `tests.jl`の配布済み必須テストを実行し，二次関数で三つの差分の違いを確認する．
 

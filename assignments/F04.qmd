@@ -4,7 +4,7 @@ lesson-id: F04
 understanding-check-points:
   - "Taylor展開から前進・後退差分が一次精度，中心差分が二次精度になることを導くこと"
   - "誤差比と観測次数を計算し，格子を細かくしたときの収束を読み取ること"
-  - "中心差分を外側の微分へ使い，三公式の数値残差を組み立てる方法"
+  - "中心差分を外側の微分へ使い，四公式の数値残差を組み立てる方法"
   - "内側と外側へ同じ離散微分を使うと，代数的相殺により丸め誤差だけが見える場合があること"
   - "成分証明による解析的証明と，残差・誤差比による数値的証拠の役割の違い"
 ---
@@ -16,7 +16,7 @@ understanding-check-points:
 
 ## 目的
 
-[F04授業](../lessons/F04.qmd)で学んだ三つの一次元差分を実装し，一次元の観測次数とF03の三公式の格子収束を確認して，[F03課題](F03.qmd)から続く一つの提出を完成させます．
+[F04授業](../lessons/F04.qmd)で学んだ三つの一次元差分を実装し，一次元の観測次数とF03の四公式の格子収束を確認して，[F03課題](F03.qmd)から続く一つの提出を完成させます．
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
 
 ## 学生リポジトリ内の場所
@@ -39,15 +39,16 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 - `backward_difference(f, x, h)`
 - `centered_difference(f, x, h)`
 
-`centered_partial`，`curl_gradient_residual`，`divergence_curl_residual`，`laplacian_identity_residual`，`verify_vector_identities`，解析関数，格子走査，残差集計は提供済みです．
+`centered_partial`，`curl_gradient_residual`，`divergence_curl_residual`，`product_divergence_residual`，`curl_curl_residual`，`verify_vector_identities`，解析関数，格子走査，残差集計は提供済みです．
 
-[授業の三つの数値残差](../lessons/F04.qmd#三公式の数値残差)は，次の関数に対応します．
+[授業の四つの数値残差](../lessons/F04.qmd#四公式の数値残差)は，次の関数に対応します．
 
-| 残差 | 提供済み関数 | 内側に使う解析関数 |
+| 残差 | 提供済み関数 | 場・比較対象の解析関数 |
 |---|---|---|
 | $\boldsymbol{r}_1$ | `curl_gradient_residual` | `gradient_scalar` |
 | $r_2$ | `divergence_curl_residual` | `curl_vector` |
-| $r_3$ | `laplacian_identity_residual` | `gradient_scalar`，`laplacian_scalar` |
+| $r_3$ | `product_divergence_residual` | `scalar_field`，`vector_field`，`gradient_scalar`，`divergence_vector` |
+| $\boldsymbol{r}_4$ | `curl_curl_residual` | `curl_vector`，`gradient_divergence_vector`，`laplacian_vector` |
 
 `centered_partial`は自分の`centered_difference`を三次元座標へ接続し，`verify_vector_identities`が内部格子点で最大残差を集計します．
 
@@ -56,11 +57,11 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 [授業の標準条件](../lessons/F04.qmd#problem-setup)で一次元収束を計算します．
 `convergence_study`で前進・後退の誤差比が`1.7`から`2.3`，中心差分の誤差比が`3.7`から`4.3`に入ることを確認し，観測次数も説明してください．
 
-## ベクトル解析三公式
+## ベクトル解析四公式
 
 `verify_vector_identities(9)`と`verify_vector_identities(17)`を実行します．
-三つの最大残差がすべて減少し，各粗格子／細格子比が`3.0`から`4.8`に入ることを確認します．
-数値残差の定義と，内側・外側の微分の扱いは[授業](../lessons/F04.qmd#三公式の数値残差)を参照してください．
+四つの最大残差がすべて減少し，各粗格子／細格子比が`3.0`から`4.8`に入ることを確認します．
+数値残差の定義と，内側・外側の微分の扱いは[授業](../lessons/F04.qmd#四公式の数値残差)を参照してください．
 
 ## 実行とテスト
 
@@ -82,9 +83,9 @@ F03とF04は別々のチェックです．
 
 `exercises/F03-F04_vector_calculus/learning_log.md`に，共通の記録項目に加えて次をまとめてください．
 
-- 三つの成分証明と，混合偏微分を交換する条件
+- 四つの成分証明と，混合偏微分を交換する条件
 - 一次元誤差と観測次数
-- `n=9`と`n=17`の三残差と比
+- `n=9`と`n=17`の四残差と比
 - 解析的証明と数値的証拠の役割の違い
 
 解釈は[授業の「証明と数値的証拠」](../lessons/F04.qmd#証明と数値的証拠)と照合してください．
@@ -92,10 +93,10 @@ F03とF04は別々のチェックです．
 ## 完了条件
 
 - F03・F04それぞれの[理解度チェック](#understanding-check)の対話全文を対応するLETUS課題へ提出し，共通の学習ログに両方の提出状況を記録した．
-- F03の三公式を直交座標成分で証明し，混合偏微分を交換する条件を書いた．
+- F03の四公式を直交座標成分で証明し，混合偏微分を交換する条件を書いた．
 - 学生TODOである前進・後退・中心差分の3関数だけを実装した．
 - 一次元の全誤差比と観測次数を確認した．
-- `n=9`と`n=17`で三残差が減少し，各比が`3.0`から`4.8`に入ることを確認した．
+- `n=9`と`n=17`で四残差が減少し，各比が`3.0`から`4.8`に入ることを確認した．
 - `exercises/F03-F04_vector_calculus/tests.jl`の配布済み必須テストを確認し，一つの自作TODOを完成して全テストを通した．
 - `exercises/F03-F04_vector_calculus/learning_log.md`を完成させ，意図したdiffだけをcommitした．
 - [学習ログ，diff，commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)までを完了し，同じbranchから一つのPRでF03とF04をまとめて提出した．

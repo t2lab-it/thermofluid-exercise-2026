@@ -17,15 +17,23 @@ title: "数値微分と格子収束"
 厳密な導関数は $f'(x)=e^x(\sin(x)+\cos(x))$ です．
 刻み幅は $h=0.2,0.1,0.05,0.025$ とし，半分にするごとの誤差の減り方を比較します．
 
-三次元では，次の滑らかな場について[F03の三公式](F03.qmd)の残差を調べます．
+三次元では，次の滑らかな場について[F03の四公式](F03.qmd)の残差を調べます．
 
 $$
-\phi(x,y,z)=\sin(x)\cos(y)e^z,\qquad
-\boldsymbol{A}(x,y,z)=\bigl(\sin(y)e^z,\ \sin(z)e^x,\ \sin(x)e^y\bigr).
+\phi(x,y,z)=\sin(x)\cos(y)e^z,
+$$
+
+$$
+\boldsymbol{A}=\begin{pmatrix}
+\sin(y)e^{2z}+e^x\\
+\sin(z)e^{2x}+e^y\\
+\sin(x)e^{2y}+e^z
+\end{pmatrix}.
 $$
 
 領域は $[-1,1]^3$，各方向の格子点数は $n=9,17$，格子間隔は $h=2/(n-1)$ とします．
-外側の差分に両隣の値が必要なため，各方向の端点を除く内部格子点で評価します．
+外側の差分に両隣の値が必要なため，内部格子点で評価します．
+最大値を比べる領域が細分化で広がらないよう，集計対象を両格子に共通の $[-0.75,0.75]^3$ 内の格子点に揃えます．
 残差の絶対値（ベクトルでは各成分の絶対値）の最大を取り，粗格子と細格子で比較します．
 
 ## Taylor展開と前進差分
@@ -38,14 +46,14 @@ f(x+h)=f(x)+h f'(x)+\frac{h^2}{2}f''(x)
 $$
 
 です．
-両辺から \(f(x)\) を引いて \(h\) で割ると，
+両辺から $f(x)$ を引いて $h$ で割ると，
 
 $$
 \frac{f(x+h)-f(x)}{h}
 =f'(x)+\frac{h}{2}f''(x)+O(h^2).
 $$
 
-したがって前進差分の打切り誤差の先頭項は \(O(h)\) で，一次精度です．
+したがって前進差分の打切り誤差の先頭項は $O(h)$ で，一次精度です．
 
 ## 後退差分
 
@@ -67,7 +75,7 @@ $$
 
 ## 中心差分
 
-\(f(x+h)\) の展開から \(f(x-h)\) の展開を引くと，偶数次の項が相殺されます．
+$f(x+h)$ の展開から $f(x-h)$ の展開を引くと，偶数次の項が相殺されます．
 4次の項は明示的に
 
 $$
@@ -104,18 +112,34 @@ $$
 $E(h)\approx C h^p$ の領域では $R(h)\approx 2^p$，$p_{\mathrm{obs}}\approx p$ です．
 したがって一次精度では比が約2，二次精度では約4になります．
 
-## 三公式の数値残差
+## 四公式の数値残差
 
 中心差分を各座標方向の偏微分に使った演算子を $\nabla_h$ と書くと，数値残差は
 
 $$
 \boldsymbol{r}_1=\nabla_h\times(\nabla\phi),\qquad
-r_2=\nabla_h\cdot(\nabla\times\boldsymbol{A}),\qquad
-r_3=\nabla_h\cdot(\nabla\phi)-\nabla^2\phi
+r_2=\nabla_h\cdot(\nabla\times\boldsymbol{A}),
+$$
+
+$$
+r_3=\nabla_h\cdot(\phi\boldsymbol{A})
+-\left(\boldsymbol{A}\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol{A}\right),
+$$
+
+$$
+\boldsymbol{r}_4=\nabla_h\times(\nabla\times\boldsymbol{A})
+-\left(\nabla(\nabla\cdot\boldsymbol{A})-\nabla^2\boldsymbol{A}\right)
 $$
 
 です．
-内側の $\nabla\phi$，$\nabla\times\boldsymbol{A}$ と比較対象の $\nabla^2\phi$ は解析的に計算し，外側だけを中心差分で近似します．
+$r_3$ は積の場 $\phi\boldsymbol{A}$ の発散を中心差分で求め，右辺は解析的に評価します．
+それ以外は内側の $\nabla\phi$，$\nabla\times\boldsymbol{A}$ を解析的に与え，外側だけを中心差分で近似します．
+$\boldsymbol{r}_4$ の右辺も解析的に評価します．
+
+標準の場では $\nabla\cdot\boldsymbol{A}=e^x+e^y+e^z$，$\nabla(\nabla\cdot\boldsymbol{A})=(e^x,e^y,e^z)$ です．
+$\boldsymbol{B}=(\sin(y)e^{2z},\sin(z)e^{2x},\sin(x)e^{2y})$ とおくと，$\nabla^2\boldsymbol{A}=3\boldsymbol{B}+(e^x,e^y,e^z)$ なので，curl curlの右辺は $-3\boldsymbol{B}$ です．
+この場では右辺の二項も，その差も恒等的には零になりません．
+
 例えば $\boldsymbol{r}_1$ の第1成分は，解析的な $\partial\phi/\partial z$ を $y$ 方向に中心差分した値から，解析的な $\partial\phi/\partial y$ を $z$ 方向に中心差分した値を引きます．
 内側の関数を評価する座標を一方向に $\pm h$ ずらすことで，一次元の中心差分をそのまま使えます．
 
