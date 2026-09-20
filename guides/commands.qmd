@@ -194,6 +194,5 @@ $ git push -u origin update/template-YYYYMMDD
 自分のリポジトリで更新用branchから`main`へのPRを作り，取り込んだ更新と確認結果を記録します．
 [Actionsとセルフレビュー，merge後のmain更新](workflow.qmd#after-merge)まで行ってください．
 この更新PRでは**Create a merge commit**を選びます．
-テンプレートの`upstream`へpushする必要はありません．
 
 参考：[GitHubのテンプレートとforkの違い](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)，[Gitのmergeオプションと中止方法](https://git-scm.com/docs/git-merge)．

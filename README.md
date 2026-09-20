@@ -13,8 +13,7 @@
 - Git
 
 WindowsではWSL2 Ubuntu 24.04 LTSのLinux側，macOSではnative macOS，Linuxではnative Linuxを対象にします。
-Windowsネイティブ側のJulia・Git・Git Bash・WSL1と/mnt/c以下のcloneは正式サポートしません。
-Codespaces、devcontainer、Jupyterは使用しません。
+WSL2ではリポジトリをLinux側のホームディレクトリへcloneします。
 
 ## 初期化
 
@@ -34,12 +33,9 @@ macOS・Linux（bash/zsh）では次を実行します。
 QUARTO_JULIA_PROJECT=. quarto render
 ```
 
-受講者の課題コマンドは，WindowsではWSL2 Ubuntu内で実行します．
-教材のQuarto編集環境をWSL2に必ず構築することは要求しません。
-
 生成物は`_site/`へ出力されます。
 `_quarto.yml`はJuliaエンジンを明示します。
-Julia実行確認用の簡易セルは公開ページに置かず、教員用のリリース予行演習が一時Quartoプロジェクトで検証します。
+Juliaの実行は、教員用のリリース予行演習が一時Quartoプロジェクトで検証します。
 
 ## テスト
 
@@ -53,8 +49,6 @@ julia --project=. scripts/verify_contracts.jl \
 ```
 
 契約検証には公開教材リポジトリと学生リポジトリのルートディレクトリを明示的に渡します。
-既存の非公開リポジトリを参照しません。
-
 
 ## 学生・プロジェクトリポジトリの公開契約
 
