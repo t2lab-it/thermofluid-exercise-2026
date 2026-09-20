@@ -9,6 +9,7 @@ title: "ベクトル解析"
 
 - gradient，divergence，curl，Laplacianを直交座標の成分で定義する．
 - 混合偏微分を交換できる条件を明記し，ベクトル解析の四公式を成分展開で証明する．
+- 四公式が移流・熱輸送・非圧縮性流れの方程式で果たす役割を説明する．
 - [次回の数値微分](F04.qmd)で同じ四公式を数値的に確かめる準備をする．
 
 ## 直交座標での微分演算子
@@ -171,6 +172,121 @@ $$
 \nabla\times(\nabla\times\boldsymbol{A})
 =\nabla(\nabla\cdot\boldsymbol{A})-\nabla^2\boldsymbol{A}.
 $$
+
+## この演習の方程式とのつながり {#thermofluid-connections}
+
+四公式は，保存則の書き換えや，速度・圧力・渦度のうち何を未知量にするかを考えるときに使います．
+ここでは速度を $\boldsymbol{u}$，圧力を $p$，温度を $T$，渦度を $\boldsymbol{\omega}=\nabla\times\boldsymbol{u}$ とします．
+以下の微分操作は場が十分滑らかな領域で考え，非圧縮性や物性一定の仮定は使う箇所で明記します．
+
+### curl grad：渦度の方程式から圧力項が消える
+
+[二次元非圧縮性Navier–Stokes](../projects/final-project-topics/incompressible-navier-stokes.qmd)では，密度と動粘性係数が一定の流れを扱います．
+その無次元運動方程式の圧力項は $-\nabla p$ なので，方程式全体のcurlを取ると
+
+$$
+\nabla\times(-\nabla p)=\boldsymbol{0}
+$$
+
+となります．
+この公式のおかげで，渦度を未知量にした式には圧力項が陽には現れません．
+二次元では $\boldsymbol{u}=(u,v,0)$，$\boldsymbol{\omega}=(0,0,\omega)$ と書け，外力のない場合の渦度方程式は
+
+$$
+\frac{\partial\omega}{\partial t}
++u\frac{\partial\omega}{\partial x}
++v\frac{\partial\omega}{\partial y}
+=\frac{1}{\mathrm{Re}}\nabla^2\omega
+$$
+
+です．
+最終プロジェクトでは，この式で渦度を進め，後述のPoisson方程式から速度を復元します．
+圧力項が消えるのは一定密度のモデルでの話です．
+密度 $\rho$ が空間的に変わると，圧力による加速度 $-(1/\rho)\nabla p$ は一般には一つのスカラーの勾配ではなく，この公式だけでcurlを零にはできません．
+
+### div curl：流れ関数から作った速度が連続の式を満たす
+
+同じ二次元流れで，$z$ に依存しない流れ関数 $\psi(x,y)$ を使い，
+
+$$
+\boldsymbol{A}=(0,0,-\psi),\qquad
+\boldsymbol{u}=\nabla\times\boldsymbol{A}
+=\left(-\frac{\partial\psi}{\partial y},\frac{\partial\psi}{\partial x},0\right)
+$$
+
+と置きます．
+すると，div curlの公式から
+
+$$
+\nabla\cdot\boldsymbol{u}
+=\nabla\cdot(\nabla\times\boldsymbol{A})=0
+$$
+
+となり，非圧縮性流れの連続の式を自動的に満たします．
+これが[渦度–流れ関数法](../projects/final-project-topics/incompressible-navier-stokes.qmd)で流れ関数を導入する理由です．
+ただし，壁面で流体が出入りしない条件やno-slip条件は別に与える必要があります．
+また，離散化後にも発散が十分小さいかは，採用した差分と境界処理について確認します．
+
+### 積の発散：保存形と移流形を結びつける
+
+単位体積あたりの輸送量を $q$ とし，生成・消滅や拡散がない場合を考えます．
+保存形の輸送方程式に積の発散の公式を使うと，
+
+$$
+\begin{aligned}
+\frac{\partial q}{\partial t}+\nabla\cdot(q\boldsymbol{u})&=0,\\
+\frac{\partial q}{\partial t}+\boldsymbol{u}\cdot\nabla q
++q\nabla\cdot\boldsymbol{u}&=0
+\end{aligned}
+$$
+
+となります．
+非圧縮条件 $\nabla\cdot\boldsymbol{u}=0$ の下では最後の項が消えます．
+一定速度 $\boldsymbol{u}=(c,0,0)$ の一次元問題にすれば，$q_t+cq_x=0$ となり，[N01の線形移流方程式](N01.qmd)に一致します（N01では輸送される量を $u$ と表記します）．
+
+[自然対流キャビティ](../projects/final-project-topics/natural-convection-cavity.qmd)の無次元温度 $\theta$ についても，非圧縮条件から $\nabla\cdot(\theta\boldsymbol{u})=\boldsymbol{u}\cdot\nabla\theta$ です．
+そのため，定常温度方程式 $\boldsymbol{u}\cdot\nabla\theta=\nabla^2\theta$ は，熱の移流流束と拡散の釣り合いとして読めます．
+また，熱伝導率 $k$ が場所によって変わる場合は，積の発散に $\phi=k$，$\boldsymbol{A}=\nabla T$ を代入すると
+
+$$
+\nabla\cdot(k\nabla T)
+=k\nabla^2T+\nabla k\cdot\nabla T
+$$
+
+となります．
+熱伝導項を単に $k\nabla^2T$ と書けるのは，$k$ が空間的に一定の場合です．
+
+[N02のBurgers方程式](N02.qmd)では，滑らかな部分で $\partial_x(u^2/2)=u\partial_xu$ となります．
+流束が $u^2$ ではなく $u^2/2$ である点に注意してください．
+こうした連続の式の書き換えができても，離散化した保存形と移流形が同じ更新になるとは限りません．
+N02で流束差を使う理由は，数値計算でも保存性を保つためです．
+
+### curl curl：流れ関数のPoisson方程式と粘性項
+
+上で定義した $\boldsymbol{A}=(0,0,-\psi)$ は $\nabla\cdot\boldsymbol{A}=0$ なので，curl curlの公式から
+
+$$
+\boldsymbol{\omega}
+=\nabla\times(\nabla\times\boldsymbol{A})
+=-\nabla^2\boldsymbol{A}
+=(0,0,\nabla^2\psi)
+$$
+
+となります．
+したがって $\nabla^2\psi=\omega$ です．
+これが[二次元非圧縮性流れの課題](../projects/final-project-topics/incompressible-navier-stokes.qmd)で，渦度から流れ関数を求めるPoisson方程式です．
+流れ関数が求まれば，その一階微分から速度を復元できます．
+
+さらに，この公式を速度自身に適用すると，非圧縮条件の下で
+
+$$
+\nabla^2\boldsymbol{u}=-\nabla\times\boldsymbol{\omega}
+$$
+
+です．
+一定動粘性係数 $\nu$ の粘性項 $\nu\nabla^2\boldsymbol{u}$ は，渦度の空間変化とも結びついています．
+二次元では右辺は $(-\partial_y\omega,\partial_x\omega,0)$ です．
+速度を各成分ごとに拡散させる表現と，渦度から見た表現を結ぶのがcurl curlの公式です．
 
 ## 数値微分への接続
 
