@@ -11,11 +11,13 @@ const ASSIGNMENT_IDENTIFIERS = Dict(
     "F01" => ["student_greeting", "exercises/F01_first_pull_request/tests.jl"],
     "F02" => ["mean_temperature", "temperature_anomaly", "exercises/F02_julia_arrays_and_tests/tests.jl"],
     "F03" => [
-        "gradient_scalar", "curl_vector", "laplacian_scalar",
+        "gradient_scalar", "curl_vector", "divergence_vector",
+        "gradient_divergence_vector", "laplacian_vector",
     ],
     "F04" => [
         "forward_difference", "backward_difference", "centered_difference",
-        "centered_partial", "verify_vector_identities", "exercises/F03-F04_vector_calculus/tests.jl",
+        "centered_partial", "product_divergence_residual", "curl_curl_residual",
+        "verify_vector_identities", "exercises/F03-F04_vector_calculus/tests.jl",
     ],
     "N01" => [
         "rectangular_initial_condition", "upwind_step!", "centered_step!",

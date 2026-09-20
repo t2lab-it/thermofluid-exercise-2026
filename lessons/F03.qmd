@@ -8,12 +8,12 @@ title: "ベクトル解析"
 ## この回の到達点
 
 - gradient，divergence，curl，Laplacianを直交座標の成分で定義する．
-- 混合偏微分を交換できる条件を明記し，ベクトル解析の三公式を成分展開で証明する．
-- [次回の数値微分](F04.qmd)で同じ三公式を数値的に確かめる準備をする．
+- 混合偏微分を交換できる条件を明記し，ベクトル解析の四公式を成分展開で証明する．
+- [次回の数値微分](F04.qmd)で同じ四公式を数値的に確かめる準備をする．
 
 ## 直交座標での微分演算子
 
-スカラー場 \(\phi(x,y,z)\) とベクトル場 \(\boldsymbol{A}(x,y,z)=(A_x,A_y,A_z)\) に対し，勾配（gradient）を
+スカラー場 $\phi(x,y,z)$ とベクトル場 $\boldsymbol{A}(x,y,z)=(A_x,A_y,A_z)$ に対し，勾配（gradient）を
 
 $$
 \nabla\phi=
@@ -54,8 +54,15 @@ $$
 $$
 
 と定義します．
-以下では，現れる二階偏微分が連続，すなわち場が対象領域で少なくとも \(C^2\) 級であると仮定します．
-この条件により \(\partial^2 f/(\partial x\partial y)=\partial^2 f/(\partial y\partial x)\) のように混合偏微分の順序を交換できます．
+ベクトルLaplacianは直交座標の各成分について
+
+$$
+\nabla^2\boldsymbol{A}=(\nabla^2 A_x,\nabla^2 A_y,\nabla^2 A_z)
+$$
+
+と定義します．
+以下では，現れる二階偏微分が連続，すなわち場が対象領域で少なくとも $C^2$ 級であると仮定します．
+この条件により $\partial^2 f/(\partial x\partial y)=\partial^2 f/(\partial y\partial x)$ のように混合偏微分の順序を交換できます．
 
 ## 証明1: curl grad = 0
 
@@ -97,36 +104,77 @@ $$
 \end{aligned}
 $$
 
-\(A_z\)，\(A_y\)，\(A_x\) それぞれの混合偏微分が二項ずつ相殺するため，
+$A_z$，$A_y$，$A_x$ それぞれの混合偏微分が二項ずつ相殺するため，
 
 $$
 \nabla\cdot(\nabla\times\boldsymbol{A})=0.
 $$
 
-## 証明3: div grad = Laplacian
+## 証明3: 積の発散
 
-gradientの各成分をdivergenceへ代入すると
+各成分に積の微分を適用すると，
 
 $$
 \begin{aligned}
-\nabla\cdot(\nabla\phi)
-&=
-\frac{\partial}{\partial x}\left(\frac{\partial\phi}{\partial x}\right)
-+\frac{\partial}{\partial y}\left(\frac{\partial\phi}{\partial y}\right)
-+\frac{\partial}{\partial z}\left(\frac{\partial\phi}{\partial z}\right)\\
-&=
-\frac{\partial^2\phi}{\partial x^2}
-+\frac{\partial^2\phi}{\partial y^2}
-+\frac{\partial^2\phi}{\partial z^2}
-=\nabla^2\phi.
+\nabla\cdot(\phi\boldsymbol{A})
+&=\partial_x(\phi A_x)+\partial_y(\phi A_y)+\partial_z(\phi A_z)\\
+&=A_x\partial_x\phi+A_y\partial_y\phi+A_z\partial_z\phi
++\phi(\partial_x A_x+\partial_y A_y+\partial_z A_z)\\
+&=\boldsymbol{A}\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol{A}.
 \end{aligned}
 $$
 
-これはLaplacianの定義そのものです．
+この公式では積の微分を使い，混合偏微分の交換は使いません．
+この証明だけなら場は $C^1$ 級で十分です．
+
+## 証明4: curl curl
+
+$\partial_x=\partial/\partial x$ などと略記します．
+第1成分を展開し，混合偏微分を交換すると，
+
+$$
+\begin{aligned}
+\left[\nabla\times(\nabla\times\boldsymbol{A})\right]_x
+&=\partial_y(\partial_x A_y-\partial_y A_x)
+-\partial_z(\partial_z A_x-\partial_x A_z)\\
+&=\partial_x\partial_y A_y+\partial_x\partial_z A_z
+-\partial_y^2 A_x-\partial_z^2 A_x\\
+&=\partial_x(\partial_x A_x+\partial_y A_y+\partial_z A_z)
+-(\partial_x^2 A_x+\partial_y^2 A_x+\partial_z^2 A_x)\\
+&=\partial_x(\nabla\cdot\boldsymbol{A})-\nabla^2 A_x.
+\end{aligned}
+$$
+
+第2・第3成分も同様に，
+
+$$
+\begin{aligned}
+\left[\nabla\times(\nabla\times\boldsymbol{A})\right]_y
+&=\partial_z(\partial_y A_z-\partial_z A_y)
+-\partial_x(\partial_x A_y-\partial_y A_x)\\
+&=\partial_y\partial_z A_z+\partial_y\partial_x A_x
+-\partial_z^2 A_y-\partial_x^2 A_y\\
+&=\partial_y(\nabla\cdot\boldsymbol{A})-\nabla^2 A_y,\\
+\left[\nabla\times(\nabla\times\boldsymbol{A})\right]_z
+&=\partial_x(\partial_z A_x-\partial_x A_z)
+-\partial_y(\partial_y A_z-\partial_z A_y)\\
+&=\partial_z\partial_x A_x+\partial_z\partial_y A_y
+-\partial_x^2 A_z-\partial_y^2 A_z\\
+&=\partial_z(\nabla\cdot\boldsymbol{A})-\nabla^2 A_z.
+\end{aligned}
+$$
+
+各成分で自分自身の座標方向の二階微分を足して引き，勾配とLaplacianの形にまとめました．
+したがって，
+
+$$
+\nabla\times(\nabla\times\boldsymbol{A})
+=\nabla(\nabla\cdot\boldsymbol{A})-\nabla^2\boldsymbol{A}.
+$$
 
 ## 数値微分への接続
 
-刻み幅 \(h>0\) に対し，一変数関数 \(f\) の前進差分，後退差分，中心差分を
+刻み幅 $h>0$ に対し，一変数関数 $f$ の前進差分，後退差分，中心差分を
 
 $$
 D_+f(x)=\frac{f(x+h)-f(x)}{h},\qquad
@@ -139,6 +187,6 @@ $$
 
 と定義します．
 三つの差分は微分の近似ですが，刻み幅に対する誤差の減り方が異なります．
-次回の[数値微分と格子収束](F04.qmd)では，その違いをTaylor展開で導き，同じ三公式の数値残差へつなげます．
+次回の[数値微分と格子収束](F04.qmd)では，その違いをTaylor展開で導き，同じ四公式の数値残差へつなげます．
 
 [F03課題の理解度チェック](../assignments/F03.qmd#understanding-check)で，この授業の内容を確認してください．
