@@ -33,6 +33,8 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
     @test occursin("{#understanding-check}", understanding_check)
     @test occursin("lessons/{{< meta lesson-id >}}.html", understanding_check)
     @test occursin("understanding-check-{{< meta lesson-id >}}.txt", understanding_check)
+    @test count("::: {.callout-tip title=\"AIへ：問題を1問出してもらう\"}", understanding_check) == 1
+    @test count("::: {.callout-tip title=\"AIへ：回答を評価してもらう\"}", understanding_check) == 1
     @test occursin(r"対話全文を学生リポジトリ[^。\n]*含めず", ai_guidance)
     for term in ("LETUS", "理解度チェック", "全文")
         @test occursin(term, ai_guidance)
