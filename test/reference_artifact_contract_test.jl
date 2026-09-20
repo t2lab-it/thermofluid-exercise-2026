@@ -124,3 +124,32 @@ end
         @test abs(s["insulated"]["heat_change"])<1e-12
     end
 end
+
+@testset "N04 both model reference contracts" begin
+    for (model,reference_errors) in (("linear",[0.0353795761290,0.0199421663399,0.0106714557243]),
+        ("nonlinear",[0.0235384925365,0.0133952214002,0.0072268027443]))
+        root=joinpath(REFERENCE_ARTIFACT_ROOT,"assets","n04-reference",model)
+        names=("comparison.png","conservation.png","convergence.png","summary.toml")
+        @test all(n->isfile(joinpath(root,n)),names)
+        all(n->isfile(joinpath(root,n)),names) || continue
+        for n in names[1:3]
+            @test png_dimensions(joinpath(root,n))==(width=800,height=500)
+        end
+        s=TOML.parsefile(joinpath(root,"summary.toml"))
+        @test s["course_id"]=="N04" && s["model"]==model && s["boundary"]=="periodic"
+        @test s["domain"]==[0.,2.] && s["initial"]=="pulse" && s["t_final"]==1.
+        @test occursin("dimensionless",s["units"])
+        @test s["convergence"]["nx"]==[40,80,160]
+        @test s["convergence"]["errors"]≈reference_errors atol=1e-12
+        @test all(p->0.8<p<1.2,s["convergence"]["orders"])
+        @test s["advection_only"]["dt"]==s["diffusion_only"]["dt"]==s["combined"]["dt"]
+        for key in ("advection_only","diffusion_only","combined")
+            r=s[key]
+            @test r["model"]==model && r["nx"]==80 && r["dx"]==0.025
+            @test r["initial_integral"]≈2.525 && abs(r["integral_change"])<1e-11
+            @test r["max_stability_number"]<=0.8+1e-12
+            @test r["diffusivity"]==(key=="advection_only" ? 0. : 0.1)
+            @test r["advection"]==(key!="diffusion_only")
+        end
+    end
+end

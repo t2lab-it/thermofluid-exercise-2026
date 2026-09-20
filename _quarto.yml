@@ -107,6 +107,10 @@ website:
               href: lessons/N03.qmd
             - text: "第7回 課題: 1次元熱拡散の実装と検証"
               href: assignments/N03.qmd
+            - text: "第7回 授業: 一次元移流拡散"
+              href: lessons/N04.qmd
+            - text: "第7回 課題: 一次元移流拡散の実装と検証"
+              href: assignments/N04.qmd
             - text: "第8回 授業: 共通化から二次元移流へ"
             - text: "第9回 授業: 二次元拡散・移流拡散"
             - text: "第10回 授業: Laplace／Poissonと反復法"

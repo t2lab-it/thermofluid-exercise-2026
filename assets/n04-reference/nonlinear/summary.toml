@@ -1,0 +1,81 @@
+boundary = "periodic"
+course_id = "N04"
+domain = [0.0, 2.0]
+initial = "pulse"
+model = "nonlinear"
+requested_safety = 0.8
+t_final = 1.0
+units = "dimensionless Burgers velocity; integral is velocity integral, not heat"
+
+[advection_only]
+advection = true
+diffusivity = 0.0
+dt = 0.002
+dx = 0.025
+final_integral = 2.5249999999999995
+fo = 0.0
+initial = "pulse"
+initial_integral = 2.5250000000000004
+integral_change = -8.881784197001252e-16
+max_cfl = 0.16
+max_stability_number = 0.16
+maximum = 2.0
+minimum = 1.0
+model = "nonlinear"
+nx = 80
+requested_safety = 0.8
+speed = 1.0
+speed_role = "unused; velocity is u, analytic mean is 1"
+steps = 500
+t_final = 1.0
+
+[combined]
+advection = true
+diffusivity = 0.1
+dt = 0.002
+dx = 0.025
+final_integral = 2.5249999999999995
+fo = 0.32
+initial = "pulse"
+initial_integral = 2.5250000000000004
+integral_change = -8.881784197001252e-16
+max_cfl = 0.16
+max_stability_number = 0.8
+maximum = 2.0
+minimum = 1.0
+model = "nonlinear"
+nx = 80
+requested_safety = 0.8
+speed = 1.0
+speed_role = "unused; velocity is u, analytic mean is 1"
+steps = 500
+t_final = 1.0
+
+[convergence]
+dx = [0.05, 0.025, 0.0125]
+errors = [0.023538492536510525, 0.013395221400203994, 0.00722680274432097]
+initial = "mode"
+nx = [40, 80, 160]
+orders = [0.813303502893155, 0.8902890051032963]
+
+[diffusion_only]
+advection = false
+diffusivity = 0.1
+dt = 0.002
+dx = 0.025
+final_integral = 2.525000000000001
+fo = 0.32
+initial = "pulse"
+initial_integral = 2.5250000000000004
+integral_change = 4.440892098500626e-16
+max_cfl = 0.0
+max_stability_number = 0.64
+maximum = 2.0
+minimum = 1.0
+model = "nonlinear"
+nx = 80
+requested_safety = 0.8
+speed = 1.0
+speed_role = "unused; velocity is u, analytic mean is 1"
+steps = 500
+t_final = 1.0

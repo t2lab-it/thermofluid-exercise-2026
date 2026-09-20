@@ -1,0 +1,81 @@
+boundary = "periodic"
+course_id = "N04"
+domain = [0.0, 2.0]
+initial = "pulse"
+model = "linear"
+requested_safety = 0.8
+t_final = 1.0
+units = "dimensionless temperature; integral is transported temperature content"
+
+[advection_only]
+advection = true
+diffusivity = 0.0
+dt = 0.0022222222222222222
+dx = 0.025
+final_integral = 2.5250000000000004
+fo = 0.0
+initial = "pulse"
+initial_integral = 2.5250000000000004
+integral_change = 0.0
+max_cfl = 0.08888888888888888
+max_stability_number = 0.08888888888888888
+maximum = 2.0
+minimum = 1.0
+model = "linear"
+nx = 80
+requested_safety = 0.8
+speed = 1.0
+speed_role = "constant advection speed"
+steps = 450
+t_final = 1.0
+
+[combined]
+advection = true
+diffusivity = 0.1
+dt = 0.0022222222222222222
+dx = 0.025
+final_integral = 2.5250000000000004
+fo = 0.3555555555555555
+initial = "pulse"
+initial_integral = 2.5250000000000004
+integral_change = 0.0
+max_cfl = 0.08888888888888888
+max_stability_number = 0.7999999999999999
+maximum = 2.0
+minimum = 1.0
+model = "linear"
+nx = 80
+requested_safety = 0.8
+speed = 1.0
+speed_role = "constant advection speed"
+steps = 450
+t_final = 1.0
+
+[convergence]
+dx = [0.05, 0.025, 0.0125]
+errors = [0.03537957612900078, 0.019942166339931733, 0.010671455724265977]
+initial = "mode"
+nx = [40, 80, 160]
+orders = [0.827094623847717, 0.9020651480251518]
+
+[diffusion_only]
+advection = false
+diffusivity = 0.1
+dt = 0.0022222222222222222
+dx = 0.025
+final_integral = 2.525
+fo = 0.3555555555555555
+initial = "pulse"
+initial_integral = 2.5250000000000004
+integral_change = -4.440892098500626e-16
+max_cfl = 0.0
+max_stability_number = 0.711111111111111
+maximum = 2.0
+minimum = 1.0
+model = "linear"
+nx = 80
+requested_safety = 0.8
+speed = 1.0
+speed_role = "constant advection speed"
+steps = 450
+t_final = 1.0
