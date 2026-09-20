@@ -61,6 +61,8 @@ exercises/N01_linear_advection/results/summary.toml
 ~~~
 
 図中の`Initial`は初期値，`Final`は最終値です．
+`t=0.125，0.250，0.375`の中間時刻も重ねて表示し，初期条件から最終時刻まで色が連続に変化するカラーマップを使います．
+`upwind.png`は`viridis`，`centered-euler.png`は`plasma`で，時刻の順序を色の順序として読み取れます．
 `Upwind`は上流差分，`Centered`は中心差分を表します．
 次を確認してください．
 
@@ -86,9 +88,9 @@ exercises/N01_linear_advection/results/summary.toml
 | 中心差分 + Euler | -10.420010468371677 | 13.492726642559711 | 11.492726642559711 | 11.420010468371677 |
 :::
 
-![上流差分法 + Euler法の公開基準値](../assets/n01-reference/upwind.png){fig-alt="初期値と上流差分法 + Euler法の最終値を比較したグラフ"}
+![上流差分法 + Euler法の公開基準値](../assets/n01-reference/upwind.png){fig-alt="初期値から時刻0.125，0.250，0.375，0.5までをviridisの連続色で示した上流差分法とEuler法のグラフ"}
 
-![中心差分法 + Euler法の公開基準値](../assets/n01-reference/centered-euler.png){fig-alt="初期値と中心差分法 + Euler法の最終値を比較し，振動を示したグラフ"}
+![中心差分法 + Euler法の公開基準値](../assets/n01-reference/centered-euler.png){fig-alt="初期値から時刻0.125，0.250，0.375，0.5までをplasmaの連続色で示し，振動の増幅を表した中心差分法とEuler法のグラフ"}
 
 真偽フラグを含む機械可読な値は[`summary.toml`](../assets/n01-reference/summary.toml)でも確認できます．
 
@@ -118,5 +120,6 @@ exercises/N01_linear_advection/results/summary.toml
 - 3つのTODOを式・添字・コードで説明できる．
 - 実効CFLと最終時刻を確認した．
 - 上流差分法の有界性と中心差分法 + Euler法のオーバーシュートまたはアンダーシュートを確認した．
+- 初期・中間・最終時刻の分布を連続したカラーマップで読み取り，時刻による波形の変化を説明した．
 - 公式出力，五つの必須テスト，一つの自作テスト，学習ログを確認した．
 - [学習ログ，diff，commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)までを完了した．
