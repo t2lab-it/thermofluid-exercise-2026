@@ -79,16 +79,17 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 
 `<model>`は`linear`または`nonlinear`です．
 保存図は初期積分からの変化を $10^{-14}$ 単位で示します．
-`comparison.png`には初期条件と`t=0.25，0.50，0.75，1.0`の3条件の分布を重ねます．
-同じ図に複数のシミュレーションを載せるため，移流のみ・拡散のみ・移流拡散にそれぞれ異なる連続カラーマップ（`viridis`・`plasma`・`cividis`）を使います．
-`conservation.png`も各シミュレーションを同じカラーマップ系列で表示します．
+`comparison.png`には灰色破線の初期分布と，最終時刻`t=1`の3条件の分布だけを重ねます．
+移流のみは青，拡散のみは朱色，移流拡散は緑の実線で示します．
+線形・非線形で条件色を統一し，`conservation.png`でも同じ色を使います．
+`convergence.png`の移流拡散の誤差は緑，1次比較線は黒点線です．
 
 ::: {.panel-tabset}
 ## 線形の基準
 
-![線形の3条件比較](../assets/n04-reference/linear/comparison.png){fig-alt="初期条件から時刻0.25，0.50，0.75，1.0までを3種類の連続カラーマップで示す線形移流のみ・拡散のみ・移流拡散の比較"}
+![線形の3条件比較](../assets/n04-reference/linear/comparison.png){fig-alt="灰色破線の初期分布と，時刻1の線形移流のみの青実線，拡散のみの朱色実線，移流拡散の緑実線の比較"}
 
-![温度の空間積分の保存誤差](../assets/n04-reference/linear/conservation.png){fig-alt="viridis・plasma・cividisを条件ごとに使い分け，全時刻の温度積分の保存誤差を10のマイナス14乗単位で示す"}
+![温度の空間積分の保存誤差](../assets/n04-reference/linear/conservation.png){fig-alt="移流のみは青，拡散のみは朱色，移流拡散は緑で，全時刻の温度積分の保存誤差を10のマイナス14乗単位で示す"}
 
 ![線形の格子収束](../assets/n04-reference/linear/convergence.png){fig-alt="40・80・160点の最大絶対誤差の減少と1次の比較線"}
 
@@ -96,9 +97,9 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 
 ## 非線形の基準
 
-![非線形の3条件比較](../assets/n04-reference/nonlinear/comparison.png){fig-alt="初期条件から時刻0.25，0.50，0.75，1.0までを3種類の連続カラーマップで示す非線形移流のみ・拡散のみ・移流拡散の比較"}
+![非線形の3条件比較](../assets/n04-reference/nonlinear/comparison.png){fig-alt="灰色破線の初期分布と，時刻1の非線形移流のみの青実線，拡散のみの朱色実線，移流拡散の緑実線の比較"}
 
-![速度の空間積分の保存誤差](../assets/n04-reference/nonlinear/conservation.png){fig-alt="viridis・plasma・cividisを条件ごとに使い分け，全時刻の速度積分の保存誤差を10のマイナス14乗単位で示す"}
+![速度の空間積分の保存誤差](../assets/n04-reference/nonlinear/conservation.png){fig-alt="移流のみは青，拡散のみは朱色，移流拡散は緑で，全時刻の速度積分の保存誤差を10のマイナス14乗単位で示す"}
 
 ![非線形の格子収束](../assets/n04-reference/nonlinear/convergence.png){fig-alt="正の周期解析解に対する40・80・160点の誤差と1次の比較線"}
 
@@ -114,7 +115,7 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 
 - 選択理由と式を記録し，選択流束・合成刻み・周期更新，旧配列の扱いを説明した．
 - 選択モデルの必須4群・自作2件・過去課題の回帰テストが通り，許容誤差と検出限界を説明した．
-- 初期・中間・最終時刻の3条件を異なる連続カラーマップで比較し，周期保存，合成安定条件，解析解に対する誤差・格子収束を図と数値で説明した．
+- 初期分布と最終時刻`t=1`の3条件を条件ごとの色で比較し，周期保存，合成安定条件，解析解に対する誤差・格子収束を図と数値で説明した．
 - 公式4出力と学習ログを確認し，AI提案の採否理由と確認方法を記録した．
 - [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，ログへ提出状況を記録した．
 - 主要チェックポイントである一次元総合確認で式・コード・テスト・結果の対応を教員・TAへ説明し，PRのmerge前に確認を受けた．

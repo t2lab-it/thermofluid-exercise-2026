@@ -69,14 +69,19 @@ exercises/N03_diffusion/results/summary.toml
 [公式出力の確認](../guides/workflow.qmd#official-results)を行い，4点をcommitします．
 
 `boundary-comparison.png`には初期分布と`t=0.25，0.50，0.75，1.0`の空間分布を重ねます．
-同じ図に複数のシミュレーションを載せるため，固定温度は`viridis`，断熱は`plasma`の連続カラーマップを使います．
-初期条件から最終時刻までの各系列を色の連続として読み取り，固定温度と断熱の違いを比較してください．
+色は時刻を表し，両境界に共通の`viridis`系列から4色を使います．
+線種は境界条件を表し，固定温度は実線，断熱は破線です．
+初期分布は灰色点線で1本だけ示し，時刻の色と境界条件の線種は別々の凡例で確認できます．
+同じ時刻の2本を比較し，境界条件による温度分布の違いを読み取ってください．
 
-![初期分布と両境界の時間発展](../assets/n03-reference/boundary-comparison.png){fig-alt="初期矩形から時刻0.25，0.50，0.75，1.0までを連続色で示した拡散分布．固定温度はviridis，断熱はplasmaで，固定温度端は0へ近づき断熱端は温度が変化する"}
+![初期分布と両境界の時間発展](../assets/n03-reference/boundary-comparison.png){fig-alt="灰色点線の初期分布と，時刻0.25，0.50，0.75，1.0を4色で示す単一パネルの拡散分布．同じ時刻の固定温度は実線，断熱は破線で，時刻と線種の凡例を別々に示す"}
 
-![両境界の無次元熱量](../assets/n03-reference/heat-content.png){fig-alt="全時刻の無次元熱量履歴．固定温度はviridis，断熱はplasmaで示し，固定温度では初期熱量0.525から減少し断熱では0.525を保つ"}
+`heat-content.png`の縦軸は無次元熱量$H$です．
+固定温度は黒実線，断熱は黒破線，初期熱量は灰色点線で示します．
 
-![両境界の解析モードの格子収束](../assets/n03-reference/convergence.png){fig-alt="viridisの固定温度とplasmaの断熱について，格子幅を半分にすると最大絶対誤差が約4分の1になる収束図"}
+![両境界の無次元熱量](../assets/n03-reference/heat-content.png){fig-alt="全時刻の無次元熱量履歴．固定温度は黒実線，断熱は黒破線，初期熱量は灰色点線で示し，固定温度では初期熱量0.525から減少し断熱では0.525を保つ"}
+
+![両境界の解析モードの格子収束](../assets/n03-reference/convergence.png){fig-alt="黒実線の固定温度と黒破線の断熱，黒点線の2次比較線を示し，格子幅を半分にすると最大絶対誤差が約4分の1になる収束図"}
 
 [`summary.toml`](../assets/n03-reference/summary.toml)と自分の結果を比較してください．
 `initial_heat`と`final_heat`は台形則の無次元熱量，`heat_change`は最終から初期を引いた符号付き変化です．
@@ -103,5 +108,5 @@ N03Diffusion.stability_experiment(; output_dir=joinpath("scratch", "N03-stabilit
 - [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログへ提出状況を記録した．
 - 実装3箇所と旧配列・境界・バッファ交換，係数2と半セルの対応を説明できる．
 - 配布済み必須4群・指定テーマ自作2つ・過去課題の回帰テストが通り，判断条件の根拠を説明できる．
-- 初期・中間・最終時刻の温度分布を連続カラーマップで比較し，両境界の熱量，標準計算の安定性，解析モードの格子収束を図と数値から説明した．
+- 灰色点線の初期分布と4時刻の温度分布を，時刻の色と境界条件の線種を使って比較し，両境界の熱量，標準計算の安定性，解析モードの格子収束を図と数値から説明した．
 - 公式4出力と学習ログを確認し，[学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで完了した．
