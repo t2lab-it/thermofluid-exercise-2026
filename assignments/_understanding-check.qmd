@@ -5,7 +5,6 @@
 まず，次の枠内の文面をそのままAIに渡してください：
 
 ::: {.callout-tip title="AIへ：問題を1問出してもらう"}
-以下のコードブロックだけをコピーして，AIに渡してください．
 
 ```text
 私は，https://t2lab-it.github.io/thermofluid-exercise-2026/lessons/{{< meta lesson-id >}}.html の内容を学習しました．
@@ -25,7 +24,6 @@
 その回答と，次の枠内の文面をAIに渡してください：
 
 ::: {.callout-tip title="AIへ：回答を評価してもらう"}
-以下のコードブロックだけをコピーして，AIに渡してください．
 
 ```text
 上記の回答を以下の観点から評価してください：
