@@ -12,28 +12,59 @@ title: "一次元熱拡散と境界・熱量保存"
 
 ## 熱伝導と無次元化
 
-一定物性，内部発熱なし，一定断面積の一次元熱伝導では，
+この回では，無次元化した一次元熱拡散方程式
 
 $$
-\rho c_p T_{t_{\rm phys}}=-q_{x_{\rm phys}},\qquad
-q=-kT_{x_{\rm phys}},\qquad
-T_{t_{\rm phys}}=\alpha_{\rm phys}T_{x_{\rm phys}x_{\rm phys}},\quad
-\alpha_{\rm phys}=\frac{k}{\rho c_p}
+\frac{\partial u}{\partial t}=D\frac{\partial^2 u}{\partial x^2}
 $$
 
-となります．
+を解きます．
+$u$ は基準温度からの温度差を規格化した無次元温度，$x$ と $t$ は無次元の位置と時間，$D$ は無次元の熱拡散率です．
+以降の $u,x,t,L,\Delta x,\Delta t,D$ はすべて無次元量で，コードの`diffusivity`は $D$ です．
+
+::: {.callout-note collapse="true" title="有次元の問題設定と無次元化の手順"}
+
+一定物性，内部発熱なし，一定断面積の一次元熱伝導を考えます．
+温度 $T$ と熱流束 $q$ は，エネルギー保存とFourierの法則
+
+$$
+\rho c_p\frac{\partial T}{\partial t_{\rm phys}}
+=-\frac{\partial q}{\partial x_{\rm phys}},\qquad
+q=-k\frac{\partial T}{\partial x_{\rm phys}}
+$$
+
+に従います．
+ここで $\rho$ は密度，$c_p$ は比熱，$k$ は熱伝導率です．
+熱流束 $q$ を消去すると，有次元の熱拡散方程式が得られます．
+
+$$
+\frac{\partial T}{\partial t_{\rm phys}}
+=\alpha_{\rm phys}\frac{\partial^2 T}{\partial x_{\rm phys}^2},\qquad
+\alpha_{\rm phys}=\frac{k}{\rho c_p}.
+$$
+
 熱伝導率 $k$ は温度勾配と熱流束の関係を，熱拡散率 $\alpha_{\rm phys}$ は温度分布が変化する速さを表します．
-基準温度 $T_{\rm ref}$，温度差 $\Delta T>0$，長さ $\ell_{\rm ref}$，時間 $t_{\rm ref}$ を使い，
+基準温度 $T_{\rm ref}$，温度差 $\Delta T>0$，長さ $\ell_{\rm ref}>0$，時間 $t_{\rm ref}>0$ を使い，
 
 $$
 u=\frac{T-T_{\rm ref}}{\Delta T},\qquad
 x=\frac{x_{\rm phys}}{\ell_{\rm ref}},\qquad
-t=\frac{t_{\rm phys}}{t_{\rm ref}},\qquad
-D=\frac{\alpha_{\rm phys}t_{\rm ref}}{\ell_{\rm ref}^2}
+t=\frac{t_{\rm phys}}{t_{\rm ref}}
 $$
 
-とします．
-以降の $u,x,t,L,\Delta x,\Delta t,D$ はすべて無次元量で，コードの`diffusivity`は $D$ です．
+と定義します．
+これらを有次元の方程式へ代入すると，
+
+$$
+\frac{\Delta T}{t_{\rm ref}}\frac{\partial u}{\partial t}
+=\alpha_{\rm phys}\frac{\Delta T}{\ell_{\rm ref}^2}
+\frac{\partial^2 u}{\partial x^2}
+$$
+
+となります．
+両辺を $\Delta T/t_{\rm ref}$ で割り，$D=\alpha_{\rm phys}t_{\rm ref}/\ell_{\rm ref}^2$ とおけば，冒頭の無次元方程式が得られます．
+
+:::
 
 ## 解く問題と標準条件 {#problem-setup}
 
