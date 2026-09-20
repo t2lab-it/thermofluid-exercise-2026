@@ -1,0 +1,170 @@
+---
+title: "一次元熱拡散と境界・熱量保存"
+---
+::: {.course-position}
+第7回・授業 · 課題ID: N03
+:::
+
+## この回の到達点
+
+温度勾配が熱流束を生み，その出入りが温度を変える関係を，差分式と熱量の変化から説明します．
+固定温度と断熱を比較し，[F04](F04.qmd)で学んだ格子収束を時間発展問題へ適用します．
+
+## 熱伝導と無次元化
+
+この回では，無次元化した一次元熱拡散方程式
+
+$$
+\frac{\partial u}{\partial t}=D\frac{\partial^2 u}{\partial x^2}
+$$
+
+を解きます．
+$u$ は基準温度からの温度差を規格化した無次元温度，$x$ と $t$ は無次元の位置と時間，$D$ は無次元の熱拡散率です．
+以降の $u,x,t,L,\Delta x,\Delta t,D$ はすべて無次元量で，コードの`diffusivity`は $D$ です．
+
+::: {.callout-note collapse="true" title="有次元の問題設定と無次元化の手順"}
+
+一定物性，内部発熱なし，一定断面積の一次元熱伝導を考えます．
+温度 $T$ と熱流束 $q$ は，エネルギー保存とFourierの法則
+
+$$
+\rho c_p\frac{\partial T}{\partial t_{\rm phys}}
+=-\frac{\partial q}{\partial x_{\rm phys}},\qquad
+q=-k\frac{\partial T}{\partial x_{\rm phys}}
+$$
+
+に従います．
+ここで $\rho$ は密度，$c_p$ は比熱，$k$ は熱伝導率です．
+熱流束 $q$ を消去すると，有次元の熱拡散方程式が得られます．
+
+$$
+\frac{\partial T}{\partial t_{\rm phys}}
+=\alpha_{\rm phys}\frac{\partial^2 T}{\partial x_{\rm phys}^2},\qquad
+\alpha_{\rm phys}=\frac{k}{\rho c_p}.
+$$
+
+熱伝導率 $k$ は温度勾配と熱流束の関係を，熱拡散率 $\alpha_{\rm phys}$ は温度分布が変化する速さを表します．
+基準温度 $T_{\rm ref}$，温度差 $\Delta T>0$，長さ $\ell_{\rm ref}>0$，時間 $t_{\rm ref}>0$ を使い，
+
+$$
+u=\frac{T-T_{\rm ref}}{\Delta T},\qquad
+x=\frac{x_{\rm phys}}{\ell_{\rm ref}},\qquad
+t=\frac{t_{\rm phys}}{t_{\rm ref}}
+$$
+
+と定義します．
+これらを有次元の方程式へ代入すると，
+
+$$
+\frac{\Delta T}{t_{\rm ref}}\frac{\partial u}{\partial t}
+=\alpha_{\rm phys}\frac{\Delta T}{\ell_{\rm ref}^2}
+\frac{\partial^2 u}{\partial x^2}
+$$
+
+となります．
+両辺を $\Delta T/t_{\rm ref}$ で割り，$D=\alpha_{\rm phys}t_{\rm ref}/\ell_{\rm ref}^2$ とおけば，冒頭の無次元方程式が得られます．
+
+:::
+
+## 解く問題と標準条件 {#problem-setup}
+
+$$
+u_t=D u_{xx},\qquad 0\le x\le L=2,\qquad
+u(x,0)=\begin{cases}1 &(0.5\le x\le1),\\0 &(\text{それ以外}).\end{cases}
+$$
+
+| 項目 | 標準条件 |
+|---|---|
+| 格子 | 両端を含む81点，$\Delta x=0.025$ |
+| 熱拡散率 | `diffusivity=0.1` |
+| 指定Fourier数 | `fo=0.4` |
+| 最終時刻 | `t_final=1.0` |
+| 固定温度 `:fixed` | 両端 $u=0$（物理的には $T_{\rm ref}$） |
+| 断熱 `:insulated` | 両端 $u_x=0$，端点の温度も時間発展 |
+
+両境界で同じ格子・初期値・刻みを使います．
+N01・N02の矩形と同じ位置に温度の高い領域を置き，移動や非線形変形と拡散による平滑化を比較します．
+
+## 内部点と境界の差分
+
+空間中心差分と陽Euler法を組み合わせます．
+
+$$
+r=\frac{D\Delta t}{\Delta x^2},\qquad
+u_i^{n+1}=u_i^n+r(u_{i+1}^n-2u_i^n+u_{i-1}^n).
+$$
+
+固定温度は新配列の両端を0にします．
+断熱端では，左のゴースト点を $u_0^n=u_2^n$ と鏡映して中心差分へ代入します．
+右端も対称に扱うため，
+
+$$
+u_1^{n+1}=u_1^n+2r(u_2^n-u_1^n),\qquad
+u_N^{n+1}=u_N^n+2r(u_{N-1}^n-u_N^n)
+$$
+
+となります．
+端点は半セルを代表し，内部点の半分の幅に同じ熱流束が作用するため，係数2が現れます．
+
+## 台形則の熱量と保存
+
+熱量に比例する無次元積分を，端点に半分の重みを付けて定義します．
+
+$$
+H_h=\Delta x\left(\frac{u_1}{2}+\sum_{i=2}^{N-1}u_i+\frac{u_N}{2}\right).
+$$
+
+断面積 $A$ の物体の基準温度からの過剰熱量は $Q=\rho c_p A\Delta T\ell_{\rm ref}H_h$ です．
+図と数値要約の熱量は $H_h$ を表します．
+断熱の1ステップでは，
+
+$$
+\frac{H_h^{n+1}-H_h^n}{r\Delta x}
+=(u_2-u_1)+\sum_{i=2}^{N-1}(u_{i+1}-2u_i+u_{i-1})+(u_{N-1}-u_N)=0
+$$
+
+と相殺します（右辺はすべて時刻 $n$）．
+例えば旧配列`[1,2,4,3]`，$r=1/4$ は断熱で`[1.5,2.25,3.25,3.5]`へ進み，$\Delta x=1$ なら両者の $H_h$ は8です．
+
+標準の非負初期値では固定端から放熱し，$H_h$ が減ります．
+矩形を端点も含めて格子に載せた初期熱量は0.525で，連続積分の0.5とは異なります．
+保存は同じ格子の初期離散熱量と比較します．
+標準の安定条件で十分長く計算すると，断熱は初期離散平均 $H_h(0)/L=0.2625$，固定温度は0へ近づきます．
+
+## 安定条件 {#stability}
+
+安定条件は $0<r\le1/2$ です．
+この範囲では内部点・断熱端とも旧値の非負の重み付き平均になり，標準計算の非負性と有界性を確認できます．
+
+$$
+\Delta t_{\rm nominal}=\frac{\mathrm{fo}\,\Delta x^2}{D},\qquad
+M=\left\lceil\frac{t_{\rm final}}{\Delta t_{\rm nominal}}\right\rceil,\qquad
+\Delta t=\frac{t_{\rm final}}{M}.
+$$
+
+標準条件は400ステップ，$\Delta t=0.0025$ です．
+指定値`requested_fo`と最終時刻に合わせた実効値`fo`を区別します．
+N01・N02の移流CFLと異なり，格子幅を半分にすると必要ステップ数は約4倍になります．
+
+固定温度で指定`fo=0.4`と`fo=0.6`を同じ時刻0.1まで比較します．
+後者の実効値は約0.5926，27ステップで，格子点ごとの振動と振幅増大が現れます．
+
+## 解析解による格子収束 {#convergence}
+
+[F04の誤差と観測次数](F04.qmd)を，滑らかな初期値`initial=:mode`に適用します．
+対応する解析解は次のとおりです．
+
+$$
+\begin{aligned}
+\text{固定温度: }&u(x,t)=e^{-D(\pi/L)^2t}\sin(\pi x/L),\\
+\text{断熱: }&u(x,t)=\tfrac12+\tfrac12e^{-D(\pi/L)^2t}\cos(\pi x/L).
+\end{aligned}
+$$
+
+41・81・161点，指定`fo=0.4`，同じ最終時刻1で，全格子点の最大絶対誤差を比べます．
+観測次数は $\log_2(E_{\rm coarse}/E_{\rm fine})$ です．
+$\Delta t\propto\Delta x^2$ なので，空間2次・時間1次の合成誤差がこの比較では概ね2次になります．
+固定温度81点の最大誤差は約 $3.47\times10^{-5}$ で，両境界の観測次数は約2です．
+
+[課題N03](../assignments/N03.qmd)で実装とテスト，図の比較を行います．
+[理解度チェック](../assignments/N03.qmd#understanding-check)で，境界・熱量・安定性・収束の関係を説明してください．

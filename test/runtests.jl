@@ -128,6 +128,7 @@ end
     for path in (
         "index.qmd", "lessons/N01.qmd", "assignments/N01.qmd",
         "lessons/N02.qmd", "assignments/N02.qmd",
+        "lessons/N03.qmd", "assignments/N03.qmd",
         "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
         "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
         "LICENSE-CC-BY-4.0.txt", "LICENSE-MIT.txt",
@@ -253,5 +254,26 @@ end
         passed, output = verify_fixture(fixture)
         @test !passed
         @test occursin("missing workflow page", output)
+    end
+end
+
+@testset "N03 starter and contract cannot be omitted" begin
+    mktempdir() do root
+        fixture=write_complete_contract_fixture(root)
+        rm(joinpath(fixture.student,"exercises","N03_diffusion","run.jl"))
+        passed,output=verify_fixture(fixture)
+        @test !passed
+        @test occursin("N03",output) && occursin("missing run path",output)
+    end
+    mktempdir() do root
+        fixture=write_complete_contract_fixture(root)
+        parsed=TOML.parsefile(fixture.contracts)
+        delete!(parsed["assignments"],"N03")
+        open(fixture.contracts,"w") do io
+            TOML.print(io,parsed)
+        end
+        passed,output=verify_fixture(fixture)
+        @test !passed
+        @test occursin("missing=N03",output)
     end
 end

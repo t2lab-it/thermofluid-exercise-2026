@@ -1,0 +1,52 @@
+course_id = "N03"
+diffusivity = 0.1
+domain = [0.0, 2.0]
+requested_fo = 0.4
+t_final = 1.0
+units = "dimensionless; heat_content H uses trapezoidal endpoint weights"
+
+[convergence.fixed]
+dx = [0.05, 0.025, 0.0125]
+errors = [0.00013889713139303428, 3.4695215399116464e-5, 8.671989364383847e-6]
+nx = [41, 81, 161]
+orders = [2.001208175461885, 2.000301831004065]
+
+[convergence.insulated]
+dx = [0.05, 0.025, 0.0125]
+errors = [6.944856569657265e-5, 1.7347607699780276e-5, 4.335994682191924e-6]
+nx = [41, 81, 161]
+orders = [2.0012081754445723, 2.000301831022531]
+
+[fixed]
+diffusivity = 0.1
+dt = 0.0025
+dx = 0.025
+final_heat = 0.461840713264037
+fo = 0.3999999999999999
+heat_change = -0.06315928673596305
+initial_heat = 0.525
+initial_maximum = 1.0
+initial_minimum = 0.0
+maximum = 1.0
+minimum = 0.0
+nx = 81
+requested_fo = 0.4
+steps = 400
+t_final = 1.0
+
+[insulated]
+diffusivity = 0.1
+dt = 0.0025
+dx = 0.025
+final_heat = 0.5249999999999999
+fo = 0.3999999999999999
+heat_change = -1.1102230246251565e-16
+initial_heat = 0.525
+initial_maximum = 1.0
+initial_minimum = 0.0
+maximum = 1.0
+minimum = 0.0
+nx = 81
+requested_fo = 0.4
+steps = 400
+t_final = 1.0
