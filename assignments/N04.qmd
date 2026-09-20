@@ -83,7 +83,7 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 
 ![線形の3条件比較](../assets/n04-reference/linear/comparison.png){fig-alt="同じ時刻1で，移流の移動と拡散による平滑化を共通軸で比べる線形モデル"}
 
-![線形の周期積分変化](../assets/n04-reference/linear/conservation.png){fig-alt="初期周期積分2.525からの3条件の変化を10のマイナス14乗単位で示す"}
+![温度の空間積分の保存誤差](../assets/n04-reference/linear/conservation.png){fig-alt="温度の初期空間積分2.525からの3条件の保存誤差を10のマイナス14乗単位で示す"}
 
 ![線形の格子収束](../assets/n04-reference/linear/convergence.png){fig-alt="40・80・160点の最大絶対誤差の減少と1次の比較線"}
 
@@ -93,7 +93,7 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 
 ![非線形の3条件比較](../assets/n04-reference/nonlinear/comparison.png){fig-alt="非線形移流による変形と拡散の平滑化を共通軸で比べる粘性Burgersモデル"}
 
-![非線形の周期積分変化](../assets/n04-reference/nonlinear/conservation.png){fig-alt="速度の初期周期積分2.525からの変化を10のマイナス14乗単位で示す"}
+![速度の空間積分の保存誤差](../assets/n04-reference/nonlinear/conservation.png){fig-alt="速度の初期空間積分2.525からの保存誤差を10のマイナス14乗単位で示す"}
 
 ![非線形の格子収束](../assets/n04-reference/nonlinear/convergence.png){fig-alt="正の周期解析解に対する40・80・160点の誤差と1次の比較線"}
 
