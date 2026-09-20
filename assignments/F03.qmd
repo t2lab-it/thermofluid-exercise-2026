@@ -54,6 +54,35 @@ $$
 
 各証明では，積の微分を使った箇所，混合偏微分の交換の有無と，必要な滑らかさの条件も学習ログへ書いてください．
 
+## 数値検証に使うスカラー場とベクトル場
+
+F03–F04の数値検証では，`exercises/F03-F04_vector_calculus/F03.jl`に定義済みの次の関数を使います．
+スカラー場 `scalar_field(point)` は
+
+$$
+\phi(x,y,z)=\sin x\cos y\,e^z
+$$
+
+です．
+ベクトル場 `vector_field(point)` は
+
+$$
+\boldsymbol{A}(x,y,z)=
+\begin{pmatrix}
+\sin y\,e^{2z}+e^x\\
+\sin z\,e^{2x}+e^y\\
+\sin x\,e^{2y}+e^z
+\end{pmatrix}
+$$
+
+です．
+どちらも全空間で滑らかで，混合偏微分の順序を交換できます．
+コードでは座標を `point = (x, y, z)` として渡します．
+これらは四公式を数値的に確かめるための検証用の場です．
+必要な滑らかさを満たす範囲で，自分でいろいろなスカラー場・ベクトル場を選び，四公式を確かめてもかまいません．
+別の関数を試すときは，比較に使う解析的な微分結果もその関数に合わせて用意してください．
+上の解析的な証明は，この関数を代入するだけでなく，必要な滑らかさを満たす一般の $\phi$ と $\boldsymbol{A}$ について行ってください．
+
 ## 実装範囲
 
 `gradient_scalar(point)`，`curl_vector(point)`，`divergence_vector(point)`，`gradient_divergence_vector(point)`，`laplacian_vector(point)`は解析的な微分結果として提供済みです．
