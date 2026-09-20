@@ -25,7 +25,7 @@ $$
 \right),
 $$
 
-divergenceを
+発散（divergence）を
 
 $$
 \nabla\cdot\boldsymbol{A}=
@@ -34,7 +34,7 @@ $$
 +\frac{\partial A_z}{\partial z},
 $$
 
-curlを
+回転（curl）を
 
 $$
 \nabla\times\boldsymbol{A}=
