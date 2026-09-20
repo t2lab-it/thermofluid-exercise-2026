@@ -18,8 +18,8 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 学生リポジトリ内の場所
 
-- 編集するコード: `exercises/F01_first_pull_request/run.jl`
-- 配布済み必須テスト・自作テスト: `exercises/F01_first_pull_request/tests.jl`
+- 編集するコード: [`exercises/F01_first_pull_request/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl)
+- 配布済み必須テスト・自作テスト: [`exercises/F01_first_pull_request/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/tests.jl)
 - 提出する学習ログ: `exercises/F01_first_pull_request/learning_log.md`
 
 ## 開始前の確認
@@ -64,7 +64,7 @@ exercise/F01-first-pull-request
 
 ## 2. 実装 {#実装する}
 
-`exercises/F01_first_pull_request/run.jl`の`student_greeting(name::AbstractString)`を実装してください．
+[`exercises/F01_first_pull_request/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl)の[`student_greeting(name::AbstractString)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl#L11-L16)を実装してください．
 修正したプログラムは以下のコマンドで実行します．
 
 ```console
@@ -79,7 +79,7 @@ $ git diff -- exercises/F01_first_pull_request/run.jl
 
 ## 3. テスト {#テストする}
 
-`exercises/F01_first_pull_request/tests.jl`の配布済み必須テストでは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を検証します．
+[`exercises/F01_first_pull_request/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/tests.jl)の配布済み必須テストでは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を検証します．
 一方，自作テストは`@test false`となっており，そのままでは失敗します．
 ここに，実装した名前と期待文字列を使う自作テストを実装してください．
 これらのテストが何を保証し，何を保証しないかを学習ログにまとめてください．
@@ -166,7 +166,7 @@ branch 'exercise/F01-first-pull-request' set up to track 'origin/exercise/F01-fi
 GitHub Actionsが成功することを確認してください．
 失敗した場合はエラー文を読んでその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
 
-Actionsが成功した後，GitHubの`Files changed`を読んでF01の`run.jl`，`tests.jl`，`learning_log.md`，`course_progress.toml`だけが意図した差分になっていることを確認します．
+Actionsが成功した後，GitHubの`Files changed`を読んでF01の[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl)，[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/tests.jl)，`learning_log.md`，`course_progress.toml`だけが意図した差分になっていることを確認します．
 [共通のセルフレビュー項目](../guides/workflow.qmd#submit-pr)に沿って，テストと実行結果，学習ログ，PR本文を照合してください．
 
 ## 9. mergeとmainへの復帰 {#mergeしてmainへ戻る}

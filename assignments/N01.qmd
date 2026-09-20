@@ -19,9 +19,9 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 学生リポジトリ内の場所
 
-- 実装・実行: `exercises/N01_linear_advection/run.jl`
-- 提供済みの補助ファイル: `exercises/N01_linear_advection/provided_support.jl`
-- 必須・自作テスト: `exercises/N01_linear_advection/tests.jl`
+- 実装・実行: [`exercises/N01_linear_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)
+- 提供済みの補助ファイル: [`exercises/N01_linear_advection/provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/provided_support.jl)
+- 必須・自作テスト: [`exercises/N01_linear_advection/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/tests.jl)
 - 学習ログ: `exercises/N01_linear_advection/learning_log.md`
 
 ## 開始
@@ -36,22 +36,22 @@ F03-F04をmergeし，更新済みで変更のない`main`から始めます．
 
 ## 実装範囲
 
-`run.jl`は冒頭にある`rectangular_initial_condition → upwind_step! / centered_step! → apply_boundary! → simulate → main`の順に読みます．
+[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)は冒頭にある[`rectangular_initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L33-L65) → [`upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L68-L100) / [`centered_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L103-L134) → [`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L137-L151) → [`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L168-L209) → [`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L231-L249)の順に読みます．
 学生が実装するのは，次の3つのTODOだけです．
 
-1. `rectangular_initial_condition`：[授業の矩形初期条件](../lessons/N01.qmd#初期条件)を配列へ設定する．
-2. `upwind_step!`：[上流差分 + Euler法](../lessons/N01.qmd#upwind-euler)による更新．
-3. `centered_step!`：[中心差分 + Euler法](../lessons/N01.qmd#centered-euler)による更新．
+1. [`rectangular_initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L33-L65)：[授業の矩形初期条件](../lessons/N01.qmd#初期条件)を配列へ設定する．
+2. [`upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L68-L100)：[上流差分 + Euler法](../lessons/N01.qmd#upwind-euler)による更新．
+3. [`centered_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L103-L134)：[中心差分 + Euler法](../lessons/N01.qmd#centered-euler)による更新．
 
-実効CFL・極値と，`summary_section`のオーバーシュート・アンダーシュートの計算も`run.jl`で確認します．
-`main`は二つの`simulate`を実行し，提供済みの`write_summary`と`make_plots`へ結果を渡して，下の3つの公式出力を作ります．
-`apply_boundary!`と時間ループは提供済みです．
-`provided_support.jl`には入力検証・TOML保存・描画の詳細があります．
+実効CFL・極値と，[`summary_section`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L211-L229)のオーバーシュート・アンダーシュートの計算も[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)で確認します．
+[`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L231-L249)は二つの[`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L168-L209)を実行し，提供済みの[`write_summary`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/provided_support.jl#L56-L69)と[`make_plots`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/provided_support.jl#L72-L83)へ結果を渡して，下の3つの公式出力を作ります．
+[`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L137-L151)と時間ループは提供済みです．
+[`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/provided_support.jl)には入力検証・TOML保存・描画の詳細があります．
 配布された関数の呼び出し方と出力形式を保って実装してください．
 
 ## 実行とテスト
 
-[共通の実行手順](../guides/workflow.qmd#exercise-work)で`run.jl`を実行すると，次の3ファイルが生成されます．
+[共通の実行手順](../guides/workflow.qmd#exercise-work)で[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)を実行すると，次の3ファイルが生成されます．
 内容を確認し，[公式出力の配置・サイズの確認](../guides/workflow.qmd#official-results)を行ってください．
 
 ~~~text
@@ -94,9 +94,9 @@ exercises/N01_linear_advection/results/summary.toml
 
 真偽フラグを含む機械可読な値は[`summary.toml`](../assets/n01-reference/summary.toml)でも確認できます．
 
-## `tests.jl`と学習ログ
+## [`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/tests.jl)と学習ログ
 
-`exercises/N01_linear_advection/tests.jl`の五つの必須TODOで，次を確かめてください．
+[`exercises/N01_linear_advection/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/tests.jl)の五つの必須TODOで，次を確かめてください．
 課題単独のテストと，現在課題・完了済み課題をまとめるテストは[学生向け課題ワークフローの「テスト」](../guides/workflow.qmd#tests)に従って実行します．
 
 1. 矩形初期条件

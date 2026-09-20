@@ -25,8 +25,8 @@ WindowsではWSL2 Ubuntu 24.04のLinux側，macOSではnative macOS，Linuxで�
 
 実行する診断コードと提供テストは，学生リポジトリの次の場所にあります．
 
-- 診断コード: exercises/F00_environment/run.jl
-- 提供テスト: test/f00_preflight_test.jl
+- 診断コード: [`exercises/F00_environment/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F00_environment/run.jl)
+- 提供テスト: [`test/f00_preflight_test.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/test/f00_preflight_test.jl)
 
 ## 実行場所
 
@@ -106,7 +106,7 @@ $ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-githu
 F00が完了しました。現在の課題はF01です。F00用のbranchやPRは作成しないでください。
 ~~~
 
-この時点から，F01課題で受講者が実装する`tests.jl`が`Pkg.test()`の実行対象になります．
+この時点から，F01課題で受講者が実装する[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/tests.jl)が`Pkg.test()`の実行対象になります．
 テストが未実装のため，ここで`Pkg.test()`を実行するとエラーになることを確かめてください．
 
 ~~~console
