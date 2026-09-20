@@ -15,27 +15,46 @@
 WindowsではWSL2 Ubuntu 24.04 LTSのLinux側，macOSではnative macOS，Linuxではnative Linuxを対象にします。
 WSL2ではリポジトリをLinux側のホームディレクトリへcloneします。
 
-## 初期化
+## バージョン確認
 
 ```bash
 julia --version
 quarto --version
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
 JuliaとQuartoの表示がそれぞれ`1.13.0`、`1.9.31`であることを確認します。
 
 ## レンダリング
 
-macOS・Linux（bash/zsh）では次を実行します。
+リポジトリのルートで次を実行します。
 
 ```bash
-QUARTO_JULIA_PROJECT=. quarto render
+env QUARTO_JULIA_PROJECT=. quarto render
 ```
 
 生成物は`_site/`へ出力されます。
 `_quarto.yml`はJuliaエンジンを明示します。
 Juliaの実行は、教員用のリリース予行演習が一時Quartoプロジェクトで検証します。
+
+現在の公開ページには実行用のJuliaセルがなく、サイトのテストもJulia標準ライブラリだけを使います。
+そのため、通常のレンダリングとテストでは`Pkg.instantiate()`は不要です。
+GitHub Pagesのビルドでも依存パッケージのインストールとキャッシュを省き、全テストと全ページのレンダリングを実行します。
+
+ページ単位の表示確認には、対象を指定できます。
+
+```bash
+env QUARTO_JULIA_PROJECT=. quarto render lessons/N01.qmd
+```
+
+サイト全体の確認や公開前には、対象を指定せず全ページをレンダリングします。
+
+数値計算や実行用のJuliaセルを扱う作業では、依存環境を初期化します。
+
+```bash
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
+```
+
+公開ページに実行用のJuliaセルを追加する場合は、GitHub Pagesのビルドにも依存環境の初期化を追加してください。
 
 ## テスト
 
