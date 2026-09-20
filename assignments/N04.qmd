@@ -77,13 +77,16 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 
 `<model>`は`linear`または`nonlinear`です．
 保存図は初期積分からの変化を $10^{-14}$ 単位で示します．
+`comparison.png`には初期条件と`t=0.25，0.50，0.75，1.0`の3条件の分布を重ねます．
+同じ図に複数のシミュレーションを載せるため，移流のみ・拡散のみ・移流拡散にそれぞれ異なる連続カラーマップ（`viridis`・`plasma`・`cividis`）を使います．
+`conservation.png`も各シミュレーションを同じカラーマップ系列で表示します．
 
 ::: {.panel-tabset}
 ## 線形の基準
 
-![線形の3条件比較](../assets/n04-reference/linear/comparison.png){fig-alt="同じ時刻1で，移流の移動と拡散による平滑化を共通軸で比べる線形モデル"}
+![線形の3条件比較](../assets/n04-reference/linear/comparison.png){fig-alt="初期条件から時刻0.25，0.50，0.75，1.0までを3種類の連続カラーマップで示す線形移流のみ・拡散のみ・移流拡散の比較"}
 
-![温度の空間積分の保存誤差](../assets/n04-reference/linear/conservation.png){fig-alt="温度の初期空間積分2.525からの3条件の保存誤差を10のマイナス14乗単位で示す"}
+![温度の空間積分の保存誤差](../assets/n04-reference/linear/conservation.png){fig-alt="viridis・plasma・cividisを条件ごとに使い分け，全時刻の温度積分の保存誤差を10のマイナス14乗単位で示す"}
 
 ![線形の格子収束](../assets/n04-reference/linear/convergence.png){fig-alt="40・80・160点の最大絶対誤差の減少と1次の比較線"}
 
@@ -91,9 +94,9 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 
 ## 非線形の基準
 
-![非線形の3条件比較](../assets/n04-reference/nonlinear/comparison.png){fig-alt="非線形移流による変形と拡散の平滑化を共通軸で比べる粘性Burgersモデル"}
+![非線形の3条件比較](../assets/n04-reference/nonlinear/comparison.png){fig-alt="初期条件から時刻0.25，0.50，0.75，1.0までを3種類の連続カラーマップで示す非線形移流のみ・拡散のみ・移流拡散の比較"}
 
-![速度の空間積分の保存誤差](../assets/n04-reference/nonlinear/conservation.png){fig-alt="速度の初期空間積分2.525からの保存誤差を10のマイナス14乗単位で示す"}
+![速度の空間積分の保存誤差](../assets/n04-reference/nonlinear/conservation.png){fig-alt="viridis・plasma・cividisを条件ごとに使い分け，全時刻の速度積分の保存誤差を10のマイナス14乗単位で示す"}
 
 ![非線形の格子収束](../assets/n04-reference/nonlinear/convergence.png){fig-alt="正の周期解析解に対する40・80・160点の誤差と1次の比較線"}
 
@@ -109,7 +112,7 @@ exercises/N04_advection_diffusion/results/<model>/summary.toml
 
 - 選択理由と式を記録し，選択流束・合成刻み・周期更新，旧配列の扱いを説明した．
 - 選択モデルの必須4群・自作2件・過去課題の回帰テストが通り，許容誤差と検出限界を説明した．
-- 選択モデルの3条件，周期保存，合成安定条件，解析解に対する誤差・格子収束を図と数値で説明した．
+- 初期・中間・最終時刻の3条件を異なる連続カラーマップで比較し，周期保存，合成安定条件，解析解に対する誤差・格子収束を図と数値で説明した．
 - 公式4出力と学習ログを確認し，AI提案の採否理由と確認方法を記録した．
 - [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，ログへ提出状況を記録した．
 - 主要チェックポイントである一次元総合確認で式・コード・テスト・結果の対応を教員・TAへ説明し，PRのmerge前に確認を受けた．

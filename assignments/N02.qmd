@@ -64,7 +64,8 @@ exercises/N02_nonlinear_advection/results/periodic.png
 exercises/N02_nonlinear_advection/results/summary.toml
 ~~~
 
-可視化には初期値`Initial`と最終値`Final`を重ねて表示します．
+可視化には初期値`Initial`と最終値`Final`だけでなく，標準条件では`t=0.25，0.50，0.75`の中間時刻も重ねて表示します．
+各曲線には時刻順に連続なカラーマップ（`viridis`など）を割り当て，初期条件から最終時刻まで色が連続に変化するようにします．
 [公式出力の確認](../guides/workflow.qmd#official-results)を行って3点をcommitします．
 実行に失敗した場合は，原因を直して再実行し，成功メッセージと3点の出力を確認してください．
 
@@ -84,9 +85,9 @@ N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 
 公式出力は[授業の標準条件](../lessons/N02.qmd#problem-setup)で生成し，以下と比較してください．
 
-![固定境界での非線形移流](../assets/n02-reference/fixed-boundary.png){fig-alt="固定境界，時刻1.0で波の一部が右端から流出し，左側は初期の低い値を保つ分布"}
+![固定境界での非線形移流](../assets/n02-reference/fixed-boundary.png){fig-alt="固定境界，初期から時刻0.25，0.50，0.75，1.0までを連続した色で示した非線形移流の分布．時刻1.0では波の一部が右端から流出し，左側は初期の低い値を保つ"}
 
-![周期境界での非線形移流](../assets/n02-reference/periodic.png){fig-alt="周期境界，時刻1.0で右端を越えた波が左側へ戻った分布．右端は表示用の先頭値で閉じている"}
+![周期境界での非線形移流](../assets/n02-reference/periodic.png){fig-alt="周期境界，初期から時刻0.25，0.50，0.75，1.0までを連続した色で示した非線形移流の分布．時刻1.0では右端を越えた波が左側へ戻り，右端は表示用の先頭値で閉じている"}
 
 左側へ戻る波の有無に注目し，固定境界と周期境界の違いを説明してください．
 数値拡散によるなまりと，非線形な波形変形を区別してください．
@@ -102,5 +103,5 @@ N01との波形比較は[授業の比較条件](../lessons/N02.qmd#comparison-co
 - 流束と更新式を式・配列・コードで説明し，周期添字を含む3箇所を実装した．
 - 必須4群と指定テーマ自作2つが通り，過去課題の回帰も通る．
   各テストの根拠と限界を説明できる．
-- 固定・周期の格子，時間刻み，最終時刻，CFL，有界性，周期総和，固定・周期境界の違いとN01との波形の違いを確認した．
+- 固定・周期の格子，時間刻み，初期・中間・最終時刻，CFL，有界性，周期総和，固定・周期境界の違いとN01との波形の違いを確認した．
 - 公式3出力と学習ログを確認し，[学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで完了した．
