@@ -12,7 +12,7 @@ const F03_F04_FORBIDDEN_TERMS = (
     "T" * "BA",
 )
 
-const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03")
+const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04")
 const REQUIRED_ASSIGNMENT_IDS = Set(REQUIRED_COURSE_ORDER)
 const EXPECTED_PREPARATION_HREFS = Set([
     "setup/index.qmd", "setup/julia.qmd", "setup/git-github.qmd",
@@ -596,7 +596,7 @@ end
 
 @testset "assignment instructions link to the shared workflow" begin
     workflow = normpath(joinpath(NAVIGATION_SITE_ROOT, "guides", "workflow.qmd"))
-    for id in ("F01", "F02", "F03", "F04", "N01", "N02", "N03")
+    for id in ("F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04")
         path = joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd")
         targets = qmd_link_targets(read(path, String))
         @test any(target -> normpath(resolve_qmd_target(path, target)) == workflow, targets)
@@ -649,7 +649,7 @@ end
         r"(?m)^\s*julia\s+--project",
         r"(?m)^\s*git\s+(?:switch|pull|status|branch|diff|add|commit|push)\b",
     )
-    for id in ("F02", "F03", "F04", "N01", "N02", "N03")
+    for id in ("F02", "F03", "F04", "N01", "N02", "N03", "N04")
         source = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
         for pattern in command_patterns
             @test !occursin(pattern, source)
