@@ -24,6 +24,7 @@ $$
 | **標準：一つのhotspotを変えると性能はどう変わるか** | 基準commitと変更一件後のcommit | profile sample，warm-up後の時間分布，allocation，throughput，回帰検証 |
 | 改善効果は問題規模でどう変わるか | 同じ二つのcommitを $S_0,S_1,S_2$ で実行 | 時間・allocation・memory量の増え方，仕事量あたりの時間 |
 | 初回latencyとwarm-up後のthroughputは同じ結論になるか | 新しいprocessでの一回実行と事前実行後の反復 | 初回時間，warm-up後の分布，throughput，出力一致 |
+: {tbl-colwidths="[30, 35, 35]"}
 
 ### 問い1：一つのhotspotの変更による性能の変化 {#問い1一つのhotspotを変えると性能はどう変わるか}
 
@@ -84,6 +85,7 @@ warm-up後は同じ処理を固定回数だけ繰り返し，合計仕事量を�
 | 時間 | 初回latency，warm-up後の各測定値，medianと分布，定義したthroughput | compile時間，warm latency，throughput |
 | memory | allocation回数，測定区間のallocated bytes，必要なら別測定したpeak resident memory | allocation回数，累積bytes，peak memory |
 | 正しさ | 既存test，参照解，保存量・残差，主要出力の比較方法と根拠ある許容範囲 | 結果が変わった変更のspeedup |
+: {tbl-colwidths="[18, 41, 41]"}
 
 solver全体の標準測定では，同じ実行pathを一度通してから同一条件を五回測り，五つの値とmedianを残します．
 測定対象が短すぎる場合は，格子や物理条件を変えず，同じkernel，time step，またはsolveを固定回数まとめて仕事量 $W$ を増やします．
@@ -96,6 +98,7 @@ $S_0$ を「同じhot pathを通り，正しさを確認済みの最小入力」
 | 学生のlaptop | $S_0$ で基準版と変更版をwarm-up後に各5回 | correctness，時間分布，allocated bytesを確認し，余裕がある場合だけ $S_1$ を追加する |
 | desktop | laptopで使った同じcommit・$S_0$ を最初に再実行 | 数値結果と性能測定を再現してから $S_1$ を測り，$S_0,S_1$ の増加率から $S_2$ を見積もる |
 | 研究室server | 同じcommit・$S_0$ を同じthread条件で最初に再実行 | local結果との一致を確認し，必要な $S_2$ またはthread比較を一つだけ追加する．長時間jobは事前に相談する |
+: {tbl-colwidths="[18, 40, 42]"}
 
 ## 進め方
 

@@ -24,6 +24,7 @@ N02完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
 | 実装・実行 | [`exercises/N03_diffusion/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl) |
 | 必須4群・自作2つ | [`exercises/N03_diffusion/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/tests.jl) |
 | 記録 | `exercises/N03_diffusion/learning_log.md` |
+: {tbl-colwidths="[24, 76]"}
 
 [`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl)の3箇所を実装してください．
 

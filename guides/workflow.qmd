@@ -109,6 +109,7 @@ $ julia --project=. scripts/course.jl start TASK_ID
 | `exercises/<課題フォルダ>/run.jl` | 課題を実装するコード |
 | `exercises/<課題フォルダ>/tests.jl` | 配布済みの必須テストと，受講生が追加する自作テスト |
 | `exercises/<課題フォルダ>/learning_log.md` | 学習ログ |
+: {tbl-colwidths="[28, 72]"}
 
 実装したコードを動かすときは，学生リポジトリのルートから次を実行します．
 

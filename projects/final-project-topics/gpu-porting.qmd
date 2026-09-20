@@ -30,6 +30,7 @@ speedupは，仕事量と測定範囲を揃えて計算します．
 | **標準：どの問題規模からGPU経路が有効になるか** | 同じ数値条件のCPU版と，主要kernelを一つ移植したGPU版を $S_0,S_1,S_2$ で比較 | CPU/GPU場の差，kernel時間，転送込み時間，speedup，memory量 |
 | データをGPUに保持すると結論はどう変わるか | 毎回入出力を転送する経路と，複数stepの間device上へ保持する経路 | 転送時間と割合，kernel時間，end-to-end時間，同一出力 |
 | 浮動小数点精度は性能と誤差の釣合いをどう変えるか | 標準ルート完了後のFloat64版とFloat32版 | 外部基準からの誤差，CPU/GPU差，時間，memory量 |
+: {tbl-colwidths="[30, 35, 35]"}
 
 ### 問い1：GPU経路が有効になる問題規模 {#問い1どの問題規模からgpu経路が有効になるか}
 
@@ -92,6 +93,7 @@ memory poolが予約した量，使用中の配列量，処理中のpeakを同�
 | 環境 | OS，CPU，GPU，driver，Julia・CUDA.jl，CPU thread，GPU device，同時実行job | hardware差とcode差 |
 | 測定 | warm-up，同期位置，正式測定5回，kernelとend-to-endの境界，集計方法 | 非同期launch時間とkernel完了時間，最速値と分布 |
 | 正しさ | 既存test，保存量・残差，外部基準，CPU/GPU場の比較量と根拠ある許容範囲 | 出力が一致しない経路のspeedup |
+: {tbl-colwidths="[18, 41, 41]"}
 
 検証と性能比較は次の順で進めます．
 
@@ -101,6 +103,7 @@ memory poolが予約した量，使用中の配列量，処理中のpeakを同�
 | 外部基準 | 解析解，benchmark，参照値，または検証済みの既存結果 | 参照元と比較量を明記し，元solverと同じ判断で妥当と確認できる |
 | CPU/GPU回帰 | $S_0$ の主要場，保存量，残差，必要なら誤差の空間分布 | 演算順序と精度を考慮した根拠ある範囲で差を説明できる |
 | 性能・規模比較 | 同じ仕事量のCPU，GPU kernel，GPU end-to-end | 各規模で回帰検証に合格し，同期済みのraw timeを残している |
+: {tbl-colwidths="[16, 40, 44]"}
 
 $S_0$ を「CPUで正しさを確認済みで，同じ主要kernelを通る最小入力」，$S_1$ を「$S_0$ のGPU回帰とmemory確認後に一段だけ増やす入力」，$S_2$ を「$S_0,S_1$ の実測時間とmemoryから利用条件内で完了できると判断した入力」とします．
 
@@ -109,6 +112,7 @@ $S_0$ を「CPUで正しさを確認済みで，同じ主要kernelを通る最�
 | 学生のlaptop | CPU版の $S_0$ とkernel局所testを再実行する．利用可能なNVIDIA GPUを確認できた場合だけ同じ $S_0$ をGPUで実行する | 回帰検証，5回の時間分布，配列byte数を確認する．GPUを利用できなければCPU代替案へ進む |
 | 利用可能と確認したdesktop GPU | 同じcommit・$S_0$・精度でCPU/GPUを再実行し，環境情報とmemory表示を記録する | $S_0$ が合格し資源に余裕がある場合だけ $S_1$ を測り，その増加から $S_2$ の可否を判断する |
 | 利用を承認された研究室server | 同じcommit・$S_0$ を最初に再実行し，account，実行方法，制限時間，memory上限，結果回収方法を確認する | local結果との一致と $S_0,S_1$ の実測を確認し，必要性を説明できる $S_2$ だけを相談して実行する |
+: {tbl-colwidths="[18, 40, 42]"}
 
 GPU，account，予約，job時間，結果回収，profiling権限は，教員またはTAに確認します．
 GPUを利用できない，または利用確認が間に合わない場合は，CPU基準版の検証，主要kernelの切出し，CPU局所test，入力・作業・出力配列のbyte数，GPUでのthread/index対応，CPU/GPU回帰testと測定scriptのinterfaceまでを成果として残します．

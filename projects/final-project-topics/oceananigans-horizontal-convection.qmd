@@ -91,7 +91,7 @@ $$
 を使います．
 $Nu$，$K$，$\Psi$，$\delta_\chi/H$ は瞬時値と平均値を分け，採用した平均窓 $[t_0^*,t_1^*]$ を全条件で記録します．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[30, 35, 35]"}
 | 問い | 比較するもの | 主な指標 |
 |---|---|---|
 | **標準：Rayleigh数だけを下げると，循環と浮力輸送はどう変わるか** | 公式の $Ra=10^8$ と，追加候補 $Ra=10^7$．$Pr=1$，幾何，境界，格子，数値手法，診断を固定 | $Nu$，$\Psi$，$K$，$\delta_\chi/H$，$b,\zeta,\chi$，定常性，時間・memory・出力容量 |
@@ -135,7 +135,7 @@ $b,\zeta,\chi$ の場，平均profile，$Nu$，$\Psi$，$K$，$\delta_\chi/H$を
 
 `launch-kits/guided-package/README.md` を読み，下表の上流資料から基準scriptと診断を自分のprojectへ作ってください．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[18, 38, 44]"}
 | 役割 | 現行の参照先 | projectへ記録すること |
 |---|---|---|
 | 公式開始例 | [`v0.110.15`の `examples/horizontal_convection.jl`](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/examples/horizontal_convection.jl)，[公式example解説](https://clima.github.io/OceananigansDocumentation/stable/literated/horizontal_convection)，[本体repository](https://github.com/CliMA/Oceananigans.jl) | 上流URL・path・tag・commit，領域，境界，格子，model，出力，授業側の変更 |
@@ -204,7 +204,7 @@ $\|\nabla_h\cdot\boldsymbol{u}_h\|$はabsolute値と $U_\star/L_x$ で規格化�
 
 検証は下表の上から順に進めます．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[16, 40, 44]"}
 | 段階 | 確認対象 | 次へ進む判断 |
 |---|---|---|
 | 公式例再現 | tag固定の水平対流script，領域，境界，$Ra,Pr$，model，JLD2出力 | 新しいJulia processで実行でき，上流と授業側の変更，version，licenseを追跡できる |
@@ -216,7 +216,7 @@ $\|\nabla_h\cdot\boldsymbol{u}_h\|$はabsolute値と $U_\star/L_x$ で規格化�
 
 公式 $128\times64$ のCPU実行の時間とメモリを測り，計算規模を決めます．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[18, 40, 42]"}
 | 環境 | 最初に行うこと | 次の規模を決める方法 |
 |---|---|---|
 | 学生のlaptop | 1 threadのCPUで $64\times32$ の短いsmoke test後，公式 $128\times64$ を実行し，初回compileと二回目のwall time，step数，memory，JLD2容量を分けて測る | 発散，収支，解析的拡散基準，時系列を処理できることを確認し，残り時間から追加 $Ra$ と必要な積分延長を決める |

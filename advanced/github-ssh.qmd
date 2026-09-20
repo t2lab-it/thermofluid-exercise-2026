@@ -182,6 +182,7 @@ $ git fetch origin
 | ホストのフィンガープリントが公式値と一致しない | 画面のフィンガープリントとGitHub公式ページを再確認する |
 | `git fetch origin`が失敗する | `git remote -v`と`ssh -T git@github.com`の結果を確認する |
 | 別のGitHubアカウント名が表示される | `ssh -T git@github.com`の成功メッセージを再確認する |
+: {tbl-colwidths="[22, 78]"}
 
 ## 完了条件
 

@@ -46,6 +46,7 @@ $$
 |---|---|---:|---|
 | 固定 | $[0,2]$ | 81 | $2/(n_x-1)$ |
 | 周期 | $[0,2)$ | 80 | $2/n_x$ |
+: {tbl-colwidths="[16, 23, 23, 38]"}
 
 どちらも格子間隔は0.025で，`nx`は各境界における格子点数です．
 周期格子は右端を除く`[0,2)`に取り，先頭と末尾をつなぎます．
@@ -80,6 +81,7 @@ $$
 | $f(u)$ | [`burgers_flux(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L8-L13) | 格子点値の流束 |
 | $\Delta t/\Delta x$ | `dt / dx` | 流束差に掛ける係数 |
 | $u_i^{n+1}$ | `u_new[i]` | 更新先 |
+: {tbl-colwidths="[24, 34, 42]"}
 
 保存形では流束差 $f(u_i)-f(u_{i-1})$ を使います．
 非保存形の $u_i(u_i-u_{i-1})$ とは，滑らかな場でも離散化後の値が異なります．

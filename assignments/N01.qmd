@@ -81,7 +81,7 @@ exercises/N01_linear_advection/results/summary.toml
 
 次の値は，[授業の標準条件](../lessons/N01.qmd#problem-setup)に対応する公開基準値です．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[24, 19, 19, 19, 19]"}
 | 手法 | `minimum` | `maximum` | `overshoot` | `undershoot` |
 |---|---:|---:|---:|---:|
 | upwind + Euler | 1.0 | 1.9993204517450067 | 0.0 | 0.0 |

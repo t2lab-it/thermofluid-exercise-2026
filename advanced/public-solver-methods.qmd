@@ -11,7 +11,7 @@ title: "CFDソルバ in Julia"
 
 ## 6つのソルバの数値手法の概観 {#つのソルバを数値手法で見渡す}
 
-::: {.table-responsive .course-map}
+::: {.table-responsive .course-map tbl-colwidths="[10, 22, 17, 16, 16, 19]"}
 | ソルバ | 主な方程式・現象 | 空間離散化 | 格子・境界 | 時間発展 | 重視する性質 |
 |---|---|---|---|---|---|
 | `WaterLily.jl` | 非圧縮性Navier–Stokes，物体まわり流れ | 直交座標格子上の有限体積的離散化とBDIM | 埋め込み物体 | ソルバ内の時間積分と圧力射影 | 非圧縮拘束，物体境界 |
@@ -396,7 +396,7 @@ $\eta$は全水深，$v$は速度，$D$は静水深，$g$は重力加速度で�
 `DispersiveShallowWater.jl`は波長依存の位相速度を持つ近似モデルを扱います．
 前者では保存，平衡保持性，正値性が主要な証拠であり，後者では線形分散関係，構造保存，近似モデルの有効範囲が主要な証拠です．
 
-::: {.table-responsive .course-map}
+::: {.table-responsive .course-map tbl-colwidths="[20, 16, 17, 15, 15, 17]"}
 | 比較する問い | `WaterLily.jl` | `Trixi.jl` / `TrixiShallowWater.jl` | `Oceananigans.jl` | `GeophysicalFlows.jl` | `DispersiveShallowWater.jl` |
 |---|---|---|---|---|---|
 | 未知変数の配置 | セル中心の圧力とセル面の速度 | 要素内の高次多項式・境界流束 | セル中心のトレーサー・圧力とセル面の速度 | 周期格子上の場とFourier係数 | 一次元格子上の水深・速度 |
@@ -415,7 +415,7 @@ $\eta$は全水深，$v$は速度，$D$は静水深，$g$は重力加速度で�
 作業場所と提出方法は[最終プロジェクトの共通手順](../assignments/final-project.qmd#project-workflow)に従ってください．
 ソルバごとに，次の外部参照と自己整合性確認を組み合わせます．
 
-::: {.table-responsive .course-map}
+::: {.table-responsive .course-map tbl-colwidths="[23, 23, 22, 32]"}
 | 調べたい数値的性質 | 主な候補 | 外部参照 | 自己整合性確認 |
 |---|---|---|---|
 | 埋め込み境界と流体力 | `WaterLily.jl` | 円柱後流のベンチマーク | 格子・計算領域・サンプリング依存性 |

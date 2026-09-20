@@ -39,7 +39,7 @@ $t_0^*$ は見た目だけで決めず，連続する複数窓で $\overline{C_D
 窓を延長したときに$\mathrm{St}$が安定し，複数の渦放出周期を含み，Nyquist周波数と周波数分解能が目的のpeakを識別できることを確認します．
 周期的な揚力が確立しない条件では，無理に$\mathrm{St}$を報告せず「定義できるpeakなし」と記録します．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[30, 35, 35]"}
 | 問い | 比較するもの | 主な指標 |
 |---|---|---|
 | **標準：Reynolds数だけを変えると，円柱後流の力と渦放出はどう変わるか** | 公式quickstartの $\mathrm{Re}_D=100$ と，同じ格子・領域・sampling契約で選ぶ追加の一条件 | $\overline{C_D}$，$C_{L,\mathrm{rms}}$，$\mathrm{St}$，$C_D,C_L$ 時系列，無次元渦度場，計算時間 |
@@ -82,7 +82,7 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 
 `launch-kits/guided-package/README.md` を読み，下表の公式資料から自分のprojectへ再現可能な開始例を作ってください．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[18, 38, 44]"}
 | 役割 | 現行の参照先 | projectへ記録すること |
 |---|---|---|
 | 公式quickstart・API | [`WaterLily.jl` stable docsの「Flow over a circle」](https://waterlily-jl.github.io/WaterLily.jl/stable/) と[本体repository](https://github.com/WaterLily-jl/WaterLily.jl) | docs URL，円柱例の入力・出力，使用したrelease/tagとcommit，変更点 |
@@ -99,7 +99,7 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 
 最初の条件比較より前に，次の契約を一つの設定ファイルまたは表へ固定します．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[18, 41, 41]"}
 | 分類 | 固定・記録するもの | 先に確認すること |
 |---|---|---|
 | 出所・環境 | WaterLily・例のURL，tag・commit・license，Julia・package，OS，CPU/GPU，thread，Float型 | 新しいprocessで同じenvironmentを復元し，公式quickstartを再実行できる |
@@ -111,7 +111,7 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 
 検証は，下表の上から順に進めます．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[16, 40, 44]"}
 | 段階 | 確認対象 | 次へ進む判断 |
 |---|---|---|
 | 公式例再現 | stable docsの円柱quickstart，速度・渦度，`sim_step!`，力API | 固定したversionと新しいprocessで実行でき，入力，出力，license，変更点を追跡できる |
@@ -124,7 +124,7 @@ $D/\Delta x$ に対する力係数と$\mathrm{St}$の図，円柱近傍の渦度
 APIと可視化の開始例には，公式stable docsの `circle(3*2^5,2^6)`（$96\times64$ cells，直径16 cells）を使います．
 格子・領域・統計の収束は，選んだ条件で確認してください．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[18, 40, 42]"}
 | 環境 | 最初に行うこと | 次の規模を決める方法 |
 |---|---|---|
 | 学生のlaptop | CPUで公式 $96\times64$ 入力を短時間だけ動かし，初回compile，事前実行後のstep時間，memory，出力sizeを記録する | 力の時系列を保存できることを確認後，同じ領域比で $D/\Delta x$ を一段だけ増やし，必要な過渡・sampling時間を完了できるか実測から判断する |

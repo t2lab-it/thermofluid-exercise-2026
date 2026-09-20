@@ -54,7 +54,7 @@ $$
 Riemann解は，連続的に広がる1-familyの希薄波，速度と圧力が連続で密度が跳ぶ接触不連続，Rankine--Hugoniot条件とentropy条件を満たす3-familyの衝撃波から成ります．
 同じ評価時刻$t_*=0.2$で，exact Riemann解から希薄波の両端，接触不連続，衝撃波の位置を求め，数値解の$\rho,u,p$へ重ねます．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[30, 35, 35]"}
 | 問い | 比較するもの | 主な指標 |
 |---|---|---|
 | **標準：要素を細かくすると，三つの波と誤差はどう変わるか** | 公式の `initial_refinement_level = 6` と，同じ次数・流束・時間積分で選ぶ隣接する粗い条件または細かい条件 | $\rho,u,p$，波位置，$L_1$誤差，保存収支，正値性，over/undershoot，DOF・時間・memory |
@@ -97,7 +97,7 @@ CFLを半分にした差が解像度や流束の比較差に対して無視で�
 
 `launch-kits/guided-package/README.md` を読み，下表の上流資料から基準scriptと独立な参照解を自分のprojectへ作ってください．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[18, 38, 44]"}
 | 役割 | 現行の参照先 | projectへ記録すること |
 |---|---|---|
 | 公式開始例 | [`v0.17.2`の `elixir_euler_modified_sod.jl`](https://github.com/trixi-framework/Trixi.jl/blob/v0.17.2/examples/tree_1d_dgsem/elixir_euler_modified_sod.jl) と[本体repository](https://github.com/trixi-framework/Trixi.jl) | 上流URL・path・tag・commit，入力，solver，境界，時間積分，授業側の変更 |
@@ -160,7 +160,7 @@ $$
 
 最初の条件比較より前に，次の順序で検証します．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[16, 40, 44]"}
 | 段階 | 確認対象 | 次へ進む判断 |
 |---|---|---|
 | 公式例再現 | tag固定のmodified Sod example，左右状態，境界，solver，`sol`，summary | 新しいprocessと固定environmentで$t=0.2$まで実行でき，出所・license・変更を追跡できる |
@@ -172,7 +172,7 @@ $$
 
 公式level 6のCPU実行の時間とメモリを測り，計算規模を決めます．
 
-::: {.table-responsive}
+::: {.table-responsive tbl-colwidths="[18, 40, 42]"}
 | 環境 | 最初に行うこと | 次の規模を決める方法 |
 |---|---|---|
 | 学生のlaptop | 1 threadのCPUで公式level 6を実行し，初回compileと二回目のwall time，step・RHS回数，memory，出力sizeを分けて測る | exact解，保存，正値性を処理できることを確認後，隣接する粗いlevelまたは細かいlevelを一つだけ追加する |
