@@ -30,6 +30,7 @@ F00から始める手順は[初回セットアップとF00のpreflight](workflow
 | `julia --version` | Julia 1.13.0を確認する |
 | `git --version` | Gitを確認する |
 | `julia --project=. -e 'using Pkg; Pkg.instantiate()'` | 配布されたJulia環境を復元する |
+: {tbl-colwidths="[38, 62]"}
 
 ## 課題の状態とテスト
 
@@ -41,6 +42,7 @@ F00から始める手順は[初回セットアップとF00のpreflight](workflow
 | `julia --project=. scripts/course.jl start TASK_ID` | F02以降の提出単位を開始する |
 | `julia --project=. -e 'using Pkg; Pkg.test()'` | `course_progress.toml`の現在課題と完了済み課題のテストを実行する |
 | `julia --project=. scripts/course.jl check-results` | 公式出力の配置とサイズを確認する |
+: {tbl-colwidths="[38, 62]"}
 
 F01は，[F01のbranch開始](workflow.qmd#start-exercise)にある手動コマンドで開始します．
 `TASK_ID`は[各課題ページ](../assignments/index.qmd)で確認してください．
@@ -70,6 +72,7 @@ Test Summary: | Pass  Total  Time
 | `git diff --cached` | commit対象の変更内容を確認する |
 | `git diff main...HEAD` | mainからの提出差分を確認する |
 | `git log --oneline -5` | 直近のcommitを確認する |
+: {tbl-colwidths="[38, 62]"}
 
 commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新の順序は[学習ログ，diff，commit](workflow.qmd#commit)から[merge後](workflow.qmd#after-merge)までを参照してください．
 

@@ -25,6 +25,7 @@ understanding-check-points:
 | 実装・実行 | [`exercises/N02_nonlinear_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl) |
 | 必須4群・自作2つ | [`exercises/N02_nonlinear_advection/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/tests.jl) |
 | 記録 | `exercises/N02_nonlinear_advection/learning_log.md` |
+: {tbl-colwidths="[24, 76]"}
 
 [`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)の次の3箇所を実装してください．
 関数は，[`burgers_flux`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L8-L13) → [`periodic_left_index`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L15-L23) → [`nonlinear_upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L26-L38) → [`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L40-L52) → [`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L54-L79) → [`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl#L81-L90)の順に読みます．
