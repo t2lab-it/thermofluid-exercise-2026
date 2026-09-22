@@ -1,0 +1,194 @@
+---
+title: "二次元拡散・移流拡散：境界熱流束と二成分Burgers"
+---
+::: {.course-position}
+第9回・授業 · 内容ID: N07 · 2026-11-06
+:::
+
+## 移流と拡散による温度輸送 {#problem-setup}
+
+[N05](N05.qmd)・[N06](N06.qmd)の共通APIと二次元配列を使い，境界条件・熱収支・非線形性を調べます．
+実装と提出物は[N07課題](../assignments/N07.qmd)にまとめています．
+一定体積熱容量を1とする無次元温度$T$と熱流束$\boldsymbol J$を考えます．
+
+$$
+\frac{\partial T}{\partial t}+\nabla\cdot\boldsymbol J=0,
+\qquad \boldsymbol J=\boldsymbol cT-\kappa\nabla T,
+\qquad Q=\int_\Omega T\,dA.
+$$
+
+移流$\boldsymbol cT$は流体の運動による熱輸送，拡散$-\kappa\nabla T$は温度勾配による熱輸送です．
+同じ初期温度でも，移流だけなら分布が移動し，拡散だけなら平滑化され，両方なら移動しながら平滑化されます．
+
+## セルの熱量と面の熱流束 {#faces}
+
+領域は$[0,2]\times[0,1]$，$\Delta x=2/n_x$，$\Delta y=1/n_y$です．
+N07では，熱量を持つセルと熱が通る境界面を対応させるため，温度をセル中心に置きます．
+`T[i,j]`の座標は$x_i=(i-1/2)\Delta x$，$y_j=(j-1/2)\Delta y$です．
+
+内部のx面では，流れが正なら左セル，負なら右セルの温度を使います．
+
+$$
+J^x_{i+1/2,j}=c_xT_{\mathrm{upwind}}
+-\kappa\frac{T_{i+1,j}-T_{i,j}}{\Delta x}.
+$$
+
+正y方向の面も同様です．
+二方向とも同じ旧場から流束を一度求め，陽Eulerで更新します．
+
+$$
+T^{n+1}_{i,j}=T^n_{i,j}-\Delta t\left[
+\frac{J^x_{i+1/2,j}-J^x_{i-1/2,j}}{\Delta x}
++\frac{J^y_{i,j+1/2}-J^y_{i,j-1/2}}{\Delta y}\right].
+$$
+
+隣り合うセルは一つの面流束を共有します．
+全セルの熱量$Q_h=\Delta x\Delta y\sum_{i,j}T_{i,j}$を足すと，内部面は相殺され，境界の輸送だけが残ります．
+角のセルでは直交する二つの面の寄与を足します．
+
+## 固定温度・断熱・流入流出 {#boundaries}
+
+境界の説明には外向き単位法線$\boldsymbol n$を使います．
+流束配列の正方向は正x・正y，領域の収支へ渡すレートは**内向き正**と区別します．
+
+| 境界 | 外向きの移流熱流束 | 外向きの拡散熱流束 |
+|---|---|---|
+| 固定温度$T_b$の閉じた壁 | $0$ | $2\kappa(T_\mathrm{cell}-T_b)/h$ |
+| 断熱の閉じた壁 | $0$ | $0$ |
+| 左から流入，$c_x>0$，$T_\mathrm{in}$ | $-c_xT_\mathrm{in}$ | $2\kappa(T_\mathrm{cell}-T_\mathrm{in})/\Delta x$ |
+| 右へ流出，$c_x>0$ | $c_xT_\mathrm{last}$ | $0$ |
+| 周期 | 対向辺へ接続 | 対向辺へ接続 |
+
+固定温度を置くのは境界面です．
+面から最初のセル中心までは$h/2$なので，勾配の分母にも$h/2$を使います．
+流出口の温度勾配ゼロは拡散流束ゼロを表し，流出する流体は熱を運び続けます．
+上下壁が断熱でも，入口・出口のある領域の総熱量は一般に変化します．
+
+## 境界を含む安定条件 {#stability}
+
+更新の中心係数が非負になる刻みを使います．
+セル中心の固定温度境界では，内部側の拡散係数1と壁側の係数2が加わります．
+各軸に固定温度または流入面があれば$a_x$または$a_y$を3，それ以外を2とします．
+
+$$
+\Delta t_{\max}=\frac{s}{|c_x|/\Delta x+|c_y|/\Delta y
++\kappa(a_x/\Delta x^2+a_y/\Delta y^2)},\qquad s=0.8.
+$$
+
+
+## 辺別の熱収支 {#heat-budget}
+
+west，east，south，northの順に，辺長を掛けた内向きレート$R_s$を記録します．
+例えば西辺では$R_\mathrm{west}=\Delta y\sum_jJ^x_{1/2,j}$，東辺では$R_\mathrm{east}=-\Delta y\sum_jJ^x_{n_x+1/2,j}$です．
+移流と拡散を分け，各ステップで実際に使った流束から$\Delta tR_s$を積算します．
+
+$$
+Q^{n+1}-Q^n=\Delta t\sum_s(R_{s,\mathrm{adv}}^n+R_{s,\mathrm{diff}}^n).
+$$
+
+保存区間$k$の輸送積分を$I_{s,k}$とすれば，保存時刻での残差は次です．
+
+$$
+\varepsilon_Q(t_m)=Q(t_m)-Q(0)-\sum_{k<m}\sum_s
+\left(I_{s,k}^{\mathrm{adv}}+I_{s,k}^{\mathrm{diff}}\right).
+$$
+
+周期辺の輸送は対向辺で相殺されます．
+収支残差で境界輸送と熱量変化の整合を，解析解誤差で解の精度を調べます．
+
+## 公式温度実験と解析解 {#thermal-cases}
+
+保存時刻は全ケースで$0,0.25,0.5,0.75,1$です．
+温度の周期3条件とBurgersの収束には$(40,30),(80,60),(160,120)$を使い，境界比較には$(80,60)$を使います．
+
+| ケースID | 速度・拡散係数 | 境界と初期温度 |
+|---|---|---|
+| `periodic_advection` | $(1,0.5)$，$\kappa=0$ | 両方向周期，同じFourier初期値 |
+| `periodic_diffusion` | $(0,0)$，$\kappa=0.05$ | 両方向周期，同じFourier初期値 |
+| `periodic_combined` | $(1,0.5)$，$\kappa=0.05$ | 両方向周期，同じFourier初期値 |
+| `closed_fixed` | $(0,0)$，$\kappa=0.05$ | 四辺$T=0$，初期値$\sin(\pi x/2)\sin(\pi y)$ |
+| `closed_insulated` | $(0,0)$，$\kappa=0.05$ | 四辺断熱，固定温度と同じ初期値 |
+| `channel_fixed` | $(1,0)$，$\kappa=0.05$ | 左$T_\mathrm{in}=1$・右流出・上下$T_w=0$，初期値$0.2$ |
+| `channel_insulated` | $(1,0)$，$\kappa=0.05$ | 左右は同じ・上下断熱，初期値$0.2$ |
+
+周期の初期値は次の3モードです．
+
+$$
+T_0=1+0.2\sin(\pi x)+0.3\cos(2\pi y)+0.1\sin(\pi x+2\pi y).
+$$
+
+解析解は各モードを$(c_xt,c_yt)$だけ移動し，波数$(k_x,k_y)$ごとに$\exp[-\kappa(k_x^2+k_y^2)t]$を掛けます．
+固定温度の閉系の解析解は$T_0\exp[-\kappa((\pi/2)^2+\pi^2)t]$です．
+周期3条件の代表図は$(80,60)$の格子と合成ケースの共通刻みを使い，`comparison_advection`・`comparison_diffusion`・`comparison_combined`で比較します．
+収束用の3格子は各ケース自身の安定刻みを使うため，代表比較とは刻み方針を区別します．
+
+![共通刻みでの温度の移動と平滑化](../assets/n07-reference/temperature_comparison.png){fig-alt="80掛ける60のセル中心格子で，移流のみ・拡散のみ・両者を含む温度を同じ色範囲で比較する3パネル"}
+
+![境界条件と熱収支](../assets/n07-reference/boundary_heat.png){fig-alt="閉系と開系の固定温度・断熱比較，west east south northの移流と拡散の熱輸送，累積流入と熱量変化，収支残差を分けた図"}
+
+## 二成分の粘性Burgers {#burgers}
+
+温度の一定速度場に対し，Burgersでは未知の速度$(u,v)$自身が二成分を運びます．
+
+$$
+u_t+u u_x+v u_y=\nu(u_{xx}+u_{yy}),\qquad
+v_t+u v_x+v v_y=\nu(v_{xx}+v_{yy}).
+$$
+
+動粘性係数は$\nu=0.05$です．
+境界条件は両方向周期です．
+$u$が正ならx方向は後退差分，負なら前進差分を使い，y方向は$v$の符号で選びます．
+**両成分を同じ旧場`u_old,v_old`から計算します．**
+温度の保存形とBurgersの移流形の違いは，速度の発散に現れます．
+$\boldsymbol w=(u,v)$とすると，$\nabla\cdot(u\boldsymbol w)=\boldsymbol w\cdot\nabla u+u\nabla\cdot\boldsymbol w$です．
+Burgersで使うのは右辺の第1項で，$v$も同様です．
+
+安定刻みは毎ステップの旧速度場から求めます．
+
+$$
+\Delta t_{\max}=\frac{0.8}{
+\max_{i,j}(|u_{i,j}|/\Delta x+|v_{i,j}|/\Delta y)
++2\nu(1/\Delta x^2+1/\Delta y^2)}.
+$$
+
+保存時刻までの残り時間と比べて小さい方を使います．
+
+### Cole–Hopf変換による解析解
+
+$X=x-0.6t$，$Y=y+0.3t$として，次の正の関数を使います．
+
+$$
+\phi=1+0.2e^{-\nu\pi^2t}\cos(\pi X)
++0.2e^{-4\nu\pi^2t}\cos(2\pi Y),\qquad \phi\ge0.6.
+$$
+$$
+u=0.6+\frac{0.4\nu\pi e^{-\nu\pi^2t}\sin(\pi X)}{\phi},
+\qquad
+v=-0.3+\frac{0.8\nu\pi e^{-4\nu\pi^2t}\sin(2\pi Y)}{\phi}.
+$$
+
+これは$u=0.6-2\nu\partial_X\log\phi$，$v=-0.3-2\nu\partial_Y\log\phi$を明示微分した式です．
+
+![Burgersの二成分と解析解誤差](../assets/n07-reference/burgers_fields.png){fig-alt="上段u，下段vについて数値解・解析解・誤差を並べ，誤差には各成分のゼロ対称色範囲を使う図"}
+
+## 精度と保存記録 {#accuracy}
+
+温度のRMS L2誤差は$\sqrt{\operatorname{mean}[(T-T_e)^2]}$，Burgersは$\sqrt{\operatorname{mean}[(u-u_e)^2+(v-v_e)^2]}$です．
+成分別の誤差も記録します．
+3格子の両区間で$p=\log_2(E_h/E_{h/2})$を求めます．
+拡散のみは$1.8\le p\le2.2$，移流・合成・Burgersは$0.8\le p\le1.2$を受入範囲とします．
+陽Eulerの時間誤差は$O(\Delta t)$，中心差分の空間誤差は$O(h^2)$です．
+拡散では安定条件に合わせて$\Delta t\propto h^2$とするため，両方の誤差が$O(h^2)$になります．
+
+![3格子の解析解誤差](../assets/n07-reference/convergence.png){fig-alt="温度の3条件とBurgersの4パネルで，最終L2誤差を格子幅と比較し，拡散に2次，その他に1次の比較線を示す図"}
+
+HDF5の場はJuliaで`(nx,ny,nt)`，外部読取りで`(nt,ny,nx)`です．
+境界輸送積分はJuliaで`(4,nt-1)`，外部で`(nt-1,4)`，辺順はwest，east，south，northです．
+保存データには条件・全ステップの時刻と刻み・ソースのhash・Git HEADを記録し，再解析と再作図に使います．
+
+図の細部は[温度比較](../assets/n07-reference/temperature_comparison.png)，[境界熱収支](../assets/n07-reference/boundary_heat.png)，[Burgers](../assets/n07-reference/burgers_fields.png)，[収束](../assets/n07-reference/convergence.png)を単独表示して確認できます．
+
+## 参照
+
+方程式の参照：[Zhengtao Gan, CFD with Python, Step 10](https://drzgan.github.io/Python_CFD/11.%20Burgers%27%20equation.html)．
+同資料の正速度向け後退差分と固定境界に対し，本課題では正負に対応する風上と周期境界を使います．

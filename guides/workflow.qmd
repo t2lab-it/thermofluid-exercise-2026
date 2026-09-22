@@ -311,3 +311,33 @@ $ julia --project=. -e 'using Pkg; Pkg.test()'
 ~~~
 
 段階別の実行で`fields.h5`を作り直した後は，再解析してから作図します．
+
+## N07の段階別実行 {#n07-stages}
+
+[N07課題](../assignments/N07.qmd)の実装後，学生リポジトリのルートで実行します．
+計算結果を更新するときは，計算・解析・作図を順に実行します．
+
+~~~console
+$ julia --project=. exercises/N07_2d_advection_diffusion/simulate.jl
+$ julia --project=. exercises/N07_2d_advection_diffusion/analyze.jl
+$ julia --project=. exercises/N07_2d_advection_diffusion/plot.jl
+~~~
+
+解析と作図には保存済みHDF5を使います．
+描画条件だけを変えた場合は`plot.jl`だけを実行できます．
+一括生成と完成後の検査は次の順です．
+
+~~~console
+$ julia --project=. exercises/N07_2d_advection_diffusion/run.jl
+$ julia --project=. exercises/N07_2d_advection_diffusion/tests.jl
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+$ julia --project=. scripts/course.jl check-results
+~~~
+
+`N05.jl verify`は既存の基準結果に対する回帰を確認し，N07を含む現在のソースのhashを回帰記録に反映します．
+再解析・再作図の前後に次を実行し，両HDF5のSHA-256の一致を確認します．
+
+~~~console
+$ julia --project=. -e 'using SHA; for name in ("temperature.h5", "burgers.h5"); path=joinpath("exercises", "N07_2d_advection_diffusion", "results", name); println(name, " ", bytes2hex(sha256(read(path)))); end'
+~~~

@@ -120,6 +120,9 @@ website:
             - text: "第8回 課題: 二次元移流・再解析・格子収束"
               href: assignments/N06.qmd
             - text: "第9回 授業: 二次元拡散・移流拡散"
+              href: lessons/N07.qmd
+            - text: "第9回 課題: 境界熱収支と二成分Burgers"
+              href: assignments/N07.qmd
             - text: "第10回 授業: Laplace／Poissonと反復法"
             - text: "第11回 最終プロジェクト: 計画へのフィードバック"
               href: assignments/final-project.qmd

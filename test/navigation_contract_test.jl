@@ -12,7 +12,7 @@ const F03_F04_FORBIDDEN_TERMS = (
     "T" * "BA",
 )
 
-const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06")
+const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07")
 const REQUIRED_ASSIGNMENT_IDS = Set(REQUIRED_COURSE_ORDER)
 const EXPECTED_PREPARATION_HREFS = Set([
     "setup/index.qmd", "setup/julia.qmd", "setup/git-github.qmd",
@@ -596,11 +596,20 @@ end
 
 @testset "assignment instructions link to the shared workflow" begin
     workflow = normpath(joinpath(NAVIGATION_SITE_ROOT, "guides", "workflow.qmd"))
-    for id in ("F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06")
+    for id in ("F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07")
         path = joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd")
         targets = qmd_link_targets(read(path, String))
         @test any(target -> normpath(resolve_qmd_target(path, target)) == workflow, targets)
     end
+end
+
+@testset "N07 refreshes prior source provenance before progress tests" begin
+    workflow=read(joinpath(NAVIGATION_SITE_ROOT,"guides","workflow.qmd"),String)
+    section=split(workflow,"{#n07-stages}";limit=2)[2]
+    regression=findfirst("julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify",section)
+    pkg=findfirst("using Pkg; Pkg.test()",section)
+    @test !isnothing(regression)
+    @test !isnothing(pkg) && !isnothing(regression) && first(regression)<first(pkg)
 end
 
 @testset "F03 and F04 retain the combined submission navigation contract" begin
@@ -649,7 +658,7 @@ end
         r"(?m)^\s*julia\s+--project",
         r"(?m)^\s*git\s+(?:switch|pull|status|branch|diff|add|commit|push)\b",
     )
-    for id in ("F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06")
+    for id in ("F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07")
         source = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
         for pattern in command_patterns
             @test !occursin(pattern, source)

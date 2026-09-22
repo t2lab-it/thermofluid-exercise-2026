@@ -1,5 +1,6 @@
 using Test
 using TOML
+using SHA
 
 const REFERENCE_ARTIFACT_ROOT = normpath(joinpath(@__DIR__, ".."))
 
@@ -185,4 +186,32 @@ end
     @test c["errors"][1]>c["errors"][2]>c["errors"][3]>0
     @test c["orders"]≈log2.(c["errors"][1:2]./c["errors"][2:3])
     @test all(p->.8<=p<=1.2,c["orders"])
+end
+
+@testset "N07 reference provenance and analytic convergence" begin
+    root=joinpath(REFERENCE_ARTIFACT_ROOT,"assets","n07-reference")
+    pngs=("temperature_comparison.png","boundary_heat.png","burgers_fields.png","convergence.png")
+    @test Set(readdir(root))==Set((pngs...,"summary.toml","plots.toml"))
+    s=TOML.parsefile(joinpath(root,"summary.toml"));p=TOML.parsefile(joinpath(root,"plots.toml"))
+    @test s["schema_version"]==1 && s["task_id"]=="N07" && s["diagnostics_complete"]
+    @test s["source_sha256"]==p["source_sha256"] && s["run_id"]==p["run_id"]
+    @test p["source_summary_sha256"]==bytes2hex(sha256(read(joinpath(root,"summary.toml"))))
+    @test p["temperature_color_limits"]==[0.,1.6] && p["display_grid"]=="n080x060"
+    for name in pngs
+        @test p["figure_sha256"][name]==bytes2hex(sha256(read(joinpath(root,name))))
+        @test 10_000<filesize(joinpath(root,name))<=5*1024^2
+    end
+    @test Set(keys(s["convergence"]))==Set(("periodic_advection","periodic_diffusion","periodic_combined","periodic_burgers"))
+    for (id,c) in s["convergence"]
+        lo,hi=id=="periodic_diffusion" ? (1.8,2.2) : (.8,1.2)
+        @test length(c["errors"])==3 && all(diff(c["errors"]).<0)
+        @test c["orders"]≈log2.(c["errors"][1:2]./c["errors"][2:3])
+        @test all(lo .<= c["orders"] .<= hi)
+    end
+    for id in ("channel_fixed","channel_insulated")
+        c=s["cases"][id]["n080x060"]
+        @test c["time"]==[0.,.25,.5,.75,1.]
+        @test maximum(abs,c["residual"])<1e-12
+        @test c["heat"]-fill(first(c["heat"]),5)≈c["cumulative_input"]+c["residual"] atol=1e-12
+    end
 end
