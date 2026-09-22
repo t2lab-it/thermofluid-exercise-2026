@@ -315,7 +315,7 @@ $ julia --project=. -e 'using Pkg; Pkg.test()'
 ## N07の段階別実行 {#n07-stages}
 
 [N07課題](../assignments/N07.qmd)の実装後，学生リポジトリのルートで実行します．
-計算だけをやり直すと保存場の来歴が変わるため，解析と作図も順に更新してください．
+計算結果を更新するときは，計算・解析・作図を順に実行します．
 
 ~~~console
 $ julia --project=. exercises/N07_2d_advection_diffusion/simulate.jl
@@ -323,9 +323,8 @@ $ julia --project=. exercises/N07_2d_advection_diffusion/analyze.jl
 $ julia --project=. exercises/N07_2d_advection_diffusion/plot.jl
 ~~~
 
-解析と作図は保存済みHDF5を読み，数値計算を再実行しません．
+解析と作図には保存済みHDF5を使います．
 描画条件だけを変えた場合は`plot.jl`だけを実行できます．
-`summary.toml`と両HDF5のhashが一致しない場合は`analyze.jl`から，図の来歴だけが古い場合は`plot.jl`から実行します．
 一括生成と完成後の検査は次の順です．
 
 ~~~console
@@ -337,9 +336,7 @@ $ julia --project=. scripts/course.jl check-results
 ~~~
 
 `N05.jl verify`は既存の基準結果に対する回帰を確認し，N07を含む現在のソースのhashを回帰記録に反映します．
-N07のソース編集後は，基準結果を作り直さず，この検査を`Pkg.test()`の前に実行してください．
-失敗メッセージがバックアップの場所を示した場合は，その内容を確かめて復元してください．
-再解析・再作図で両HDF5のSHA-256が変わらないことは，次を各操作の前後に実行して比較します．
+再解析・再作図の前後に次を実行し，両HDF5のSHA-256の一致を確認します．
 
 ~~~console
 $ julia --project=. -e 'using SHA; for name in ("temperature.h5", "burgers.h5"); path=joinpath("exercises", "N07_2d_advection_diffusion", "results", name); println(name, " ", bytes2hex(sha256(read(path)))); end'
