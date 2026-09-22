@@ -1,7 +1,7 @@
 using TOML
 
 const CANONICAL_BASE = "https://t2lab-it.github.io/thermofluid-exercise-2026/"
-const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06"])
+const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07"])
 const SELF_CONTAINED_ASSIGNMENT_IDS = Set(["F00", "F01"])
 const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
 

@@ -136,6 +136,7 @@ end
         "lessons/N04.qmd", "assignments/N04.qmd",
         "lessons/N05.qmd", "assignments/N05.qmd",
         "lessons/N06.qmd", "assignments/N06.qmd",
+        "lessons/N07.qmd", "assignments/N07.qmd",
         "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
         "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
         "LICENSE-CC-BY-4.0.txt", "LICENSE-MIT.txt",
@@ -307,7 +308,7 @@ end
 end
 
 @testset "N05 N06 contracts reject omissions and arbitrary shared commands" begin
-    for id in ("N05","N06"), missing in (:entry,:contract)
+    for id in ("N05","N06","N07"), missing in (:entry,:contract)
         mktempdir() do root
             fixture=write_complete_contract_fixture(root)
             parsed=TOML.parsefile(fixture.contracts)
