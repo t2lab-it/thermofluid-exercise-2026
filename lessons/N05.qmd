@@ -16,7 +16,7 @@ N05では，N01〜N04で完成した処理の置き場所を変え，呼び出�
 N01とN04の線形流束は，同じ値と速度から同じ積を計算します．
 N02とN04の周期格子では，左端の左隣を最後の点にする判定が繰り返されます．
 こうした同じ役割を一箇所へ集めると，修正箇所を一本化し，片方だけ直したために結果が食い違うことを防げます．
-たとえば`i == 1 ? n : i - 1`を`periodic_left_index(i,n)`に置き換えれば，呼び出す側は「左隣を求める」という役割を読み取れ，検証した周期端の処理を再利用できます．
+たとえば`i == 1 ? n : i - 1`を[`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L3-L6)に置き換えれば，呼び出す側は「左隣を求める」という役割を読み取れ，検証した周期端の処理を再利用できます．
 
 このように，外から見た挙動を変えずに内部の構成を変える作業をリファクタリングと呼びます．
 新しい数値解法を加えたり，入力の許される範囲を変えたりする機能変更とは分けて考えます．
@@ -24,16 +24,19 @@ N02とN04の周期格子では，左端の左隣を最後の点にする判定�
 
 ## 最小APIと責務 {#common-api}
 
+コードへのリンクは，この教材に対応する学生スターターのcommit `92a01c5`の該当箇所を指します．
+共通APIのリンク先は学生が実装する関数枠であり，以下の教師作成例とは区別します．
+
 APIは，呼び出す側と処理する側の約束です．
 関数名だけでなく，引数と既定値，戻り値，変更する配列，拒否する入力も含みます．
 
 | 共通API | 役割 |
 |---|---|
-| `periodic_left_index(i,n)`・`periodic_right_index(i,n)` | 重複終点を持たない周期格子の隣接点 |
-| `linear_flux(u,speed)`・`burgers_flux(u)` | 有限実数のスカラー流束 |
-| `validate_buffers(u_new,u_old)` | 独立した同形状の浮動小数配列と有限な旧値の検証 |
-| `fit_timestep(dt_max,t_final)` | 上限以下の刻みと整数ステップ数の組 `(;steps,dt)` |
-| `ThermofluidExercise.N01`〜`.N04` | 各課題の更新処理と境界処理 |
+| [`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L3-L6)・[`periodic_right_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L8-L11) | 重複終点を持たない周期格子の隣接点 |
+| [`linear_flux(u,speed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L13-L16)・[`burgers_flux(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L18-L21) | 有限実数のスカラー流束 |
+| [`validate_buffers(u_new,u_old)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L23-L26) | 独立した同形状の浮動小数配列と有限な旧値の検証 |
+| [`fit_timestep(dt_max,t_final)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L28-L31) | 上限以下の刻みと整数ステップ数の組 `(;steps,dt)` |
+| [`ThermofluidExercise.N01`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L33-L46)・[`N02`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L47-L56)・[`N03`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L57-L66)・[`N04`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L67-L76) | 各課題の更新処理と境界処理 |
 
 | 共通側へ置くもの | 課題側へ残すものと理由 |
 |---|---|
@@ -50,11 +53,12 @@ N01〜N03では不安定な条件も実験として観察し，N04では合成�
 
 ## ファイルの配置と呼び出し {#package-layout}
 
-パッケージは`Project.toml`などで名前や依存関係を持つコードのまとまり，モジュールは関数名を整理する名前空間です．
+パッケージは[`Project.toml`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/Project.toml)などで名前や依存関係を持つコードのまとまり，モジュールは関数名を整理する名前空間です．
 今回は学生リポジトリにある既存プロジェクト`ThermofluidExercise`の中で抽出します．
 別のプロジェクトを作ったり，パッケージを登録・公開したりする作業ではありません．
 
 次はファイルと名前空間の関係です．
+実際のパッケージ入口は[`src/ThermofluidExercise.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl)，N01の旧入口は[`exercises/N01_linear_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N01_linear_advection/run.jl#L137-L142)にあります．
 `N01Boundary.jl`という分割ファイル名は配置例であり，課題の追加指定ではありません．
 
 ```text
@@ -69,7 +73,7 @@ N01〜N03では不安定な条件も実験として観察し，N04では合成�
    └─ N01_linear_advection/run.jl  … 旧入口と実験設定
 ```
 
-`ThermofluidExercise.N01.apply_boundary!`のドットは，パッケージ内のN01という名前空間にある関数を指します．
+[`ThermofluidExercise.N01.apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L42-L45)のドットは，パッケージ内のN01という名前空間にある関数を指します．
 `include("N01Boundary.jl")`は，そのファイルのコードを呼び出し元のモジュールで評価します．
 ファイルを分けただけでは名前空間はできず，次の例ではファイル内の`module N01`が名前空間を作ります．
 `import ThermofluidExercise`は有効なプロジェクトからパッケージをロードし，その名前を使えるようにします．
@@ -92,11 +96,11 @@ ThermofluidExercise.N01〜N04の処理
 ```
 
 共通側から課題の`run.jl`やグローバル設定を読み込むと，特定の実験がないと部品を使えなくなります．
-N04では課題側の`SELECTED_MODEL`を`model`として渡し，共通側は受け取った選択に従います．
+N04では課題側の[`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N04_advection_diffusion/run.jl#L4-L10)を`model`として渡し，共通側は受け取った選択に従います．
 
 ## 一つの境界処理を移す {#boundary-example}
 
-以下はN01の境界処理を教材用に再構成した教師作成例です．
+以下はN01の[`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N01_linear_advection/run.jl#L137-L142)と[`validate_boundary_inputs`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N01_linear_advection/provided_support.jl#L35-L39)を教材用に再構成した教師作成例です．
 異なる課題の境界を一つにする例ではなく，処理を移して旧入口から呼ぶ仕組みを小さく示します．
 N01〜N04の抽出全体の解答ではありません．
 
@@ -240,6 +244,8 @@ end
 
 回帰確認とは，変更によって既存の挙動が崩れていないか調べることです．
 小例の期待値は人が独立に求めましたが，N01〜N04全体の代表結果は抽出前の完成コードから記録します．
+提供コードの[`baseline`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl#L85-L92)が基準を保存し，[`verify`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl#L93-L105)が抽出後の結果を比較してレポートを保存します．
+新しいプロセスで実行する箇所は[`fresh_capture`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl#L52-L59)，比較規則は[`compare!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl#L60-L74)で確認できます．
 以下は計算中の配列の流れではなく，証拠ファイルを作って比較する順序です．
 
 ```text
