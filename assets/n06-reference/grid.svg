@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 370" role="img" aria-labelledby="title desc">
+<title id="title">Periodic neighbors in a rectangular grid</title><desc id="desc">First array index i follows x; second index j follows y. At i=1 wrap to nx, and at j=1 wrap to ny.</desc>
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7" fill="#345995"/></marker></defs>
+<rect width="720" height="370" fill="white"/>
+<g stroke="#aebdcc" fill="none"><path d="M100 90H600M100 150H600M100 210H600M100 270H600M100 90V270M200 90V270M300 90V270M400 90V270M500 90V270M600 90V270"/></g>
+<g stroke="#345995" stroke-width="3" marker-end="url(#arrow)"><path d="M80 300H650"/><path d="M80 300V50"/><path d="M290 150H216"/><path d="M300 160V194"/><path d="M100 90C130 20 570 20 600 90" fill="none"/><path d="M600 270C675 260 675 100 600 90" fill="none" stroke-dasharray="7 4"/></g>
+<g fill="#345995"><circle cx="300" cy="150" r="7"/><circle cx="200" cy="150" r="7"/><circle cx="300" cy="210" r="7"/></g>
+<g font-family="sans-serif" font-size="21" fill="#182b40"><text x="648" y="330">x, i</text><text x="28" y="44">y, j</text><text x="311" y="137">u[i,j]</text><text x="112" y="140">u[i-1,j]</text><text x="312" y="239">u[i,j-1]</text><text x="195" y="24">i = 1 → nx</text><text transform="translate(700 244) rotate(-90)">j = 1 → ny</text><text x="92" y="330">1</text><text x="587" y="330">nx</text><text x="34" y="274">1</text><text x="28" y="96">ny</text></g>
+</svg>

@@ -6,6 +6,8 @@ isdefined(@__MODULE__, :parse_qmd_document) ||
     include(joinpath(@__DIR__, "support", "qmd_contracts.jl"))
 
 const ASSIGNMENT_IDENTIFIERS = Dict(
+    "N05" => ["periodic_left_index", "periodic_right_index", "linear_flux", "burgers_flux", "validate_buffers", "fit_timestep", "SELECTED_MODEL", "src/ThermofluidExercise.jl", "exercises/N05-N06_common_package_2d_advection/N05.jl", "exercises/N05-N06_common_package_2d_advection/tests.jl"],
+    "N06" => ["stable_timestep", "advection_step!", "spatial_variance", "COLORMAP", "COLOR_LIMITS", "DISPLAY_CASE", "src/N06Advection.jl", "exercises/N05-N06_common_package_2d_advection/simulate.jl", "exercises/N05-N06_common_package_2d_advection/analyze.jl", "exercises/N05-N06_common_package_2d_advection/plot.jl", "exercises/N05-N06_common_package_2d_advection/tests.jl"],
     "N04" => ["SELECTED_MODEL", "advective_flux", "stable_timestep", "advection_diffusion_step!", "analytic_solution", "conserved_integral", "simulate", "main", "exercises/N04_advection_diffusion/tests.jl"],
     "N03" => ["diffusion_step!", "apply_boundary!", "thermal_content", "exercises/N03_diffusion/tests.jl"],
     "N02" => ["burgers_flux", "periodic_left_index", "nonlinear_upwind_step!", "exercises/N02_nonlinear_advection/tests.jl"],

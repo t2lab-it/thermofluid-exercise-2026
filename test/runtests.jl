@@ -133,6 +133,8 @@ end
         "lessons/N02.qmd", "assignments/N02.qmd",
         "lessons/N03.qmd", "assignments/N03.qmd",
         "lessons/N04.qmd", "assignments/N04.qmd",
+        "lessons/N05.qmd", "assignments/N05.qmd",
+        "lessons/N06.qmd", "assignments/N06.qmd",
         "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
         "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
         "LICENSE-CC-BY-4.0.txt", "LICENSE-MIT.txt",
@@ -300,5 +302,33 @@ end
         passed,output=verify_fixture(fixture)
         @test !passed
         @test occursin("missing=N04",output)
+    end
+end
+
+@testset "N05 N06 contracts reject omissions and arbitrary shared commands" begin
+    for id in ("N05","N06"), missing in (:entry,:contract)
+        mktempdir() do root
+            fixture=write_complete_contract_fixture(root)
+            parsed=TOML.parsefile(fixture.contracts)
+            if missing==:entry
+                rm(joinpath(fixture.student,parsed["assignments"][id]["run_path"]))
+            else
+                delete!(parsed["assignments"],id)
+                open(io->TOML.print(io,parsed),fixture.contracts,"w")
+            end
+            passed,output=verify_fixture(fixture)
+            @test !passed && occursin(id,output)
+        end
+    end
+    for (id,command) in (("N06",F03_F04_START_COMMAND),("N06","wrong"),("N04",N05_N06_START_COMMAND))
+        mktempdir() do root
+            fixture=write_complete_contract_fixture(root)
+            parsed=TOML.parsefile(fixture.contracts)
+            parsed["assignments"][id]["start_command"]=command
+            open(io->TOML.print(io,parsed),fixture.contracts,"w")
+            passed,output=verify_fixture(fixture)
+            @test !passed
+            @test occursin("combined start command",output) || occursin("duplicate start command",output)
+        end
     end
 end

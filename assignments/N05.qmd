@@ -1,0 +1,69 @@
+---
+title: "共通パッケージへの抽出と回帰確認"
+lesson-id: N05
+understanding-check-points:
+  - "抽出前の予想，実際の重複，共通APIと課題側の責務"
+  - "既存入口からの委譲，境界規約とN04選択の保持"
+  - "baselineの来歴，別プロセスでの比較，回帰と物理的正しさの違い"
+  - "AI提案のdiffと採否理由，テストと代表結果の対応"
+---
+::: {.course-position}
+第8回・課題 · 課題ID: N05
+:::
+
+## N05からN06へ
+
+提出単位: `N05-N06`．
+[N05授業](../lessons/N05.qmd)の抽出を行い，同じbranch・PR・学習ログで[N06課題](N06.qmd)まで進めます．
+N04の選択モデルを完成させてから，[課題の開始](../guides/workflow.qmd#start-exercise)で提出単位`N05-N06`を指定します．
+未選択モデルを完成させる必要はありません．
+PRの確認・mergeはN05とN06の完了条件を満たしてから行います．
+
+## 編集対象と契約
+
+| 役割 | 学生リポジトリ内の場所 |
+|---|---|
+| 共通APIと抽出した実装 | `src/ThermofluidExercise.jl`と必要な`src/`内のファイル |
+| 既存入口の委譲 | N01〜N04の各`run.jl`内の対応関数 |
+| 基準取得・比較の提供入口 | `exercises/N05-N06_common_package_2d_advection/N05.jl` |
+| N05・N06のテスト | `exercises/N05-N06_common_package_2d_advection/tests.jl` |
+| 共通の記録 | `exercises/N05-N06_common_package_2d_advection/learning_log.md` |
+: {tbl-colwidths="[30, 70]"}
+
+`periodic_left_index(i,n)`・`periodic_right_index(i,n)`は`1 <= i <= n`の整数を受け付け，`Bool`は拒否します．
+`linear_flux(u,speed)`・`burgers_flux(u)`は有限実数の流束を返し，後者は負値でも定義します．
+`validate_buffers(u_new,u_old)`は同形状，1始まり，各軸3点以上，浮動小数，非alias，有限な旧値を要求します．
+新配列は未初期化でも使えるようにします．
+`fit_timestep(dt_max,t_final)`は正の有限値から`(;steps,dt)`を返し，上限以下の刻みで最終時刻へ到達させます．
+
+`ThermofluidExercise.N01`の`upwind_step!`・`centered_step!`・`apply_boundary!`，`.N02`の`nonlinear_upwind_step!`・`apply_boundary!`，`.N03`の`diffusion_step!`・`apply_boundary!`，`.N04`の`stable_timestep`・`advection_diffusion_step!`へ対応処理を抽出します．
+N01の境界処理は従来どおり2点でも動き，N01の有効な入力へ厳しい共通検証を一律に加えません．
+N01〜N03の不安定条件の観察経路と，N04の合成安定条件違反の拒否を残します．
+旧入口の関数名・引数・返却フィールド・出力名を保ち，N04の`SELECTED_MODEL`を課題側から明示的に渡します．
+初期条件・実験条件・診断・描画を各課題へ残し，更新式を二重に持たずに委譲してください．
+
+## 抽出前の記録と抽出後の検証
+
+[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)に従って，**コードを変更する前にbaselineを取得**します．
+抽出対象と変化しないはずの挙動を予想し，N04選択と基準取得時のcommitをログへ記録します．
+抽出後はF01〜N04の既存テストとN05の比較を実行し，diffと結果を照合します．
+
+N05の提出物は`results/N05/baseline.toml`と`results/N05/regression.toml`です．
+レポートにはbaselineのSHA-256と現在コードのSHA-256，項目別の差を残します．
+比較はキー・形状・整数・モデルの一致と，浮動小数の`rtol=1e-12, atol=1e-13`を要求します．
+不一致は原因を調べて修正し，合格のために基準を上書きしないでください．
+抽出前の基準がない場合は，変更前commitの隔離コピーから取得する方法を教員・TAへ相談します．
+
+N05の共通化で進めなくなった場合は，diffと失敗を説明して教員・TAの復帰支援を受けられます．
+復帰後も自分の過去課題・N04選択・学習ログを保ち，採用した差分と回帰結果を説明します．
+N06の数値更新と診断は引き続き自分で完成させます．
+
+{{< include /assignments/_understanding-check.qmd >}}
+
+## 完了条件
+
+- 抽出前の予想・baselineと採用したdiffがあり，共通APIと旧入口の委譲を説明した．
+- 過去課題のテストと回帰比較が通り，N04選択・境界規約・代表結果を保ったことを示した．
+- AI提案の採否理由，確認方法，復帰支援を使った場合の差分を共通ログへ記録した．
+- [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，ログへ提出状況を記録した．
+- [N06](N06.qmd)を同じ提出単位で続け，両内容の完了後に[提出手順](../guides/workflow.qmd#commit)を行う．

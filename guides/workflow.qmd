@@ -253,3 +253,60 @@ main
 ~~~
 
 この後は[課題開始](#start-exercise)に戻って次の課題に取り組んでください．
+
+
+## N05-N06の段階別実行 {#n05-n06-stages}
+
+提出単位`N05-N06`は一つのbranch・PR・学習ログで進めます．
+編集先は`src/`，`analyze.jl`，`plot.jl`，`tests.jl`です．
+課題の要件は[N05](../assignments/N05.qmd)と[N06](../assignments/N06.qmd)を参照し，以下のコマンドは学生リポジトリのrootで実行します．
+
+N04までの完成コードを変更する前に，基準を一度だけ取得します．
+既存のbaselineは上書きできません．
+
+~~~console
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl baseline
+~~~
+
+共通化のdiffを確認し，抽出後の回帰を別プロセスで比較します．
+
+~~~console
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
+~~~
+
+N06の数値更新ができたら，計算と基本解析を別々に実行します．
+
+~~~console
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/simulate.jl
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/analyze.jl
+~~~
+
+`analyze.jl`の`spatial_variance`を完成させ，同じHDF5から再解析します．
+その後`plot.jl`の表示設定を変え，再作図します．
+
+~~~console
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/analyze.jl
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/plot.jl
+~~~
+
+ファイルのSHA-256は次のコマンドで再解析・再作図の前後に確認できます．
+`summary.toml`の`source_fields_sha256`，`plots.toml`の入力ハッシュとも照合します．
+
+~~~console
+$ julia --project=. -e 'using SHA; println(bytes2hex(sha256(read("exercises/N05-N06_common_package_2d_advection/results/N06/fields.h5"))))'
+~~~
+
+全段階を実行する場合は共通入口を使います．
+baselineはあらかじめ取得しておきます．
+
+~~~console
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/run.jl
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/tests.jl
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+~~~
+
+段階別の実行で`fields.h5`を作り直した後は，再解析してから作図します．
+古いsummaryとの組合せでは作図が停止します．
+一括実行は全段階の成功後に出力を反映し，捕捉できる失敗時には既存成果物を復元します．
+復元にも失敗した場合は表示された退避先を保ち，教員・TAへ状況を伝えます．
+強制終了や停電をまたぐ完全な復元は保証されないため，提出済みの成果物はGitでも保管します．

@@ -153,3 +153,36 @@ end
         end
     end
 end
+
+@testset "N06 three grid reference fields and diagnostics" begin
+    root=joinpath(REFERENCE_ARTIFACT_ROOT,"assets","n06-reference")
+    names=("fields.png","diagnostics.png","convergence.png","summary.toml","plots.toml")
+    @test all(n->isfile(joinpath(root,n)),names)
+    @test !any(n->endswith(n,".h5"),readdir(root))
+    @test sum(filesize(joinpath(root,n)) for n in names)<=10*1024^2
+    for name in names[1:3]
+        @test 10_000 < filesize(joinpath(root,name)) <= 5*1024^2
+        dims=png_dimensions(joinpath(root,name))
+        @test dims == (name=="fields.png" ? (width=1100,height=660) : name=="diagnostics.png" ? (width=1000,height=400) : (width=700,height=460))
+    end
+    s=TOML.parsefile(joinpath(root,"summary.toml")); plots=TOML.parsefile(joinpath(root,"plots.toml"))
+    @test s["schema_version"]==1 && s["diagnostics_complete"]
+    @test s["conditions"]["cx"]==1. && s["conditions"]["cy"]==.5
+    @test s["conditions"]["boundary_x"]==s["conditions"]["boundary_y"]=="periodic"
+    @test plots["source_fields_sha256"]==s["source_fields_sha256"]
+    @test occursin(r"^[a-f0-9]{64}$",s["source_fields_sha256"])
+    for (id,nx,ny) in (("n040x030",40,30),("n080x060",80,60),("n160x120",160,120))
+        c=s["cases"][id]
+        @test (c["nx"],c["ny"])==(nx,ny)
+        @test c["dx"]==2/nx && c["dy"]==1/ny
+        @test c["time"]==[0.,.25,.5,.75,1.]
+        @test maximum(abs.(c["mass"].-2.))<=2e-12
+        @test all(isfinite,c["variance"]) && all(>=(0.),c["variance"])
+        @test c["segment_dt"].*c["segment_steps"]≈fill(.25,4)
+    end
+    c=s["convergence"]
+    @test c["errors"]≈[.04586691138478507,.02406462411492619,.012332831539922874] atol=1e-12
+    @test c["errors"][1]>c["errors"][2]>c["errors"][3]>0
+    @test c["orders"]≈log2.(c["errors"][1:2]./c["errors"][2:3])
+    @test all(p->.8<=p<=1.2,c["orders"])
+end

@@ -71,6 +71,13 @@ julia> twice(3)
         self.assertEqual(render('```julia\nprintln("julia> literal")\n```'),
                          ['println("julia> literal")'])
 
+    def test_n0506_stages_copy_as_independent_commands(self):
+        source = (ROOT / 'guides' / 'workflow.qmd').read_text()
+        blocks = render(source)
+        base = 'julia --project=. exercises/N05-N06_common_package_2d_advection/'
+        for tail in ('N05.jl baseline', 'N05.jl verify', 'simulate.jl', 'analyze.jl', 'plot.jl', 'run.jl', 'tests.jl'):
+            self.assertIn(base + tail, blocks)
+
 
 if __name__ == '__main__':
     unittest.main()
