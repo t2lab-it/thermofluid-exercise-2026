@@ -2,8 +2,8 @@
 title: "共通パッケージへの抽出と回帰確認"
 lesson-id: N05
 understanding-check-points:
-  - "抽出前の予想，実際の重複，共通APIと課題側の責務"
-  - "既存入口からの委譲，境界規約とN04選択の保持"
+  - "抽出前の予想，実際の重複，パッケージ構造，共通APIと課題側の責務"
+  - "既存入口からの委譲，引数・既定値・戻り値・例外，境界規約とN04選択の保持"
   - "baselineの来歴，別プロセスでの比較，回帰と物理的正しさの違い"
   - "AI提案のdiffと採否理由，テストと代表結果の対応"
 ---
@@ -57,6 +57,8 @@ N05の提出物は`results/N05/baseline.toml`と`results/N05/regression.toml`で
 N05の共通化で進めなくなった場合は，diffと失敗を説明して教員・TAの復帰支援を受けられます．
 復帰後も自分の過去課題・N04選択・学習ログを保ち，採用した差分と回帰結果を説明します．
 N06の数値更新と診断は引き続き自分で完成させます．
+
+理解度チェックの4観点は，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)，[基準と回帰の証拠](../lessons/N05.qmd#regression)，[AI差分の採否](../lessons/N05.qmd#diff-review)を参照して整理します．
 
 {{< include /assignments/_understanding-check.qmd >}}
 

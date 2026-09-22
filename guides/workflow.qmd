@@ -258,7 +258,7 @@ main
 ## N05-N06の段階別実行 {#n05-n06-stages}
 
 提出単位`N05-N06`は一つのbranch・PR・学習ログで進めます．
-編集先は`src/`，`analyze.jl`，`plot.jl`，`tests.jl`です．
+編集先は`src/`，N01〜N04の`run.jl`内の委譲する関数，`analyze.jl`，`plot.jl`，`tests.jl`です．
 課題の要件は[N05](../assignments/N05.qmd)と[N06](../assignments/N06.qmd)を参照し，以下のコマンドは学生リポジトリのrootで実行します．
 
 N04までの完成コードを変更する前に，基準を一度だけ取得します．
@@ -273,6 +273,13 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl baselin
 ~~~console
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
 ~~~
+
+比較後はプロセスの終了状態とメッセージを確認します．
+失敗時は古い`regression.toml`が残る場合があるため，ファイルがあるだけで今回の成功とは扱いません．
+成功した実行のレポートで，`baseline_sha256`，現在の`code_sha256`，`git_head`，`selected_model`を照合します．
+不一致なら表示された箇所と最後に確認できたdiffを調べ，baselineやテスト期待値を現在の結果に合わせて変更しないでください．
+基準が欠落している場合は現在の変更と記録を保ち，変更前commitの隔離コピーから取得する方法を教員・TAへ相談します．
+判断の理由は[N05授業の証拠の読み方](../lessons/N05.qmd#regression)を参照します．
 
 N06の数値更新ができたら，計算と基本解析を別々に実行します．
 
