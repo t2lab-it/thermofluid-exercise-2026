@@ -17,6 +17,8 @@ Julia拡張機能と以下のエージェントは，Remote - WSLで開いた接
 
 ## GitHub Copilot
 
+公式ドキュメント：[GitHub Copilot](https://docs.github.com/en/copilot)．
+
 1. VS Code の Extensions で `GitHub Copilot` をインストールする．
 2. GitHub アカウントでサインインする．
 3. 学生リポジトリを VS Code で開く．
@@ -25,10 +27,14 @@ Julia拡張機能と以下のエージェントは，Remote - WSLで開いた接
 
 ## OpenAI Codex
 
+公式ドキュメント：[VS Code拡張機能](https://developers.openai.com/codex/ide/)・[CLI](https://developers.openai.com/codex/cli/)．
+
 VS Code拡張機能またはCLIを利用できます．
 授業アカウントで利用可能な方法を一つ選び，学生リポジトリを作業ディレクトリとして開いてください．
 
 ## Amazon Q Developer
+
+公式ドキュメント：[IDEでのAmazon Q Developerの利用](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-in-IDE.html)．
 
 VS Code の Extensions で `Amazon Q` を検索し，Amazon Q DeveloperのVS Code拡張機能をインストールしてサインインします．
 学生リポジトリを開いてください．
@@ -43,3 +49,16 @@ VS Code の Extensions で `Amazon Q` を検索し，Amazon Q DeveloperのVS Cod
 3. 確認用に作ったファイルを削除する．
 
 AI利用時の記録と注意事項は[AI利用と安全](../guides/ai-usage.qmd)を確認してください．
+
+## その他のコーディングエージェント
+
+上記以外にも，次のようなコーディングエージェントがあります．
+利用形態と特徴を以下にまとめます．
+導入方法や利用条件は，各製品の公式ドキュメントを確認してください．
+
+| エージェント（公式ドキュメント） | 利用形態の例 | 特徴 |
+|---|---|---|
+| [Claude Code](https://code.claude.com/docs/en/overview) | CLI・VS Code拡張機能 | コードベースを読み取り，複数ファイルの編集やコマンド実行を行う． |
+| [Gemini CLI](https://geminicli.com/docs/) | CLI | ターミナルからGeminiを使い，ローカルのプロジェクトを理解して作業を進める． |
+| [Cursor](https://cursor.com/docs) | 専用エディタ・CLI | Agentでコードの調査，実装，デバッグ，変更のレビューを行う． |
+| [Cline](https://docs.cline.bot/) | VS Code拡張機能・CLI | ファイルの作成やコマンド実行などを，利用者の承認を交えて進める． |
