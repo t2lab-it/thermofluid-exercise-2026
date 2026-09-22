@@ -23,36 +23,38 @@ understanding-check-points:
 
 ## 編集対象
 
+コードへのリンクは，対応する学生スターターのcommit `92a01c5`の該当箇所を指します．
+
 | 役割 | 学生リポジトリ内の場所 |
 |---|---|
-| 合成刻み・二次元更新の2箇所 | `src/N06Advection.jl` |
-| 空間分散の実装 | `exercises/N05-N06_common_package_2d_advection/analyze.jl` |
-| 表示設定の変更 | `exercises/N05-N06_common_package_2d_advection/plot.jl` |
-| 必須テストと自作2件 | `exercises/N05-N06_common_package_2d_advection/tests.jl` |
-| 共通の記録 | `exercises/N05-N06_common_package_2d_advection/learning_log.md` |
-| 計算の提供入口 | `exercises/N05-N06_common_package_2d_advection/simulate.jl` |
+| 合成刻み・二次元更新の2箇所 | [`src/N06Advection.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl) |
+| 空間分散の実装 | [`exercises/N05-N06_common_package_2d_advection/analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/analyze.jl) |
+| 表示設定の変更 | [`exercises/N05-N06_common_package_2d_advection/plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl) |
+| 必須テストと自作2件 | [`exercises/N05-N06_common_package_2d_advection/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/tests.jl) |
+| 共通の記録 | [`exercises/N05-N06_common_package_2d_advection/learning_log.md`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/learning_log.md) |
+| 計算の提供入口 | [`exercises/N05-N06_common_package_2d_advection/simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/simulate.jl) |
 : {tbl-colwidths="[30, 70]"}
 
-`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`は合成CFLから有限な正の`Float64`を返します．
+[`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L11-L20)は合成CFLから有限な正の`Float64`を返します．
 速度は非負で少なくとも一方が正，格子幅は正，`0 < safety <= 1`とします．
-`advection_step!(u_new,u_old,dt,dx,dy; cx=1.0,cy=0.5)`は周期全点を同じ旧配列から更新し，新配列を返します．
+[`advection_step!(u_new,u_old,dt,dx,dy; cx=1.0,cy=0.5)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L21-L32)は周期全点を同じ旧配列から更新し，新配列を返します．
 合成CFL超過を更新前に拒否し，旧配列を変更せず，記憶領域を共有させません．
 片方向速度0を扱い，両速度0の1ステップは旧値をコピーします．
 
-`spatial_variance(u)`は各保存時刻の空間分散を，有限な非負の`Float64`で返します．
+[`spatial_variance(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/analyze.jl#L3-L7)は各保存時刻の空間分散を，有限な非負の`Float64`で返します．
 スターターの`nothing`では基本診断だけを保存し，`diagnostics_complete=false`となるため課題は未完了です．
 分散を実装して再解析し，`diagnostics_complete=true`を確認してください．
-`plot.jl`の`COLORMAP`，`COLOR_LIMITS`，`DISPLAY_CASE`から表示条件を変更します．
+`plot.jl`の[`COLORMAP`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L5)，[`COLOR_LIMITS`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L6)，[`DISPLAY_CASE`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L7)から表示条件を変更します．
 計算条件を変えず，初期場・数値解・解析解の色の上下限を共通に保って比較します．
 
 時間積分・解析解・HDF5入出力・基本診断・収束反復・描画は提供コードです．
-`provided_support.jl`と各入口を読み，入力と出力の対応を説明してください．
+[`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/provided_support.jl)と各入口を読み，入力と出力の対応を説明してください．
 
 ## 実行と自作テスト
 
 [段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)で，計算，基本解析，分散追加後の再解析，再作図の順に実行します．
 再解析・再作図の前後で`fields.h5`のSHA-256が同じであることを記録します．
-一括入口`exercises/N05-N06_common_package_2d_advection/run.jl`はN05回帰確認とN06の全段階を実行します．
+一括入口[`exercises/N05-N06_common_package_2d_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/run.jl)はN05回帰確認とN06の全段階を実行します．
 
 [課題単独と進捗連動のテスト](../guides/workflow.qmd#tests)を実行します．
 配布済みテストは非対称な1ステップ，周期端・角，旧配列不変・非alias，定数場，片方向速度0，合成CFL，保存時刻と出力の整合を確認します．

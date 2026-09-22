@@ -21,25 +21,27 @@ PRの確認・mergeはN05とN06の完了条件を満たしてから行います�
 
 ## 編集対象と契約
 
+コードへのリンクは，対応する学生スターターのcommit `92a01c5`の該当箇所を指します．
+
 | 役割 | 学生リポジトリ内の場所 |
 |---|---|
-| 共通APIと抽出した実装 | `src/ThermofluidExercise.jl`と必要な`src/`内のファイル |
-| 既存入口の委譲 | N01〜N04の各`run.jl`内の対応関数 |
-| 基準取得・比較の提供入口 | `exercises/N05-N06_common_package_2d_advection/N05.jl` |
-| N05・N06のテスト | `exercises/N05-N06_common_package_2d_advection/tests.jl` |
-| 共通の記録 | `exercises/N05-N06_common_package_2d_advection/learning_log.md` |
+| 共通APIと抽出した実装 | [`src/ThermofluidExercise.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl)と必要な`src/`内のファイル |
+| 既存入口の委譲 | [`N01/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N01_linear_advection/run.jl)・[`N02/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N02_nonlinear_advection/run.jl)・[`N03/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N03_diffusion/run.jl)・[`N04/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N04_advection_diffusion/run.jl)内の対応関数 |
+| 基準取得・比較の提供入口 | [`exercises/N05-N06_common_package_2d_advection/N05.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl) |
+| N05・N06のテスト | [`exercises/N05-N06_common_package_2d_advection/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/tests.jl) |
+| 共通の記録 | [`exercises/N05-N06_common_package_2d_advection/learning_log.md`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/learning_log.md) |
 : {tbl-colwidths="[30, 70]"}
 
-`periodic_left_index(i,n)`・`periodic_right_index(i,n)`は`1 <= i <= n`の整数を受け付け，`Bool`は拒否します．
-`linear_flux(u,speed)`・`burgers_flux(u)`は有限実数の流束を返し，後者は負値でも定義します．
-`validate_buffers(u_new,u_old)`は同形状，1始まり，各軸3点以上，浮動小数，非alias，有限な旧値を要求します．
+[`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L3-L6)・[`periodic_right_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L8-L11)は`1 <= i <= n`の整数を受け付け，`Bool`は拒否します．
+[`linear_flux(u,speed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L13-L16)・[`burgers_flux(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L18-L21)は有限実数の流束を返し，後者は負値でも定義します．
+[`validate_buffers(u_new,u_old)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L23-L26)は同形状，1始まり，各軸3点以上，浮動小数，非alias，有限な旧値を要求します．
 新配列は未初期化でも使えるようにします．
-`fit_timestep(dt_max,t_final)`は正の有限値から`(;steps,dt)`を返し，上限以下の刻みで最終時刻へ到達させます．
+[`fit_timestep(dt_max,t_final)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L28-L31)は正の有限値から`(;steps,dt)`を返し，上限以下の刻みで最終時刻へ到達させます．
 
-`ThermofluidExercise.N01`の`upwind_step!`・`centered_step!`・`apply_boundary!`，`.N02`の`nonlinear_upwind_step!`・`apply_boundary!`，`.N03`の`diffusion_step!`・`apply_boundary!`，`.N04`の`stable_timestep`・`advection_diffusion_step!`へ対応処理を抽出します．
+`ThermofluidExercise.N01`の[`upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L34-L37)・[`centered_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L38-L41)・[`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L42-L45)，`.N02`の[`nonlinear_upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L48-L51)・[`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L52-L55)，`.N03`の[`diffusion_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L58-L61)・[`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L62-L65)，`.N04`の[`stable_timestep`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L68-L71)・[`advection_diffusion_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L72-L75)へ対応処理を抽出します．
 N01の境界処理は従来どおり2点でも動き，N01の有効な入力へ厳しい共通検証を一律に加えません．
 N01〜N03の不安定条件の観察経路と，N04の合成安定条件違反の拒否を残します．
-旧入口の関数名・引数・返却フィールド・出力名を保ち，N04の`SELECTED_MODEL`を課題側から明示的に渡します．
+旧入口の関数名・引数・返却フィールド・出力名を保ち，N04の[`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N04_advection_diffusion/run.jl#L4)を課題側から明示的に渡します．
 初期条件・実験条件・診断・描画を各課題へ残し，更新式を二重に持たずに委譲してください．
 
 ## 抽出前の記録と抽出後の検証
