@@ -1,18 +1,14 @@
 ---
-title: "配列・関数・ループ・テスト"
+title: "Julia入門：配列・関数・テスト"
 ---
 ::: {.course-position}
 第3回・授業 1/2 · 課題ID: F02
 :::
 
-## この回の到達点
+この授業では，温度データの小さな実験から，関数を作って正しさを確かめるところまで進みます．
+各例で結果を予想し，実行後に入力を一か所変えて，結果が変わる理由を説明してください．
 
-- `eachindex`を使うループで配列の要素を処理できる．
-- 入力契約を持つ関数として平均と偏差を実装できる．
-- 手計算例と数学的性質を別々のテストで確認できる．
-- 入力配列が変更されていないことをテストできる．
-
-## 温度列の平均と偏差 {#problem-setup}
+## 1．温度列の平均と偏差 {#problem-setup}
 
 有限な実数からなる温度列 $T_1,\ldots,T_N$（$N\ge1$）について，算術平均と各要素の偏差を求めます．
 
@@ -21,97 +17,357 @@ $$
 $$
 
 例えば温度列 $[10,20,30]$ では，平均は20，偏差は $[-10,0,10]$ です．
-平均を一度求め，それを各要素から引くと，元の温度列と同じ長さの偏差列が得られます．
-厳密な計算では
+平均の出力は一つの値，偏差の出力は入力と同じ長さの新しい配列です．
+最後の温度だけを30から33へ変えると，平均と三つの偏差はどう変わるでしょうか．
+まず手計算し，[F02課題のAPI](../assignments/F02.qmd#api)の入力と戻り値を確認してください．
+これから単位換算・集計・配列変換を別々に試し，課題で組み合わせます．
+
+## 2．Juliaの値と配列 {#配列ループ関数テストを順に動かす}
+
+ターミナルで`julia --project=.`を実行し，REPL（入力した式をその場で評価する対話環境）を起動します．
+以下のコードは同じREPLで上から順に実行してください．
+コピーボタンで入力コードをコピーできます．
+
+`=`は右辺の値を左辺の名前に代入します．
+`[]`で値を並べたものが配列で，`values[2]`の2は添字，取り出される20.0が要素です．
+この配列の添字は1から始まり，`length`で要素数を調べます．
+`typeof`は値の型，`eltype`は配列の要素の型を返します．
+
+```{.julia .f02-example}
+temperature = 20
+values = [10.0, 20.0, 30.0]
+typeof(temperature)  # Int64（64ビット環境）
+typeof(20.0)         # Float64
+eltype(values)       # Float64
+length(values)       # 3
+values[2]            # 20.0
+```
+
+小数点のない20は整数，小数点のある20.0は浮動小数点数です．
+次は2番目の要素を書き換え，読み出してから元へ戻します．
+
+```{.julia .f02-example}
+values[2] = 21.0
+values              # [10.0, 21.0, 30.0]
+values[2] = 20.0
+```
+
+::: {.callout-note title="意図的に失敗する例：範囲外の添字"}
+要素は三つなので，次は`BoundsError`になります．
+
+```{.julia .f02-example expected-error="BoundsError"}
+values[4]
+```
+
+有効な添字へ戻して続けます．
+
+```{.julia .f02-example}
+values[3]           # 30.0
+```
+:::
+
+添字を1へ変えた場合の値を予想して確かめてください．
+
+## 3．関数の定義と呼び出し
+
+摂氏をケルビンへ換算するには273.15を足します．
+`function`から`end`までが関数の定義で，`celsius`は呼び出し時の入力を受け取る引数です．
+`return`は計算結果を呼び出し元へ返します．
+`to_kelvin(0.0)`と呼び出すと，引数に0.0を渡して換算を実行します．
+
+`using Test`で標準のテスト機能を読み込みます．
+`@test`は後ろの式が`true`（真）になることを確かめ，`==`は値が等しいかを比較します．
+
+```{.julia .f02-example}
+using Test
+
+function to_kelvin(celsius)
+    return celsius + 273.15
+end
+
+kelvin = to_kelvin(0.0)
+@test kelvin == 273.15
+@test to_kelvin(20.0) == 293.15
+```
+
+`println`は画面に表示する関数で，戻り値は「値がない」ことを表す`nothing`です．
+次の例では画面に273.15を表示し，`shown`には`nothing`が入ります．
+`===`はここでは戻り値が`nothing`そのものかを確かめます．
+
+```{.julia .f02-example}
+shown = println(kelvin)
+@test shown === nothing
+@test kelvin == 273.15
+```
+
+`to_kelvin`の引数を10.0へ変えると，戻り値は何になるでしょうか．
+表示した数値を後の計算で使いたいとき，どの変数を使うかも説明してください．
+
+## 4．ループによる集計
+
+総和 $\sum_i T_i$ は，要素を一つずつ足す処理で表せます．
+`for value in values`は要素の値を順に`value`へ入れます．
+`total = total + value`は，それまでの合計へ今回の値を加えて代入し直します．
+集計用変数は関数内に置きます．
+`first`は最初の要素，`zero`は与えた値と同じ型のゼロを返します．
+この例は空でない温度列を受け取り，合計を返します．
+
+```{.julia .f02-example}
+function temperature_total(values)
+    total = zero(first(values))
+    for value in values
+        total = total + value
+        println(total)
+    end
+    return total
+end
+
+@test temperature_total([10.0, 20.0, 30.0]) == 60.0
+@test temperature_total([10, 20, 30]) == 60
+```
+
+最初の呼び出しでは途中経過として10.0，30.0，60.0を表示し，戻り値の60.0をテストします．
+二つ目では10，30，60を表示します．
+`println(total)`を取り除いても戻り値は変わりません．
+入力を`[10, 20, 33]`へ変えると，各周の`total`はどうなるでしょうか．
+
+## 5．出力配列の作成と要素型
+
+今度は温度列を一つずつ換算し，新しい配列を返します．
+`eachindex(values)`は要素にアクセスするための添字を順に与えます．
+要素を読むだけの集計と違い，入力と出力の同じ位置を対応させるときに使います．
+
+`similar(values)`は入力と同じ要素型・形状の配列を確保します．
+要素は未初期化なので，必ず全要素へ書き込んでから読みます．
+末尾の`;`はREPLでの結果表示を抑えます．
+
+```{.julia .f02-example}
+integers = [10, 20, 30]
+whole_kelvin = similar(integers);
+```
+
+::: {.callout-note title="意図的に失敗する例：整数配列への小数の代入"}
+整数型の出力配列へ283.15を格納しようとすると，`InexactError`になります．
+
+```{.julia .f02-example expected-error="InexactError"}
+whole_kelvin[1] = to_kelvin(integers[1])
+```
+
+次の関数では出力を作り直します．
+:::
+
+`similar(values, result_type)`で，結果を格納する要素型を指定できます．
+ここでは最初の換算結果の型を調べます．
+
+```{.julia .f02-example}
+function kelvin_values(values)
+    result_type = typeof(to_kelvin(first(values)))
+    result = similar(values, result_type)
+    for i in eachindex(values)
+        result[i] = to_kelvin(values[i])
+    end
+    return result
+end
+
+converted = kelvin_values(integers)
+@test converted == [283.15, 293.15, 303.15]
+@test eltype(converted) == Float64
+@test integers == [10, 20, 30]
+```
+
+空でない温度列を受け取り，同じ長さの換算済み配列を返します．
+次は`Float32[...]`で，通常の小数リテラルより精度の低いFloat32の配列を作ります．
+`273.15f0`はFloat32の小数リテラルです．
+
+```{.julia .f02-example}
+small_values = Float32[10, 20, 30]
+@test eltype(small_values) == Float32
+@test typeof(small_values[1] + 273.15f0) == Float32
+@test typeof(to_kelvin(small_values[1])) == Float64
+@test eltype(kelvin_values(small_values)) == Float64
+```
+
+最後の二つがFloat64になるのは，`to_kelvin`がFloat64の定数273.15と足し算するためです．
+課題でも，平均や差の計算結果を格納できる型を考えます．
+換算定数をFloat32にしたら整数入力とFloat32入力でどう変わるか，理由を予想してください．
+
+## 6．入力契約と検査
+
+この課題では，要素が一つ以上あり，全要素が有限な実数である温度列を扱います．
+空配列や，`NaN`（数ではない値）・`Inf`（無限大）を含む入力は検査で拒否します．
+`isempty`は空かどうか，`isfinite`は有限かどうかを返します．
+`if`は条件が真のときだけ中の処理を実行し，`!`は真偽を反転します．
+`throw(ArgumentError(...))`は入力が不適切であることを知らせ，その呼び出しを中断します．
+
+次は配布済みの`validate_temperatures`と同じ検査内容を，分岐とループで読むための例です．
+有効な入力なら`nothing`を返します．
+`AbstractVector{<:Real}`は「実数要素の一次元配列を受け取る」と読みます．
+
+```{.julia .f02-example}
+function check_temperatures(values::AbstractVector{<:Real})
+    if isempty(values)
+        throw(ArgumentError("温度の配列を空にはできません"))
+    end
+    for value in values
+        if !isfinite(value)
+            throw(ArgumentError("温度はすべて有限値にしてください"))
+        end
+    end
+    return nothing
+end
+
+@test check_temperatures([10, 20, 30]) === nothing
+@test check_temperatures(Float32[10, 20, 30]) === nothing
+```
+
+::: {.callout-note title="意図的に失敗する例：不正な入力"}
+次の三つはそれぞれ`ArgumentError`になります．
+`Float64[]`は要素がゼロ個のFloat64配列です．
+一つずつ実行し，拒否の理由を読んでください．
+
+```{.julia .f02-example expected-error="ArgumentError"}
+check_temperatures(Float64[])
+```
+
+```{.julia .f02-example expected-error="ArgumentError"}
+check_temperatures([10.0, NaN])
+```
+
+```{.julia .f02-example expected-error="ArgumentError"}
+check_temperatures([10.0, Inf])
+```
+
+REPLへ戻ったら，次の`@test_throws`で「指定した例外が出ること」を成功条件として確かめられます．
+
+```{.julia .f02-example}
+@test_throws ArgumentError check_temperatures(Float64[])
+@test_throws ArgumentError check_temperatures([10.0, NaN])
+@test_throws ArgumentError check_temperatures([10.0, Inf])
+@test check_temperatures([10.0, 20.0]) === nothing
+```
+:::
+
+配布コードでは`isempty(values) && throw(...)`で「空なら拒否」，`all(isfinite, values) || throw(...)`で「全要素が有限でなければ拒否」を表しています．
+`&&`は左が真のとき，`||`は左が偽のときだけ右を評価し，`all`は全要素が条件を満たすか調べます．
+`NaN`を20.0に置き換えると，どの条件を通過するか説明してください．
+
+## 7．配列のコピーと入力の保持
+
+`b = a`は同じ配列を二つの名前で参照します．
+そのため，`b`の要素を書き換えると，`a`にも変更が反映されます．
+
+```{.julia .f02-example}
+a = [10.0, 20.0, 30.0]
+b = a
+b[1] = 99.0
+@test a[1] == 99.0
+```
+
+新しい入力を用意し，`copy(a)`で値をコピーすると，この実数配列を独立に変更できます．
+
+```{.julia .f02-example}
+a = [10.0, 20.0, 30.0]
+b = copy(a)
+b[1] = 99.0
+@test a == [10.0, 20.0, 30.0]
+@test b == [99.0, 20.0, 30.0]
+```
+
+関数が入力を書き換えることも副作用の一つです．
+呼び出し前のコピーを保存し，呼び出し後と比較すると入力非変更をテストできます．
+さらに出力を書き換え，入力と出力が独立していることも確かめます．
+
+```{.julia .f02-example}
+original = copy(a)
+result = kelvin_values(a)
+@test a == original
+result[1] = 0.0
+@test a == original
+@test result[1] == 0.0
+```
+
+`original = a`で保存してしまった場合，入力の書き換えを見逃す理由を説明してください．
+
+## 8．テストと近似比較 {#テストを層に分ける}
+
+::: {.callout-note title="意図的に失敗する例：期待値の間違い"}
+次は`Test Failed`になります．
+`Expression`に期待した式，`Evaluated`に実際の比較が表示されます．
+
+```{.julia .f02-example expected-error="Test.Fail"}
+@test to_kelvin(0.0) == 0.0
+```
+
+摂氏0度は0 Kではなく273.15 Kなので，期待値を直して再実行します．
+
+```{.julia .f02-example}
+@test to_kelvin(0.0) == 273.15
+```
+:::
+
+有限桁の浮動小数点数は，多くの小数を厳密には表せません．
+`isapprox`で許容誤差内の一致を調べます．
+`;`の後ろの`atol`，`rtol`は名前を付けて渡す引数で，絶対・相対許容誤差です．
+`1e-12`は $10^{-12}$ を表します．
+
+```{.julia .f02-example}
+@test (0.1 + 0.2 == 0.3) == false
+@test isapprox(0.1 + 0.2, 0.3; atol=1e-12, rtol=0)
+```
+
+この例の入力は1程度のFloat64で，差は約 $5.6\times10^{-17}$ です．
+許容誤差は入力の大きさ，型，演算回数に応じて選びます．
+詳しい選び方は[共通ガイド](../guides/testing.qmd#tolerances)を参照してください．
+
+| 層 | この授業・課題の例 | 分かること |
+|---|---|---|
+| 具体例 | 単位換算や手計算した平均 | 期待する値との一致 |
+| 入力契約 | 空，`NaN`，`Inf` | 不正入力を拒否する |
+| 型一般性 | 整数，`Float32` | 入力と計算結果の型を考慮している |
+| 副作用 | 入力配列が不変 | 入力の保持 |
+| 数学的性質 | 偏差の総和がほぼ0 | 多くの入力に共通する関係 |
+: {tbl-colwidths="[18, 42, 40]"}
+
+テストを観点ごとに分けると，失敗した条件を特定しやすくなります．
+近似比較の`atol`を0にした場合に，この例の結果が変わる理由を説明してください．
+
+## 9．数学的性質による検証 {#anomaly-test}
+
+[平均と偏差の定義](#problem-setup)から，厳密計算では
 
 $$
-\sum_{i=1}^{N}T_i'=\sum_{i=1}^{N}T_i-N\bar{T}=0
+\sum_{i=1}^{N}T_i'
+=\sum_{i=1}^{N}(T_i-\bar{T})
+=\sum_{i=1}^{N}T_i-N\bar{T}
+=0
 $$
 
 となります．
-浮動小数点の計算では丸め誤差が入るため，偏差の総和は適切な許容誤差で0と比較します．
-この性質は一つの具体例だけに依存せず，集計と各要素の処理が整合しているかを確かめる手掛かりになります．
-実装する関数と入力・戻り値の契約は[F02課題](../assignments/F02.qmd#api)にあります．
+同じ平均を $N$ 回引くので，温度の総和と打ち消し合います．
+浮動小数点で求めた総和には丸め誤差が残ることがあります．
+次は手計算の偏差を並べた例で，`sum`は配列の総和を返します．
 
-## 配列・ループ・関数・テストの順次実行 {#配列ループ関数テストを順に動かす}
-
-ターミナルで`julia --project=.`を実行してREPL（Read-Eval-Print Loopという対話型実行環境）を立ち上げます．
-表示された`julia>` という表示用のプロンプトに続いて，以下のコマンドを一つずつ入力して出力と見比べてください．
-
-まずはJuliaの配列を作成し，その要素にアクセスしてみます．
-配列の要素番号（インデックス）とその値の違いに注意しましょう．
-
-```julia-repl
-julia> values = [10.0, 20.0, 30.0]
-3-element Vector{Float64}:
- 10.0
- 20.0
- 30.0
-
-julia> values[2]
-20.0
-
-julia> for value in values
-           println(value - 20.0)
-       end
--10.0
-0.0
-10.0
+```{.julia .f02-example}
+hand_anomalies = [-0.2, -0.1, 0.3]
+@test isapprox(sum(hand_anomalies), 0.0; atol=1e-12, rtol=0)
+@test hand_anomalies == [-0.2, -0.1, 0.3]
 ```
 
-`eachindex(values)`を使った配列要素へのアクセスは以下のようにおこないます．
-
-```julia-repl
-julia> function double_values(values)
-           result = similar(values)
-           for i in eachindex(values)
-               result[i] = 2 * values[i]
-           end
-           return result
-       end
-double_values (generic function with 1 method)
-
-julia> double_values([1.0, 2.0, 3.0])
-3-element Vector{Float64}:
- 2.0
- 4.0
- 6.0
-```
-
-`double_values`関数は入力として配列を受け取り，ループで要素がもとの二倍の大きさになる新しい配列を組み立て，`return`で返します．
-その動作を以下のようにテストしてみましょう．
-`@test`は式がtrueになることを確認します．
-
-```julia-repl
-julia> using Test
-
-julia> @test double_values([1.0, 2.0, 3.0]) == [2.0, 4.0, 6.0]
-Test Passed
-```
-
-## テストの層分け {#テストを層に分ける}
-
-| 層 | この授業の例 | 分かること |
-|---|---|---|
-| 具体例 | `[10, 20, 30]`の平均 | 手計算との一致 |
-| 入力契約 | 空，`NaN`，`Inf` | 不正入力を拒否する |
-| 型一般性 | 整数，`Float32` | 特定型へ過剰固定していない |
-| 数学的性質 | 偏差の総和がほぼ0 | 多くの入力に共通する関係 |
-| 副作用 | 入力配列が不変 | 関数が新しい結果を返す |
-: {tbl-colwidths="[18, 42, 40]"}
-
-一つのテストですべてを確認せず，失敗時にどの契約が壊れたか分かる大きさへ分けます．
-テストが成功しても，数値的・物理的な妥当性のすべてを保証するわけではありません．
-さらなる詳細は[テストと数値検証](../guides/testing.qmd)を参照してください．
-
-## 偏差の総和のテスト {#anomaly-test}
-
-[平均と偏差の定義](#problem-setup)から，厳密計算では偏差の総和は0です．
-この関係は，一つの入力例だけでなく多くの入力に共通する性質です．
-浮動小数点では平均や差の計算に丸め誤差が入るので，総和が`== 0`になることではなく，絶対許容誤差の範囲で0に近いことを確認します．
-比較の書き方と許容誤差の考え方は，[共通ガイド](../guides/testing.qmd#tolerances)を参照してください．
+1程度以下のFloat64を三つ足すこの例では，総和に約 $-5.6\times10^{-17}$ が残ります．
+0との比較には正の絶対許容誤差が必要です．
 
 ただし，すべての要素を0として返す誤実装も，総和のテストには通ります．
-例えば入力`[10, 20, 30]`に対して偏差が`[-10, 0, 10]`となる具体例の確認も組み合わせます．
+`zeros(3)`で作った三つのゼロと，温度列`[10, 20, 30]`の手計算による偏差を比べます．
+`!=`は値が等しくないことを表します．
 
-[F02課題の理解度チェック](../assignments/F02.qmd#understanding-check)で，この授業の内容を確認してください．
+```{.julia .f02-example}
+wrong_anomalies = zeros(3)
+@test isapprox(sum(wrong_anomalies), 0.0; atol=1e-12, rtol=0)
+@test wrong_anomalies != [-10.0, 0.0, 10.0]
+```
+
+総和がほぼ0という性質と，具体的な偏差が合うことの両方を確かめてください．
+三つの偏差のうち一つを1だけ増やすと，総和のテストで何を検出できるでしょうか．
+
+課題では「入力列→入力検査→集計→平均→各要素との差→新しい偏差列」の順にデータが流れます．
+ここまでの例を組み合わせ，[F02課題](../assignments/F02.qmd)の実装・テストと[理解度チェック](../assignments/F02.qmd#understanding-check)へ進んでください．
