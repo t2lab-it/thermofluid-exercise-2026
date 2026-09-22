@@ -112,6 +112,13 @@ website:
             - text: "第7回 課題: 一次元移流拡散の実装と検証"
               href: assignments/N04.qmd
             - text: "第8回 授業: 共通化から二次元移流へ"
+              href: lessons/N05.qmd
+            - text: "第8回 課題: 共通パッケージへの抽出と回帰確認"
+              href: assignments/N05.qmd
+            - text: "第8回 授業: 二次元線形移流と保存場"
+              href: lessons/N06.qmd
+            - text: "第8回 課題: 二次元移流・再解析・格子収束"
+              href: assignments/N06.qmd
             - text: "第9回 授業: 二次元拡散・移流拡散"
             - text: "第10回 授業: Laplace／Poissonと反復法"
             - text: "第11回 最終プロジェクト: 計画へのフィードバック"

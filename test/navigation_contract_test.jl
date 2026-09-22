@@ -12,7 +12,7 @@ const F03_F04_FORBIDDEN_TERMS = (
     "T" * "BA",
 )
 
-const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04")
+const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06")
 const REQUIRED_ASSIGNMENT_IDS = Set(REQUIRED_COURSE_ORDER)
 const EXPECTED_PREPARATION_HREFS = Set([
     "setup/index.qmd", "setup/julia.qmd", "setup/git-github.qmd",
@@ -596,7 +596,7 @@ end
 
 @testset "assignment instructions link to the shared workflow" begin
     workflow = normpath(joinpath(NAVIGATION_SITE_ROOT, "guides", "workflow.qmd"))
-    for id in ("F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04")
+    for id in ("F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06")
         path = joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd")
         targets = qmd_link_targets(read(path, String))
         @test any(target -> normpath(resolve_qmd_target(path, target)) == workflow, targets)
@@ -649,10 +649,22 @@ end
         r"(?m)^\s*julia\s+--project",
         r"(?m)^\s*git\s+(?:switch|pull|status|branch|diff|add|commit|push)\b",
     )
-    for id in ("F02", "F03", "F04", "N01", "N02", "N03", "N04")
+    for id in ("F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06")
         source = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
         for pattern in command_patterns
             @test !occursin(pattern, source)
+        end
+    end
+end
+
+@testset "N05 and N06 share submission but keep distinct content routes" begin
+    contracts=TOML.parsefile(joinpath(NAVIGATION_SITE_ROOT,"assignments","contracts.toml"))["assignments"]
+    for (id,entry,other) in (("N05","N05.jl","N06"),("N06","simulate.jl","N05"))
+        @test contracts[id]["start_command"] == N05_N06_START_COMMAND
+        @test contracts[id]["run_path"] == "exercises/N05-N06_common_package_2d_advection/$entry"
+        for directory in ("lessons","assignments")
+            source=read(joinpath(NAVIGATION_SITE_ROOT,directory,"$id.qmd"),String)
+            @test "$other.qmd" in qmd_link_targets(source)
         end
     end
 end

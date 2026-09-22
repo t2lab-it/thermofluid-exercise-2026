@@ -1,9 +1,15 @@
 using TOML
 
 const CANONICAL_BASE = "https://t2lab-it.github.io/thermofluid-exercise-2026/"
-const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04"])
+const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06"])
 const SELF_CONTAINED_ASSIGNMENT_IDS = Set(["F00", "F01"])
 const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
+
+const N05_N06_START_COMMAND = "julia --project=. scripts/course.jl start N05-N06"
+const COMBINED_START_COMMANDS = Dict(
+    ("F03", "F04") => F03_F04_START_COMMAND,
+    ("N05", "N06") => N05_N06_START_COMMAND,
+)
 
 function fail(message::AbstractString)
     println(stderr, "contract error: ", message)
@@ -58,15 +64,11 @@ function verify_contracts(contracts_path, public_root, student_root)
         )
     end
 
-    combined_entries_are_tables = all(
-        id -> haskey(assignments, id) && assignments[id] isa AbstractDict,
-        ("F03", "F04"),
-    )
-    if combined_entries_are_tables
-        f03_command = get(assignments["F03"], "start_command", nothing)
-        f04_command = get(assignments["F04"], "start_command", nothing)
-        if f03_command != F03_F04_START_COMMAND || f04_command != F03_F04_START_COMMAND
-            ok &= fail("F03 and F04 must share the combined start command")
+    for (pair, expected_command) in COMBINED_START_COMMANDS
+        if all(id -> haskey(assignments,id) && assignments[id] isa AbstractDict, pair)
+            if any(id -> get(assignments[id],"start_command",nothing) != expected_command, pair)
+                ok &= fail("$(join(pair, " and ")) must share the combined start command")
+            end
         end
     end
 
@@ -101,8 +103,8 @@ function verify_contracts(contracts_path, public_root, student_root)
 
         if haskey(seen_start, command)
             first_id = seen_start[command]
-            combined_pair = Set((first_id, String(id))) == Set(("F03", "F04"))
-            if !(combined_pair && command == F03_F04_START_COMMAND)
+            combined_pair = (first_id, String(id))
+            if get(COMBINED_START_COMMANDS, combined_pair, nothing) != command
                 ok &= fail("duplicate start command at assignment ID $id (already used by $first_id)")
             end
         else

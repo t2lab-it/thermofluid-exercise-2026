@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">二次元格子の参照点と周期境界</title>
+  <desc id="desc">左図はu[i,j]が参照する左隣u[i−1,j]と下隣u[i,j−1]を示す．右図は左下の点u[1,1]で，左隣がu[nx,1]，下隣がu[1,ny]に接続することを示す．第1添字iはx方向，第2添字jはy方向に増える．</desc>
+  <defs>
+    <marker id="axis-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 8 4 0 8Z" fill="#64748b"/>
+    </marker>
+    <marker id="x-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 10 5 0 10Z" fill="#007c91"/>
+    </marker>
+    <marker id="y-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 10 5 0 10Z" fill="#b45309"/>
+    </marker>
+    <g id="grid" stroke="#cbd5e1" stroke-width="1.5" fill="none">
+      <path d="M0 0H280M0 70H280M0 140H280M0 0V140M70 0V140M140 0V140M210 0V140M280 0V140"/>
+    </g>
+  </defs>
+  <rect width="960" height="480" rx="16" fill="#fff"/>
+  <g font-family="sans-serif" fill="#1e293b">
+    <rect x="16" y="16" width="452" height="396" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="484" y="16" width="460" height="396" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+    <g font-size="23" font-weight="700">
+      <text x="40" y="54">格子内部の参照点</text>
+      <text x="508" y="54">左下の角での周期接続</text>
+    </g>
+    <g font-size="17" fill="#475569">
+      <text x="40" y="83">左隣・下隣を同じ旧配列から参照</text>
+      <text x="508" y="83">各方向の端を反対側の端へ接続</text>
+    </g>
+    <!-- i increases rightwards; j increases upwards in both panels. -->
+    <use href="#grid" x="112" y="146"/>
+    <use href="#grid" x="590" y="146"/>
+    <g fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#axis-arrow)">
+      <path d="M84 314H423M84 314V117"/>
+      <path d="M562 314H901M562 314V117"/>
+    </g>
+    <g font-size="18" fill="#475569">
+      <text x="400" y="305">x, i</text><text x="60" y="112">y, j</text>
+      <text x="878" y="305">x, i</text><text x="538" y="112">y, j</text>
+      <text x="112" y="338" text-anchor="middle">1</text><text x="392" y="338" text-anchor="middle">nx</text>
+      <text x="590" y="338" text-anchor="middle">1</text><text x="870" y="338" text-anchor="middle">nx</text>
+      <text x="69" y="292" text-anchor="end">1</text><text x="69" y="152" text-anchor="end">ny</text>
+      <text x="547" y="292" text-anchor="end">1</text><text x="547" y="152" text-anchor="end">ny</text>
+    </g>
+    <!-- Arrows point from the updated point towards the old values it reads. -->
+    <path d="M241 216H195" stroke="#007c91" stroke-width="3" marker-end="url(#x-arrow)"/>
+    <path d="M252 227V273" stroke="#b45309" stroke-width="3" marker-end="url(#y-arrow)"/>
+    <circle cx="252" cy="216" r="8" fill="#1e293b" stroke="#fff" stroke-width="2"/>
+    <circle cx="182" cy="216" r="7" fill="#007c91" stroke="#fff" stroke-width="2"/>
+    <circle cx="252" cy="286" r="7" fill="#b45309" stroke="#fff" stroke-width="2"/>
+    <g font-size="20">
+      <text x="264" y="202">u[i,j]</text>
+      <text x="118" y="199" fill="#007c91">u[i−1,j]</text>
+      <text x="265" y="282" fill="#b45309">u[i,j−1]</text>
+    </g>
+    <!-- Separate dashed paths show the two wraps from the same corner. -->
+    <path d="M580 286C558 286 564 365 602 365H846C879 365 882 313 873 297" fill="none" stroke="#007c91" stroke-width="3" stroke-dasharray="7 5" marker-end="url(#x-arrow)"/>
+    <path d="M590 296C590 306 626 308 626 276V166C626 140 610 136 600 143" fill="none" stroke="#b45309" stroke-width="3" stroke-dasharray="7 5" marker-end="url(#y-arrow)"/>
+    <circle cx="590" cy="286" r="8" fill="#1e293b" stroke="#fff" stroke-width="2"/>
+    <circle cx="870" cy="286" r="7" fill="#007c91" stroke="#fff" stroke-width="2"/>
+    <circle cx="590" cy="146" r="7" fill="#b45309" stroke="#fff" stroke-width="2"/>
+    <g font-size="20">
+      <text x="642" y="284">u[1,1]</text>
+      <text x="783" y="268" fill="#007c91">u[nx,1]</text>
+      <text x="638" y="151" fill="#b45309">u[1,ny]</text>
+      <text x="691" y="393" fill="#007c91">i = 1 → nx</text>
+      <text x="638" y="191" fill="#b45309">j = 1 → ny</text>
+    </g>
+    <g font-size="18">
+      <circle cx="58" cy="446" r="7" fill="#1e293b"/><text x="74" y="452">更新する点</text>
+      <circle cx="260" cy="446" r="7" fill="#007c91"/><text x="276" y="452">x方向の参照点</text>
+      <circle cx="489" cy="446" r="7" fill="#b45309"/><text x="505" y="452">y方向の参照点</text>
+      <path d="M729 446H769" stroke="#64748b" stroke-width="2" stroke-dasharray="7 5"/><text x="780" y="452">周期接続</text>
+    </g>
+  </g>
+</svg>

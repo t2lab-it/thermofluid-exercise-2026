@@ -1,0 +1,321 @@
+---
+title: "共通化から二次元移流へ：共通パッケージ"
+---
+::: {.course-position}
+第8回・授業 · 内容ID: N05
+:::
+
+N05では，N01〜N04で完成した処理の置き場所を変え，呼び出す側から見た挙動を保ちます．
+作業・提出条件は[N05課題](../assignments/N05.qmd)，コマンドは[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)を参照します．
+
+## 挙動を残す抽出 {#extraction}
+
+N01とN04の線形流束は，同じ値と速度から同じ積を計算します．
+N02とN04の周期格子では，左端の左隣を最後の点にする判定が繰り返されます．
+こうした同じ役割を一箇所へ集めると，修正箇所を一本化し，片方だけ直したために結果が食い違うことを防げます．
+たとえば`i == 1 ? n : i - 1`を[`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L3-L6)に置き換えれば，呼び出す側は「左隣を求める」という役割を読み取れ，検証した周期端の処理を再利用できます．
+
+このように，外から見た挙動を変えずに内部の構成を変える作業をリファクタリングと呼びます．
+新しい数値解法を加えたり，入力の許される範囲を変えたりする機能変更とは分けて考えます．
+抽出前に「重複している役割」「移してよい処理」「変わらないはずの結果」を予想しておくと，AIの提案が目的を外れていないか判断できます．
+
+## 最小APIと責務 {#common-api}
+
+コードへのリンクは，この教材に対応する学生スターターのcommit `92a01c5`の該当箇所を指します．
+共通APIのリンク先は学生が実装する関数枠であり，以下の教師作成例とは区別します．
+
+APIは，呼び出す側と処理する側の約束です．
+関数名だけでなく，引数と既定値，戻り値，変更する配列，拒否する入力も含みます．
+
+| 共通API | 役割 |
+|---|---|
+| [`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L3-L6)・[`periodic_right_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L8-L11) | 重複終点を持たない周期格子の隣接点 |
+| [`linear_flux(u,speed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L13-L16)・[`burgers_flux(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L18-L21) | 有限実数のスカラー流束 |
+| [`validate_buffers(u_new,u_old)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L23-L26) | 独立した同形状の浮動小数配列と有限な旧値の検証 |
+| [`fit_timestep(dt_max,t_final)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L28-L31) | 上限以下の刻みと整数ステップ数の組 `(;steps,dt)` |
+| [`ThermofluidExercise.N01`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L33-L46)・[`N02`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L47-L56)・[`N03`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L57-L66)・[`N04`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L67-L76) | 各課題の更新処理と境界処理 |
+
+| 共通側へ置くもの | 課題側へ残すものと理由 |
+|---|---|
+| 流束・周期添字など，同じ入力に同じ処理をする部品 | 初期条件と実験条件：何を調べるかは課題ごとに違う |
+| 各課題の契約を保った更新・境界処理 | 旧入口：既存のテストや実験から同じ呼び方を続ける |
+| 引数で選択を受け取るN04の更新 | `SELECTED_MODEL`：学生が選んだモデルは課題側が決める |
+| 独立して検証できる計算処理 | 診断・描画：計算結果をどの観点で調べるかを決める |
+
+
+## ファイルの配置と呼び出し {#package-layout}
+
+パッケージは[`Project.toml`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/Project.toml)などで名前や依存関係を持つコードのまとまり，モジュールは関数名を整理する名前空間です．
+今回は学生リポジトリにある既存プロジェクト`ThermofluidExercise`の中で抽出します．
+
+次はファイルと名前空間の関係です．
+実際のパッケージ入口は[`src/ThermofluidExercise.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl)，N01の旧入口は[`exercises/N01_linear_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N01_linear_advection/run.jl#L137-L142)にあります．
+
+```text
+既存プロジェクトのroot
+├─ Project.toml  … name = "ThermofluidExercise"
+├─ src/
+│  ├─ ThermofluidExercise.jl  … module ThermofluidExercise
+│  │     ├─ 共通ヘルパー（流束・周期添字など）
+│  │     └─ N01〜N04のサブモジュール
+│  └─ N01Boundary.jl  … includeで読み込む分割例
+└─ exercises/
+   └─ N01_linear_advection/run.jl  … 旧入口と実験設定
+```
+
+[`ThermofluidExercise.N01.apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L42-L45)のドットは，パッケージ内のN01という名前空間にある関数を指します．
+`include("N01Boundary.jl")`は，そのファイルのコードを呼び出し元のモジュールで評価します．
+次の例では，分割ファイル内の`module N01`が名前空間を作ります．
+`import ThermofluidExercise`は有効なプロジェクトからパッケージをロードし，その名前を使えるようにします．
+`using ThermofluidExercise`もロードしますが，さらにexportされた名前を取り込みます．
+ここでは処理の所属が見えるように`import`と修飾した関数名を使います．
+
+実行時の呼び出しは次の方向です．
+配置図のファイルの並びと，配列が処理される順序を区別します．
+
+```text
+課題の実験設定
+  ↓ 引数を渡す
+課題の旧入口
+  ↓ 委譲する
+ThermofluidExercise.N01〜N04の処理
+  ↓ 必要な共通ヘルパーを使う
+戻り値・更新した出力配列
+  ↓
+課題側の診断・描画
+```
+
+共通側から課題の`run.jl`やグローバル設定を読み込むと，特定の実験がないと部品を使えなくなります．
+N04では課題側の[`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N04_advection_diffusion/run.jl#L4-L10)を`model`として渡し，共通側は受け取った選択に従います．
+
+## 境界処理の抽出 {#boundary-example}
+
+以下はN01の[`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N01_linear_advection/run.jl#L137-L142)と[`validate_boundary_inputs`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N01_linear_advection/provided_support.jl#L35-L39)を教材用に再構成した教師作成例です．
+異なる課題の境界を一つにする例ではなく，処理を移して旧入口から呼ぶ仕組みを小さく示します．
+N01〜N04の抽出全体の解答ではありません．
+
+### 変更前と保持する契約
+
+この小例は通常の1始まりの実数ベクトルを使います．
+左端を指定値にし，その後で右端へ一つ左の値を写し，元の配列そのものを返します．
+末尾の`!`は，引数を変更する関数名に付ける慣習です．
+`left_value`はキーワード引数で，省略時は`1.0`です．
+
+**変更前の`boundary.jl`（小例の旧入口）**：
+
+```{.julia .n05-example #n05-before}
+function apply_boundary!(u::AbstractVector{<:Real}; left_value::Real = 1.0)
+    length(u) >= 2 || throw(ArgumentError("2点以上が必要です"))
+    isfinite(left_value) || throw(ArgumentError("左端の値は有限にします"))
+    u[1] = left_value
+    u[end] = u[end - 1]
+    return u
+end
+```
+
+`|| throw(...)`は左の条件を満たさない場合に例外を出します．
+検証を先に行うので，1点配列や非有限の指定値を拒否する場合は書込みが始まりません．
+次の値と振る舞いを，配置を変えても保持します．
+
+| 入力 | 結果と確認したい約束 |
+|---|---|
+| `[2.0,3.0,4.0]`，指定省略 | 同じ配列が`[1.0,3.0,3.0]`になる：既定値 |
+| `[2.0,3.0,4.0]`，`left_value=5.0` | 同じ配列が`[5.0,3.0,3.0]`になる：引数の伝達 |
+| `[8.0,9.0]`，`left_value=2.0` | `[2.0,2.0]`になる：2点を許し，左端を先に更新 |
+| `[8.0]`，または`left_value=Inf` | `ArgumentError`，入力は不変：拒否する入力と書込み順 |
+
+2点の場合，`u[end - 1]`は左端そのものです．
+右端を先に更新すると`[2.0,8.0]`になり，式が同じでも結果は変わります．
+
+### 変更後の配置と旧入口
+
+次の各ファイルは，この小例だけを別の一時ディレクトリで再現するための完全なコードです．
+実課題では既存の`Project.toml`と他の関数を保ち，対応する処理だけを移します．
+
+**小例のrootに置く`Project.toml`**：
+既存プロジェクトの名前と識別子に対応する最小構成です．
+
+```{.toml .n05-example #n05-project}
+name = "ThermofluidExercise"
+uuid = "6cf049f0-8f3e-4f50-9f52-a7aa1a85f701"
+version = "0.1.0"
+```
+
+**`src/ThermofluidExercise.jl`**：パッケージの入口から分割ファイルを読み込みます．
+
+```{.julia .n05-example #n05-package}
+module ThermofluidExercise
+include("N01Boundary.jl")
+end
+```
+
+**`src/N01Boundary.jl`**：変更前と同じ処理をN01の名前空間へ移します．
+
+```{.julia .n05-example #n05-boundary}
+module N01
+function apply_boundary!(u::AbstractVector{<:Real}; left_value::Real = 1.0)
+    length(u) >= 2 || throw(ArgumentError("2点以上が必要です"))
+    isfinite(left_value) || throw(ArgumentError("左端の値は有限にします"))
+    u[1] = left_value
+    u[end] = u[end - 1]
+    return u
+end
+end
+```
+
+**変更後の`boundary.jl`**：旧入口を同じ名前と引数で残し，共通側へ仕事を渡します．
+このように他の関数へ処理を任せることを委譲と呼びます．
+
+```{.julia .n05-example #n05-after}
+import ThermofluidExercise
+
+function apply_boundary!(u::AbstractVector{<:Real}; left_value::Real = 1.0)
+    return ThermofluidExercise.N01.apply_boundary!(u; left_value=left_value)
+end
+```
+
+旧入口の既定値も残すので，呼び出す側はこれまでどおり`apply_boundary!(u)`と書けます．
+`return`で共通側の戻り値をそのまま返します．
+実課題ではこの旧入口に相当する関数が各`run.jl`内にあり，実験設定・診断・描画はそこへ残します．
+
+### 共通のテストによる確認
+
+**小例のrootに置く`checks.jl`**は，変更前にも変更後にも同じものを使います．
+小例のrootを有効なプロジェクトとして，新しいJuliaプロセスでこのファイルを実行する前提です．
+`include`は同じディレクトリの旧入口を読み込み，変更後の旧入口はパッケージをロードします．
+課題全体のbaseline取得・テスト・回帰の操作は[共通ガイド](../guides/workflow.qmd#n05-n06-stages)にまとめています．
+
+```{.julia .n05-example #n05-checks}
+using Test
+include("boundary.jl")
+
+@testset "境界処理の契約" begin
+    u = [2.0, 3.0, 4.0]
+    @test apply_boundary!(u) === u
+    @test u == [1.0, 3.0, 3.0]
+
+    u = [2.0, 3.0, 4.0]
+    @test apply_boundary!(u; left_value=5.0) === u
+    @test u == [5.0, 3.0, 3.0]
+
+    u = [8.0, 9.0]
+    @test apply_boundary!(u; left_value=2.0) === u
+    @test u == [2.0, 2.0]
+
+    u = [8.0]
+    @test_throws ArgumentError apply_boundary!(u)
+    @test u == [8.0]
+
+    u = [8.0, 9.0]
+    @test_throws ArgumentError apply_boundary!(u; left_value=Inf)
+    @test u == [8.0, 9.0]
+end
+```
+
+`==`は値の一致，ここでの`===`は返された配列が渡した配列そのものかを確かめます．
+`@test_throws`の2例は，意図した拒否が起こることを確認する成功条件です．
+これら10項目が変更前後で通っても，旧入口が本当に委譲しているとはまだ言い切れません．
+旧入口に元の処理が残ったままでも，同じ値が出るからです．
+掲載例の検証では，共通側を呼ぶと目印の値が返るように一時的に置き換え，旧入口にもその目印が現れることを別プロセスで確認しています．
+自分の抽出でも，数値の一致とdiff上の委譲の両方を確かめます．
+
+::: {.callout-note collapse="true"}
+## 再読用：変更後のコードの読み込み
+
+Juliaは読み込んだ関数の定義をプロセス内に保持します．
+変更前後のコードは，それぞれ新しいプロセスで読み込んで確かめます．
+:::
+
+## 抽出前後の証拠 {#regression}
+
+回帰確認とは，変更によって既存の挙動が崩れていないか調べることです．
+小例の期待値は人が独立に求めましたが，N01〜N04全体の代表結果は抽出前の完成コードから記録します．
+提供コードの[`baseline`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl#L85-L92)が基準を保存し，[`verify`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl#L93-L105)が抽出後の結果を比較してレポートを保存します．
+新しいプロセスで実行する箇所は[`fresh_capture`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl#L52-L59)，比較規則は[`compare!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/N05.jl#L60-L74)で確認できます．
+以下は証拠ファイルの作成と比較の流れです．
+
+```text
+抽出前の完成コード ＋ 選択済みN04モデル
+  ↓ 新しいプロセスで代表実験を実行
+baseline.toml（結果と来歴を固定）
+  │
+  │ 比較の基準として読む
+  ↓
+抽出後の旧入口を新しいプロセスで実行
+  ↓ 同じ条件の結果をbaselineと比較
+一致 → regression.tomlへ比較結果と来歴を記録
+不一致 → 場所を示して停止
+```
+
+baselineの`results`には数値配列に加えて，返却フィールド，刻み，ステップ数，診断量を含めます．
+たとえば最終配列が似ていても，返却フィールドが欠けたりステップ数が変わったりすれば，同じ契約を保ったとはいえません．
+キー・形状・整数・モデルは一致を求め，浮動小数は有限値であることと`rtol=1e-12, atol=1e-13`による許容差内の一致を求めます．
+許容差は，小さな丸め誤差を許容して比較するために設けます．
+
+| 証拠 | 読み取る来歴 |
+|---|---|
+| baselineの`schema_version`・`selected_model` | 記録の形式と，抽出前に選んだN04モデル |
+| baselineの`git_head`・`code_sha256` | 基準取得時のcommitと，対象Juliaファイルの内容 |
+| regressionの`baseline_sha256` | 比較に使ったbaselineファイルの識別 |
+| regressionの`git_head`・`code_sha256`・`selected_model` | 比較時のコードとモデル |
+| regressionの`schema_version`・`differences` | レポートの形式と，浮動小数項目ごとの絶対差 |
+
+SHA-256は内容から計算する識別値です．
+Git HEADだけでは未commitの編集を識別できないため，コードのハッシュも読みます．
+抽出前後のコードのハッシュは，どのコードを比較したかを示します．
+baselineのハッシュは，比較に使った基準を識別します．
+
+### 比較結果の確認
+
+| 状況 | 動作と判断 |
+|---|---|
+| N04選択・キー・形状・値が一致 | 今回の実行の成功を確認し，レポートの来歴と項目別の差を読む |
+| N04選択・キー・形状・値が不一致 | 表示された箇所とdiffを照合し，契約を崩した変更を直す |
+
+失敗後に確認する終了状態・メッセージと操作は[共通ガイド](../guides/workflow.qmd#n05-n06-stages)を参照します．
+回帰は代表実験について「変更前と同じ」を示す証拠です．
+たとえば変更前後で同じ誤った境界値を使えば回帰は通るため，小例の2点入力のような独立した期待値や，保存量・解析解との比較を別に用います．
+
+## AI提案の差分と採否 {#diff-review}
+
+中心例のように，旧入口の式を取り除いて同じ引数で共通側を呼ぶ差分は，採用候補になります．
+
+```diff
+ function apply_boundary!(u::AbstractVector{<:Real}; left_value::Real = 1.0)
+-    # 入力検証と境界更新の本体
+-    return u
++    return ThermofluidExercise.N01.apply_boundary!(u; left_value=left_value)
+ end
+```
+
+共通側に移った本体，2点の更新順序，例外，実際の委譲まで確認します．
+次の表は，契約を崩す提案と，判断に使う証拠の対応です．
+
+| 提案された部分変更 | 崩れる約束と不採用の理由 | 判断する証拠 |
+|---|---|---|
+| 共通側へ式をコピーし，旧入口の式も残す | 修正箇所が二つのままになる．同じ結果でも共通化できていない | diffで本体の移動と旧入口の委譲を読み，呼び出しも確かめる |
+| N01境界へ`length(u) >= 3`を加える | 有効だった2点入力を拒否する | `[8.0,9.0]`が`[2.0,2.0]`になる既存契約のテスト |
+| N01〜N03へ安定条件違反の拒否を一律に加える | 不安定条件を観察する実験が消える | 既存テストと代表実験の実行経路 |
+| N04の共通更新内で`model = :linear`と固定する | 課題側で選んだ非線形モデルが無視される | `SELECTED_MODEL`から引数への伝達，選択モデルのテストと回帰 |
+| 差が出たのでbaselineやテスト期待値を現在値へ変更する | 変更前の基準や独立した期待値を失い，契約破壊を隠す | 基準の来歴，期待値の根拠，結果と無関係に行うdiffの確認 |
+
+証拠にはそれぞれ役割があります．
+**diff**は「処理が移り，旧入口が委譲するか」，**既存テスト**は「期待する挙動を保つか」，**回帰**は「代表結果を保つか」を示します．
+たとえば式の二重保持はテストと回帰だけでは分からず，既定値の変更はdiffを眺めるだけでは見落とすかもしれません．
+三つを対応付けて，採用した理由と採用しなかった理由を説明します．
+
+## N06での再利用 {#toward-n06}
+
+[N06授業](N06.qmd)では，定速度の二次元線形移流へ進みます．
+周期添字・線形流束・更新バッファの検証・最終時刻への刻み調整は，N05で検証した部品を再利用できます．
+
+| 再利用する部品 | N06で新たに考えること |
+|---|---|
+| 周期隣接点 | `u[i,j]`の二軸でそれぞれ隣接点を求め，周期端と角を接続する |
+| 線形流束 | x方向とy方向の寄与を，同じ旧配列から求めて同時に更新する |
+| 独立した旧・新バッファ | 両方向の寄与を同じ旧配列から計算し，新配列へ書き込む |
+| `fit_timestep` | 合成CFLから上限を決めた後で，最終時刻へ刻みを合わせる |
+
+二次元では$C_x + C_y \leq 1$という合成条件を考え，たとえば各方向が`0.6`なら個別には1未満でも合計は`1.2`になります．
+共通部品を信頼できるようにすることで，この二方向の組合せへ注意を向けられます．
+両方向周期境界と3格子の収束確認までが[N06課題](../assignments/N06.qmd)の必修範囲です．
