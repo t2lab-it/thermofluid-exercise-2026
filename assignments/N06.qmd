@@ -38,11 +38,10 @@ understanding-check-points:
 [`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L11-L20)は合成CFLから有限な正の`Float64`を返します．
 速度は非負で少なくとも一方が正，格子幅は正，`0 < safety <= 1`とします．
 [`advection_step!(u_new,u_old,dt,dx,dy; cx=1.0,cy=0.5)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L21-L32)は周期全点を同じ旧配列から更新し，新配列を返します．
-合成CFL超過を更新前に拒否し，旧配列を変更せず，記憶領域を共有させません．
+旧・新配列は独立した記憶領域を使い，合成CFLを検証してから新配列へ結果を書き込みます．
 片方向速度0を扱い，両速度0の1ステップは旧値をコピーします．
 
 [`spatial_variance(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/analyze.jl#L3-L7)は各保存時刻の空間分散を，有限な非負の`Float64`で返します．
-スターターの`nothing`では基本診断だけを保存し，`diagnostics_complete=false`となるため課題は未完了です．
 分散を実装して再解析し，`diagnostics_complete=true`を確認してください．
 `plot.jl`の[`COLORMAP`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L5)，[`COLOR_LIMITS`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L6)，[`DISPLAY_CASE`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L7)から表示条件を変更します．
 計算条件を変えず，初期場・数値解・解析解の色の上下限を共通に保って比較します．
@@ -89,7 +88,6 @@ N05の2ファイルに加え，`results/N06/`へ次の6ファイルを保存し�
 基準計算の[summary.toml](../assets/n06-reference/summary.toml)と[plots.toml](../assets/n06-reference/plots.toml)を図と照合できます．
 HDF5は自分の計算で生成してください．
 [公式出力の確認](../guides/workflow.qmd#official-results)で1ファイル5 MiB，1内容ID10 MiB，全課題100 MiBの上限も確認します．
-入力破損や古い解析との混在が検出された場合は，対象を確認して対応する段階を実行し直します．
 
 {{< include /assignments/_understanding-check.qmd >}}
 
