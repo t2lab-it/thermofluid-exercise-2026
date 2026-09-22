@@ -331,10 +331,13 @@ $ julia --project=. exercises/N07_2d_advection_diffusion/plot.jl
 ~~~console
 $ julia --project=. exercises/N07_2d_advection_diffusion/run.jl
 $ julia --project=. exercises/N07_2d_advection_diffusion/tests.jl
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
 $ julia --project=. -e 'using Pkg; Pkg.test()'
 $ julia --project=. scripts/course.jl check-results
 ~~~
 
+`N05.jl verify`は既存の基準結果に対する回帰を確認し，N07を含む現在のソースのhashを回帰記録に反映します．
+N07のソース編集後は，基準結果を作り直さず，この検査を`Pkg.test()`の前に実行してください．
 失敗メッセージがバックアップの場所を示した場合は，その内容を確かめて復元してください．
 再解析・再作図で両HDF5のSHA-256が変わらないことは，次を各操作の前後に実行して比較します．
 

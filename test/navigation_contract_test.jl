@@ -603,6 +603,15 @@ end
     end
 end
 
+@testset "N07 refreshes prior source provenance before progress tests" begin
+    workflow=read(joinpath(NAVIGATION_SITE_ROOT,"guides","workflow.qmd"),String)
+    section=split(workflow,"{#n07-stages}";limit=2)[2]
+    regression=findfirst("julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify",section)
+    pkg=findfirst("using Pkg; Pkg.test()",section)
+    @test !isnothing(regression)
+    @test !isnothing(pkg) && !isnothing(regression) && first(regression)<first(pkg)
+end
+
 @testset "F03 and F04 retain the combined submission navigation contract" begin
     contracts = TOML.parsefile(
         joinpath(NAVIGATION_SITE_ROOT, "assignments", "contracts.toml"),
