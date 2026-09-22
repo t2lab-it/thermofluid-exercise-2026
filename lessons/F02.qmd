@@ -1,5 +1,5 @@
 ---
-title: "Juliaで温度データを処理する：配列・関数・テスト"
+title: "Julia入門：配列・関数・テスト"
 ---
 ::: {.course-position}
 第3回・授業 1/2 · 課題ID: F02
