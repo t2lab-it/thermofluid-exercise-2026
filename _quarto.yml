@@ -83,7 +83,7 @@ website:
               href: lessons/F01.qmd
             - text: "第2回 課題: 最初のbranchとpull request"
               href: assignments/F01.qmd
-            - text: "第3回 授業: 配列・関数・ループ、テスト"
+            - text: "第3回 授業: Juliaで温度データを処理する"
               href: lessons/F02.qmd
             - text: "第3回 課題: Juliaの配列・関数・テスト"
               href: assignments/F02.qmd
