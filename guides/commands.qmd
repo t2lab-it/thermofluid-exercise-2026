@@ -79,9 +79,7 @@ commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新
 ## 配布教材の更新の取り込み {#material-updates}
 
 教員から学生用配布リポジトリの更新案内があったときに使います．
-`origin`は自分のGitHubリポジトリです．
-`git pull origin main`だけでは，教員側の配布リポジトリの更新は入りません．
-初回準備で登録した`upstream`から，自分の更新用branchへ取り込みます．
+配布元の`upstream`から更新を取得し，自分の更新用branchへ取り込みます．
 
 ### 別PCでcloneしたとき：配布元の再登録 {#register-upstream}
 
@@ -90,8 +88,7 @@ $ git remote -v
 （登録済みのremote名とURLを表示）
 ~~~
 
-remote設定は各PCの`.git/config`に保存され，個人リポジトリへpushされません．
-別PCで個人リポジトリをcloneした場合，`upstream`は引き継がれません．
+remote設定はPCごとに登録します．
 `origin`が自分のリポジトリであることを確認します．
 `upstream`が未登録の場合だけ，次を実行してください．
 
@@ -103,13 +100,9 @@ $ git remote get-url upstream
 git@github.com:t2lab-it/thermofluid-exercise-student-2026.git
 ~~~
 
-登録済みの場合もURLを確認します．
-別のリポジトリを指している場合は，そのまま進めず教員・TAへ相談してください．
-
 ### 更新時の作業の保存と取り込み {#更新のたびに作業を保存して取り込む}
 
 作業中の課題は先に保存・commitし，通常のPR手順でmainへのmergeまで済ませてください．
-課題の途中で更新が必要な場合は，取り込み先のbranchを教員・TAと確認してください．
 
 ~~~console
 $ git status --short
@@ -136,13 +129,8 @@ $ git merge --no-commit --no-ff upstream/main
 （確認のためcommit前で停止．競合があれば対象ファイルを表示）
 ~~~
 
-`Already up to date.`と表示された場合は，取り込む更新がありません．
-この場合はcommit・PRは不要です．
-
-共通祖先がないというエラーが出た場合は，準備手順とremoteを確認し，操作を止めて教員・TAへ相談してください．
-同じ箇所を自分と配布元の両方が変更した場合は，競合を解消します．
-更新PRは**Create a merge commit**でmergeしてください．
-SquashやRebaseでは配布元commitとの祖先関係が残らず，次回も同じ競合が起こり得ます．
+`Already up to date.`と表示されたら，更新作業は完了です．
+変更が取り込まれたら，次の手順で内容を確認してPRを作成します．
 
 ### 競合の解消・確認・PR
 
@@ -155,7 +143,7 @@ $ git diff --name-only --diff-filter=U
 ~~~
 
 競合があればVS Codeで対象ファイルを開き，自分の解答・自作テスト・学習ログ・`course_progress.toml`の進捗を残しながら，配布側の修正を反映します．
-「現在の変更」「入力側の変更」を全ファイルへ一括適用せず，両方の内容を確認してください．
+ファイルごとに自分と配布元の両方の内容を確認してください．
 競合マーカー（`<<<<<<<`，`=======`，`>>>>>>>`）を取り除き，解決したファイルごとに`git add ファイルのパス`を実行します．
 判断できない場合は教員・TAへ相談してください．
 commit前の取り込みを中止するには，次を使います．
@@ -165,7 +153,7 @@ $ git merge --abort
 （merge開始前の状態へ戻る．競合解消中の編集も取り消す）
 ~~~
 
-取り込みを続ける場合は，未解決の競合がないことを確認し，差分とテストを確認します．
+競合を解消したら，差分とテストを確認します．
 
 ~~~console
 $ git diff --cached --stat
@@ -184,10 +172,7 @@ $ julia --project=. -e 'using Pkg; Pkg.test()'
 （現在課題と通過済みの課題のテスト結果を表示）
 ~~~
 
-過去課題の失敗は課題IDと原因を示す警告になり，現在課題まで検査が続きます．
-現在課題の失敗，必須ファイルの欠落，進捗の破損，実行基盤の異常，結果サイズの超過はエラーです．
-現在課題のエラーは修正してからcommit・提出します．
-警告が出た過去課題も，単独テストで原因を確認できるようにしておきます．
+テストの[警告とエラー](testing.qmd#test-results)を確認し，エラーを修正してからcommitします．
 
 ~~~console
 $ git commit -m "Merge student materials updates"
@@ -199,6 +184,6 @@ $ git push -u origin update/materials-YYYYMMDD
 
 自分のリポジトリで更新用branchから`main`へのPRを作り，取り込んだ更新と確認結果を記録します．
 [Actionsとセルフレビュー，merge後のmain更新](workflow.qmd#after-merge)まで行ってください．
-この更新PRでは**Create a merge commit**を選びます．
+配布元との履歴を共有するため，更新PRでは**Create a merge commit**を選びます．
 
 参考：[Gitのremote設定](https://git-scm.com/docs/git-remote)，[Gitのmergeオプションと中止方法](https://git-scm.com/docs/git-merge)．

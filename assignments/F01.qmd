@@ -35,7 +35,7 @@ $ git rev-parse --show-toplevel
 
 $ julia --project=. scripts/course.jl status
 現在の提出単位: F01
-通過済み（テスト合格を示しません）: F00
+通過済み: F00
 （課題ページ・実行方法などの表示は省略）
 
 $ git status --short

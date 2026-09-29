@@ -41,8 +41,9 @@ $ git config --global user.email "YOUR_GITHUB_EMAIL"
 ## 個人課題用リポジトリの公開範囲
 
 受講者が課題に取り組むリポジトリは**公開**です．
-GitHubユーザー名やcommit・issue・pull requestなどの活動，その日時は外部から見えるため，課題に関係のない個人情報や秘密情報を書き込んではいけません．
-AIとの全対話ログも個人課題用リポジトリへcommitしてはいけません．
+GitHubユーザー名やcommit・issue・pull requestなどの活動，その日時は外部から見えます．
+個人情報・秘密情報・AIとの全対話ログはcommitしないでください．
+理解度チェックのAI対話全文はLETUSへ提出します．
 記録・提出の方法は[AI利用と安全](../guides/ai-usage.qmd)を確認してください．
 
 教材本文・図は`CC BY 4.0`，コードは`MIT`です．
@@ -54,7 +55,7 @@ SSH接続は標準の複製経路です．
 先に[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)を完了してください．
 
 1. GitHubの[新規リポジトリ作成](https://github.com/new)を開き，自分のアカウントをOwnerにして**空の公開リポジトリ**を作る．
-   名前は`thermofluid-exercise-2026-<自分のusername>`，公開範囲はPublicとし，README・`.gitignore`・ライセンスの初期生成を選ばない．
+   名前は`thermofluid-exercise-2026-<自分のusername>`，公開範囲はPublicとし，README・`.gitignore`・ライセンスの初期生成のチェックを外す．
 2. [学生用配布リポジトリ](https://github.com/t2lab-it/thermofluid-exercise-student-2026)を通常の`git clone`で複製する．
    配布元の履歴を保持し，教材更新を通常のmergeで取り込めるようにする．
 3. clone直後の`origin`を`upstream`へ変更し，空の個人リポジトリを`origin`として登録する．
@@ -95,12 +96,8 @@ $ git branch -vv
 * main （commit情報は省略） [origin/main] （commitメッセージ）
 ```
 `origin`は自分の提出先，`upstream`は教材の配布元です．
-配布元へpushする操作はありません．
-初回pushが拒否されたら，個人リポジトリが空であるか，URLが正しいかを確認して教員・TAへ相談してください．
-既存commitを上書きせず，元の成果を保管したまま別の空リポジトリと別のローカルディレクトリで準備します．
 別PCで個人リポジトリをcloneする場合は[配布元の再登録](../guides/commands.qmd#register-upstream)も行います．
 `exercises/`や`scripts/`が見えることを確認してください．
-Juliaのパッケージ環境は，[環境診断（F00）](../assignments/F00.qmd)で復元します．
 
 続いて[コーディングエージェント](agents.qmd)と[課題ワークフロー](../guides/workflow.qmd)を確認し，[環境診断（F00）](../assignments/F00.qmd)を実行してください．
 GitHub CLIを使いたい人は，準備後に[任意の発展資料](../advanced/github-cli.qmd)を参照してください．
