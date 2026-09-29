@@ -97,7 +97,7 @@ exercises/N01_linear_advection/results/summary.toml
 ## [`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/tests.jl)と学習ログ
 
 [`exercises/N01_linear_advection/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/tests.jl)の五つの必須TODOで，次を確かめてください．
-課題単独のテストと，現在課題・完了済み課題をまとめるテストは[学生向け課題ワークフローの「テスト」](../guides/workflow.qmd#tests)に従って実行します．
+課題単独のテストと，現在課題・通過済みの課題をまとめるテストは[学生向け課題ワークフローの「テスト」](../guides/workflow.qmd#tests)に従って実行します．
 
 1. 矩形初期条件
 2. 上流差分後の配列全体

@@ -38,9 +38,9 @@ F00から始める手順は[初回セットアップとF00のpreflight](workflow
 |---|---|
 | `julia --project=. scripts/course.jl preflight` | F00の機械的な環境診断だけを行う |
 | `julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent AGENT_ID` | 手動確認を記録してF00を完了する．`AGENT_ID`は確認した一つのエージェントへ置き換える |
-| `julia --project=. scripts/course.jl status` | 現在課題，完了済み課題，branchを表示する |
+| `julia --project=. scripts/course.jl status` | 現在課題，通過済みの提出単位を表示する |
 | `julia --project=. scripts/course.jl start TASK_ID` | F02以降の提出単位を開始する |
-| `julia --project=. -e 'using Pkg; Pkg.test()'` | `course_progress.toml`の現在課題と完了済み課題のテストを実行する |
+| `julia --project=. -e 'using Pkg; Pkg.test()'` | 現在課題の失敗はエラー，過去課題の失敗は警告として検査する |
 | `julia --project=. scripts/course.jl check-results` | 公式出力の配置とサイズを確認する |
 : {tbl-colwidths="[38, 62]"}
 
@@ -76,29 +76,31 @@ Test Summary: | Pass  Total  Time
 
 commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新の順序は[学習ログ，diff，commit](workflow.qmd#commit)から[merge後](workflow.qmd#after-merge)までを参照してください．
 
-## テンプレートの更新の取り込み {#template-updates}
+## 配布教材の更新の取り込み {#material-updates}
 
-教員から学生用テンプレートの更新案内があったときに使います．
+教員から学生用配布リポジトリの更新案内があったときに使います．
 `origin`は自分のGitHubリポジトリです．
-`git pull origin main`だけでは，教員側のテンプレートの更新は入りません．
-ここではテンプレートを`upstream`として登録し，自分の更新用branchへ取り込みます．
+`git pull origin main`だけでは，教員側の配布リポジトリの更新は入りません．
+初回準備で登録した`upstream`から，自分の更新用branchへ取り込みます．
 
-### 初回のみ：テンプレートの登録 {#初回だけテンプレートを登録する}
+### 別PCでcloneしたとき：配布元の再登録 {#register-upstream}
 
 ~~~console
 $ git remote -v
 （登録済みのremote名とURLを表示）
 ~~~
 
+remote設定は各PCの`.git/config`に保存され，個人リポジトリへpushされません．
+別PCで個人リポジトリをcloneした場合，`upstream`は引き継がれません．
 `origin`が自分のリポジトリであることを確認します．
 `upstream`が未登録の場合だけ，次を実行してください．
 
 ~~~console
-$ git remote add upstream https://github.com/t2lab-it/thermofluid-exercise-student-2026.git
+$ git remote add upstream git@github.com:t2lab-it/thermofluid-exercise-student-2026.git
 （成功時は出力なし）
 
 $ git remote get-url upstream
-https://github.com/t2lab-it/thermofluid-exercise-student-2026.git
+git@github.com:t2lab-it/thermofluid-exercise-student-2026.git
 ~~~
 
 登録済みの場合もURLを確認します．
@@ -115,7 +117,7 @@ $ git status --short
 ~~~
 
 ファイルが表示された場合は，未commitの変更や未追跡ファイルを整理してから進みます．
-以下の`update/template-YYYYMMDD`は，日付などを入れた未使用のbranch名に置き換えてください．
+以下の`update/materials-YYYYMMDD`は，日付などを入れた未使用のbranch名に置き換えてください．
 
 ~~~console
 $ git switch main
@@ -124,24 +126,23 @@ Switched to branch 'main'
 $ git pull --ff-only origin main
 （更新状況を表示）
 
-$ git switch -c update/template-YYYYMMDD
-Switched to a new branch 'update/template-YYYYMMDD'
+$ git switch -c update/materials-YYYYMMDD
+Switched to a new branch 'update/materials-YYYYMMDD'
 
 $ git fetch upstream
-（テンプレートの取得状況を表示）
+（配布元の取得状況を表示）
 
-$ git merge --no-commit --no-ff --allow-unrelated-histories upstream/main
+$ git merge --no-commit --no-ff upstream/main
 （確認のためcommit前で停止．競合があれば対象ファイルを表示）
 ~~~
 
 `Already up to date.`と表示された場合は，取り込む更新がありません．
 この場合はcommit・PRは不要です．
 
-`Use this template`で作ったリポジトリはテンプレートと履歴が独立しているため，初回の取り込みには`--allow-unrelated-histories`が必要です．
-初回は，変更した解答や進捗ファイルが`add/add`競合になることがあります．
-2回目以降も同じコマンドを使えます．
+共通祖先がないというエラーが出た場合は，準備手順とremoteを確認し，操作を止めて教員・TAへ相談してください．
+同じ箇所を自分と配布元の両方が変更した場合は，競合を解消します．
 更新PRは**Create a merge commit**でmergeしてください．
-SquashやRebaseではテンプレートとの履歴のつながりが残らず，次回も同じ競合が起こり得ます．
+SquashやRebaseでは配布元commitとの祖先関係が残らず，次回も同じ競合が起こり得ます．
 
 ### 競合の解消・確認・PR
 
@@ -180,17 +181,19 @@ $ julia --project=. -e 'using Pkg; Pkg.instantiate()'
 （Julia環境の復元状況を表示）
 
 $ julia --project=. -e 'using Pkg; Pkg.test()'
-（現在課題と完了済み課題のテスト結果を表示）
+（現在課題と通過済みの課題のテスト結果を表示）
 ~~~
 
-現在課題が未完成なら，その失敗と更新に伴う不具合を区別します．
-完了済み課題の失敗や原因不明の失敗は，解消または教員・TAへの確認後に進めてください．
+過去課題の失敗は課題IDと原因を示す警告になり，現在課題まで検査が続きます．
+現在課題の失敗，必須ファイルの欠落，進捗の破損，実行基盤の異常，結果サイズの超過はエラーです．
+現在課題のエラーは修正してからcommit・提出します．
+警告が出た過去課題も，単独テストで原因を確認できるようにしておきます．
 
 ~~~console
-$ git commit -m "Merge student template updates"
+$ git commit -m "Merge student materials updates"
 （commit結果を表示）
 
-$ git push -u origin update/template-YYYYMMDD
+$ git push -u origin update/materials-YYYYMMDD
 （自分のリポジトリへのpush結果を表示）
 ~~~
 
@@ -198,4 +201,4 @@ $ git push -u origin update/template-YYYYMMDD
 [Actionsとセルフレビュー，merge後のmain更新](workflow.qmd#after-merge)まで行ってください．
 この更新PRでは**Create a merge commit**を選びます．
 
-参考：[GitHubのテンプレートとforkの違い](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)，[Gitのmergeオプションと中止方法](https://git-scm.com/docs/git-merge)．
+参考：[Gitのremote設定](https://git-scm.com/docs/git-remote)，[Gitのmergeオプションと中止方法](https://git-scm.com/docs/git-merge)．
