@@ -1,0 +1,77 @@
+---
+title: "LaplaceのJacobi更新・境界・残差"
+lesson-id: N08
+understanding-check-points:
+  - "5点差分とdx!=dy，旧場からの同時更新，全辺と角"
+  - "生成項の符号，残差と更新量，停止閾値"
+  - "Laplace・Poissonの製造解，反復誤差と格子誤差，両区間の収束次数"
+  - "自作2群の期待値と許容誤差，保存データの来歴，AI提案の採否"
+---
+::: {.course-position}
+第10回・課題 · 内容ID: N08 · 提出単位: N08-N09
+:::
+
+## 必修と授業内の到達点
+
+提出単位は`N08-N09`で，1 branch・1 PR・1学習ログを使います．
+[N08授業](../lessons/N08.qmd)と[N09授業](../lessons/N09.qmd)を通して，全辺DirichletのJacobi法でLaplace・Poissonの両方を完成させます．
+課題フォルダは`exercises/N08-N09_laplace_poisson/`です．
+授業内はN08の4関数を実装し，小配列の更新・境界・残差・停止判定を説明できることを目指します．
+Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N09課題](N09.qmd)に従って授業後までに完成させます．
+
+## 編集先とAPI {#api}
+
+`src/N08N09Elliptic.jl`の`ThermofluidExercise.Elliptic`へ次を実装します．
+
+```julia
+apply_dirichlet!(u,g)
+laplace_jacobi_step!(u_new,u_old,dx,dy)
+laplace_residual!(r,u,dx,dy)
+residual_converged(rnorm,rinitial;atol=1e-10,rtol=1e-12)
+```
+
+新場と旧場には別の配列を使います．
+`apply_dirichlet!`は内部の値を保ち，全辺と角へ境界値をコピーします．
+step／residualは出力配列を返し，残差配列のDirichlet辺は0にします．
+入力検査と，反復を進める`solve_laplace(u0,g,dx,dy)`は提供済みです．
+停止基準は[N08授業](../lessons/N08.qmd#residual)を参照します．
+計算結果の`u`，`converged`，`iterations`，`residual_history`，`update_history`，`threshold`を使って解と反復を確認します．
+
+`exercises/N08-N09_laplace_poisson/simulate.jl`は計算，`analyze.jl`は保存場の解析，`plot.jl`は表示，`run.jl`は一括実行です．
+配布済みテストを保持し，`exercises/N08-N09_laplace_poisson/tests.jl`の[自作2群](N09.qmd#student-tests)を完成させます．
+予想・式・検証結果・考察は，同じフォルダの`learning_log.md`へ書きます．
+
+## 授業内のN08-check {#classroom}
+
+[共通の開始手順](../guides/workflow.qmd#n08-n09-stages)で課題を開始し，4関数を実装したら次を実行します．
+
+```console
+$ julia --project=. exercises/N08-N09_laplace_poisson/tests.jl N08-check
+```
+
+「N08授業内検証成功」は，N08の4関数の検証が成功したことを表します．
+提出時には，[N09課題の完了条件](N09.qmd#completion)に沿って両問題・自作2群・公式12出力を`all`で検証します．
+
+## Laplaceの実験と参照結果 {#reference-results}
+
+領域`[0,2]×[0,1]`，節点格子`(17,13),(33,25),(65,49)`，内部0・境界既知値の初期場を使います．
+[N08授業の既知解H](../lessons/N08.qmd#exact)と数値解を比較し，内部RMS／最大誤差を測ります．
+$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を計算し，両区間・両誤差で$1.8\le p\le2.2$を確認します．
+独立に計算した残差を停止閾値と照合し，境界値も確認します．
+実行コマンドは[段階別実行](../guides/workflow.qmd#n08-n09-stages)，保存形式は[N09の公式出力](N09.qmd#reference-results)を参照します．
+
+![N08の数値解・既知解・誤差](../assets/n08-reference/fields.png){fig-alt="境界を含む節点格子の数値解と既知解を共通色範囲，誤差をゼロ対称色範囲で比較"}
+
+![N08の残差・更新量・閾値](../assets/n08-reference/residual.png){fig-alt="3格子の残差，更新量，停止閾値を線種で区別した対数図"}
+
+![N08の3格子誤差](../assets/n08-reference/convergence.png){fig-alt="内部RMSと最大誤差，2次比較線"}
+
+基準の[summary.toml](../assets/n08-reference/summary.toml)と[plots.toml](../assets/n08-reference/plots.toml)を照合します．
+図は[場](../assets/n08-reference/fields.png)・[残差](../assets/n08-reference/residual.png)・[収束](../assets/n08-reference/convergence.png)の単独表示でも確認できます．
+
+{{< include /assignments/_understanding-check.qmd >}}
+
+## N08-N09の完了条件
+
+両問題の実装・検証・提出は，[N09課題の完了条件](N09.qmd#completion)にまとめています．
+N08とN09それぞれの理解度チェック全文をLETUSへ提出します．

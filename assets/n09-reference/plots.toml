@@ -1,0 +1,17 @@
+axis_order = "y,x"
+display_grid = "n033x025"
+error_color_range = [-0.0014166533089223776, 0.0014166533089223776]
+error_colormap = "RdBu"
+field_color_range = [1.0, 3.633593723067283]
+field_colormap = "viridis"
+log_floor = 1.0e-16
+run_id = "ce2d5bae64369d2108f7e5a70c2b0429"
+schema_version = 1
+source_fields_sha256 = "4dd1f2465190b24f89605bc495420be5855927755b23afb92971f2f2b66eaff4"
+source_summary_sha256 = "fb40432629d4edf249a39443f4fcca21a0cda50523cbc1b8b2ee07721d45f158"
+task_id = "N09"
+
+[png_sha256]
+"convergence.png" = "0706c743d41436462320d1977225a73c551345cbd76e83a77918dce7a0823dbf"
+"fields.png" = "a692e42e7c4340873712f678d773dfc8835d9382fea85d970096d2a7e5b82959"
+"residual.png" = "4b0e299379fa9365e52bd3098fcfa6289dec4661fb08d754d0520cde721ae8ad"

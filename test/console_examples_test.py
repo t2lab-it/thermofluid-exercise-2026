@@ -78,6 +78,14 @@ julia> twice(3)
         for tail in ('N05.jl baseline', 'N05.jl verify', 'simulate.jl', 'analyze.jl', 'plot.jl', 'run.jl', 'tests.jl'):
             self.assertIn(base + tail, blocks)
 
+    def test_n08_commands_select_only_n08(self):
+        blocks = render((ROOT / 'guides' / 'workflow.qmd').read_text())
+        base = 'julia --project=. exercises/N08-N09_laplace_poisson/'
+        for stage in ('simulate', 'analyze', 'plot', 'run'):
+            self.assertIn(base + stage + '.jl N08', blocks)
+            self.assertIn(base + stage + '.jl all', blocks)
+        self.assertIn(base + 'tests.jl N08-check', blocks)
+
 
 if __name__ == '__main__':
     unittest.main()

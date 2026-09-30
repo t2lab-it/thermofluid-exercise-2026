@@ -123,7 +123,14 @@ website:
               href: lessons/N07.qmd
             - text: "第9回 課題: 境界熱収支と二成分Burgers"
               href: assignments/N07.qmd
-            - text: "第10回 授業: Laplace／Poissonと反復法"
+            - text: "第10回 授業: LaplaceとJacobi反復"
+              href: lessons/N08.qmd
+            - text: "第10回 課題: Laplaceの授業内検証"
+              href: assignments/N08.qmd
+            - text: "第10回 授業: Poisson・製造解と発展"
+              href: lessons/N09.qmd
+            - text: "第10回 課題: 両問題の収束と検証"
+              href: assignments/N09.qmd
             - text: "第11回 最終プロジェクト: 計画へのフィードバック"
               href: assignments/final-project.qmd
             - text: "第12回 最終プロジェクト: 結果・再現性へのフィードバック"
