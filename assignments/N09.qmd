@@ -11,45 +11,131 @@ understanding-check-points:
 第10回・課題 · 内容ID: N09 · 提出単位: N08-N09
 :::
 
-## Poissonへの拡張と課題の完成
+## 定式化と実装条件 {#formulation}
 
-[N08](N08.qmd)と同じ提出単位`N08-N09`・課題フォルダ`exercises/N08-N09_laplace_poisson/`を使います．
+### Poissonへの拡張と課題の完成 {#poissonへの拡張と課題の完成}
+
+[N08](N08.qmd)と同じ提出単位`N08-N09`・課題フォルダ[`exercises/N08-N09_laplace_poisson/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/exercises/N08-N09_laplace_poisson)を使います．
 全辺DirichletのJacobi法でPoissonを実装し，Laplace・Poissonの両方の実験と検証を完成させます．
+
+取り組む方程式は，生成項$f$を持つ二次元のPoisson方程式です．
+$f=0$の場合はLaplace方程式になります．
+
+$$
+\Delta u=\frac{\partial^2 u}{\partial x^2}
++\frac{\partial^2 u}{\partial y^2}=f.
+$$
+
 授業内の検証は[N08-check](N08.qmd#classroom)，提出前の検証は`all`です．
+
+{{< include /assignments/_elliptic-formulation.qmd >}}
+
+### 任意発展：Neumannの定式化と実験条件 {#neumann-formulation}
+
+Neumann・Gauss–Seidel・SORの以下の条件は任意発展に使います．
+
+発展も同じ領域・節点格子・初期推定・残差停止条件を使います．
+外向き法線微分$g_N=\partial_nu$を指定し，物理的な外向き拡散流束$-\kappa g_N$と区別します．
+`bc`の辺順はwest，east，south，north，各辺は`(;kind=:dirichletまたは:neumann,values)`です．
+west／eastの`values`は長さ$n_y$，south／northは長さ$n_x$で，各境界節点の指定値を格納します．
+
+Neumann辺の節点も未知として更新し，外向き符号で次のゴースト値を消去します．
+
+$$
+\begin{aligned}
+u_{0,j}&=u_{2,j}+2\Delta x\,g_{W,j},\\
+u_{n_x+1,j}&=u_{n_x-1,j}+2\Delta x\,g_{E,j},\\
+u_{i,0}&=u_{i,2}+2\Delta y\,g_{S,i},\\
+u_{i,n_y+1}&=u_{i,n_y-1}+2\Delta y\,g_{N,i}.
+\end{aligned}
+$$
+
+上の五点差分・Jacobi候補へ代入し，Neumann同士の角は両方向の寄与を加えます．
+Dirichlet辺に接する角は固定し，二つのDirichlet値が接する角は一致させます．
+Dirichlet節点の残差は0，その他は境界を含め$r=f-\Delta_hu$を求めます．
+normはNeumann辺・角を含む全未知節点で計算します．
+更新は$u^{k+1}=(1-\omega)u^k+\omega u_{\mathrm{Jacobi}}$，標準$\omega=2/3$，入力範囲$0<\omega<1$とします．
+
+混合境界は西・東をDirichlet，南・北をNeumannにします．
+`mixed_laplace_flux`では$u_*=H,f=0$，`mixed_poisson_flux`では$u_*=H+V,f=-((\pi/2)^2+\pi^2)V$を使います．
+西・東は必修と同じ境界値で，$s_x=\sin(\pi x/2)$と書くと南・北の外向き微分は次式です．
+
+$$
+\begin{aligned}
+g_{S,H}&=-1-\frac{\pi s_x}{2\sinh(\pi/2)},\\
+g_{N,H}&=1+\frac{\pi s_x\cosh(\pi/2)}{2\sinh(\pi/2)},\\
+g_{S,H+V}&=g_{S,H}-\pi s_x,\\
+g_{N,H+V}&=g_{N,H}-\pi s_x.
+\end{aligned}
+$$
+
+`mixed_poisson_zero_flux`は$u_*=x^2$，$f=2$，西値0，東値4，南・北微分0です．
+混合境界の初期推定は内部・Neumann辺0，Dirichlet辺と接する角は指定値です．
+
+純Neumannは，全辺をNeumannにして次の2ケースを使います．
+
+::: {.table-responsive}
+| 既知解 | 生成項 | $(g_W,g_E,g_S,g_N)$ |
+|---|---|---|
+| $x^2+2y^2$ | 6 | $(0,4,0,4)$ |
+| $\cos(\pi x)+0.5\cos(2\pi y)$ | $-\pi^2\cos(\pi x)-2\pi^2\cos(2\pi y)$ | $(0,0,0,0)$ |
+:::
+
+各軸の端点重み$a_i,b_j$を1/2，内部を1とし，$w_{ij}=\Delta x\Delta y\,a_ib_j$を使います．
+計算前に次の離散可解条件を確認します．
+
+$$
+\begin{aligned}
+\sum_{i,j}w_{ij}f_{ij}
+&=\Delta y\sum_jb_j(g_{W,j}+g_{E,j})\\
+&\quad+\Delta x\sum_ia_i(g_{S,i}+g_{N,i}).
+\end{aligned}
+$$
+
+差の許容値は`1e-12*max(1,sum(abs,w.*f),各辺のabs流束積分の総和)`です．
+初期推定は0で，初回と各更新後に$\bar u_w=\sum wu/\sum w$を全節点から引き，重み付き平均0を公式基準にします．
+既知解にも同じ離散平均固定を行い，3格子の約2次収束を検証します．
+一点固定の比較は別配列$u_{\mathrm{pin}}=u-u_{1,1}$を作り，既知解も同じ点の値を引きます．
+固定点を含む元の全節点残差と法線微分を検査します．
+
+### 任意発展：Gauss–Seidel・SORの更新条件 {#relaxation-formulation}
+
+必修のDirichlet Poisson問題と同じ生成項・初期推定・3格子・残差停止条件を使います．
+$j$を外側，$i$を内側に走査し，西・南の新値と東・北の旧値からJacobi式と同じ候補$u_{GS}$を計算します．
+SORは$u\leftarrow(1-\omega)u+\omega u_{GS}$と順次更新し，境界値を保持します．
+$\omega=1$がGauss–Seidel，SORの比較値は1.5，入力範囲は$0<\omega<2$です．
+反復数，既知解誤差，初回コンパイルを除いた実行時間で比較します．
 
 ## 編集先とAPI {#api}
 
-`src/N08N09Elliptic.jl`の`ThermofluidExercise.Elliptic`へ次を実装します．
+[`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L1)へ次を実装します．
 
-```julia
-poisson_jacobi_step!(u_new,u_old,f,dx,dy)
-poisson_residual!(r,u,f,dx,dy)
-```
+- [`poisson_jacobi_step!(u_new,u_old,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L58)
+- [`poisson_residual!(r,u,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L65)
 
 [Laplaceの実装](N08.qmd#api)を基に，更新式の$-f$と残差の$+f$を加えます．
 $f=0$でLaplaceと一致することを確かめます．
-反復を進める`solve_poisson(u0,g,f,dx,dy)`は提供済みで，入力・出力の扱いはN08と共通です．
+反復を進める[`solve_poisson(u0,g,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L101)は提供済みで，入力・出力の扱いはN08と共通です．
 
 ## 実験と自作2群 {#student-tests}
 
-領域`[0,2]×[0,1]`，節点格子`(17,13),(33,25),(65,49)`，内部0・境界既知値の初期場を使います．
-LaplaceのH，PoissonのH+Vと生成項は[公式条件](../lessons/N09.qmd#manufactured)を参照します．
-両問題の内部RMS／最大誤差を測り，$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$の両区間・両誤差で$1.8\le p\le2.2$を確認します．
+[冒頭の問題設定](#problem-setup)と[停止・格子収束の判定条件](#standard-conditions)に従って実験します．
 独立に計算した残差を停止閾値と照合し，境界誤差も確認します．
 
-配布済みテストを保持し，`exercises/N08-N09_laplace_poisson/tests.jl`に次の自作2群を実装します．
+配布済みテストを保持し，[`exercises/N08-N09_laplace_poisson/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/tests.jl)に次の自作2群を実装します．
 
 1. 非対称小配列・dx!=dyで両問題の1回の更新を手計算と比較し，旧場・全辺と角の保持，f=0での一致を検査する．
 2. 両問題の残差停止・解析解誤差・3格子の両区間の約2次収束を検査する．
 
 期待値と許容誤差には，式や手計算に基づく根拠を添えます．
-`exercises/N08-N09_laplace_poisson/run.jl`で両問題の出力を生成し，[N05 verify→課題テスト→Pkg.test→check-results](../guides/workflow.qmd#n08-n09-stages)で完成を確認します．
+[`exercises/N08-N09_laplace_poisson/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/run.jl)で両問題の出力を生成し，[N05 verify→課題テスト→Pkg.test→check-results](../guides/workflow.qmd#n08-n09-stages)で完成を確認します．
 通常の`all`は，両問題・自作2群・公式12出力を検証します．
 
 ## 公式12出力 {#reference-results}
 
 `results/N08/`・`results/N09/`にそれぞれ次の6ファイルを保存します．
 
+::: {.table-responsive}
 | ファイル | 内容 |
 |---|---|
 | `fields.h5` | 3格子の最終場・条件・反復履歴 |
@@ -58,6 +144,7 @@ LaplaceのH，PoissonのH+Vと生成項は[公式条件](../lessons/N09.qmd#manu
 | `residual.png` | 残差・更新量・停止閾値 |
 | `convergence.png` | 3格子の誤差と2次比較線 |
 | `plots.toml` | 図と入力のhash |
+:::
 
 `u[i,j]`はx,y順，外部HDF5のデータ空間はy,x順で，図はxを横軸，yを縦軸にします．
 両問題は`all`で生成し，共通のrun_idを使います．
@@ -77,12 +164,10 @@ LaplaceのH，PoissonのH+Vと生成項は[公式条件](../lessons/N09.qmd#manu
 
 Neumann・Gauss–Seidel・SORは，任意に取り組む発展です．
 
-- `extensions/neumann.jl`：可解条件，重み付き平均0，ゴースト消去，緩和更新と残差を実装する．APIは`neumann_jacobi_step!`・`neumann_residual!`・`solve_neumann`，標準omega=2/3．
-- `extensions/relaxation.jl`：`gauss_seidel_step!`・`sor_step!`を実装し，同じPoisson問題をomega=1と1.5で比較する．
+- [`extensions/neumann.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl)：可解条件，重み付き平均0，ゴースト消去，緩和更新と残差を実装する．APIは[`neumann_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L55)・[`neumann_residual!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L63)・[`solve_neumann`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L70)．
+- [`extensions/relaxation.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl)：[`gauss_seidel_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl#L14)・[`sor_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl#L5)を実装し，[冒頭の更新・比較条件](#relaxation-formulation)を検証する．
 
-[Neumannの数式と二段階の実験](../lessons/N09.qmd#neumann)に沿って，混合境界から純Neumannへ進みます．
-`mixed_poisson_zero_flux`では$u=x^2,f=2$へ収束することを確認します．
-純Neumannの公式解は重み付き平均0とし，別配列の一点固定への定数移動を，全節点残差・法線微分・同じ基準の既知解で比較します．
+[冒頭のNeumannの条件](#neumann-formulation)に沿って，混合境界から純Neumannへ進みます．
 DCT-Iのk=0モードは可解条件と定数自由度の説明に使います．
 [発展の独立コマンド](../guides/workflow.qmd#n08-n09-extensions)でテスト・計算し，出力は`results/N09/extensions/neumann/`・`relaxation/`へ保存します．
 

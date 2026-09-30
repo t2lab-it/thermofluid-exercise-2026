@@ -8,7 +8,14 @@ lesson-id: N09
 
 ## 生成項の符号 {#poisson}
 
-本課題は$\Delta u=f$に統一します．
+取り組む方程式は，生成項$f$を持つ二次元のPoisson方程式です．
+本課題では，生成項の符号を次の形に統一します．
+
+$$
+\Delta u=\frac{\partial^2 u}{\partial x^2}
++\frac{\partial^2 u}{\partial y^2}=f.
+$$
+
 定常熱伝導$\kappa\Delta T+q=0$なら$f=-q/\kappa$です．
 [Laplaceの5点差分](N08.qmd#grid)に生成項を加えると，Jacobi更新は次の式になります．
 
@@ -21,7 +28,7 @@ u_{ij}^{(k+1)}&=\frac{A_x+A_y-f_{ij}}{2/dx^2+2/dy^2}.
 $$
 
 更新式では$-f$，残差では$r=f-\Delta_hu$になることを式から説明します．
-`poisson_jacobi_step!`と`poisson_residual!`を実装し，$f=0$でLaplaceの更新・残差と一致することを確かめます．
+[`poisson_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L58)と[`poisson_residual!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L65)を実装し，$f=0$でLaplaceの更新・残差と一致することを確かめます．
 
 ## 製造解と3格子収束 {#manufactured}
 

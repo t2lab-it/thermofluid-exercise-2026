@@ -39,14 +39,14 @@ APIは，呼び出す側と処理する側の約束です．
 |---|---|
 | 流束・周期添字など，同じ入力に同じ処理をする部品 | 初期条件と実験条件：何を調べるかは課題ごとに違う |
 | 各課題の契約を保った更新・境界処理 | 旧入口：既存のテストや実験から同じ呼び方を続ける |
-| 引数で選択を受け取るN04の更新 | `SELECTED_MODEL`：学生が選んだモデルは課題側が決める |
+| 引数で選択を受け取るN04の更新 | [`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N04_advection_diffusion/run.jl#L4)：学生が選んだモデルは課題側が決める |
 | 独立して検証できる計算処理 | 診断・描画：計算結果をどの観点で調べるかを決める |
 
 
 ## ファイルの配置と呼び出し {#package-layout}
 
 パッケージは[`Project.toml`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/Project.toml)などで名前や依存関係を持つコードのまとまり，モジュールは関数名を整理する名前空間です．
-今回は学生リポジトリにある既存プロジェクト`ThermofluidExercise`の中で抽出します．
+今回は学生リポジトリにある既存プロジェクト[`ThermofluidExercise`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl)の中で抽出します．
 
 次はファイルと名前空間の関係です．
 実際のパッケージ入口は[`src/ThermofluidExercise.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl)，N01の旧入口は[`exercises/N01_linear_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N01_linear_advection/run.jl#L137-L142)にあります．
@@ -296,7 +296,7 @@ baselineのハッシュは，比較に使った基準を識別します．
 | 共通側へ式をコピーし，旧入口の式も残す | 修正箇所が二つのままになる．同じ結果でも共通化できていない | diffで本体の移動と旧入口の委譲を読み，呼び出しも確かめる |
 | N01境界へ`length(u) >= 3`を加える | 有効だった2点入力を拒否する | `[8.0,9.0]`が`[2.0,2.0]`になる既存契約のテスト |
 | N01〜N03へ安定条件違反の拒否を一律に加える | 不安定条件を観察する実験が消える | 既存テストと代表実験の実行経路 |
-| N04の共通更新内で`model = :linear`と固定する | 課題側で選んだ非線形モデルが無視される | `SELECTED_MODEL`から引数への伝達，選択モデルのテストと回帰 |
+| N04の共通更新内で`model = :linear`と固定する | 課題側で選んだ非線形モデルが無視される | [`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N04_advection_diffusion/run.jl#L4)から引数への伝達，選択モデルのテストと回帰 |
 | 差が出たのでbaselineやテスト期待値を現在値へ変更する | 変更前の基準や独立した期待値を失い，契約破壊を隠す | 基準の来歴，期待値の根拠，結果と無関係に行うdiffの確認 |
 
 証拠にはそれぞれ役割があります．
@@ -314,7 +314,7 @@ baselineのハッシュは，比較に使った基準を識別します．
 | 周期隣接点 | `u[i,j]`の二軸でそれぞれ隣接点を求め，周期端と角を接続する |
 | 線形流束 | x方向とy方向の寄与を，同じ旧配列から求めて同時に更新する |
 | 独立した旧・新バッファ | 両方向の寄与を同じ旧配列から計算し，新配列へ書き込む |
-| `fit_timestep` | 合成CFLから上限を決めた後で，最終時刻へ刻みを合わせる |
+| [`fit_timestep`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L29) | 合成CFLから上限を決めた後で，最終時刻へ刻みを合わせる |
 
 二次元では$C_x + C_y \leq 1$という合成条件を考え，たとえば各方向が`0.6`なら個別には1未満でも合計は`1.2`になります．
 共通部品を信頼できるようにすることで，この二方向の組合せへ注意を向けられます．
