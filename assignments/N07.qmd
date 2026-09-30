@@ -33,28 +33,26 @@ understanding-check-points:
 
 N05の周期添字と共通検証を再利用し，N06の完成ソルバは維持します．
 時間積分，保存時刻への短縮，HDF5入出力，解析解，基本診断と描画は提供します．
-`exercises/N07_2d_advection_diffusion/`の`simulate.jl`が計算，`analyze.jl`が解析，`plot.jl`が作図を担当します．
-一括実行には`exercises/N07_2d_advection_diffusion/run.jl`を使います．
-提供する`provided_support.jl`も読み，場と境界輸送の流れを説明してください．
+[`exercises/N07_2d_advection_diffusion/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion)の[`simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/simulate.jl)が計算，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/analyze.jl)が解析，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/plot.jl)が作図を担当します．
+一括実行には[`exercises/N07_2d_advection_diffusion/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/run.jl)を使います．
+提供する[`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/provided_support.jl)も読み，場と境界輸送の流れを説明してください．
 
 ## 固定API {#api}
 
-`ThermofluidExercise.N07`内に次の関数を実装します．
+[`ThermofluidExercise.N07`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L1)内に次の関数を実装します．
 
-```julia
-thermal_stable_timestep(cx, cy, kappa, dx, dy, bc; safety=0.8)
-thermal_fluxes!(fluxes, T, dx, dy; cx, cy, kappa, bc)
-thermal_step!(Tnew, Told, dt, dx, dy; cx, cy, kappa, bc)
-burgers_stable_timestep(u, v, nu, dx, dy; safety=0.8)
-burgers_step!(unew, vnew, uold, vold, dt, dx, dy; nu)
-```
+- [`thermal_stable_timestep(cx, cy, kappa, dx, dy, bc; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L74)
+- [`thermal_fluxes!(fluxes, T, dx, dy; cx, cy, kappa, bc)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L81)
+- [`thermal_step!(Tnew, Told, dt, dx, dy; cx, cy, kappa, bc)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L87)
+- [`burgers_stable_timestep(u, v, nu, dx, dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L102)
+- [`burgers_step!(unew, vnew, uold, vold, dt, dx, dy; nu)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L109)
 
 刻み関数は有限正の`Float64`を返します．
 `bc=(;west,east,south,north)`の各辺は`(;kind::Symbol,value::Float64)`で，値不要の境界は`value=0.0`です．
 `periodic`，`dirichlet`，`insulated`，左`inflow`，右`outflow`の組合せ検証は提供されます．
 流束は`(;adv_x,diff_x,adv_y,diff_y)`で，x面は`(nx+1,ny)`，y面は`(nx,ny+1)`です．
 正x・正y方向の移流／拡散流束を全要素に書き，`fluxes`を返します．
-`thermal_step!`は同じ旧場から面流束を一度だけ構築し，`(;temperature=Tnew,boundary_rates)`を返します．
+[`thermal_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L87)は同じ旧場から面流束を一度だけ構築し，`(;temperature=Tnew,boundary_rates)`を返します．
 `boundary_rates`の`advective`と`diffusive`はそれぞれ`(;west,east,south,north)`で，辺長で積分した**内向き正**のレートです．
 Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`を返します．
 
@@ -62,11 +60,9 @@ Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`�
 係数は有限，`kappa,nu>=0`，格子幅は正，`0<safety<=1`です．
 形状・alias・係数・安定条件の検証は提供コードで行います．
 
-`analyze.jl`では次を実装します．
+[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/analyze.jl)では次を実装します．
 
-```julia
-heat_budget(time, heat, advective_integrals, diffusive_integrals)
-```
+- [`heat_budget(time, heat, advective_integrals, diffusive_integrals)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/analyze.jl#L4)
 
 時刻は0始まりの有限・狭義増加列で2点以上，`heat`は同じ長さの有限列です．
 積分入力は`(4,nt-1)`の有限配列，辺順はwest，east，south，northです．
