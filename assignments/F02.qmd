@@ -16,6 +16,13 @@ understanding-check-points:
 
 [F02授業](../lessons/F02.qmd)で学んだ平均と偏差を，整数やFloat32などの実数配列を扱う関数として実装し，具体例と数学的性質をテストします．
 
+温度列$T_1,\ldots,T_N$の算術平均と各要素の偏差は，次の定義式で求めます．
+
+$$
+\bar T=\frac{1}{N}\sum_{i=1}^{N}T_i,
+\qquad T_i'=T_i-\bar T.
+$$
+
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
 
 ## 学生リポジトリ内の場所
