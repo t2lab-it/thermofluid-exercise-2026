@@ -41,11 +41,11 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 
 ### [`mean_temperature(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L13-L17)
 
-温度列`values`について，[授業で定義した算術平均](../lessons/F02.qmd#problem-setup)を返します．
+温度列`values`について，上の式で定義した算術平均を返します．
 
 ### [`temperature_anomaly(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)
 
-同じ長さの新しい配列を作り，[授業で定義した各要素の偏差](../lessons/F02.qmd#problem-setup)を返します．
+同じ長さの新しい配列を作り，上の式で定義した各要素の偏差を返します．
 入力配列`values`は変更しません．
 
 ## 入力と戻り値の契約

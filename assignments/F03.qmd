@@ -36,8 +36,24 @@ F02をmergeし，更新済みで変更のない`main`から始めます．
 
 ## 解析的な証明
 
-授業ページの定義から，次の四式を直交座標の成分へ展開して証明します．
-差分の定義は[授業の数値微分への接続](../lessons/F03.qmd#数値微分への接続)を参照してください．
+次の直交座標の定義から，四式を成分へ展開して証明します．
+スカラー場は$\phi$，ベクトル場は$\boldsymbol A=(A_x,A_y,A_z)$です．
+
+$$
+\begin{aligned}
+\nabla\phi&=(\partial_x\phi,\partial_y\phi,\partial_z\phi),\\
+\nabla\cdot\boldsymbol A&=\partial_xA_x+\partial_yA_y+\partial_zA_z,\\
+\nabla\times\boldsymbol A&=\begin{pmatrix}
+\partial_yA_z-\partial_zA_y\\
+\partial_zA_x-\partial_xA_z\\
+\partial_xA_y-\partial_yA_x
+\end{pmatrix},\\
+\nabla^2\phi&=\partial_x^2\phi+\partial_y^2\phi+\partial_z^2\phi.
+\end{aligned}
+$$
+
+ベクトルのLaplacianは各成分へスカラーのLaplacianを適用します．
+混合偏微分を交換する四公式の証明では，対象の場を$C^2$級とします．
 
 $$
 \nabla\times(\nabla\phi)=\boldsymbol{0},\qquad
@@ -82,6 +98,22 @@ $$
 必要な滑らかさを満たす範囲で，自分でいろいろなスカラー場・ベクトル場を選び，四公式を確かめてもかまいません．
 別の関数を試すときは，比較に使う解析的な微分結果もその関数に合わせて用意してください．
 上の解析的な証明は，この関数を代入するだけでなく，必要な滑らかさを満たす一般の $\phi$ と $\boldsymbol{A}$ について行ってください．
+
+## 差分関数の定式化 {#discretization}
+
+評価点$x\in\mathbb R$，有限な刻み幅$h>0$について，次の三式を実装します．
+$f$は評価に使う$x$と$x\pm h$で有限値を返す関数とします．
+
+$$
+\begin{aligned}
+D_h^+f(x)&=\frac{f(x+h)-f(x)}{h},\\
+D_h^-f(x)&=\frac{f(x)-f(x-h)}{h},\\
+D_h^0f(x)&=\frac{f(x+h)-f(x-h)}{2h}.
+\end{aligned}
+$$
+
+手計算例は$f(x)=x^2$，$x=2$，$h=0.5$とし，期待値は前進4.5，後退3.5，中心4です．
+関数を指定点で評価する課題なので，時間発展の初期条件やPDEの境界条件はありません．
 
 ## 実装範囲
 
