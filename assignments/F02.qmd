@@ -12,7 +12,9 @@ understanding-check-points:
 第3回・課題 2/2 · 課題ID: F02
 :::
 
-## 目的
+## 定式化と実装条件 {#formulation}
+
+### 目的 {#目的}
 
 [F02授業](../lessons/F02.qmd)で学んだ平均と偏差を，整数やFloat32などの実数配列を扱う関数として実装し，具体例と数学的性質をテストします．
 
@@ -24,6 +26,16 @@ $$
 $$
 
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
+
+### 入力と戻り値の契約
+
+本課題では，関数の入力と出力の間に以下の契約を課します．
+
+- `values`は空でない実数の一次元配列とする．
+- すべての値が有限，つまり`NaN`でも`Inf`でもないことを確認する．
+- 整数，`Float32`，その他の実数型を含む`AbstractVector`で意味のある結果を返す．
+- [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)は入力と同じ長さの新しい配列を返し，入力を変更しない．
+- 不正な入力は明示的に拒否する．
 
 ## 学生リポジトリ内の場所
 
@@ -45,18 +57,7 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 
 ### [`temperature_anomaly(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)
 
-同じ長さの新しい配列を作り，上の式で定義した各要素の偏差を返します．
-入力配列`values`は変更しません．
-
-## 入力と戻り値の契約
-
-本課題では，関数の入力と出力の間に以下の契約を課します．
-
-- `values`は空でない実数の一次元配列とする．
-- すべての値が有限，つまり`NaN`でも`Inf`でもないことを確認する．
-- 整数，`Float32`，その他の実数型を含む`AbstractVector`で意味のある結果を返す．
-- [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)は入力と同じ長さの新しい配列を返し，入力を変更しない．
-- 不正な入力は明示的に拒否する．
+[冒頭の定義と入力契約](#formulation)に従い，各要素の偏差を返します．
 
 ## テストする観点
 

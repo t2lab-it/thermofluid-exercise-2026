@@ -13,7 +13,9 @@ understanding-check-points:
 第9回・課題 · 課題ID: N07
 :::
 
-## 必修の範囲
+## 定式化と実装条件 {#formulation}
+
+### 必修の範囲 {#必修の範囲}
 
 提出単位は`N07`で，1 branch・1 PR・1学習ログを使います．
 `N05-N06`を完了し，[N07授業](../lessons/N07.qmd)の温度境界条件・熱収支・二成分Burgersを実装します．
@@ -41,7 +43,7 @@ $$
 授業内の最低到達点は，開境界1ステップの流入・流出・壁熱流束を説明して熱収支を照合し，小配列でBurgersの二成分同時更新と風上方向を確認することです．
 全実験・収束・作図・自作テスト・考察は授業後までに完成させます．
 
-## 領域・格子と公式実験 {#problem-setup}
+### 領域・格子と公式実験 {#problem-setup}
 
 $T$は体積熱容量を1とした無次元温度，$u,v$は無次元速度で，座標と時刻も無次元です．
 領域は$[0,2]\times[0,1]$，セル中心格子を使います．
@@ -75,7 +77,7 @@ $$
 周期3ケースと`periodic_burgers`は$(40,30),(80,60),(160,120)$の3格子，閉鎖・流路の4ケースは$(80,60)$で計算します．
 `comparison_advection`，`comparison_diffusion`，`comparison_combined`は対応する周期ケースの$(80,60)$計算で，3条件とも移流拡散の刻みに揃えます．
 
-## 温度の流束・更新・境界条件 {#discretization}
+### 温度の流束・更新・境界条件 {#discretization}
 
 内部面の正x向き流束は，次式の移流と拡散の和です．
 y方向も同様に正y向きを正とします．
@@ -115,7 +117,7 @@ $$
 周期面は対向する末尾・先頭セルを内部面と同じ式で結び，面配列の両端へ同じ正方向流束を書きます．
 角セルもx面とy面の寄与を加えます．
 
-### 安定刻み
+#### 安定刻み
 
 $a_x$は西・東のいずれかが固定温度または流入なら3，それ以外は2，$a_y$も南・北について同様です．
 $s=0.8$として次式を使い，各ステップの刻みを次の保存時刻までの残り時間以下へ短縮します．
@@ -131,7 +133,7 @@ $$
 係数$\lambda_T=0$の入力から安定刻みを求めることはできません．
 更新の安定条件は$\Delta t\lambda_T\le1$です．
 
-### 辺別熱輸送と熱収支
+#### 辺別熱輸送と熱収支 {#heat-budget}
 
 熱量は$Q_h=\Delta x\Delta y\sum_{i,j}T_{ij}$です．
 移流・拡散ごとに面流束から次の辺別レートを求め，**内向き正**で返します．
@@ -161,7 +163,7 @@ $$
 
 許容値は`1e-12*max(1,abs(Q0),sum(abs,advective_integrals)+sum(abs,diffusive_integrals))`です．
 
-## Burgersの初期境界条件・更新 {#burgers-formulation}
+### Burgersの初期境界条件・更新 {#burgers-formulation}
 
 `periodic_burgers`は同じセル中心領域で両方向周期，$\nu=0.05$です．
 初期場は次の解析解を$t=0$で評価して作ります．
@@ -203,7 +205,7 @@ a_B=\max_{i,j}(|u_{ij}|/\Delta x+|v_{ij}|/\Delta y),\\
 \end{gathered}
 $$
 
-### 温度の解析解と誤差指標
+#### 温度の解析解と誤差指標
 
 周期温度の解析解は$X=x-c_xt$，$Y=y-c_yt$として次式です．
 
@@ -219,6 +221,30 @@ $$
 その他の閉鎖・流路ケースでは，指定初期値と辺別熱収支を検証します．
 $M=n_xn_y$として，温度誤差は$E_T=\sqrt{\sum(T-T_*)^2/M}$，Burgers誤差は$E_B=\sqrt{\sum((u-u_*)^2+(v-v_*)^2)/M}$です．
 最終時刻の3格子で$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を求めます．
+
+### 収束の判定条件 {#standard-conditions}
+
+誤差が単調減少し，拡散は`1.8<=p<=2.2`，移流・合成・Burgersは`0.8<=p<=1.2`を確認します．
+
+### 入力・戻り値の契約 {#input-contract}
+
+刻み関数は有限正の`Float64`を返します．
+`bc=(;west,east,south,north)`の各辺は`(;kind::Symbol,value::Float64)`で，値不要の境界は`value=0.0`です．
+`periodic`，`dirichlet`，`insulated`，左`inflow`，右`outflow`の組合せ検証は提供されます．
+流束は`(;adv_x,diff_x,adv_y,diff_y)`で，x面は`(nx+1,ny)`，y面は`(nx,ny+1)`です．
+正x・正y方向の移流／拡散流束を全要素に書き，`fluxes`を返します．
+[`thermal_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L87)は同じ旧場から面流束を一度だけ構築し，`(;temperature=Tnew,boundary_rates)`を返します．
+`boundary_rates`の`advective`と`diffusive`はそれぞれ`(;west,east,south,north)`で，辺長で積分した**内向き正**のレートです．
+Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`を返します．
+
+入力は1始まりの浮動小数行列，各軸3以上，有限な旧値，同形状で，新旧バッファは非aliasです．
+係数は有限，`kappa,nu>=0`，格子幅は正，`0<safety<=1`です．
+形状・alias・係数・安定条件の検証は提供コードで行います．
+
+時刻は0始まりの有限・狭義増加列で2点以上，`heat`は同じ長さの有限列です．
+積分入力は`(4,nt-1)`の有限配列，辺順はwest，east，south，northです．
+戻り値は`(;net_input,cumulative_input,residual)`で，長さは順に`nt-1,nt,nt`です．
+後二つの先頭は0で，`residual`は[上の熱収支残差](#heat-budget)です．
 
 ## 編集対象と提供コード
 
@@ -248,27 +274,13 @@ N05の周期添字と共通検証を再利用し，N06の完成ソルバは維�
 - [`burgers_stable_timestep(u, v, nu, dx, dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L102)
 - [`burgers_step!(unew, vnew, uold, vold, dt, dx, dy; nu)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L109)
 
-刻み関数は有限正の`Float64`を返します．
-`bc=(;west,east,south,north)`の各辺は`(;kind::Symbol,value::Float64)`で，値不要の境界は`value=0.0`です．
-`periodic`，`dirichlet`，`insulated`，左`inflow`，右`outflow`の組合せ検証は提供されます．
-流束は`(;adv_x,diff_x,adv_y,diff_y)`で，x面は`(nx+1,ny)`，y面は`(nx,ny+1)`です．
-正x・正y方向の移流／拡散流束を全要素に書き，`fluxes`を返します．
-[`thermal_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/src/N07Transport.jl#L87)は同じ旧場から面流束を一度だけ構築し，`(;temperature=Tnew,boundary_rates)`を返します．
-`boundary_rates`の`advective`と`diffusive`はそれぞれ`(;west,east,south,north)`で，辺長で積分した**内向き正**のレートです．
-Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`を返します．
-
-入力は1始まりの浮動小数行列，各軸3以上，有限な旧値，同形状で，新旧バッファは非aliasです．
-係数は有限，`kappa,nu>=0`，格子幅は正，`0<safety<=1`です．
-形状・alias・係数・安定条件の検証は提供コードで行います．
+関数の入力・返却形式は[冒頭の契約](#input-contract)に従います．
 
 [`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/analyze.jl)では次を実装します．
 
 - [`heat_budget(time, heat, advective_integrals, diffusive_integrals)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/efbb5db232aaaf7b7de41eee1f7a38c0edba8831/exercises/N07_2d_advection_diffusion/analyze.jl#L4)
 
-時刻は0始まりの有限・狭義増加列で2点以上，`heat`は同じ長さの有限列です．
-積分入力は`(4,nt-1)`の有限配列，辺順はwest，east，south，northです．
-戻り値は`(;net_input,cumulative_input,residual)`で，長さは順に`nt-1,nt,nt`です．
-後二つの先頭は0，`residual[k]=heat[k]-heat[1]-cumulative_input[k]`とします．
+[冒頭の熱収支と配列契約](#input-contract)に従って実装します．
 
 ## 実験・検証・記録
 
@@ -282,8 +294,7 @@ Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`�
 2. 周期温度の拡散・合成と二成分Burgersについて，解析解誤差と3格子の両区間の観測次数を検証する．
 
 非対称な小配列と`dx!=dy`を使い，入力・期待値・許容値の根拠を自分で書きます．
-熱収支の初期許容値は`1e-12*max(1,abs(Q0),sum(abs,境界輸送積分))`です．
-誤差が単調減少し，拡散は`1.8<=p<=2.2`，移流・合成・Burgersは`0.8<=p<=1.2`を確認します．
+[冒頭の熱収支・収束の判定条件](#standard-conditions)を確認します．
 固定温度閉系も解析解と比較します．
 [課題単独と進捗連動のテスト](../guides/workflow.qmd#tests)の両方を実行します．
 

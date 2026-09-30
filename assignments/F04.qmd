@@ -14,7 +14,9 @@ understanding-check-points:
 
 提出単位: `F03-F04`（1 branch，1 PR，1学習ログ）
 
-## 目的
+## 定式化と実装条件 {#formulation}
+
+### 目的 {#目的}
 
 [F04授業](../lessons/F04.qmd)で学んだ三つの一次元差分を実装し，一次元の観測次数とF03の四公式の格子収束を確認して，[F03課題](F03.qmd)から続く一つの提出を完成させます．
 
@@ -48,41 +50,7 @@ $$
 
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
 
-## 学生リポジトリ内の場所
-
-- 解析関数: [`exercises/F03-F04_vector_calculus/F03.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl)
-- 実装・実行: [`exercises/F03-F04_vector_calculus/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl)
-- 配布済み必須テスト・自作テスト: [`exercises/F03-F04_vector_calculus/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/tests.jl)
-- 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
-
-## 開始または再開
-
-第4回に作成した`F03-F04`用branchへ戻って作業を続けてください．
-まだ開始していない場合は，[F03の開始手順](F03.qmd#開始)を参照してください．
-
-## 実装範囲
-
-学生が実装するのは次の3関数だけです．
-
-- [`forward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L37-L41)
-- [`backward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L43-L47)
-- [`centered_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L49-L53)
-
-[`centered_partial`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L87-L96)，[`curl_gradient_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L99-L110)，[`divergence_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L113-L116)，[`product_divergence_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L119-L125)，[`curl_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L128-L138)，[`verify_vector_identities`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)，解析関数，格子走査，残差集計は提供済みです．
-
-[授業の四つの数値残差](../lessons/F04.qmd#四公式の数値残差)は，次の関数に対応します．
-
-| 残差 | 提供済み関数 | 場・比較対象の解析関数 |
-|---|---|---|
-| $\boldsymbol{r}_1$ | [`curl_gradient_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L99-L110) | [`gradient_scalar`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L22-L28) |
-| $r_2$ | [`divergence_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L113-L116) | [`curl_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L31-L38) |
-| $r_3$ | [`product_divergence_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L119-L125) | [`scalar_field`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L6)，[`vector_field`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L8-L12)，[`gradient_scalar`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L22-L28)，[`divergence_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L45-L48) |
-| $\boldsymbol{r}_4$ | [`curl_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L128-L138) | [`curl_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L31-L38)，[`gradient_divergence_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L50-L53)，[`laplacian_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L55-L58) |
-: {tbl-colwidths="[18, 32, 50]"}
-
-[`centered_partial`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L87-L96)は自分の[`centered_difference`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L49-L53)を三次元座標へ接続し，[`verify_vector_identities`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)が内部格子点で最大残差を集計します．
-
-## 検証問題と標準条件 {#problem-setup}
+### 検証問題と標準条件 {#problem-setup}
 
 一次元では次の関数を$x=0.4$で評価し，刻み幅$h=0.2,0.1,0.05,0.025$を使います．
 
@@ -113,7 +81,7 @@ $$
 集計対象は両格子に共通の$[-0.75,0.75]^3$内の格子点です．
 場の式から隣点を評価するため，PDEの初期・境界条件は課しません．
 
-### 残差と誤差の定義 {#discretization}
+#### 残差と誤差の定義 {#discretization}
 
 各座標の外側微分を中心差分に置き換えた演算子を$\nabla_h$と書き，次の残差を集計します．
 内側の微分と右辺は，提供済みの解析関数で評価します．
@@ -141,16 +109,54 @@ $$
 ベクトル残差は全成分の絶対値の最大を取ります．
 どちらも誤差比$R=E(h)/E(h/2)$，観測次数$p=\log_2R$を用います．
 
+#### 収束の判定条件 {#standard-conditions}
+
+一次元の全刻み区間で，前進・後退差分の誤差比は$1.7\le R\le2.3$，中心差分は$3.7\le R\le4.3$とします．
+三次元では四つの最大残差がすべて減少し，各粗格子／細格子比が$3.0\le R\le4.8$に入ることを確認します．
+
+## 学生リポジトリ内の場所
+
+- 解析関数: [`exercises/F03-F04_vector_calculus/F03.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl)
+- 実装・実行: [`exercises/F03-F04_vector_calculus/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl)
+- 配布済み必須テスト・自作テスト: [`exercises/F03-F04_vector_calculus/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/tests.jl)
+- 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
+
+## 開始または再開
+
+第4回に作成した`F03-F04`用branchへ戻って作業を続けてください．
+まだ開始していない場合は，[F03の開始手順](F03.qmd#開始)を参照してください．
+
+## 実装範囲
+
+学生が実装するのは次の3関数だけです．
+
+- [`forward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L37-L41)
+- [`backward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L43-L47)
+- [`centered_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L49-L53)
+
+[`centered_partial`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L87-L96)，[`curl_gradient_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L99-L110)，[`divergence_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L113-L116)，[`product_divergence_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L119-L125)，[`curl_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L128-L138)，[`verify_vector_identities`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)，解析関数，格子走査，残差集計は提供済みです．
+
+[冒頭で定義した四つの数値残差](#discretization)は，次の関数に対応します．
+
+| 残差 | 提供済み関数 | 場・比較対象の解析関数 |
+|---|---|---|
+| $\boldsymbol{r}_1$ | [`curl_gradient_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L99-L110) | [`gradient_scalar`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L22-L28) |
+| $r_2$ | [`divergence_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L113-L116) | [`curl_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L31-L38) |
+| $r_3$ | [`product_divergence_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L119-L125) | [`scalar_field`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L6)，[`vector_field`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L8-L12)，[`gradient_scalar`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L22-L28)，[`divergence_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L45-L48) |
+| $\boldsymbol{r}_4$ | [`curl_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L128-L138) | [`curl_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L31-L38)，[`gradient_divergence_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L50-L53)，[`laplacian_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L55-L58) |
+: {tbl-colwidths="[18, 32, 50]"}
+
+[`centered_partial`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L87-L96)は自分の[`centered_difference`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L49-L53)を三次元座標へ接続し，[`verify_vector_identities`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)が内部格子点で最大残差を集計します．
+
 ## 一次元収束
 
 上の標準条件で一次元収束を計算します．
-[`convergence_study`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L55-L79)で前進・後退の誤差比が`1.7`から`2.3`，中心差分の誤差比が`3.7`から`4.3`に入ることを確認し，観測次数も説明してください．
+[`convergence_study`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L55-L79)で[冒頭の判定条件](#standard-conditions)を確認し，観測次数も説明してください．
 
 ## ベクトル解析四公式
 
 [`verify_vector_identities(9)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)と[`verify_vector_identities(17)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)を実行します．
-四つの最大残差がすべて減少し，各粗格子／細格子比が`3.0`から`4.8`に入ることを確認します．
-上の残差の定義に従い，中心差分は外側の微分へ使います．
+[冒頭の残差](#discretization)と[判定条件](#standard-conditions)に従って四公式の収束を確認します．
 
 ## 実行とテスト
 
@@ -185,7 +191,7 @@ F03とF04は別々のチェックです．
 - F03の四公式を直交座標成分で証明し，混合偏微分を交換する条件を書いた．
 - 学生TODOである前進・後退・中心差分の3関数だけを実装した．
 - 一次元の全誤差比と観測次数を確認した．
-- `n=9`と`n=17`で四残差が減少し，各比が`3.0`から`4.8`に入ることを確認した．
+- 四残差の格子収束が[判定条件](#standard-conditions)を満たすことを確認した．
 - [`exercises/F03-F04_vector_calculus/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/tests.jl)の配布済み必須テストを確認し，一つの自作TODOを完成して全テストを通した．
 - `exercises/F03-F04_vector_calculus/learning_log.md`を完成させ，意図したdiffだけをcommitした．
 - [学習ログ，diff，commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)までを完了し，同じbranchから一つのPRでF03とF04をまとめて提出した．

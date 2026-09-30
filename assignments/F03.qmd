@@ -14,27 +14,16 @@ understanding-check-points:
 
 提出単位: `F03-F04`（1 branch，1 PR，1学習ログ）
 
-## 目的
+## 定式化と実装条件 {#formulation}
+
+### 目的 {#目的}
 
 [F03授業](../lessons/F03.qmd)で学んだ四公式を直交座標の成分で証明し，第5回の数値検証を始めます．
 授業の最後の20分では，下の三つの差分関数を実装し，二次関数の手計算値と比較してください．
 [F04課題](F04.qmd)まで同じbranchで継続します．
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
 
-## 学生リポジトリ内の場所
-
-- 解析関数: [`exercises/F03-F04_vector_calculus/F03.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl)
-- 差分関数の実装・実行: [`exercises/F03-F04_vector_calculus/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl)
-- 配布済み必須テスト・自作テスト: [`exercises/F03-F04_vector_calculus/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/tests.jl)
-- 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
-
-## 開始
-
-F02をmergeし，更新済みで変更のない`main`から始めます．
-[課題の開始手順](../guides/workflow.qmd#start-exercise)の`TASK_ID`を`F03-F04`へ置き換えてください．
-作成した一つのbranchを，第5回の完了まで使います．
-
-## 解析的な証明
+### 解析的な証明
 
 次の直交座標の定義から，四式を成分へ展開して証明します．
 スカラー場は$\phi$，ベクトル場は$\boldsymbol A=(A_x,A_y,A_z)$です．
@@ -70,7 +59,7 @@ $$
 
 各証明では，積の微分を使った箇所，混合偏微分の交換の有無と，必要な滑らかさの条件も学習ログへ書いてください．
 
-## 数値検証に使うスカラー場とベクトル場
+### 数値検証に使うスカラー場とベクトル場
 
 F03–F04の数値検証では，[`exercises/F03-F04_vector_calculus/F03.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl)に定義済みの次の関数を使います．
 スカラー場 [`scalar_field(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L6) は
@@ -99,7 +88,7 @@ $$
 別の関数を試すときは，比較に使う解析的な微分結果もその関数に合わせて用意してください．
 上の解析的な証明は，この関数を代入するだけでなく，必要な滑らかさを満たす一般の $\phi$ と $\boldsymbol{A}$ について行ってください．
 
-## 差分関数の定式化 {#discretization}
+### 差分関数の定式化 {#discretization}
 
 評価点$x\in\mathbb R$，有限な刻み幅$h>0$について，次の三式を実装します．
 $f$は評価に使う$x$と$x\pm h$で有限値を返す関数とします．
@@ -115,22 +104,13 @@ $$
 手計算例は$f(x)=x^2$，$x=2$，$h=0.5$とし，期待値は前進4.5，後退3.5，中心4です．
 関数を指定点で評価する課題なので，時間発展の初期条件やPDEの境界条件はありません．
 
-## 実装範囲
-
-[`gradient_scalar(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L22-L28)，[`curl_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L31-L38)，[`divergence_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L45-L48)，[`gradient_divergence_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L50-L53)，[`laplacian_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L55-L58)は解析的な微分結果として提供済みです．
-学生が実装するのは，[`exercises/F03-F04_vector_calculus/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl)内の次の3関数だけです．
-
-- [`forward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L37-L41)
-- [`backward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L43-L47)
-- [`centered_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L49-L53)
-
-## 発展：積の回転と移流項の変形
+### 発展：積の回転と移流項の変形
 
 必須の証明と差分関数の実装が終わり，時間が余った人向けの任意課題です．
 取り組んだ場合は，導出と気づいたことを同じ学習ログに追記してください．
 以下では場が $C^1$ 級であるとし，直交座標の成分で考えます．
 
-### 積の回転
+#### 積の回転
 
 スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し，次の公式を証明してください．
 
@@ -154,7 +134,7 @@ $$
 密度一定の場合と，密度勾配・圧力勾配が平行でない場合を比べ，渦度方程式に圧力由来の項が残る条件を説明してください．
 [授業の圧力項の説明](../lessons/F03.qmd#thermofluid-connections)で，一定密度を仮定した理由を確かめる課題です．
 
-### 移流項の変形
+#### 移流項の変形
 
 速度 $\boldsymbol{u}=(u,v,w)$ と渦度 $\boldsymbol{\omega}=\nabla\times\boldsymbol{u}$ に対し，次の恒等式を証明してください．
 
@@ -188,6 +168,28 @@ $$
 と書き換えてください．
 速度の大きさに由来する勾配を圧力の勾配とまとめると，移流項の残りが速度と渦度の外積になることを確認します．
 さらに渦なしの領域 $\boldsymbol{\omega}=\boldsymbol{0}$ では，移流項がどのような形になるか説明してください．
+
+## 学生リポジトリ内の場所
+
+- 解析関数: [`exercises/F03-F04_vector_calculus/F03.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl)
+- 差分関数の実装・実行: [`exercises/F03-F04_vector_calculus/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl)
+- 配布済み必須テスト・自作テスト: [`exercises/F03-F04_vector_calculus/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/tests.jl)
+- 学習ログ: `exercises/F03-F04_vector_calculus/learning_log.md`
+
+## 開始
+
+F02をmergeし，更新済みで変更のない`main`から始めます．
+[課題の開始手順](../guides/workflow.qmd#start-exercise)の`TASK_ID`を`F03-F04`へ置き換えてください．
+作成した一つのbranchを，第5回の完了まで使います．
+
+## 実装範囲
+
+[`gradient_scalar(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L22-L28)，[`curl_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L31-L38)，[`divergence_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L45-L48)，[`gradient_divergence_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L50-L53)，[`laplacian_vector(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L55-L58)は解析的な微分結果として提供済みです．
+学生が実装するのは，[`exercises/F03-F04_vector_calculus/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl)内の次の3関数だけです．
+
+- [`forward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L37-L41)
+- [`backward_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L43-L47)
+- [`centered_difference(f, x, h)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L49-L53)
 
 {{< include /assignments/_understanding-check.qmd >}}
 

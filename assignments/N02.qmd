@@ -12,7 +12,9 @@ understanding-check-points:
 第6回・課題 · 課題ID: N02
 :::
 
-## 取り組む課題
+## 定式化と実装条件 {#formulation}
+
+### 取り組む課題 {#取り組む課題}
 
 [N02授業](../lessons/N02.qmd)の内容を使って，以下に取り組みます．
 
@@ -25,7 +27,7 @@ $$
 
 [下の問題設定・標準条件](#problem-setup)を実装し，固定・周期境界の数値結果を比較します．
 
-## 問題設定と標準条件 {#problem-setup}
+### 問題設定と標準条件 {#problem-setup}
 
 未知量$u$は非負の無次元速度で，$x,t$も無次元です．
 最終時刻は$t_f=1$，指定CFLは0.5，初期条件は次の矩形です．
@@ -45,7 +47,7 @@ $$
 固定境界では内部更新後に$u_1=1$，$u_{n_x}=u_{n_x-1}$を設定します．
 周期左隣は$i=1$で$n_x$，それ以外で$i-1$です．
 
-### 離散化と時間刻み {#discretization}
+#### 離散化と時間刻み {#discretization}
 
 非負速度に対する左側の保存形上流流束を使い，全更新を同じ旧配列から計算します．
 周期では下式の$i-1$を周期左隣に置き換えます．
@@ -64,6 +66,10 @@ $a_0=\max_i|u_i^0|=2$，$\Delta t_{\max}=0.5\Delta x/a_0$，$N_t=\lceil t_f/\Del
 周期積分$I_h=\Delta x\sum_i u_i$は保存され，固定境界の計算にはこの保存条件を課しません．
 N01との波形比較は，固定境界・同じ矩形初期値・81点・指定CFL 0.5・最終時刻1に揃え，N01の定速度は$c=1$とします．
 任意の安定条件超過実験は固定境界・81点・最終時刻0.1で，指定CFL 0.5と2を比べます．
+
+保存・表示時刻は$t=0,0.25,0.50,0.75,1$です．
+指定CFLが1を超えても計算は続行しますが，値が非有限になると停止します．
+`max_cfl`は全状態の最大実測値，`overshoot`と`undershoot`は初期極値を超えた量（超過なしなら0），`sum_change`は最終総和から初期総和を引いた符号付きの値です．
 
 ## 編集する3ファイルと実装3箇所
 
@@ -114,12 +120,12 @@ exercises/N02_nonlinear_advection/results/periodic.png
 exercises/N02_nonlinear_advection/results/summary.toml
 ~~~
 
-可視化には初期値`Initial`と最終値`Final`だけでなく，標準条件では`t=0.25，0.50，0.75`の中間時刻も重ねて表示します．
+可視化には[冒頭で指定した時刻](#formulation)の分布を重ね，初期値を`Initial`，最終値を`Final`と表示します．
 各曲線には時刻順に連続なカラーマップ（`viridis`など）を割り当て，初期条件から最終時刻まで色が連続に変化するようにします．
 [公式出力の確認](../guides/workflow.qmd#official-results)を行って3点をcommitします．
 実行に失敗した場合は，原因を直して再実行し，成功メッセージと3点の出力を確認してください．
 
-任意の[CFLを変える追加実験](../lessons/N02.qmd#comparison-conditions)では，Juliaで[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)を読み込んで次のように実行できます．
+任意の[安定条件超過実験](#formulation)では，Juliaで[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)を読み込んで次のように実行できます．
 比較する二つの出力は，それぞれ別の一時ディレクトリに保存されます．
 
 ```julia
@@ -128,8 +134,7 @@ N02NonlinearAdvection.main(; cfl=0.5, t_final=0.1, output_dir=mktempdir())
 N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 ```
 
-指定CFLが1を超えても計算は続行しますが，値が非有限になると停止します．
-その場合は比較する両方の最終時刻を同じだけ短くし，使った条件と停止時の状況を学習ログに記録してください．
+非有限値で停止した場合は，比較する両方の最終時刻を同じだけ短くし，使った条件と停止時の状況を学習ログに記録してください．
 
 ## 公開基準値との比較 {#reference-results}
 
@@ -143,7 +148,7 @@ N02NonlinearAdvection.main(; cfl=2.0, t_final=0.1, output_dir=mktempdir())
 数値拡散によるなまりと，非線形な波形変形を区別してください．
 N01との波形比較も[本課題の比較条件](#problem-setup)で実行してください．
 [`summary.toml`](../assets/n02-reference/summary.toml)をAIに読ませて，自身が実装した結果と比較してください．
-`max_cfl`は全状態の最大実測値，`overshoot`と`undershoot`は初期極値を超えた量（超過なしなら0），`sum_change`は最終総和から初期総和を引いた符号付きの値です．
+診断値の定義は[冒頭の条件](#formulation)を参照し，図と照合してください．
 
 {{< include /assignments/_understanding-check.qmd >}}
 
