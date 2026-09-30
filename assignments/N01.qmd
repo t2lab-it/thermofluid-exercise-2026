@@ -12,10 +12,55 @@ understanding-check-points:
 第6回・課題 2/2 · 課題ID: N01
 :::
 
-## 目的
+## 定式化と実装条件 {#formulation}
+
+### 目的 {#目的}
 
 1次元線形移流方程式の数値計算を実装し，上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します．
+数値手法の導出と安定性の解説は[N01授業](../lessons/N01.qmd)で学びます．
+
+$$
+\frac{\partial u}{\partial t}+c\frac{\partial u}{\partial x}=0.
+$$
+
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
+
+### 問題設定と標準条件 {#problem-setup}
+
+未知量$u$，座標$x$，時刻$t$は無次元量です．
+領域は$0\le x\le2$，速度は$c=1>0$，最終時刻は$t_f=0.5$とします．
+初期条件と境界条件は次のとおりです．
+
+$$
+\begin{gathered}
+u(x,0)=\begin{cases}2&0.5\le x\le1,\\1&\text{それ以外},\end{cases}\\
+u(0,t)=1,\qquad u_x(2,t)=0.
+\end{gathered}
+$$
+
+格子は両端を含む$n_x=81$点で，$x_i=(i-1)\Delta x$，$\Delta x=2/(n_x-1)=0.025$，$i=1,\ldots,n_x$です．
+境界の実装は$u_1=1$，$u_{n_x}=u_{n_x-1}$とし，内部点の更新後に適用します．
+
+#### 離散化と時間刻み {#discretization}
+
+同じ旧配列から内部点$i=2,\ldots,n_x-1$の新値を求めます．
+$C=c\Delta t/\Delta x$として，上流差分と中心差分の更新式を使います．
+
+$$
+u_i^{n+1}=u_i^n-C(u_i^n-u_{i-1}^n),
+$$
+
+$$
+u_i^{n+1}=u_i^n-\frac C2(u_{i+1}^n-u_{i-1}^n).
+$$
+
+指定CFLは0.5で，$\Delta t_{\max}=0.5\Delta x/c$，$N_t=\lceil t_f/\Delta t_{\max}\rceil$，$\Delta t=t_f/N_t$とします．
+標準条件では$N_t=40$，$\Delta t=0.0125$です．
+上流差分の安定条件は$0<C\le1$で，中心差分＋前進Eulerはこの比較でも不安定です．
+両手法を同じ格子と刻みで進め，新配列へ境界条件を適用してからバッファを交換します．
+
+保存・表示時刻は$t=0,0.125,0.250,0.375,0.5$です．
+最終時刻への到達は`isapprox(steps * dt, t_final; atol=100eps())`で確認します．
 
 ## 学生リポジトリ内の場所
 
@@ -29,19 +74,14 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 F03-F04をmergeし，更新済みで変更のない`main`から始めます．
 [課題の開始手順](../guides/workflow.qmd#start-exercise)の`TASK_ID`を`N01`へ置き換えてください．
 
-## 参照する問題と数値手法
-
-[授業の問題・標準条件](../lessons/N01.qmd#problem-setup)を使います．
-座標と添字は[格子と添字](../lessons/N01.qmd#格子と添字)，差分式は[後退差分と中心差分](../lessons/N01.qmd#後退差分と中心差分)を確認してください．
-
 ## 実装範囲
 
 [`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)は冒頭にある[`rectangular_initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L33-L65) → [`upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L68-L100) / [`centered_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L103-L134) → [`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L137-L151) → [`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L168-L209) → [`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L231-L249)の順に読みます．
 学生が実装するのは，次の3つのTODOだけです．
 
-1. [`rectangular_initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L33-L65)：[授業の矩形初期条件](../lessons/N01.qmd#初期条件)を配列へ設定する．
-2. [`upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L68-L100)：[上流差分 + Euler法](../lessons/N01.qmd#upwind-euler)による更新．
-3. [`centered_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L103-L134)：[中心差分 + Euler法](../lessons/N01.qmd#centered-euler)による更新．
+1. [`rectangular_initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L33-L65)：[本課題の矩形初期条件](#problem-setup)を配列へ設定する．
+2. [`upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L68-L100)：[上流差分 + Euler法](#discretization)による更新．
+3. [`centered_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L103-L134)：[中心差分 + Euler法](#discretization)による更新．
 
 実効CFL・極値と，[`summary_section`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L211-L229)のオーバーシュート・アンダーシュートの計算も[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)で確認します．
 [`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L231-L249)は二つの[`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L168-L209)を実行し，提供済みの[`write_summary`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/provided_support.jl#L56-L69)と[`make_plots`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/provided_support.jl#L72-L83)へ結果を渡して，下の3つの公式出力を作ります．
@@ -61,15 +101,14 @@ exercises/N01_linear_advection/results/summary.toml
 ~~~
 
 図中の`Initial`は初期値，`Final`は最終値です．
-`t=0.125，0.250，0.375`の中間時刻も重ねて表示し，初期条件から最終時刻まで色が連続に変化するカラーマップを使います．
+[冒頭で指定した時刻](#formulation)の分布を重ね，時刻順に色が連続に変化するカラーマップを使います．
 `upwind.png`は`viridis`，`centered-euler.png`は`plasma`で，時刻の順序を色の順序として読み取れます．
 `Upwind`は上流差分，`Centered`は中心差分を表します．
 次を確認してください．
 
 - PNGが開き，`summary.toml`の値が同じ実行結果と一致する．
 - 上流差分法の最小・最大が初期範囲内に収まり，中心差分法 + Euler法にオーバーシュートまたはアンダーシュートがある．
-- 実効CFLが`c * dt / dx`に一致する．
-- `isapprox(steps * dt, t_final; atol=100eps())`で，最終時刻へ到達する．
+- 実効CFLと最終時刻が[冒頭の条件](#discretization)を満たす．
 
 具体的な値は，下の[公開基準値](#reference-results)と比べます．
 
@@ -79,7 +118,7 @@ exercises/N01_linear_advection/results/summary.toml
 数値の差は，丸め誤差を考慮して比較してください．
 これにより，計算方法や境界条件の大きな違いを，丸め誤差の違いと混同しにくくなります．
 
-次の値は，[授業の標準条件](../lessons/N01.qmd#problem-setup)に対応する公開基準値です．
+次の値は，[本課題の標準条件](#problem-setup)に対応する公開基準値です．
 
 ::: {.table-responsive tbl-colwidths="[24, 19, 19, 19, 19]"}
 | 手法 | `minimum` | `maximum` | `overshoot` | `undershoot` |
@@ -109,8 +148,8 @@ exercises/N01_linear_advection/results/summary.toml
 
 自作TODOでは，必須とは異なる初期条件，CFL，格子数，またはAPIの性質を一つ選びます．
 
-学習ログには，そのテストが保証することと保証しないことを分けて記録します．
-また，`u_old, u_new = u_new, u_old`によって配列全体をコピーせずに新旧の役割を交換できる理由と，同じ配列を新旧に使ってはいけない理由を書いてください．
+学習ログには，そのテストの検証範囲と限界を記録します．
+また，`u_old, u_new = u_new, u_old`による参照の交換のしくみと，新旧に独立した配列を使う理由を書いてください．
 
 {{< include /assignments/_understanding-check.qmd >}}
 

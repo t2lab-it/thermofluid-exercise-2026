@@ -13,13 +13,95 @@ understanding-check-points:
 第8回・課題 · 課題ID: N06
 :::
 
-## 必修の範囲
+## 定式化と実装条件 {#formulation}
+
+### 必修の範囲 {#必修の範囲}
 
 提出単位: `N05-N06`．
 [N05課題](N05.qmd)と同じbranch・PR・学習ログを使います．
-[N06授業の公式条件](../lessons/N06.qmd#problem-setup)で，定速度の二次元線形移流・両方向周期境界を実装します．
+[下の公式条件](#problem-setup)で，定速度の二次元線形移流・両方向周期境界を実装します．
+
+$$
+\frac{\partial u}{\partial t}+c_x\frac{\partial u}{\partial x}
++c_y\frac{\partial u}{\partial y}=0.
+$$
+
 **保存量・解析解誤差・3格子の収束，空間分散の再解析と表示設定の再作図までが必修です．**
 授業内は非正方の小配列で1ステップを実行し，授業後に公式3格子と考察まで完成させます．
+
+### 問題設定と標準条件 {#problem-setup}
+
+未知量$u$，座標$x,y$，時刻$t$は無次元量です．
+領域は$[0,L_x)\times[0,L_y)$，$L_x=2$，$L_y=1$，速度は$(c_x,c_y)=(1,0.5)$です．
+両方向を周期境界とし，$u(x+L_x,y,t)=u(x,y,t)$，$u(x,y+L_y,t)=u(x,y,t)$を課します．
+格子は$(n_x,n_y)=(40,30),(80,60),(160,120)$です．
+$\Delta x=L_x/n_x$，$\Delta y=L_y/n_y$，$x_i=(i-1)\Delta x$，$y_j=(j-1)\Delta y$とし，`u[i,j]`は$(x_i,y_j)$の値です．
+初期条件は次式です．
+
+$$
+\begin{aligned}
+u_0(x,y)&=1+0.2\sin(\pi x)\\
+&\quad+0.3\cos(2\pi y)\\
+&\quad+0.1\sin(\pi x+2\pi y).
+\end{aligned}
+$$
+
+解析解は$u_*(x,y,t)=u_0(x-c_xt,y-c_yt)$で，初期場を周期的に平行移動した値です．
+最終時刻は1，保存時刻は$0,0.25,0.5,0.75,1$，作図の代表格子は$(80,60)$とします．
+
+#### 離散化と時間刻み {#discretization}
+
+$i_-,j_-$は各軸の周期左隣（先頭では各軸の末尾）です．
+速度は非負として，全点を同じ旧配列から二方向上流差分＋前進Eulerで更新します．
+
+$$
+\begin{gathered}
+C_x=\frac{c_x\Delta t}{\Delta x},\qquad C_y=\frac{c_y\Delta t}{\Delta y},\\
+\begin{aligned}
+u_{ij}^{n+1}&=u_{ij}^n\\
+&\quad-C_x(u_{ij}^n-u_{i_-,j}^n)\\
+&\quad-C_y(u_{ij}^n-u_{i,j_-}^n).
+\end{aligned}
+\end{gathered}
+$$
+
+安定条件は$C_x+C_y\le1$です．
+$s=0.8$として$\Delta t_{\max}=s/(c_x/\Delta x+c_y/\Delta y)$を使います．
+保存時刻間の長さ$\tau$ごとに$N=\lceil\tau/\Delta t_{\max}\rceil$，$\Delta t=\tau/N$とし，保存時刻へ一致させます．
+保存する場は更新バッファからコピーして保持します．
+
+#### 保存量・誤差・分散
+
+$M=n_xn_y$，$e_{ij}=u_{ij}-u_*(x_i,y_j,t)$とします．
+格子収束には最終時刻のRMS型L2誤差を使います．
+
+$$
+\begin{aligned}
+I_h&=\Delta x\Delta y\sum_{i,j}u_{ij},\\
+\bar u&=\frac1M\sum_{i,j}u_{ij},\\
+E_2&=\sqrt{\frac1M\sum_{i,j}e_{ij}^2},\\
+E_\infty&=\max_{i,j}|e_{ij}|,\\
+\operatorname{Var}(u)&=\frac1M\sum_{i,j}(u_{ij}-\bar u)^2.
+\end{aligned}
+$$
+
+周期積分$I_h$の初期値は2で，全時刻で保存されます．
+分散は上の定義式を使い，保存時刻の各場から再計算します．
+両格子区間の観測次数は$p=\log_2(E_{2,\mathrm{coarse}}/E_{2,\mathrm{fine}})$です．
+
+#### 保存量・収束の判定条件 {#standard-conditions}
+
+保存量の許容誤差は初期積分の相対スケール付き`1e-12`を目安とし，値の大きさ・点数・反復回数を踏まえて説明します．
+公式3格子の最終時刻のL2誤差が減少し，両区間の観測次数が$0.8\le p\le1.2$に入ることを確認します．
+
+#### 入力・戻り値の契約 {#input-contract}
+
+[`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L11-L20)は合成CFLから正の`Float64`を返します．
+速度は非負で少なくとも一方が正，格子幅は正，`0 < safety <= 1`とします．
+[`advection_step!(u_new,u_old,dt,dx,dy; cx=1.0,cy=0.5)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L21-L32)は上の更新式を使い，新配列を返します．
+旧・新配列は独立した記憶領域を使い，合成CFLを検証してから新配列へ結果を書き込みます．
+
+[`spatial_variance(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/analyze.jl#L3-L7)は各保存時刻の空間分散を`Float64`で返します．
 
 ## 編集対象
 
@@ -35,13 +117,7 @@ understanding-check-points:
 | 計算の提供入口 | [`exercises/N05-N06_common_package_2d_advection/simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/simulate.jl) |
 : {tbl-colwidths="[30, 70]"}
 
-[`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L11-L20)は合成CFLから有限な正の`Float64`を返します．
-速度は非負で少なくとも一方が正，格子幅は正，`0 < safety <= 1`とします．
-[`advection_step!(u_new,u_old,dt,dx,dy; cx=1.0,cy=0.5)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L21-L32)は周期全点を同じ旧配列から更新し，新配列を返します．
-旧・新配列は独立した記憶領域を使い，合成CFLを検証してから新配列へ結果を書き込みます．
-片方向速度0を扱い，両速度0の1ステップは旧値をコピーします．
-
-[`spatial_variance(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/analyze.jl#L3-L7)は各保存時刻の空間分散を，有限な非負の`Float64`で返します．
+[冒頭の入力・戻り値の契約](#input-contract)に従って，刻み関数・更新関数・空間分散を実装します．
 分散を実装して再解析し，`diagnostics_complete=true`を確認してください．
 [`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl)の[`COLORMAP`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L5)，[`COLOR_LIMITS`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L6)，[`DISPLAY_CASE`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/plot.jl#L7)から表示条件を変更します．
 計算条件を変えず，初期場・数値解・解析解の色の上下限を共通に保って比較します．
@@ -56,14 +132,13 @@ understanding-check-points:
 一括入口[`exercises/N05-N06_common_package_2d_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/run.jl)はN05回帰確認とN06の全段階を実行します．
 
 [課題単独と進捗連動のテスト](../guides/workflow.qmd#tests)を実行します．
-配布済みテストは非対称な1ステップ，周期端・角，旧配列不変・非alias，定数場，片方向速度0，合成CFL，保存時刻と出力の整合を確認します．
+配布済みテストは非対称な1ステップ，周期端・角，旧配列の値の保持・新旧配列の独立性，定数場，片方向速度0，合成CFL，保存時刻と出力の整合を確認します．
 自作するテストは次の2件です．
 
 - 非対称な非定数場を複数ステップ更新し，独立に計算した初期積分の保存を検証する．
-- 公式3格子で最終時刻の解析解に対するL2誤差が減少し，二つの区間の観測次数が`0.8 <= p <= 1.2`となることを検証する．
+- [公式の格子収束条件](#standard-conditions)を満たすことを検証する．
 
-保存量の許容誤差は初期積分の相対スケール付き`1e-12`を目安とし，値の大きさ・点数・反復回数を踏まえて説明します．
-期待値・許容誤差の根拠と，検出できる誤り・検出できない誤りをログへ残します．
+[冒頭の保存量・収束の判定条件](#standard-conditions)に従い，期待値・許容誤差の根拠と検証範囲・限界をログへ残します．
 過去課題のテストも継続し，N05-N06のテストは一つの提出単位として1回実行されます．
 
 ## 公式出力と比較 {#reference-results}

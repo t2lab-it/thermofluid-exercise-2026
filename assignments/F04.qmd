@@ -14,10 +14,105 @@ understanding-check-points:
 
 提出単位: `F03-F04`（1 branch，1 PR，1学習ログ）
 
-## 目的
+## 定式化と実装条件 {#formulation}
+
+### 目的 {#目的}
 
 [F04授業](../lessons/F04.qmd)で学んだ三つの一次元差分を実装し，一次元の観測次数とF03の四公式の格子収束を確認して，[F03課題](F03.qmd)から続く一つの提出を完成させます．
+
+実装する前進・後退・中心差分は，それぞれ次の式です．
+
+$$
+\begin{aligned}
+D_h^+f(x)&=\frac{f(x+h)-f(x)}{h},\\
+D_h^-f(x)&=\frac{f(x)-f(x-h)}{h},\\
+D_h^0f(x)&=\frac{f(x+h)-f(x-h)}{2h}.
+\end{aligned}
+$$
+
+三次元で数値的に検証する対象は，次の四公式です．
+場・刻み幅・残差の作り方は，下の[検証問題と標準条件](#problem-setup)で指定します．
+
+$$
+\nabla\times(\nabla\phi)=\boldsymbol 0,
+\qquad \nabla\cdot(\nabla\times\boldsymbol A)=0,
+$$
+
+$$
+\nabla\cdot(\phi\boldsymbol A)
+=\boldsymbol A\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol A,
+$$
+
+$$
+\nabla\times(\nabla\times\boldsymbol A)
+=\nabla(\nabla\cdot\boldsymbol A)-\nabla^2\boldsymbol A.
+$$
+
 branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課題ワークフロー](../guides/workflow.qmd)を参照してください．
+
+### 検証問題と標準条件 {#problem-setup}
+
+一次元では次の関数を$x=0.4$で評価し，刻み幅$h=0.2,0.1,0.05,0.025$を使います．
+
+$$
+\begin{gathered}
+f(x)=\sin x\,e^x,\\
+f'(x)=e^x(\sin x+\cos x).
+\end{gathered}
+$$
+
+三次元の場は次の式で，全空間で滑らかです．
+座標は`point=(x,y,z)`として渡します．
+
+$$
+\phi(x,y,z)=\sin x\cos y\,e^z,
+$$
+
+$$
+\boldsymbol A(x,y,z)=\begin{pmatrix}
+\sin y\,e^{2z}+e^x\\
+\sin z\,e^{2x}+e^y\\
+\sin x\,e^{2y}+e^z
+\end{pmatrix}.
+$$
+
+領域は$[-1,1]^3$，各軸は端点を含む$n=9,17$点，格子幅は$h=2/(n-1)$です．
+座標は各軸で$-1+(i-1)h$，$i=1,\ldots,n$とします．
+集計対象は両格子に共通の$[-0.75,0.75]^3$内の格子点です．
+隣点の値は場の式から評価します．
+
+#### 残差と誤差の定義 {#discretization}
+
+各座標の外側微分を中心差分に置き換えた演算子を$\nabla_h$と書き，次の残差を集計します．
+内側の微分と右辺は，提供済みの解析関数で評価します．
+
+$$
+\begin{gathered}
+\boldsymbol r_1=\nabla_h\times(\nabla\phi),\\
+r_2=\nabla_h\cdot(\nabla\times\boldsymbol A),
+\end{gathered}
+$$
+
+$$
+r_3=\nabla_h\cdot(\phi\boldsymbol A)
+-\bigl(\boldsymbol A\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol A\bigr),
+$$
+
+$$
+\begin{aligned}
+\boldsymbol r_4&=\nabla_h\times(\nabla\times\boldsymbol A)\\
+&\quad-\bigl(\nabla(\nabla\cdot\boldsymbol A)-\nabla^2\boldsymbol A\bigr).
+\end{aligned}
+$$
+
+一次元誤差は$E(h)=|D_hf(0.4)-f'(0.4)|$，三次元誤差は集計領域での残差の絶対値の最大です．
+ベクトル残差は全成分の絶対値の最大を取ります．
+どちらも誤差比$R=E(h)/E(h/2)$，観測次数$p=\log_2R$を用います．
+
+#### 収束の判定条件 {#standard-conditions}
+
+一次元の全刻み区間で，前進・後退差分の誤差比は$1.7\le R\le2.3$，中心差分は$3.7\le R\le4.3$とします．
+三次元では四つの最大残差がすべて減少し，各粗格子／細格子比が$3.0\le R\le4.8$に入ることを確認します．
 
 ## 学生リポジトリ内の場所
 
@@ -41,7 +136,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 [`centered_partial`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L87-L96)，[`curl_gradient_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L99-L110)，[`divergence_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L113-L116)，[`product_divergence_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L119-L125)，[`curl_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L128-L138)，[`verify_vector_identities`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)，解析関数，格子走査，残差集計は提供済みです．
 
-[授業の四つの数値残差](../lessons/F04.qmd#四公式の数値残差)は，次の関数に対応します．
+[冒頭で定義した四つの数値残差](#discretization)は，次の関数に対応します．
 
 | 残差 | 提供済み関数 | 場・比較対象の解析関数 |
 |---|---|---|
@@ -55,14 +150,13 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ## 一次元収束
 
-[授業の標準条件](../lessons/F04.qmd#problem-setup)で一次元収束を計算します．
-[`convergence_study`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L55-L79)で前進・後退の誤差比が`1.7`から`2.3`，中心差分の誤差比が`3.7`から`4.3`に入ることを確認し，観測次数も説明してください．
+上の標準条件で一次元収束を計算します．
+[`convergence_study`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L55-L79)で[冒頭の判定条件](#standard-conditions)を確認し，観測次数も説明してください．
 
 ## ベクトル解析四公式
 
 [`verify_vector_identities(9)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)と[`verify_vector_identities(17)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L141-L163)を実行します．
-四つの最大残差がすべて減少し，各粗格子／細格子比が`3.0`から`4.8`に入ることを確認します．
-数値残差の定義と，内側・外側の微分の扱いは[授業](../lessons/F04.qmd#四公式の数値残差)を参照してください．
+[冒頭の残差](#discretization)と[判定条件](#standard-conditions)に従って四公式の収束を確認します．
 
 ## 実行とテスト
 
@@ -97,7 +191,7 @@ F03とF04は別々のチェックです．
 - F03の四公式を直交座標成分で証明し，混合偏微分を交換する条件を書いた．
 - 学生TODOである前進・後退・中心差分の3関数だけを実装した．
 - 一次元の全誤差比と観測次数を確認した．
-- `n=9`と`n=17`で四残差が減少し，各比が`3.0`から`4.8`に入ることを確認した．
+- 四残差の格子収束が[判定条件](#standard-conditions)を満たすことを確認した．
 - [`exercises/F03-F04_vector_calculus/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/tests.jl)の配布済み必須テストを確認し，一つの自作TODOを完成して全テストを通した．
 - `exercises/F03-F04_vector_calculus/learning_log.md`を完成させ，意図したdiffだけをcommitした．
 - [学習ログ，diff，commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)までを完了し，同じbranchから一つのPRでF03とF04をまとめて提出した．
