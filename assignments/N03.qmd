@@ -14,14 +14,78 @@ understanding-check-points:
 
 ## 取り組む課題
 
+熱拡散と境界条件の物理的意味，差分式の導出は[N03授業](../lessons/N03.qmd)で学びます．
+
 取り組む方程式は，一次元の熱拡散方程式です．
 
 $$
 \frac{\partial u}{\partial t}=D\frac{\partial^2 u}{\partial x^2}.
 $$
 
-[N03の問題・標準条件](../lessons/N03.qmd#problem-setup)を実装し，固定温度と断熱の結果を比較します．
+[下の問題設定・標準条件](#problem-setup)を実装し，固定温度と断熱の結果を比較します．
 N02完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課題ID`N03`を指定します．
+
+## 問題設定と標準条件 {#problem-setup}
+
+未知量$u=(T-T_{\mathrm{ref}})/\Delta T$は無次元温度で，$\Delta T>0$です．
+無次元座標$x=x_{\mathrm{phys}}/\ell_{\mathrm{ref}}$，時刻$t=t_{\mathrm{phys}}/t_{\mathrm{ref}}$を使い，拡散係数は$D=\alpha t_{\mathrm{ref}}/\ell_{\mathrm{ref}}^2=0.1$とします．
+領域は$[0,L]$，$L=2$，最終時刻は$t_f=1$です．
+端点を含む$n_x=81$点を$x_i=(i-1)\Delta x$，$\Delta x=L/(n_x-1)$に配置します．
+初期条件`initial=:pulse`は次の矩形です．
+
+$$
+u(x,0)=\begin{cases}1&0.5\le x\le1,\\0&\text{それ以外}.\end{cases}
+$$
+
+両端を固定温度0とする`:fixed`と，両端の法線微分0とする`:insulated`を比較します．
+固定温度は$u(0,t)=u(L,t)=0$，断熱は$u_x(0,t)=u_x(L,t)=0$です．
+
+### 離散化と時間刻み {#discretization}
+
+内部点は中心差分＋前進Eulerで更新します．
+
+$$
+\begin{gathered}
+u_i^{n+1}=u_i^n+r(u_{i+1}^n-2u_i^n+u_{i-1}^n),\\
+r=\frac{D\Delta t}{\Delta x^2}.
+\end{gathered}
+$$
+
+固定温度では更新後の両端を0にします．
+断熱ではゴースト$u_0^n=u_2^n$，$u_{n_x+1}^n=u_{n_x-1}^n$を消去した次式で端点も更新します．
+
+$$
+\begin{aligned}
+u_1^{n+1}&=u_1^n+2r(u_2^n-u_1^n),\\
+u_{n_x}^{n+1}&=u_{n_x}^n+2r(u_{n_x-1}^n-u_{n_x}^n).
+\end{aligned}
+$$
+
+内部・端点とも同じ旧配列を参照し，新配列への書込みが終わってから交換します．
+指定Fourier数は0.4で，$\Delta t_{\max}=0.4\Delta x^2/D$，$N_t=\lceil t_f/\Delta t_{\max}\rceil$，$\Delta t=t_f/N_t$です．
+実効値$r$を記録し，安定条件$0<r\le1/2$を確認します．
+熱量は端点を半分に重み付けする台形則で，断熱では保存されます．
+
+$$
+H_h=\Delta x\left(\frac{u_1}{2}+\sum_{i=2}^{n_x-1}u_i+\frac{u_{n_x}}2\right).
+$$
+
+### 解析解と比較条件
+
+`initial=:mode`では次の解析解の$t=0$を初期条件にします．
+$\lambda=D(\pi/L)^2$として記します．
+
+$$
+\begin{aligned}
+u_{*,\mathrm{fixed}}&=e^{-\lambda t}\sin(\pi x/L),\\
+u_{*,\mathrm{insulated}}&=\tfrac12\\
+&\quad+\tfrac12e^{-\lambda t}\cos(\pi x/L).
+\end{aligned}
+$$
+
+両境界を41・81・161点，指定Fourier数0.4，最終時刻1で比較します．
+全格子点での最大絶対誤差$E=\max_i|u_i-u_*(x_i,1)|$と，両区間の$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を計算し，約2次の収束を確認します．
+任意の安定条件超過実験は矩形初期値・固定温度・81点・最終時刻0.1で，指定Fourier数0.4と0.6を比べます．
 
 ## 編集する3ファイルと実装3箇所
 
@@ -57,7 +121,7 @@ N02完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
 - **断熱の熱量保存**：端点を含めて値が異なる非対称な非定数配列を複数ステップ進めます．
   初期熱量をテスト側でも独立に計算し，点数・ステップ数・値の大きさ・丸め誤差から許容誤差を決めます．
 - **解析解と格子収束**：固定温度の正弦モードを41・81・161点で，同じ最終時刻・同じ指定Fourier数で計算します．
-  [授業の解析解](../lessons/N03.qmd#convergence)との誤差の減少と観測次数を確認します．
+  本課題の解析解との誤差の減少と観測次数を確認します．
 
 各テストの入力，期待値，誤差指標，許容誤差とその根拠を学習ログに記します．
 
@@ -97,7 +161,7 @@ exercises/N03_diffusion/results/summary.toml
 
 ## 任意の安定条件超過実験
 
-実装が完成したら，[授業の比較条件](../lessons/N03.qmd#stability)に対応する[`stability_experiment`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L126-L133)を次のように試せます．
+実装が完成したら，[本課題の比較条件](#problem-setup)に対応する[`stability_experiment`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl#L126-L133)を次のように試せます．
 
 ```julia
 include("exercises/N03_diffusion/run.jl")
