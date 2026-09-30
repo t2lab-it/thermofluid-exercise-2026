@@ -391,3 +391,63 @@ $ julia --project=. -e 'using SHA; for name in ("temperature.h5", "burgers.h5");
 教員から更新案内があったら，[コマンド一覧の配布更新手順](commands.qmd#material-updates)に従います．
 クリーンな`main`から更新branchを作り，`upstream/main`を通常のmergeで取り込んで確認します．
 更新用PRは**Create a merge commit**で統合し，配布元のcommitを個人リポジトリの祖先として保持します．
+
+## N08-N09の段階別実行 {#n08-n09-stages}
+
+N07を完了したcleanなmainから，共通の提出単位を開始します．
+
+```console
+$ julia --project=. scripts/course.jl start N08-N09
+```
+
+N08の4関数を完成させた授業内の検証は，結果ファイルなしで成功します．
+
+```console
+$ julia --project=. exercises/N08-N09_laplace_poisson/tests.jl N08-check
+```
+
+N08だけの計算・解析・作図にはすべて明示的なN08引数を使い，N09 TODOを呼びません．
+
+```console
+$ julia --project=. exercises/N08-N09_laplace_poisson/simulate.jl N08
+$ julia --project=. exercises/N08-N09_laplace_poisson/analyze.jl N08
+$ julia --project=. exercises/N08-N09_laplace_poisson/plot.jl N08
+$ julia --project=. exercises/N08-N09_laplace_poisson/run.jl N08
+```
+
+N09の完成後はallで両問題を揃えます．
+各stageの引数はN08／N09／all，省略時allです．
+
+```console
+$ julia --project=. exercises/N08-N09_laplace_poisson/simulate.jl all
+$ julia --project=. exercises/N08-N09_laplace_poisson/analyze.jl all
+$ julia --project=. exercises/N08-N09_laplace_poisson/plot.jl all
+$ julia --project=. exercises/N08-N09_laplace_poisson/run.jl all
+```
+
+analyze／plotは保存したHDF5だけを読み，ソルバを呼ばず，HDF5を変更しません．
+公式12出力は一括run内で検証して反映し，既存結果と学生追加ファイルを保ちます．
+ソース編集後は元baselineを作り直さず，N05 verifyで回帰記録を更新します．
+
+```console
+$ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
+$ julia --project=. exercises/N08-N09_laplace_poisson/tests.jl all
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+$ julia --project=. scripts/course.jl check-results
+```
+
+課題単独allと進捗連動テストの[役割](#tests)を区別し，履歴共有runnerの過去課題の警告も確認します．
+N08-checkの成功をN08-N09の全体完了として提出しません．
+
+## N08-N09の任意発展 {#n08-n09-extensions}
+
+混合境界→純Neumannと，Gauss–Seidel／SORは別々に実行します．
+
+```console
+$ julia --project=. exercises/N08-N09_laplace_poisson/extensions/tests_neumann.jl
+$ julia --project=. exercises/N08-N09_laplace_poisson/extensions/run_neumann.jl
+$ julia --project=. exercises/N08-N09_laplace_poisson/extensions/tests_relaxation.jl
+$ julia --project=. exercises/N08-N09_laplace_poisson/extensions/run_relaxation.jl
+```
+
+各発展はresults/N09/extensions/の専用フォルダへ保存し，容量には含めますが，必修の成功には要求しません．

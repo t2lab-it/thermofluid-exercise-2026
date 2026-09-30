@@ -215,3 +215,25 @@ end
         @test c["heat"]-fill(first(c["heat"]),5)≈c["cumulative_input"]+c["residual"] atol=1e-12
     end
 end
+
+@testset "N08 N09 reference provenance and both-interval second order" begin
+    for id in ("N08","N09")
+        dir=joinpath(REFERENCE_ARTIFACT_ROOT,"assets",lowercase(id)*"-reference")
+        @test Set(readdir(dir))==Set(("fields.png","residual.png","convergence.png","summary.toml","plots.toml"))
+        s=TOML.parsefile(joinpath(dir,"summary.toml"));p=TOML.parsefile(joinpath(dir,"plots.toml"))
+        @test s["task_id"]==p["task_id"]==id && s["diagnostics_complete"]
+        @test s["run_id"]==p["run_id"] && s["source_fields_sha256"]==p["source_fields_sha256"]
+        @test p["source_summary_sha256"]==bytes2hex(sha256(read(joinpath(dir,"summary.toml"))))
+        @test p["display_grid"]=="n033x025" && p["axis_order"]=="y,x"
+        @test p["error_color_range"][1]==-p["error_color_range"][2]
+        for norm in ("l2","linf")
+            errors=[s["cases"][grid][norm*"_error"] for grid in ("n017x013","n033x025","n065x049")]
+            @test s["orders_"*norm]≈log2.(errors[1:2]./errors[2:3])
+            @test all(v->1.8<=v<=2.2,s["orders_"*norm])
+        end
+        for name in ("fields.png","residual.png","convergence.png")
+            @test p["png_sha256"][name]==bytes2hex(sha256(read(joinpath(dir,name))))
+            @test 10000<filesize(joinpath(dir,name))<=5*1024^2
+        end
+    end
+end

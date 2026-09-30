@@ -1,7 +1,7 @@
 using TOML
 
 const CANONICAL_BASE = "https://t2lab-it.github.io/thermofluid-exercise-2026/"
-const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07"])
+const REQUIRED_IDS = Set(["F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08", "N09"])
 const SELF_CONTAINED_ASSIGNMENT_IDS = Set(["F00", "F01"])
 const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
 
@@ -9,6 +9,7 @@ const N05_N06_START_COMMAND = "julia --project=. scripts/course.jl start N05-N06
 const COMBINED_START_COMMANDS = Dict(
     ("F03", "F04") => F03_F04_START_COMMAND,
     ("N05", "N06") => N05_N06_START_COMMAND,
+    ("N08", "N09") => "julia --project=. scripts/course.jl start N08-N09",
 )
 
 function fail(message::AbstractString)

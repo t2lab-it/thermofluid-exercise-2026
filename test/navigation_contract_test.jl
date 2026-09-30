@@ -12,7 +12,7 @@ const F03_F04_FORBIDDEN_TERMS = (
     "T" * "BA",
 )
 
-const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07")
+const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08", "N09")
 const REQUIRED_ASSIGNMENT_IDS = Set(REQUIRED_COURSE_ORDER)
 const EXPECTED_PREPARATION_HREFS = Set([
     "setup/index.qmd", "setup/julia.qmd", "setup/git-github.qmd",
@@ -596,7 +596,7 @@ end
 
 @testset "assignment instructions link to the shared workflow" begin
     workflow = normpath(joinpath(NAVIGATION_SITE_ROOT, "guides", "workflow.qmd"))
-    for id in ("F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07")
+    for id in ("F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08", "N09")
         path = joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd")
         targets = qmd_link_targets(read(path, String))
         @test any(target -> normpath(resolve_qmd_target(path, target)) == workflow, targets)
@@ -658,7 +658,7 @@ end
         r"(?m)^\s*julia\s+--project",
         r"(?m)^\s*git\s+(?:switch|pull|status|branch|diff|add|commit|push)\b",
     )
-    for id in ("F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07")
+    for id in ("F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08", "N09")
         source = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
         for pattern in command_patterns
             @test !occursin(pattern, source)
@@ -675,5 +675,16 @@ end
             source=read(joinpath(NAVIGATION_SITE_ROOT,directory,"$id.qmd"),String)
             @test "$other.qmd" in qmd_link_targets(source)
         end
+    end
+end
+
+@testset "N08 and N09 preserve a shared submission and independent classroom check" begin
+    contracts=TOML.parsefile(joinpath(NAVIGATION_SITE_ROOT,"assignments","contracts.toml"))["assignments"]
+    @test contracts["N08"]["start_command"]==contracts["N09"]["start_command"]=="julia --project=. scripts/course.jl start N08-N09"
+    @test endswith(contracts["N08"]["run_path"],"simulate.jl")
+    @test endswith(contracts["N09"]["run_path"],"run.jl")
+    for id in ("N08","N09")
+        page=read(joinpath(NAVIGATION_SITE_ROOT,"assignments",id*".qmd"),String)
+        @test all(occursin(word,page) for word in ("N08-check","自作2群","公式12出力","LETUS","src/N08N09Elliptic.jl"))
     end
 end

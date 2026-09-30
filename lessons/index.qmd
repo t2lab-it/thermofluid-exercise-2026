@@ -15,3 +15,6 @@ title: "授業"
 - [一次元移流拡散](N04.qmd)
 
 - [二次元拡散・移流拡散](N07.qmd)
+
+- [Laplace方程式とJacobi反復](N08.qmd)
+- [Poisson方程式・製造解と発展](N09.qmd)

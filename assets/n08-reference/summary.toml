@@ -1,0 +1,59 @@
+diagnostics_complete = true
+orders_l2 = [2.052768809864365, 2.0263663816718065]
+orders_linf = [1.9939594371808549, 1.998067974278531]
+run_id = "521e897a621c160623854b96edb9b55a"
+schema_version = 1
+source_fields_sha256 = "0396ed8aab720a47ae99a19784142c3c6320415e9b942a0266b55cca53ba5466"
+task_id = "N08"
+
+[cases.n017x013]
+boundary_error = 0.0
+case_id = "laplace_dirichlet"
+dx = 0.125
+dy = 0.08333333333333333
+independent_residual = 6.248654926821473e-10
+iterations = 835
+l2_error = 0.00025851378171298203
+linf_error = 0.0004723317461730048
+nx = 17
+ny = 13
+reason = "converged"
+threshold = 6.377596730369891e-10
+
+[cases.n033x025]
+boundary_error = 0.0
+case_id = "laplace_dirichlet"
+dx = 0.0625
+dy = 0.041666666666666664
+independent_residual = 2.517452912798035e-9
+iterations = 3180
+l2_error = 6.230726884073572e-5
+linf_error = 0.00011857838619055983
+nx = 33
+ny = 25
+reason = "converged"
+threshold = 2.5237912061631606e-9
+
+[cases.n065x049]
+boundary_error = 0.0
+case_id = "laplace_dirichlet"
+dx = 0.03125
+dy = 0.020833333333333332
+independent_residual = 1.0039684639195912e-8
+iterations = 11998
+l2_error = 1.5294724263590158e-5
+linf_error = 2.9684322538692243e-5
+nx = 65
+ny = 49
+reason = "converged"
+threshold = 1.0039718588317037e-8
+
+[conditions]
+atol = 1.0e-10
+boundary = "dirichlet"
+domain = [0.0, 2.0, 0.0, 1.0]
+grid_location = "node"
+maxiter = 200000
+method = "jacobi"
+rtol = 1.0e-12
+units = "1"

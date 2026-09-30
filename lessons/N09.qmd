@@ -1,0 +1,105 @@
+---
+title: "Poisson方程式・製造解と反復法の発展"
+lesson-id: N09
+---
+::: {.course-position}
+第10回・授業 · 内容ID: N09 · 提出単位: N08-N09
+:::
+
+## 生成項の符号 {#poisson}
+
+本課題は$\Delta u=f$に統一します．
+定常熱伝導$\kappa\Delta T+q=0$なら$f=-q/\kappa$です．
+[Laplaceの5点差分](N08.qmd#grid)に生成項を加えると，Jacobi更新は次の式になります．
+
+$$
+\begin{aligned}
+A_x&=(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)})/dx^2,\\
+A_y&=(u_{i,j-1}^{(k)}+u_{i,j+1}^{(k)})/dy^2,\\
+u_{ij}^{(k+1)}&=\frac{A_x+A_y-f_{ij}}{2/dx^2+2/dy^2}.
+\end{aligned}
+$$
+
+更新式では$-f$，残差では$r=f-\Delta_hu$になることを式から説明します．
+`poisson_jacobi_step!`と`poisson_residual!`を実装し，$f=0$でLaplaceの更新・残差と一致することを確かめます．
+
+## 製造解と3格子収束 {#manufactured}
+
+$$
+\begin{aligned}
+V(x,y)&=\sin(\pi x/2)\sin(\pi y),\\
+u_*&=H+V,\\
+f&=-[(\pi/2)^2+\pi^2]V.
+\end{aligned}
+$$
+
+既知の$u_*$を微分して$f$と境界値を作る方法を製造解法と呼びます．
+$V$は全辺で0なので，境界値はLaplaceと同じ$H$です．
+領域，初期推定，節点数，停止基準は[N08](N08.qmd)と同じです．
+必修はLaplace・Poissonの両方で3格子の内部RMS／最大誤差を測り，$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$の両区間が$1.8\le p\le2.2$となることです．
+許容値を10分の1にした解との差が公式RMS誤差の1%以下なら，反復誤差が格子誤差を支配していない証拠になります．
+[実装・保存・提出](../assignments/N09.qmd)では，計算した場から独立に残差を再計算します．
+
+## 発展：混合境界から純Neumannへ {#neumann}
+
+外向き法線微分$g_N=\partial u/\partial n$を指定し，物理的な外向き拡散流束$-\kappa g_N$と区別します．
+辺順はwest，east，south，northで，`bc`の各辺は`(;kind=:dirichletまたは:neumann,values)`です．
+west／eastのvalues長はny，south／northはnxです．
+
+境界を含む節点で，Neumann辺の値も未知として反復します．
+westのゴーストは$u_{0,j}=u_{2,j}+2dx\,g_{N,\mathrm{west},j}$，eastは$u_{nx+1,j}=u_{nx-1,j}+2dx\,g_{N,\mathrm{east},j}$です．
+south／northも同じ外向き符号で消去します．
+Neumann同士の角には両方向のゴースト寄与を使い，Dirichlet辺に接する角は指定値を固定します．
+残差・更新量のnormにはNeumann辺の未知節点も含めます．
+
+最初の混合境界ではwest／eastをDirichlet，south／northをNeumannにし，HとH+Vの非ゼロ法線微分を使います．
+`mixed_laplace_flux`・`mixed_poisson_flux`では非ゼロ流束と角を検証します．
+`mixed_poisson_zero_flux`は$u=x^2,f=2$，west値0，east値4，south／north微分0です．
+ゼロ流束は辺の値を0にする条件ではなく，この辺も$x^2$へ収束します．
+二次式は差分で厳密なので次数判定を課さず，解誤差・独立残差・角を検査します．
+
+次に全辺Neumannへ進み，$u=x^2+2y^2,f=6$の非ゼロ流束と，$u=\cos(\pi x)+0.5\cos(2\pi y)$のゼロ流束を比較します．
+後者の生成項は$f=-\pi^2\cos(\pi x)-2\pi^2\cos(2\pi y)$で，3格子の約2次収束を検証します．
+
+### 可解条件と平均0
+
+$$
+\begin{aligned}
+\int_\Omega f\,d\Omega&=\oint_{\partial\Omega}g_N\,ds,\\
+w_{ij}&=dx\,dy\,a_i b_j.
+\end{aligned}
+$$
+
+$a_i,b_j$は各軸の端だけ1/2，内部は1の台形重みです．
+離散可解条件は$\sum w_{ij}f_{ij}$と4辺の台形流束積分の一致です．
+許容値は`1e-12*max(1,sum(abs,w.*f),各辺のabs流束積分の総和)`です．
+違反は反復・出力前に拒否し，右辺から平均を引いて別問題に変えません．
+純Neumannでは定数を加えても同じ方程式と法線微分を満たすため，初回と各反復後に重み付き平均を引き，平均0を公式の基準にします．
+既知解にも同じ離散平均固定を行います．
+平均固定だけでは交互振動が残るため，$u_{\mathrm{new}}=(1-\omega)u_{\mathrm{old}}+\omega u_{\mathrm{Jacobi}}$，標準$\omega=2/3$の緩和Jacobiを使います．
+入力は$0<\omega<1$です．
+混合境界はDirichlet値が定数自由度を固定するため，平均を引きません．
+
+### DCT-Iのk=0モードと一点固定
+
+境界節点で偶拡張するcosine基底のDCT-Iは，このゴースト消去作用素に対応します．
+[FFTW公式のDCT種別](https://fftw.org/fftw3_doc/Real-even_002fodd-DFTs-_0028cosine_002fsine-transforms_0029.html)では，DCT-Iの対称点が両端の節点にあることを確認できます．
+2次元の定数モードは$(k_x,k_y)=(0,0)$です．
+右辺の同モードが0という可解条件を確認し，解の同モードを0と選ぶことが重み付き平均0に対応します．
+非ゼロ右辺モードを削除すると生成項が変わり，今回の不整合入力の拒否とは異なる問題になります．
+周期FFTをそのままNeumannへ適用せず，非ゼロ法線微分では境界寄与を含む右辺の可解条件が必要です．
+定数零空間と右辺の整合性は[PETSc公式の特異系の説明](https://petsc.org/release/manual/ksp/#solving-singular-systems)も参照できます．
+
+一点固定は$u_{1,1}=0$を選ぶ別の定数基準です．
+既存解から別配列`u_pin=u .- u[1,1]`を作り，既知解も同じ点の値を引きます．
+固定点を含む元の全節点残差，法線微分，定数分を除いた解誤差が平均0の解と一致するか比較します．
+行を一点固定条件に置換する場合も，置換前の可解条件と置換点を含む元の方程式残差が必要です．
+今回は変換ソルバや行置換ソルバを追加せず，配列の定数移動だけで比較します．
+
+## 発展：Gauss–SeidelとSOR {#relaxation}
+
+Gauss–Seidelは走査中の新値を使い，jを外側，iを内側に走査するとwest／southが新値，east／northが旧値です．
+SORはその候補$u_{GS}$から$u\leftarrow(1-\omega)u+\omega u_{GS}$と更新します．
+$\omega=1$はGauss–Seidelと一致し，入力範囲は$0<\omega<2$，比較値は1.5です．
+同じDirichlet Poisson問題・初期場・格子・真の残差停止を使い，反復数，解誤差，コンパイルを除いた実行時間で比較します．
+反復数だけで速度を決めず，初回コンパイルと通常実行を区別します．

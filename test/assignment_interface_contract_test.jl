@@ -6,6 +6,8 @@ isdefined(@__MODULE__, :parse_qmd_document) ||
     include(joinpath(@__DIR__, "support", "qmd_contracts.jl"))
 
 const ASSIGNMENT_IDENTIFIERS = Dict(
+    "N08" => ["apply_dirichlet!","laplace_jacobi_step!","laplace_residual!","residual_converged","src/N08N09Elliptic.jl","exercises/N08-N09_laplace_poisson/simulate.jl","exercises/N08-N09_laplace_poisson/tests.jl"],
+    "N09" => ["poisson_jacobi_step!","poisson_residual!","src/N08N09Elliptic.jl","exercises/N08-N09_laplace_poisson/run.jl","exercises/N08-N09_laplace_poisson/tests.jl"],
     "N07" => ["thermal_stable_timestep", "thermal_fluxes!", "thermal_step!", "burgers_stable_timestep", "burgers_step!", "heat_budget", "src/N07Transport.jl", "exercises/N07_2d_advection_diffusion/run.jl", "exercises/N07_2d_advection_diffusion/analyze.jl", "exercises/N07_2d_advection_diffusion/tests.jl"],
     "N05" => ["periodic_left_index", "periodic_right_index", "linear_flux", "burgers_flux", "validate_buffers", "fit_timestep", "SELECTED_MODEL", "src/ThermofluidExercise.jl", "exercises/N05-N06_common_package_2d_advection/N05.jl", "exercises/N05-N06_common_package_2d_advection/tests.jl"],
     "N06" => ["stable_timestep", "advection_step!", "spatial_variance", "COLORMAP", "COLOR_LIMITS", "DISPLAY_CASE", "src/N06Advection.jl", "exercises/N05-N06_common_package_2d_advection/simulate.jl", "exercises/N05-N06_common_package_2d_advection/analyze.jl", "exercises/N05-N06_common_package_2d_advection/plot.jl", "exercises/N05-N06_common_package_2d_advection/tests.jl"],
