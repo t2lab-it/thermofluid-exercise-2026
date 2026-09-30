@@ -22,30 +22,28 @@ $$
 
 提出単位は`N08-N09`で，1 branch・1 PR・1学習ログを使います．
 [N08授業](../lessons/N08.qmd)と[N09授業](../lessons/N09.qmd)を通して，全辺DirichletのJacobi法でLaplace・Poissonの両方を完成させます．
-課題フォルダは`exercises/N08-N09_laplace_poisson/`です．
+課題フォルダは[`exercises/N08-N09_laplace_poisson/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/exercises/N08-N09_laplace_poisson)です．
 授業内はN08の4関数を実装し，小配列の更新・境界・残差・停止判定を説明できることを目指します．
 Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N09課題](N09.qmd)に従って授業後までに完成させます．
 
 ## 編集先とAPI {#api}
 
-`src/N08N09Elliptic.jl`の`ThermofluidExercise.Elliptic`へ次を実装します．
+[`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L1)へ次を実装します．
 
-```julia
-apply_dirichlet!(u,g)
-laplace_jacobi_step!(u_new,u_old,dx,dy)
-laplace_residual!(r,u,dx,dy)
-residual_converged(rnorm,rinitial;atol=1e-10,rtol=1e-12)
-```
+- [`apply_dirichlet!(u,g)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L28)
+- [`laplace_jacobi_step!(u_new,u_old,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L35)
+- [`laplace_residual!(r,u,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L42)
+- [`residual_converged(rnorm,rinitial;atol=1e-10,rtol=1e-12)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L49)
 
 新場と旧場には別の配列を使います．
-`apply_dirichlet!`は内部の値を保ち，全辺と角へ境界値をコピーします．
+[`apply_dirichlet!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L28)は内部の値を保ち，全辺と角へ境界値をコピーします．
 step／residualは出力配列を返し，残差配列のDirichlet辺は0にします．
-入力検査と，反復を進める`solve_laplace(u0,g,dx,dy)`は提供済みです．
+入力検査と，反復を進める[`solve_laplace(u0,g,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L100)は提供済みです．
 停止基準は[N08授業](../lessons/N08.qmd#residual)を参照します．
 計算結果の`u`，`converged`，`iterations`，`residual_history`，`update_history`，`threshold`を使って解と反復を確認します．
 
-`exercises/N08-N09_laplace_poisson/simulate.jl`は計算，`analyze.jl`は保存場の解析，`plot.jl`は表示，`run.jl`は一括実行です．
-配布済みテストを保持し，`exercises/N08-N09_laplace_poisson/tests.jl`の[自作2群](N09.qmd#student-tests)を完成させます．
+[`exercises/N08-N09_laplace_poisson/simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/simulate.jl)は計算，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/analyze.jl)は保存場の解析，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/plot.jl)は表示，[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/run.jl)は一括実行です．
+配布済みテストを保持し，[`exercises/N08-N09_laplace_poisson/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/tests.jl)の[自作2群](N09.qmd#student-tests)を完成させます．
 予想・式・検証結果・考察は，同じフォルダの`learning_log.md`へ書きます．
 
 ## 授業内のN08-check {#classroom}
