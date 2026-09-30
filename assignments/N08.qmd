@@ -15,12 +15,11 @@ understanding-check-points:
 
 提出単位は`N08-N09`で，1 branch・1 PR・1学習ログを使います．
 [N08授業](../lessons/N08.qmd)と[N09授業](../lessons/N09.qmd)を通して，全辺DirichletのJacobi法でLaplace・Poissonの両方を完成させます．
-[N08課題](N08.qmd)・[N09課題](N09.qmd)は同じ`exercises/N08-N09_laplace_poisson/`を使います．
-授業内はN08の小配列更新・全辺と角・独立残差・残差停止を成功させ，式とコードを説明します．
-Poissonの導入は授業内，全実験・図・収束・自作2群・考察は授業後までに完成させます．
-Neumann・Gauss–Seidel・SORは任意の発展で，必修のテスト・進捗・評価へ混ぜません．
+課題フォルダは`exercises/N08-N09_laplace_poisson/`です．
+授業内はN08の4関数を実装し，小配列の更新・境界・残差・停止判定を説明できることを目指します．
+Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N09課題](N09.qmd)に従って授業後までに完成させます．
 
-## 編集先と固定API {#api}
+## 編集先とAPI {#api}
 
 `src/N08N09Elliptic.jl`の`ThermofluidExercise.Elliptic`へ次を実装します．
 
@@ -31,61 +30,35 @@ laplace_residual!(r,u,dx,dy)
 residual_converged(rnorm,rinitial;atol=1e-10,rtol=1e-12)
 ```
 
-[N08の4関数](N08.qmd#api)と[N09の2関数](N09.qmd#api)が必修の数値TODOです．
-入力は1始まり，各軸3点以上の同形状浮動小数行列，有限な旧場・生成項・境界，非alias配列，有限正のdx・dyです．
-検証は書込み前に行い，出力は全要素を書き終える前にNaNを含んでも構いません．
-step／residualは出力バッファを返し，`apply_dirichlet!`は内部を保ち全辺・角をコピーします．
-Laplace残差は$-\Delta_hu$，Poisson残差は$f-\Delta_hu$で，Dirichlet辺は0です．
+新場と旧場には別の配列を使います．
+`apply_dirichlet!`は内部の値を保ち，全辺と角へ境界値をコピーします．
+step／residualは出力配列を返し，残差配列のDirichlet辺は0にします．
+入力検査と，反復を進める`solve_laplace(u0,g,dx,dy)`は提供済みです．
+停止基準は[N08授業](../lessons/N08.qmd#residual)を参照します．
+計算結果の`u`，`converged`，`iterations`，`residual_history`，`update_history`，`threshold`を使って解と反復を確認します．
 
-提供driverは`solve_laplace(u0,g,dx,dy)`と`solve_poisson(u0,g,f,dx,dy)`です．
-標準は`atol=1e-10,rtol=1e-12,maxiter=200000`で，新場の真の残差から停止し，初回残差0は0反復です．
-戻り値は`(;u,converged,reason,iterations,residual_history,update_history,threshold)`です．
-reasonは`converged`・`maxiter`・`nonfinite`で，最後の有限場を保ちます．
-履歴は反復0を含み，初回更新量は0です．
-
-`exercises/N08-N09_laplace_poisson/simulate.jl`は計算，`analyze.jl`は保存場の独立解析，`plot.jl`は表示，`exercises/N08-N09_laplace_poisson/run.jl`は一括実行です．
-`provided_support.jl`の問題生成・入力検証・I/O・反映処理も読みます．
-`exercises/N08-N09_laplace_poisson/tests.jl`には配布済み必須assertionを保持し，自作2群を完成させます．
-予想・式・根拠・復帰点利用・AI提案の採否を同じフォルダの`learning_log.md`へ書きます．
+`exercises/N08-N09_laplace_poisson/simulate.jl`は計算，`analyze.jl`は保存場の解析，`plot.jl`は表示，`run.jl`は一括実行です．
+配布済みテストを保持し，`exercises/N08-N09_laplace_poisson/tests.jl`の[自作2群](N09.qmd#student-tests)を完成させます．
+予想・式・検証結果・考察は，同じフォルダの`learning_log.md`へ書きます．
 
 ## 授業内のN08-check {#classroom}
 
-[開始と段階別の操作](../guides/workflow.qmd#n08-n09-stages)を使い，授業内には次を実行します．
+[共通の開始手順](../guides/workflow.qmd#n08-n09-stages)で課題を開始し，4関数を実装したら次を実行します．
 
 ```console
 $ julia --project=. exercises/N08-N09_laplace_poisson/tests.jl N08-check
 ```
 
-「N08授業内検証成功」はN08の4関数だけの成功を表します．
-N09・授業後の自作TODO・3格子成果物は要求せず，進捗・ログ・resultsも変更しません．
-これはN08-N09全体の完了判定には使えません．
-引数省略・`all`・進捗runnerからのincludeは，両問題・自作2群・全公式成果物を検査します．
-未実装数値TODOと未記入自作TODOは失敗します．
+「N08授業内検証成功」は，N08の4関数の検証が成功したことを表します．
+提出時には，[N09課題の完了条件](N09.qmd#completion)に沿って両問題・自作2群・公式12出力を`all`で検証します．
 
-## 実験と自作2群
+## Laplaceの実験と参照結果 {#reference-results}
 
 領域`[0,2]×[0,1]`，節点格子`(17,13),(33,25),(65,49)`，内部0・境界既知値の初期場を使います．
-LaplaceのH，PoissonのH+Vと生成項は[公式条件](../lessons/N09.qmd#manufactured)を照合します．
-両問題の内部RMS／最大誤差と境界誤差を分け，$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$の両区間・両normで$1.8\le p\le2.2$を要求します．
-独立残差と停止閾値を照合し，更新量だけの停止を拒否します．
-
-1. 非対称小配列・dx!=dyで両問題の1 sweep，手計算期待値，旧場不変，全辺と角，f=0一致を検査する．
-2. 両問題の残差停止・解析解誤差・3格子の両区間の約2次収束を検査する．
-
-期待値と許容値の根拠を書き，必須テストの削除・無効化，空／恒真の自作テスト，不当に緩い許容値を使いません．
-ソース編集後は[N05 verify→単独テスト→進捗連動テスト](../guides/workflow.qmd#n08-n09-stages)を実行し，元baselineを保ちます．
-
-## 公式12出力 {#reference-results}
-
-`results/N08/`・`results/N09/`にそれぞれ`fields.h5,summary.toml,fields.png,residual.png,convergence.png,plots.toml`を保存します．
-HDF5は3格子の最終場・条件・反復履歴，summaryは独立残差・境界誤差・解析解誤差・次数，plotsは図と入力のhashを持ちます．
-`u[i,j]`はx,y順，外部HDF5のデータ空間はy,x順で，図はxを横軸，yを縦軸にします．
-定常問題なので時刻軸・dtは作りません．
-allでは両HDF5の共通run_idを要求し，単独実行を混ぜた結果はallで揃えます．
-再解析・再作図の前後でfields.h5のSHA-256が変わらないことを確認します．
-古いsummary／図，混在run_id，未収束場は完了扱いしません．
-捕捉可能な失敗では既存公式出力・追加ファイルを保ち，復元失敗時は表示されたバックアップを保存して教員へ相談します．
-追加ファイル・下位フォルダを含めて1ファイル5 MiB，1内容ID10 MiB，全課題100 MiBです．
+[N08授業の既知解H](../lessons/N08.qmd#exact)と数値解を比較し，内部RMS／最大誤差を測ります．
+$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を計算し，両区間・両誤差で$1.8\le p\le2.2$を確認します．
+独立に計算した残差を停止閾値と照合し，境界値も確認します．
+実行コマンドは[段階別実行](../guides/workflow.qmd#n08-n09-stages)，保存形式は[N09の公式出力](N09.qmd#reference-results)を参照します．
 
 ![N08の数値解・既知解・誤差](../assets/n08-reference/fields.png){fig-alt="境界を含む節点格子の数値解と既知解を共通色範囲，誤差をゼロ対称色範囲で比較"}
 
@@ -96,22 +69,9 @@ allでは両HDF5の共通run_idを要求し，単独実行を混ぜた結果はa
 基準の[summary.toml](../assets/n08-reference/summary.toml)と[plots.toml](../assets/n08-reference/plots.toml)を照合します．
 図は[場](../assets/n08-reference/fields.png)・[残差](../assets/n08-reference/residual.png)・[収束](../assets/n08-reference/convergence.png)の単独表示でも確認できます．
 
-## 発展の編集と独立実行
-
-[Neumann二段階の数式](../lessons/N09.qmd#neumann)を読み，`extensions/neumann.jl`の可解条件，重み・平均固定，ゴースト消去，緩和更新と残差を実装します．
-APIは`neumann_jacobi_step!`・`neumann_residual!`・`solve_neumann`で，引数はu／f・dx／dy・bc，標準omega=2/3です．
-`mixed_poisson_zero_flux`はu=x²,f=2で辺の値が0固定されないことを検査します．
-純Neumannの公式解は重み付き平均0とし，別配列の一点固定への定数移動を全節点残差・法線微分・同じゲージの既知解で比較します．
-可解条件違反を右辺変更で隠さず，DCT-Iのk=0は説明に使い，FFT／行置換ソルバは追加しません．
-`extensions/relaxation.jl`では`gauss_seidel_step!`・`sor_step!`を実装し，Poisson問題をomega=1と1.5で比較します．
-[発展の独立コマンド](../guides/workflow.qmd#n08-n09-extensions)でテスト・計算し，出力は`results/N09/extensions/neumann/`・`relaxation/`へ置きます．
-必修6ファイルを上書きせず，発展が未着手でも必修allは成功します．
-
 {{< include /assignments/_understanding-check.qmd >}}
 
-## 完了条件
+## N08-N09の完了条件
 
-- Laplace・Poissonの両方で公式12出力，境界・独立残差・停止・解析解誤差・3格子両区間・来歴・容量を検証する．
-- 配布済み必須テスト・自作2群と進捗runnerの採用契約でテストが成功する．
-- 更新量と残差，生成項の符号，境界，反復誤差と格子誤差を式・コード・結果で説明する．
-- 学習ログを完成し，理解度チェック全文をLETUSへ提出する．
+両問題の実装・検証・提出は，[N09課題の完了条件](N09.qmd#completion)にまとめています．
+N08とN09それぞれの理解度チェック全文をLETUSへ提出します．
