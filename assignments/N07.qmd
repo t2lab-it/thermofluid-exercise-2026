@@ -17,6 +17,26 @@ understanding-check-points:
 
 提出単位は`N07`で，1 branch・1 PR・1学習ログを使います．
 `N05-N06`を完了し，[N07授業](../lessons/N07.qmd)の温度境界条件・熱収支・二成分Burgersを実装します．
+
+温度輸送では，次の移流拡散方程式に取り組みます．
+移流のみでは$\kappa=0$，拡散のみでは$\boldsymbol c=\boldsymbol 0$とします．
+
+$$
+\begin{aligned}
+\frac{\partial T}{\partial t}+\nabla\cdot\boldsymbol J&=0,\\
+\boldsymbol J&=\boldsymbol cT-\kappa\nabla T.
+\end{aligned}
+$$
+
+二成分Burgersでは，次の二つの方程式を同時に進めます．
+
+$$
+\begin{aligned}
+u_t+u u_x+v u_y&=\nu(u_{xx}+u_{yy}),\\
+v_t+u v_x+v v_y&=\nu(v_{xx}+v_{yy}).
+\end{aligned}
+$$
+
 **固定温度・断熱，移流・拡散・移流拡散，開いた系の移流と拡散を合わせた熱収支，二成分Burgersをすべて必修**とします．
 授業内の最低到達点は，開境界1ステップの流入・流出・壁熱流束を説明して熱収支を照合し，小配列でBurgersの二成分同時更新と風上方向を確認することです．
 全実験・収束・作図・自作テスト・考察は授業後までに完成させます．

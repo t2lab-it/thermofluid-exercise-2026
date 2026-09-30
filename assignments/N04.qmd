@@ -16,6 +16,20 @@ understanding-check-points:
 ## 選択して取り組む課題
 
 [N04の問題・標準条件](../lessons/N04.qmd#problem-setup)について，線形または非線形を選択します．
+
+取り組む方程式は，一次元の移流拡散方程式です．
+
+$$
+\begin{gathered}
+\frac{\partial u}{\partial t}+\frac{\partial f(u)}{\partial x}
+=D\frac{\partial^2 u}{\partial x^2},\\
+f(u)=\begin{cases}
+cu & (\text{線形}),\\
+u^2/2 & (\text{非線形}).
+\end{cases}
+\end{gathered}
+$$
+
 **選択したモデルだけで必修を完了できます．**
 どちらも周期境界，3条件比較，保存，解析解による精度・格子収束が必修です．
 N03完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課題ID`N04`を指定します．

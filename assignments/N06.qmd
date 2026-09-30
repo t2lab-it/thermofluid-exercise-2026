@@ -18,6 +18,12 @@ understanding-check-points:
 提出単位: `N05-N06`．
 [N05課題](N05.qmd)と同じbranch・PR・学習ログを使います．
 [N06授業の公式条件](../lessons/N06.qmd#problem-setup)で，定速度の二次元線形移流・両方向周期境界を実装します．
+
+$$
+\frac{\partial u}{\partial t}+c_x\frac{\partial u}{\partial x}
++c_y\frac{\partial u}{\partial y}=0.
+$$
+
 **保存量・解析解誤差・3格子の収束，空間分散の再解析と表示設定の再作図までが必修です．**
 授業内は非正方の小配列で1ステップを実行し，授業後に公式3格子と考察まで完成させます．
 

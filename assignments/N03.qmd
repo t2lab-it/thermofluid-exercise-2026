@@ -14,6 +14,12 @@ understanding-check-points:
 
 ## 取り組む課題
 
+取り組む方程式は，一次元の熱拡散方程式です．
+
+$$
+\frac{\partial u}{\partial t}=D\frac{\partial^2 u}{\partial x^2}.
+$$
+
 [N03の問題・標準条件](../lessons/N03.qmd#problem-setup)を実装し，固定温度と断熱の結果を比較します．
 N02完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課題ID`N03`を指定します．
 

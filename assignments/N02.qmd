@@ -16,6 +16,13 @@ understanding-check-points:
 
 [N02授業](../lessons/N02.qmd)の内容を使って，以下に取り組みます．
 
+取り組む方程式は，保存形の非粘性Burgers方程式です．
+
+$$
+\frac{\partial u}{\partial t}+\frac{\partial f(u)}{\partial x}=0,
+\qquad f(u)=\frac{u^2}{2}.
+$$
+
 [授業で定義した問題・標準条件](../lessons/N02.qmd#problem-setup)を実装し，固定・周期境界の数値結果を比較します．
 
 ## 編集する3ファイルと実装3箇所
