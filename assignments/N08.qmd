@@ -26,6 +26,8 @@ $$
 授業内はN08の4関数を実装し，小配列の更新・境界・残差・停止判定を説明できることを目指します．
 Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N09課題](N09.qmd)に従って授業後までに完成させます．
 
+{{< include /assignments/_elliptic-formulation.qmd >}}
+
 ## 編集先とAPI {#api}
 
 [`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L1)へ次を実装します．
@@ -39,7 +41,7 @@ Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N
 [`apply_dirichlet!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L28)は内部の値を保ち，全辺と角へ境界値をコピーします．
 step／residualは出力配列を返し，残差配列のDirichlet辺は0にします．
 入力検査と，反復を進める[`solve_laplace(u0,g,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L100)は提供済みです．
-停止基準は[N08授業](../lessons/N08.qmd#residual)を参照します．
+停止基準は上の[停止条件](#standard-conditions)を使います．
 計算結果の`u`，`converged`，`iterations`，`residual_history`，`update_history`，`threshold`を使って解と反復を確認します．
 
 [`exercises/N08-N09_laplace_poisson/simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/simulate.jl)は計算，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/analyze.jl)は保存場の解析，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/plot.jl)は表示，[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/run.jl)は一括実行です．
@@ -60,7 +62,7 @@ $ julia --project=. exercises/N08-N09_laplace_poisson/tests.jl N08-check
 ## Laplaceの実験と参照結果 {#reference-results}
 
 領域`[0,2]×[0,1]`，節点格子`(17,13),(33,25),(65,49)`，内部0・境界既知値の初期場を使います．
-[N08授業の既知解H](../lessons/N08.qmd#exact)と数値解を比較し，内部RMS／最大誤差を測ります．
+[上の既知解$H$](#problem-setup)と数値解を比較し，内部RMS／最大誤差を測ります．
 $p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を計算し，両区間・両誤差で$1.8\le p\le2.2$を確認します．
 独立に計算した残差を停止閾値と照合し，境界値も確認します．
 実行コマンドは[段階別実行](../guides/workflow.qmd#n08-n09-stages)，保存形式は[N09の公式出力](N09.qmd#reference-results)を参照します．
