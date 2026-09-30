@@ -43,6 +43,23 @@ N01〜N03の不安定条件の観察経路と，N04の合成安定条件違反�
 旧入口の関数名・引数・返却フィールド・出力名を保ち，N04の[`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N04_advection_diffusion/run.jl#L4)を課題側から明示的に渡します．
 初期条件・実験条件・診断・描画を各課題へ残し，更新処理を共通側へ委譲してください．
 
+## 共通関数の定式化 {#discretization}
+
+周期配列では，左隣は$i=1$で$n$，それ以外は$i-1$，右隣は$i=n$で1，それ以外は$i+1$です．
+線形流束は$f(u)=cu$，Burgers流束は$f(u)=u^2/2$とします．
+入力$u,c$は有限な実数で，Burgers流束は負値も受け付けます．
+`fit_timestep(dt_max,t_final)`は有限な正の入力から次の組を返します．
+
+$$
+\begin{gathered}
+N_t=\max\left(1,\left\lceil\frac{t_f}{\Delta t_{\max}}\right\rceil\right),\\
+\Delta t=\frac{t_f}{N_t}.
+\end{gathered}
+$$
+
+戻り値は`(;steps=N_t,dt=Δt)`で，`steps`は整数，`dt`は有限正の`Float64`です．
+N05では新しい方程式・領域・初期境界条件を追加せず，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](N03.qmd#problem-setup)・[N04](N04.qmd#problem-setup)の定式化と公式条件を維持します．
+
 ## 抽出前の記録と抽出後の検証
 
 [段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)に従って，**コードを変更する前にbaselineを取得**します．

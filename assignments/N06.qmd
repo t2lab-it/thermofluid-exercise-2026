@@ -17,7 +17,7 @@ understanding-check-points:
 
 提出単位: `N05-N06`．
 [N05課題](N05.qmd)と同じbranch・PR・学習ログを使います．
-[N06授業の公式条件](../lessons/N06.qmd#problem-setup)で，定速度の二次元線形移流・両方向周期境界を実装します．
+[下の公式条件](#problem-setup)で，定速度の二次元線形移流・両方向周期境界を実装します．
 
 $$
 \frac{\partial u}{\partial t}+c_x\frac{\partial u}{\partial x}
@@ -26,6 +26,66 @@ $$
 
 **保存量・解析解誤差・3格子の収束，空間分散の再解析と表示設定の再作図までが必修です．**
 授業内は非正方の小配列で1ステップを実行し，授業後に公式3格子と考察まで完成させます．
+
+## 問題設定と標準条件 {#problem-setup}
+
+未知量$u$，座標$x,y$，時刻$t$は無次元量です．
+領域は$[0,L_x)\times[0,L_y)$，$L_x=2$，$L_y=1$，速度は$(c_x,c_y)=(1,0.5)$です．
+両方向を周期境界とし，$u(x+L_x,y,t)=u(x,y,t)$，$u(x,y+L_y,t)=u(x,y,t)$を課します．
+格子は$(n_x,n_y)=(40,30),(80,60),(160,120)$で，両方向とも周期端を重複しません．
+$\Delta x=L_x/n_x$，$\Delta y=L_y/n_y$，$x_i=(i-1)\Delta x$，$y_j=(j-1)\Delta y$とし，`u[i,j]`は$(x_i,y_j)$の値です．
+初期条件は次式です．
+
+$$
+\begin{aligned}
+u_0(x,y)&=1+0.2\sin(\pi x)\\
+&\quad+0.3\cos(2\pi y)\\
+&\quad+0.1\sin(\pi x+2\pi y).
+\end{aligned}
+$$
+
+解析解は$u_*(x,y,t)=u_0(x-c_xt,y-c_yt)$で，初期場を周期的に平行移動した値です．
+最終時刻は1，保存時刻は$0,0.25,0.5,0.75,1$，作図の代表格子は$(80,60)$とします．
+
+### 離散化と時間刻み {#discretization}
+
+$i_-,j_-$は各軸の周期左隣（先頭では各軸の末尾）です．
+速度は非負として，全点を同じ旧配列から二方向上流差分＋前進Eulerで更新します．
+
+$$
+\begin{gathered}
+C_x=\frac{c_x\Delta t}{\Delta x},\qquad C_y=\frac{c_y\Delta t}{\Delta y},\\
+\begin{aligned}
+u_{ij}^{n+1}&=u_{ij}^n\\
+&\quad-C_x(u_{ij}^n-u_{i_-,j}^n)\\
+&\quad-C_y(u_{ij}^n-u_{i,j_-}^n).
+\end{aligned}
+\end{gathered}
+$$
+
+安定条件は$C_x+C_y\le1$です．
+$s=0.8$として$\Delta t_{\max}=s/(c_x/\Delta x+c_y/\Delta y)$を使います．
+保存時刻間の長さ$\tau$ごとに$N=\lceil\tau/\Delta t_{\max}\rceil$，$\Delta t=\tau/N$とし，保存時刻へ一致させます．
+保存する場は更新バッファからコピーして保持します．
+
+### 保存量・誤差・分散
+
+$M=n_xn_y$，$e_{ij}=u_{ij}-u_*(x_i,y_j,t)$とします．
+格子収束には最終時刻のRMS型L2誤差を使います．
+
+$$
+\begin{aligned}
+I_h&=\Delta x\Delta y\sum_{i,j}u_{ij},\\
+\bar u&=\frac1M\sum_{i,j}u_{ij},\\
+E_2&=\sqrt{\frac1M\sum_{i,j}e_{ij}^2},\\
+E_\infty&=\max_{i,j}|e_{ij}|,\\
+\operatorname{Var}(u)&=\frac1M\sum_{i,j}(u_{ij}-\bar u)^2.
+\end{aligned}
+$$
+
+周期積分$I_h$の初期値は2で，全時刻で保存されます．
+分散は標本分散の補正をせず，保存時刻の各場から再計算します．
+両格子区間の観測次数は$p=\log_2(E_{2,\mathrm{coarse}}/E_{2,\mathrm{fine}})$です．
 
 ## 編集対象
 
