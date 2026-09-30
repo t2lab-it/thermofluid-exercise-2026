@@ -48,7 +48,7 @@ $$
 $T$は体積熱容量を1とした無次元温度，$u,v$は無次元速度で，座標と時刻も無次元です．
 領域は$[0,2]\times[0,1]$，セル中心格子を使います．
 $\Delta x=2/n_x$，$\Delta y=1/n_y$，$x_i=(i-1/2)\Delta x$，$y_j=(j-1/2)\Delta y$で，場の配列軸は`[i,j]`すなわちx,y順です．
-境界上に場の節点を置かず，境界面までの距離は半セルです．
+境界面と隣接セル中心の距離は半セルです．
 最終時刻は1，保存時刻は$0,0.25,0.5,0.75,1$です．
 
 温度の初期場を$F(x,y)$，$S(x,y)$として定義します．
@@ -130,7 +130,6 @@ $$
 \end{aligned}
 $$
 
-係数$\lambda_T=0$の入力から安定刻みを求めることはできません．
 更新の安定条件は$\Delta t\lambda_T\le1$です．
 
 #### 辺別熱輸送と熱収支 {#heat-budget}
@@ -228,8 +227,8 @@ $M=n_xn_y$として，温度誤差は$E_T=\sqrt{\sum(T-T_*)^2/M}$，Burgers誤�
 
 ### 入力・戻り値の契約 {#input-contract}
 
-刻み関数は有限正の`Float64`を返します．
-`bc=(;west,east,south,north)`の各辺は`(;kind::Symbol,value::Float64)`で，値不要の境界は`value=0.0`です．
+刻み関数は正の`Float64`を返します．
+`bc=(;west,east,south,north)`の各辺は`(;kind::Symbol,value::Float64)`で，`periodic`・`insulated`・`outflow`では`value=0.0`です．
 `periodic`，`dirichlet`，`insulated`，左`inflow`，右`outflow`の組合せ検証は提供されます．
 流束は`(;adv_x,diff_x,adv_y,diff_y)`で，x面は`(nx+1,ny)`，y面は`(nx,ny+1)`です．
 正x・正y方向の移流／拡散流束を全要素に書き，`fluxes`を返します．
@@ -237,12 +236,11 @@ $M=n_xn_y$として，温度誤差は$E_T=\sqrt{\sum(T-T_*)^2/M}$，Burgers誤�
 `boundary_rates`の`advective`と`diffusive`はそれぞれ`(;west,east,south,north)`で，辺長で積分した**内向き正**のレートです．
 Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`を返します．
 
-入力は1始まりの浮動小数行列，各軸3以上，有限な旧値，同形状で，新旧バッファは非aliasです．
-係数は有限，`kappa,nu>=0`，格子幅は正，`0<safety<=1`です．
-形状・alias・係数・安定条件の検証は提供コードで行います．
+入力は1始まりで各軸3点以上の浮動小数行列とし，新旧バッファは同形状の独立した配列を使います．
+`kappa,nu>=0`，格子幅は正，`0<safety<=1`とします．
 
-時刻は0始まりの有限・狭義増加列で2点以上，`heat`は同じ長さの有限列です．
-積分入力は`(4,nt-1)`の有限配列，辺順はwest，east，south，northです．
+時刻は0始まりの狭義増加列で，`heat`は同じ長さの列です．
+積分入力は`(4,nt-1)`の配列，辺順はwest，east，south，northです．
 戻り値は`(;net_input,cumulative_input,residual)`で，長さは順に`nt-1,nt,nt`です．
 後二つの先頭は0で，`residual`は[上の熱収支残差](#heat-budget)です．
 

@@ -5,8 +5,8 @@ understanding-check-points:
   - "配列の要素とインデックス，eachindexを使うループ"
   - "平均と偏差を入力契約を持つ関数として実装すること"
   - "手計算できる具体例と，偏差の総和がほぼ0になる数学的性質を別々にテストすること"
-  - "浮動小数点数を完全一致ではなく適切な許容誤差で比較すること"
-  - "関数が入力配列を変更していないことをテストすること"
+  - "浮動小数点数を適切な許容誤差で比較すること"
+  - "関数の呼び出し前後で入力配列の値が保たれることをテストすること"
 ---
 ::: {.course-position}
 第3回・課題 2/2 · 課題ID: F02
@@ -31,11 +31,11 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 本課題では，関数の入力と出力の間に以下の契約を課します．
 
-- `values`は空でない実数の一次元配列とする．
-- すべての値が有限，つまり`NaN`でも`Inf`でもないことを確認する．
+- `values`は1要素以上の実数の一次元配列とする．
+- すべての値が有限であることを確認する．
 - 整数，`Float32`，その他の実数型を含む`AbstractVector`で意味のある結果を返す．
-- [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)は入力と同じ長さの新しい配列を返し，入力を変更しない．
-- 不正な入力は明示的に拒否する．
+- [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)は入力と同じ長さの新しい配列を返し，入力の値を保持する．
+- 入力条件を満たさない場合はエラーにする．
 
 ## 学生リポジトリ内の場所
 
@@ -84,5 +84,5 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 - [理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，学習ログに提出状況を記録した．
 - 二つの固定APIが入力契約を守る．
 - 配布済み必須テストと，上の観点から選んだ自作テストが通る．
-- 偏差の性質と入力非変更を説明できる．
+- 偏差の性質と入力値の保持を説明できる．
 - 共通ワークフローの[学習ログ，diff，commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)までを完了した．

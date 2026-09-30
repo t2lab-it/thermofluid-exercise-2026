@@ -34,7 +34,7 @@ $$
 未知量$u$，座標$x,y$，時刻$t$は無次元量です．
 領域は$[0,L_x)\times[0,L_y)$，$L_x=2$，$L_y=1$，速度は$(c_x,c_y)=(1,0.5)$です．
 両方向を周期境界とし，$u(x+L_x,y,t)=u(x,y,t)$，$u(x,y+L_y,t)=u(x,y,t)$を課します．
-格子は$(n_x,n_y)=(40,30),(80,60),(160,120)$で，両方向とも周期端を重複しません．
+格子は$(n_x,n_y)=(40,30),(80,60),(160,120)$です．
 $\Delta x=L_x/n_x$，$\Delta y=L_y/n_y$，$x_i=(i-1)\Delta x$，$y_j=(j-1)\Delta y$とし，`u[i,j]`は$(x_i,y_j)$の値です．
 初期条件は次式です．
 
@@ -86,7 +86,7 @@ E_\infty&=\max_{i,j}|e_{ij}|,\\
 $$
 
 周期積分$I_h$の初期値は2で，全時刻で保存されます．
-分散は標本分散の補正をせず，保存時刻の各場から再計算します．
+分散は上の定義式を使い，保存時刻の各場から再計算します．
 両格子区間の観測次数は$p=\log_2(E_{2,\mathrm{coarse}}/E_{2,\mathrm{fine}})$です．
 
 #### 保存量・収束の判定条件 {#standard-conditions}
@@ -96,13 +96,12 @@ $$
 
 #### 入力・戻り値の契約 {#input-contract}
 
-[`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L11-L20)は合成CFLから有限な正の`Float64`を返します．
+[`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L11-L20)は合成CFLから正の`Float64`を返します．
 速度は非負で少なくとも一方が正，格子幅は正，`0 < safety <= 1`とします．
 [`advection_step!(u_new,u_old,dt,dx,dy; cx=1.0,cy=0.5)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/N06Advection.jl#L21-L32)は上の更新式を使い，新配列を返します．
 旧・新配列は独立した記憶領域を使い，合成CFLを検証してから新配列へ結果を書き込みます．
-片方向速度0を扱い，両速度0の1ステップは旧値をコピーします．
 
-[`spatial_variance(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/analyze.jl#L3-L7)は各保存時刻の空間分散を，有限な非負の`Float64`で返します．
+[`spatial_variance(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/analyze.jl#L3-L7)は各保存時刻の空間分散を`Float64`で返します．
 
 ## 編集対象
 
@@ -133,14 +132,13 @@ $$
 一括入口[`exercises/N05-N06_common_package_2d_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/exercises/N05-N06_common_package_2d_advection/run.jl)はN05回帰確認とN06の全段階を実行します．
 
 [課題単独と進捗連動のテスト](../guides/workflow.qmd#tests)を実行します．
-配布済みテストは非対称な1ステップ，周期端・角，旧配列不変・非alias，定数場，片方向速度0，合成CFL，保存時刻と出力の整合を確認します．
+配布済みテストは非対称な1ステップ，周期端・角，旧配列の値の保持・新旧配列の独立性，定数場，片方向速度0，合成CFL，保存時刻と出力の整合を確認します．
 自作するテストは次の2件です．
 
 - 非対称な非定数場を複数ステップ更新し，独立に計算した初期積分の保存を検証する．
 - [公式の格子収束条件](#standard-conditions)を満たすことを検証する．
 
-[冒頭の保存量・収束の判定条件](#standard-conditions)に従い，許容誤差の根拠を説明します．
-期待値・許容誤差の根拠と，検出できる誤り・検出できない誤りをログへ残します．
+[冒頭の保存量・収束の判定条件](#standard-conditions)に従い，期待値・許容誤差の根拠と検証範囲・限界をログへ残します．
 過去課題のテストも継続し，N05-N06のテストは一つの提出単位として1回実行されます．
 
 ## 公式出力と比較 {#reference-results}

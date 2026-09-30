@@ -24,8 +24,8 @@ PRの確認・mergeはN05とN06の完了条件を満たしてから行います�
 
 周期配列では，左隣は$i=1$で$n$，それ以外は$i-1$，右隣は$i=n$で1，それ以外は$i+1$です．
 [`linear_flux(u,speed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L13-L16)は$f(u)=cu$，[`burgers_flux(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L18-L21)は$f(u)=u^2/2$を返します．
-入力$u,c$は有限な実数で，Burgers流束は負値も受け付けます．
-[`fit_timestep(dt_max,t_final)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L28-L31)は有限な正の入力から次の組を返します．
+入力$u,c$は実数とします．
+[`fit_timestep(dt_max,t_final)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L28-L31)は正の入力から次の組を返します．
 
 $$
 \begin{gathered}
@@ -34,17 +34,14 @@ N_t=\max\left(1,\left\lceil\frac{t_f}{\Delta t_{\max}}\right\rceil\right),\\
 \end{gathered}
 $$
 
-戻り値は`(;steps=N_t,dt=Δt)`で，`steps`は整数，`dt`は有限正の`Float64`です．
-N05では新しい方程式・領域・初期境界条件を追加せず，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](N03.qmd#problem-setup)・[N04](N04.qmd#problem-setup)の定式化と公式条件を維持します．
+戻り値は`(;steps=N_t,dt=Δt)`で，`steps`は整数，`dt`は正の`Float64`です．
+N05では，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](N03.qmd#problem-setup)・[N04](N04.qmd#problem-setup)の定式化と公式条件を維持して更新処理を共通化します．
 
-[`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L3-L6)・[`periodic_right_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L8-L11)は`1 <= i <= n`の整数を受け付け，`Bool`は拒否します．
-[`validate_buffers(u_new,u_old)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L23-L26)は同形状，1始まり，各軸3点以上，浮動小数，非alias，有限な旧値を要求します．
-新配列は未初期化でも使えるようにします．
+[`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L3-L6)・[`periodic_right_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L8-L11)は`1 <= i <= n`の整数を受け付けます．
+[`validate_buffers(u_new,u_old)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L23-L26)は，同形状で独立した浮動小数配列を検証します．
+添字は1始まり，各軸3点以上とします．
 
 比較はキー・形状・整数・モデルの一致と，浮動小数の`rtol=1e-12, atol=1e-13`を要求します．
-
-N01の境界処理は，従来どおり2点以上の配列を扱います．
-N01〜N03の不安定条件の観察経路と，N04の合成安定条件違反の拒否を残します．
 
 ## 編集対象と契約
 
@@ -68,7 +65,7 @@ N01〜N03の不安定条件の観察経路と，N04の合成安定条件違反�
 ## 抽出前の記録と抽出後の検証
 
 [段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)に従って，**コードを変更する前にbaselineを取得**します．
-抽出対象と変化しないはずの挙動を予想し，N04選択と基準取得時のcommitをログへ記録します．
+抽出対象と抽出前後で維持する挙動を予想し，N04選択と基準取得時のcommitをログへ記録します．
 抽出後はF01〜N04の既存テストとN05の比較を実行し，diffと結果を照合します．
 
 N05の提出物は`results/N05/baseline.toml`と`results/N05/regression.toml`です．
