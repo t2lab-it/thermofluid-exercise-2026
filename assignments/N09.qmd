@@ -15,6 +15,15 @@ understanding-check-points:
 
 [N08](N08.qmd)と同じ提出単位`N08-N09`・課題フォルダ`exercises/N08-N09_laplace_poisson/`を使います．
 全辺DirichletのJacobi法でPoissonを実装し，Laplace・Poissonの両方の実験と検証を完成させます．
+
+取り組む方程式は，生成項$f$を持つ二次元のPoisson方程式です．
+$f=0$の場合はLaplace方程式になります．
+
+$$
+\Delta u=\frac{\partial^2 u}{\partial x^2}
++\frac{\partial^2 u}{\partial y^2}=f.
+$$
+
 授業内の検証は[N08-check](N08.qmd#classroom)，提出前の検証は`all`です．
 
 ## 編集先とAPI {#api}

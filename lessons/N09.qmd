@@ -8,7 +8,14 @@ lesson-id: N09
 
 ## 生成項の符号 {#poisson}
 
-本課題は$\Delta u=f$に統一します．
+取り組む方程式は，生成項$f$を持つ二次元のPoisson方程式です．
+本課題では，生成項の符号を次の形に統一します．
+
+$$
+\Delta u=\frac{\partial^2 u}{\partial x^2}
++\frac{\partial^2 u}{\partial y^2}=f.
+$$
+
 定常熱伝導$\kappa\Delta T+q=0$なら$f=-q/\kappa$です．
 [Laplaceの5点差分](N08.qmd#grid)に生成項を加えると，Jacobi更新は次の式になります．
 

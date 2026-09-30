@@ -14,6 +14,13 @@ lesson-id: N08
 全辺の値を指定するDirichlet境界条件を必修とし，法線微分を指定するNeumann境界条件は[発展](N09.qmd#neumann)で扱います．
 実装先と授業内の検証は[N08課題](../assignments/N08.qmd)，生成項への拡張は[N09授業](N09.qmd)へ進みます．
 
+取り組む方程式は，二次元のLaplace方程式です．
+
+$$
+\Delta u=\frac{\partial^2 u}{\partial x^2}
++\frac{\partial^2 u}{\partial y^2}=0.
+$$
+
 ## 節点格子と5点差分 {#grid}
 
 領域は$[0,2]\times[0,1]$で，全量を無次元とします．

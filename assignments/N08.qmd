@@ -13,6 +13,13 @@ understanding-check-points:
 
 ## 必修と授業内の到達点
 
+N08で取り組む方程式は，二次元のLaplace方程式です．
+
+$$
+\Delta u=\frac{\partial^2 u}{\partial x^2}
++\frac{\partial^2 u}{\partial y^2}=0.
+$$
+
 提出単位は`N08-N09`で，1 branch・1 PR・1学習ログを使います．
 [N08授業](../lessons/N08.qmd)と[N09授業](../lessons/N09.qmd)を通して，全辺DirichletのJacobi法でLaplace・Poissonの両方を完成させます．
 課題フォルダは`exercises/N08-N09_laplace_poisson/`です．
