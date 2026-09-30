@@ -153,6 +153,26 @@ F02も既習なら，F02の課題branchで進捗変更を同様にcommit・ロ�
 | `exercises/<課題フォルダ>/learning_log.md` | 学習ログ |
 : {tbl-colwidths="[28, 72]"}
 
+### 実装のTODO {#implementation-todos}
+
+課題ページに従って`run.jl`，`src/`，`analyze.jl`，発展の`extensions/`を開き，`TODO(課題ID)`を検索します．
+学生が実装する箇所は，次の形で示しています．
+
+```julia
+# TODO(N08): 指定された境界値を各辺へ書き込む。
+error("未実装 N08: apply_dirichlet!")
+```
+
+`error(...)`を，課題の入力・更新・戻り値の契約を満たす自分の処理へ置き換えてください．
+有効な入力で「未実装」と表示されたときは，その関数の実装箇所を確認します．
+未実装の関数を呼ぶと実行は失敗し，計算結果として利用できません．
+提供済みの入力検証や境界処理と，`STUDENT_BEGIN/END`・`TODO_BEGIN/END`の編集マーカーは保ちます．
+`include`やimportだけでは計算・保存を行わないため，未着手課題のTODOを先に完成させる必要はありません．
+
+N04では選択した流束と，刻み・更新の共通2箇所を完成させ，他方の流束は未実装のまま必修を完了できます．
+N08/N09の発展課題も，必修とは別に取り組む実装箇所です．
+N06の分散だけは`nothing`を返す例外であり，[段階別実行](#n05-n06-stages)の手順で基本解析から分散を含む解析へ進めます．
+
 実装したコードを動かすときは，学生リポジトリのルートから次を実行します．
 
 ~~~console
@@ -177,6 +197,7 @@ Test Summary: | Pass  Total  Time
 テスト結果の読み方は[警告とエラー](testing.qmd#test-results)を参照してください．
 
 未記入の`@test false`を，課題に合った入力・期待値・判定を持つテストへ置き換えてください．
+`TODO(必須)`と`TODO(自作)`の両方を確認し，各課題が求めるテスト数と判定基準を保って記入します．
 具体例，数学的性質，入力契約，失敗条件などの選び方と数値検証の詳しい説明は[テストと数値検証](testing.qmd#exercise-tests)を参照してください．
 
 ### 課題単独のテスト
@@ -329,6 +350,9 @@ N06の数値更新ができたら，計算と基本解析を別々に実行し�
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/simulate.jl
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/analyze.jl
 ~~~
+
+`spatial_variance`が`nothing`を返す間も基本解析は成功しますが，`summary.toml`には分散を保存せず，`diagnostics_complete=false`を記録します．
+この段階では作図と必修完了検査が未完成を拒否するため，基本解析の成功だけで必修完了とはしません．
 
 `analyze.jl`の`spatial_variance`を完成させ，同じHDF5から再解析します．
 その後`plot.jl`の表示設定を変え，再作図します．
