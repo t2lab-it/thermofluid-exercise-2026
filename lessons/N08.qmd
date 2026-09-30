@@ -45,13 +45,13 @@ u_{ij}^{(k+1)}&=\frac{A_x+A_y}{2/dx^2+2/dy^2}.
 $$
 
 新旧配列を分け，同じ旧場から全内部点を更新してから配列を交換します．
-`laplace_jacobi_step!`にこの対応を実装し，`apply_dirichlet!`で全辺・角を固定します．
+[`laplace_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L35)にこの対応を実装し，[`apply_dirichlet!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L28)で全辺・角を固定します．
 初期推定は内部0，境界は既知解の値です．
 
 ## 残差と停止判定 {#residual}
 
 残差は$r=f-\Delta_hu$で，Laplaceでは$r=-\Delta_hu$です．
-`laplace_residual!`は新場の内部残差を計算し，Dirichlet辺では0を記録します．
+[`laplace_residual!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L42)は新場の内部残差を計算し，Dirichlet辺では0を記録します．
 $\|r\|_\infty$と初回残差$r_0$から，次の条件を判定します．
 
 $$

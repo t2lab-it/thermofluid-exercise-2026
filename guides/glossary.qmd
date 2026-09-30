@@ -209,7 +209,7 @@ GitHub CLIの`gh`は別のコマンド体系で，[発展資料](../advanced/git
 | ローカル | 自分のPC上の手元環境．push前のテストとdiff確認をここで行う． |
 | WSL2・Remote - WSL | Windows上でLinux環境を使う仕組みと，その環境をVS Codeから開くための拡張機能．授業ではWSL2内のリポジトリでJulia・Gitを実行する． |
 | ターミナル・シェル | ターミナルは文字で入出力する画面，シェルはそこでコマンドを解釈・実行するプログラム．Julia REPLとは入力する言語が異なる． |
-| CLI | コマンドを文字で入力して操作するインターフェース．GitHub CLIの`gh`と，授業の`scripts/course.jl`は別の道具． |
+| CLI | コマンドを文字で入力して操作するインターフェース．GitHub CLIの`gh`と，授業の[`scripts/course.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/scripts/course.jl)は別の道具． |
 | REPL | 入力したJulia式をその場で評価する対話環境．`julia>`は入力待ちの表示で，コードの一部ではない． |
 | 作業ディレクトリ・ルートディレクトリ | 作業ディレクトリはコマンドを実行している場所．リポジトリのルートはその最上位で，授業の多くのコマンドはここから実行する． |
 | Juliaup | Juliaの導入と使用するバージョンの管理に使うツール． |
