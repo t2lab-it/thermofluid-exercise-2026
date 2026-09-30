@@ -121,7 +121,7 @@ Expression: false
 ~~~console
 $ julia --project=. scripts/course.jl status
 現在の提出単位: F01
-完了済み: F00
+通過済み: F00
 （課題ページ・実行方法などの表示は省略）
 
 $ git status --short
@@ -144,7 +144,7 @@ main
 - VS CodeとJulia拡張機能を使える（WindowsではRemote - WSL接続）．
 - 学生リポジトリをブラウザで閲覧できる．
 - 標準または指定された一つの代替エージェントで，ファイル編集とコマンド実行を確認した．
-- preflight が成功し，進捗の完了済み課題が F00，現在課題が F01 になる．
+- preflight が成功し，進捗の通過済み単位が F00，現在課題が F01 になる．
 
 ## 失敗時の対応 {#失敗したとき}
 

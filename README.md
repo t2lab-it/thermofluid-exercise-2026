@@ -1,10 +1,10 @@
 # 熱流体力学演習（2026）公開教材
 
-2026年度「熱流体力学演習」の公開Quarto教材サイトです。
+2026年度「熱流体力学演習」の公開Quarto教材サイトです．
 
 公開URL: <https://t2lab-it.github.io/thermofluid-exercise-2026/>
 
-学生向けの課題開始，テスト，学習ログ，PR，mergeの手順は[課題ワークフロー](guides/workflow.qmd)を正本として確認してください。
+学生向けの課題開始，テスト，学習ログ，PR，mergeの手順は[課題ワークフロー](guides/workflow.qmd)を正本として確認してください．
 
 ## 必要なローカル環境
 
@@ -12,8 +12,8 @@
 - Quarto 1.9.31
 - Git
 
-WindowsではWSL2 Ubuntu 24.04 LTSのLinux側，macOSではnative macOS，Linuxではnative Linuxを対象にします。
-WSL2ではリポジトリをLinux側のホームディレクトリへcloneします。
+WindowsではWSL2 Ubuntu 24.04 LTSのLinux側，macOSではnative macOS，Linuxではnative Linuxを対象にします．
+WSL2ではリポジトリをLinux側のホームディレクトリへcloneします．
 
 ## バージョン確認
 
@@ -22,39 +22,39 @@ julia --version
 quarto --version
 ```
 
-JuliaとQuartoの表示がそれぞれ`1.13.0`、`1.9.31`であることを確認します。
+JuliaとQuartoの表示がそれぞれ`1.13.0`，`1.9.31`であることを確認します．
 
 ## レンダリング
 
-リポジトリのルートで次を実行します。
+リポジトリのルートで次を実行します．
 
 ```bash
 env QUARTO_JULIA_PROJECT=. quarto render
 ```
 
-生成物は`_site/`へ出力されます。
-`_quarto.yml`はJuliaエンジンを明示します。
-Juliaの実行は、教員用のリリース予行演習が一時Quartoプロジェクトで検証します。
+生成物は`_site/`へ出力されます．
+`_quarto.yml`はJuliaエンジンを明示します．
+Juliaの実行は，教員用のリリース予行演習が一時Quartoプロジェクトで検証します．
 
-現在の公開ページには実行用のJuliaセルがなく、サイトのテストもJulia標準ライブラリだけを使います。
-そのため、通常のレンダリングとテストでは`Pkg.instantiate()`は不要です。
-GitHub Pagesのビルドでも依存パッケージのインストールとキャッシュを省き、全テストと全ページのレンダリングを実行します。
+現在の公開ページには実行用のJuliaセルがなく，サイトのテストもJulia標準ライブラリだけを使います．
+そのため，通常のレンダリングとテストでは`Pkg.instantiate()`は不要です．
+GitHub Pagesのビルドでも依存パッケージのインストールとキャッシュを省き，全テストと全ページのレンダリングを実行します．
 
-ページ単位の表示確認には、対象を指定できます。
+ページ単位の表示確認には，対象を指定できます．
 
 ```bash
 env QUARTO_JULIA_PROJECT=. quarto render lessons/N01.qmd
 ```
 
-サイト全体の確認や公開前には、対象を指定せず全ページをレンダリングします。
+サイト全体の確認や公開前には，対象を指定せず全ページをレンダリングします．
 
-数値計算や実行用のJuliaセルを扱う作業では、依存環境を初期化します。
+数値計算や実行用のJuliaセルを扱う作業では，依存環境を初期化します．
 
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
-公開ページに実行用のJuliaセルを追加する場合は、GitHub Pagesのビルドにも依存環境の初期化を追加してください。
+公開ページに実行用のJuliaセルを追加する場合は，GitHub Pagesのビルドにも依存環境の初期化を追加してください．
 
 ## テスト
 
@@ -67,17 +67,18 @@ julia --project=. scripts/verify_contracts.jl \
   /absolute/path/to/thermofluid-exercise-student-2026
 ```
 
-契約検証には公開教材リポジトリと学生リポジトリのルートディレクトリを明示的に渡します。
+契約検証には公開教材リポジトリと学生リポジトリのルートディレクトリを明示的に渡します．
 
 ## 学生・プロジェクトリポジトリの公開契約
 
-学生用テンプレートは公開済みです。
-個人課題用は学生が公開テンプレートの `Use this template` で自分のアカウントに作成し、SSHでcloneします。
-作成するリポジトリは公開します。
-LMSの成績・出欠・個別フィードバックなどの非公開データはGitに置きません。
+学生用配布リポジトリは公開済みです．
+学生が空の公開個人リポジトリを作成し，学生用配布リポジトリをSSHで通常cloneして履歴を保持します．
+配布元remoteを`upstream`へ変更し，個人remoteを`origin`として登録して初回pushします．
+作成するリポジトリは公開します．
+LMSの成績・出欠・個別フィードバックなどの非公開データはGitに置きません．
 
-最終プロジェクトは学生自身が公開リポジトリを作成し、AIと協働して必要な環境を整えます。
-[環境構築とコード移行](guides/final-project-handoff.qmd)を参照してください。
+最終プロジェクトは学生自身が公開リポジトリを作成し，AIと協働して必要な環境を整えます．
+[環境構築とコード移行](guides/final-project-handoff.qmd)を参照してください．
 ## ライセンス
 
 Copyright © 2026 荒木 亮（ARAKI, Ryo）
@@ -85,7 +86,7 @@ Copyright © 2026 荒木 亮（ARAKI, Ryo）
 - 教材本文・図: CC BY 4.0
 - コード: MIT License
 
-詳細は[LICENSE.md](LICENSE.md)を参照してください。
+詳細は[LICENSE.md](LICENSE.md)を参照してください．
 
 ## 実行例の書き方
 

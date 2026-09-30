@@ -38,7 +38,7 @@ title: "リンク集"
 
 - Scott Chacon・Ben Straub, [Pro Git](https://git-scm.com/book/ja/v2/%E4%BD%BF%E3%81%84%E5%A7%8B%E3%82%81%E3%82%8B-Git%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB), 第2版, Apress, 2014（Gitのインストール）.
 - [アカウント作成手順](https://docs.github.com/ja/get-started/start-your-journey/creating-an-account-on-github)
-- [GitHubのテンプレートとforkの違い](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)
+- [GitHubの新しいリポジトリ作成](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)
 - [Gitのmergeオプションと中止方法](https://git-scm.com/docs/git-merge)
 
 #### SSH接続

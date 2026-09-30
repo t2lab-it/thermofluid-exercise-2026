@@ -59,7 +59,7 @@ $ git status --short
 （変更があれば状態とパスを表示．変更がなければ出力なし）
 
 $ git diff -- course_progress.toml
-（F00完了による現在課題・完了済み課題の変更が表示されます）
+（F00完了による現在課題・通過済みの提出単位の変更が表示されます）
 
 $ git branch --show-current
 （現在のbranch名．開始前・merge後は main，作業中は課題branch）
@@ -75,7 +75,8 @@ exercise/F01-first-pull-request
 
 ### F02以降：更新済みのmainからの開始 {#f02以降更新済みのmainから開始する}
 
-F02以降は，前の課題をGitHubでmergeしたクリーンな`main`から開始します．
+F02以降は，通常は前の課題をGitHubでmergeしたクリーンな`main`から開始します．
+再準備して既習課題を通過する場合は，[既習課題の進め方](#previous-exercises)に沿ってローカルでmergeします．
 
 ~~~console
 $ git switch main
@@ -98,6 +99,47 @@ main
 $ julia --project=. scripts/course.jl start TASK_ID
 （指定した課題のbranch作成と開始のメッセージ，課題ページ・実行方法などを表示）
 ~~~
+
+`start`は過去課題と現在課題のテスト失敗を警告として表示し，次の提出単位へ進めます．
+提出単位の順に，一課題ずつ進めてください．
+
+## 作業環境を再準備したときの既習課題 {#previous-exercises}
+
+元の作業環境と成果を保管します．
+[Git・GitHubの準備](../setup/git-github.qmd)に沿って別の空リポジトリと別のローカルディレクトリを用意し，新環境でもF00の確認を完了します．
+F01のbranchを手動で作成し，進捗の変更をcommitしてローカルの`main`へmergeします．
+既習課題はこの進捗記録と`start`で順に通過します．
+
+~~~console
+$ git switch -c exercise/F01-first-pull-request
+Switched to a new branch 'exercise/F01-first-pull-request'
+
+$ git diff -- course_progress.toml
+（F00の確認による進捗変更を表示）
+
+$ git add course_progress.toml
+（成功時は出力なし）
+
+$ git commit -m "Record F00 environment check"
+（commit結果を表示）
+
+$ git switch main
+Switched to branch 'main'
+
+$ git merge --ff-only exercise/F01-first-pull-request
+（Fast-forwardと変更一覧を表示）
+
+$ julia --project=. scripts/course.jl start F02
+（F01の未実装などは警告を表示し，F02のbranchを作成）
+~~~
+
+F02も既習なら，F02の課題branchで進捗変更を同様にcommit・ローカルmergeし，`start F03-F04`へ進みます．
+各段階で`status`とdiffを確認し，一課題ずつ進めてください．
+新たに取り組む課題では，通常の実装・テスト・学習ログ・push・PRへ戻ります．
+後続課題で使うコードは，保管した自分の実装から移すか，新たに実装します．
+
+`completed`と「通過済み」は進捗の記録です．
+課題の完了は，各課題ページの完了条件で確認してください．
 
 ## 通常の課題作業 {#exercise-work}
 
@@ -123,7 +165,7 @@ $ julia --project=. exercises/<課題フォルダ>/run.jl
 ### 自作テストの場所と書き方
 
 入力，関数呼び出し，期待値または判定基準をもつ自作テストを，各課題の`exercises/<課題フォルダ>/tests.jl`に書きます．
-課題が`course_progress.toml`の現在課題または完了済み課題になってから，次のコマンドがその課題の`tests.jl`を実行するようになります．
+課題が`course_progress.toml`の現在課題または通過済みの提出単位になってから，次のコマンドがその課題の`tests.jl`を実行するようになります．
 
 ~~~console
 $ julia --project=. -e 'using Pkg; Pkg.test()'
@@ -131,6 +173,8 @@ $ julia --project=. -e 'using Pkg; Pkg.test()'
 Test Summary: | Pass  Total  Time
 （テスト名・成功件数・実行時間を表示）
 ~~~
+
+テスト結果の読み方は[警告とエラー](testing.qmd#test-results)を参照してください．
 
 未記入の`@test false`を，課題に合った入力・期待値・判定を持つテストへ置き換えてください．
 具体例，数学的性質，入力契約，失敗条件などの選び方と数値検証の詳しい説明は[テストと数値検証](testing.qmd#exercise-tests)を参照してください．
@@ -218,8 +262,8 @@ GitHub Actionsが成功することを確認してください．
 
 Actionsが成功した後，GitHubの`Files changed`を読んで以下を確認します．
 
-- 課題の必須ファイルだけが含まれている（秘密情報や不要な（個人）情報がない）．
-- 配布済み必須テストを削除・無効化せず，課題で指定された必須TODOを省略せずに記入した．
+- 提出ファイルが課題の指定と一致している．
+- 配布済み必須テストを保持し，課題で指定された必須TODOを記入した．
 - 自作テストに判定基準と許容誤差の根拠がある．
 - 実装，テスト，公式出力，学習ログ，PR本文の説明が一致している．
 
@@ -341,3 +385,9 @@ $ julia --project=. scripts/course.jl check-results
 ~~~console
 $ julia --project=. -e 'using SHA; for name in ("temperature.h5", "burgers.h5"); path=joinpath("exercises", "N07_2d_advection_diffusion", "results", name); println(name, " ", bytes2hex(sha256(read(path)))); end'
 ~~~
+
+## 配布教材の更新 {#material-updates}
+
+教員から更新案内があったら，[コマンド一覧の配布更新手順](commands.qmd#material-updates)に従います．
+クリーンな`main`から更新branchを作り，`upstream/main`を通常のmergeで取り込んで確認します．
+更新用PRは**Create a merge commit**で統合し，配布元のcommitを個人リポジトリの祖先として保持します．
