@@ -13,5 +13,5 @@ task_id = "N08"
 
 [png_sha256]
 "convergence.png" = "7e1816fa47cf5a1adb22c8a649d70dcea14bfbe2020978c197bbae34df6611ae"
-"fields.png" = "f0ef2f0f1017083734ffbb3422cf9bcdbf9b391e05ffe9e595c2763ddc976c88"
+"fields.png" = "c47d924782c6ad6be3582f0023bf361d9980dfc783798fe29582f1a1e9aba523"
 "residual.png" = "6b512be89611c379507268312b587e771a109c2d85ec48ac9eac8b0b01b935d2"
