@@ -10,16 +10,13 @@ title: "WaterLily.jlによる円柱まわり流れ"
 直径 $D$ の二次元円柱へ速度 $U_\infty$ の一様流が当たり，動粘性係数を $\nu$ とします．
 支配方程式と`WaterLily.jl`の境界データ埋め込み法（BDIM）は[CFDソルバ in Julia](../../advanced/public-solver-methods.qmd#埋め込み境界法と非圧縮性流れ)で確認できます．
 標準比較の主要パラメータは
-
 $$
 \mathrm{Re}_D=\frac{U_\infty D}{\nu}
 $$
-
 です．
 Reynolds数だけを変える比較では，$U_\infty$，$D$，円柱位置，$D/\Delta x$，$D$で無次元化した計算領域，外側境界条件，初期条件，浮動小数点型，時間積分設定，過渡除外とsamplingの規則を固定し，$\nu$だけを変えます．
 
 二次元の単位spanあたりの全流体力を $(F_x,F_y)$ とすると，抗力・揚力係数とStrouhal数を
-
 $$
 \begin{aligned}
 C_D &= \frac{F_x}{\tfrac12\rho U_\infty^2D},\\
@@ -27,7 +24,6 @@ C_L &= \frac{F_y}{\tfrac12\rho U_\infty^2D},\\
 \mathrm{St} &= \frac{f_sD}{U_\infty}
 \end{aligned}
 $$
-
 と定義します．
 `WaterLily.jl`は密度で規格化した圧力を使うため，実装では固定したpackage版の公式APIと同じ規格化になっているかを確認します．
 平均抗力 $\overline{C_D}$ に加えて，揚力変動は $C_{L,\mathrm{rms}}=\sqrt{\overline{(C_L-\overline{C_L})^2}}$ を標準にし，半peak-to-peak振幅を使う場合は別の量として明記します．

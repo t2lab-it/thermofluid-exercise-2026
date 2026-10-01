@@ -8,17 +8,15 @@ lesson-id: N09
 
 ## 生成項の符号 {#poisson}
 
-取り組む方程式は，生成項$f$を持つ二次元のPoisson方程式です．
-本課題では，生成項の符号を次の形に統一します．
-
+本課題では，生成項の符号を統一し，取り組む方程式を生成項$f$を持つ二次元のPoisson方程式
 $$
 \Delta u=\frac{\partial^2 u}{\partial x^2}
-+\frac{\partial^2 u}{\partial y^2}=f.
++\frac{\partial^2 u}{\partial y^2}=f
 $$
+とします．
 
 定常熱伝導$\kappa\Delta T+q=0$なら$f=-q/\kappa$です．
-[Laplaceの5点差分](N08.qmd#grid)に生成項を加えると，Jacobi更新は次の式になります．
-
+[Laplaceの5点差分](N08.qmd#grid)に生成項を加えると，Jacobi更新は
 $$
 \begin{aligned}
 A_x&=(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)})/dx^2,\\
@@ -32,6 +30,7 @@ $$
 
 ## 製造解と3格子収束 {#manufactured}
 
+製造解と対応する生成項は
 $$
 \begin{aligned}
 V(x,y)&=\sin(\pi x/2)\sin(\pi y),\\
@@ -70,6 +69,7 @@ Neumann同士の角には両方向のゴースト寄与を使い，Dirichlet辺�
 
 ### 可解条件と平均0
 
+台形重みと重み付き平均は
 $$
 \begin{aligned}
 \int_\Omega f\,d\Omega&=\oint_{\partial\Omega}g_N\,ds,\\

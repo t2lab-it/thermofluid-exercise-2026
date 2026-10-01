@@ -10,18 +10,14 @@ GPUは多数の要素へ同じ計算を並列に適用できますが，小さ�
 GPU移植では，同じ数値問題を解くCPU経路とGPU経路を比較します．
 CPU版とGPU版でalgorithm，離散化，境界条件，初期条件，停止条件，浮動小数点精度，出力を固定し，格子点数，time step数，反復数などから仕事量 $W$ を定義します．
 選んだ処理と同じ範囲のCPU時間を $T_\mathrm{CPU,kernel}$，GPU上のkernel時間を $T_\mathrm{GPU,kernel}$ とすると，kernelのspeedupは
-
 $$
 S_\mathrm{kernel}=\frac{T_\mathrm{CPU,kernel}}{T_\mathrm{GPU,kernel}}
 $$
-
 です．
 一方，実際の利用判断には，同じ範囲についてhostからdeviceへの入力転送，GPU計算，必要な出力のhostへの回収を含む $T_\mathrm{GPU,e2e}$ と，対応するCPU時間 $T_\mathrm{CPU,scope}$ から
-
 $$
 S_\mathrm{e2e}=\frac{T_\mathrm{CPU,scope}}{T_\mathrm{GPU,e2e}}
 $$
-
 を求めます．
 speedupは，仕事量と測定範囲を揃えて計算します．
 

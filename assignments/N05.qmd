@@ -25,14 +25,14 @@ PRの確認・mergeはN05とN06の完了条件を満たしてから行います�
 周期配列では，左隣は$i=1$で$n$，それ以外は$i-1$，右隣は$i=n$で1，それ以外は$i+1$です．
 [`linear_flux(u,speed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L13-L16)は$f(u)=cu$，[`burgers_flux(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L18-L21)は$f(u)=u^2/2$を返します．
 入力$u,c$は実数とします．
-[`fit_timestep(dt_max,t_final)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L28-L31)は正の入力から次の組を返します．
-
+[`fit_timestep(dt_max,t_final)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/92a01c541f9c7579a77a65429d4662dfa7c84d17/src/ThermofluidExercise.jl#L28-L31)は正の入力から次の組
 $$
 \begin{gathered}
 N_t=\max\left(1,\left\lceil\frac{t_f}{\Delta t_{\max}}\right\rceil\right),\\
-\Delta t=\frac{t_f}{N_t}.
+\Delta t=\frac{t_f}{N_t}
 \end{gathered}
 $$
+を返します．
 
 戻り値は`(;steps=N_t,dt=Δt)`で，`steps`は整数，`dt`は正の`Float64`です．
 N05では，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](N03.qmd#problem-setup)・[N04](N04.qmd#problem-setup)の定式化と公式条件を維持して更新処理を共通化します．

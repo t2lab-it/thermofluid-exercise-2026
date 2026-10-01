@@ -10,7 +10,6 @@ title: "温度場からの熱源位置・強度推定"
 
 標準モデルは，幅 $L_x\times L_y$ の矩形領域 $\Omega$ における，一定の熱伝導率 $k$ と定温境界 $T_b$ をもつ二次元定常熱伝導です．
 温度を $T(x,y)$，単位体積当たりの発熱を $s(x,y;\boldsymbol{\theta})$ とすると，順問題は
-
 $$
 \begin{aligned}
 -\nabla\cdot(k\nabla T)
@@ -20,7 +19,6 @@ T&=T_b
 &&\text{on }\partial\Omega
 \end{aligned}
 $$
-
 です．
 ここで $k$ の単位は $\mathrm{W\,m^{-1}\,K^{-1}}$，$T$ の単位は $\mathrm{K}$，$s$ の単位は $\mathrm{W\,m^{-3}}$ です．
 標準ルートでは領域，$k$，$T_b$，境界条件を固定し，対流，放射，温度依存物性を含めません．
@@ -28,15 +26,12 @@ $$
 熱源の中心を $\boldsymbol{x}_0=(x_0,y_0)$，固定する幅を $\sigma$ とします．
 位置 $\boldsymbol{x}=(x,y)$ から中心までの距離の二乗は，$r^2=\lVert\boldsymbol{x}-\boldsymbol{x}_0\rVert^2=(x-x_0)^2+(y-y_0)^2$ です．
 未正規化のGaussianを
-
 $$
 G_\sigma
 =\exp\!\left(-\frac{r^2}{2\sigma^2}\right)
 $$
-
 と置きます．
 領域内で積分すると1になる分布 $g_\sigma$ は
-
 $$
 \begin{aligned}
 Z_\sigma
@@ -45,37 +40,30 @@ g_\sigma
 &=\frac{G_\sigma}{Z_\sigma}
 \end{aligned}
 $$
-
 です．
 $s=Q g_\sigma$ とすれば，$Q=\int_\Omega s\,\mathrm{d}\Omega$ は二次元モデルの単位厚さ当たりの総発熱であり，単位は $\mathrm{W\,m^{-1}}$ です．
 未知量は
-
 $$
 \boldsymbol{\theta}=(x_0,y_0,Q)
 $$
-
 の三つです．
 $Q$ をGaussianの最大値として定義する方法もありますが，両者を混ぜないでください．
 標準ルートでは $Q$ を上の積分値，$\sigma$ と探索可能な $(x_0,y_0,Q)$ の範囲を固定し，同じ定義を合成データ生成と推定に使います．
 [DOLFINxのPoisson公式例](https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_poisson.html)では，Poisson方程式，Dirichlet・Neumann境界，Gaussian型ソース項の具体例を確認できます．
 
 センサー位置を $\boldsymbol{s}_i=(x_i,y_i)$，合成真値を $\boldsymbol{\theta}^*$ とすると，観測モデルは
-
 $$
 d_i=T_{\mathrm{gen}}(\boldsymbol{s}_i;\boldsymbol{\theta}^*)+\varepsilon_i
 $$
-
 です．
 $T_{\mathrm{gen}}$ はデータ生成用の格子と順モデルによる温度，$\varepsilon_i$ は記録した規則で加える観測ノイズです．
 センサーは推定用集合 $\mathcal{I}_{\mathrm{fit}}$ と検証用集合 $\mathcal{I}_{\mathrm{val}}$ に推定前に分け，推定格子上の温度 $T_h$ に対して
-
 $$
 J(\boldsymbol{\theta})
 =\frac{1}{|\mathcal{I}_{\mathrm{fit}}|}
 \sum_{i\in\mathcal{I}_{\mathrm{fit}}}
 \left[T_h(\boldsymbol{s}_i;\boldsymbol{\theta})-d_i\right]^2
 $$
-
 を小さくする $\widehat{\boldsymbol{\theta}}$ を探します．
 位置誤差 $e_{\mathrm{pos}}=\sqrt{(\hat x_0-x_0^*)^2+(\hat y_0-y_0^*)^2}$，相対強度誤差 $e_Q=|\hat Q-Q^*|/|Q^*|$，推定用・検証用それぞれの温度RMSEを分けて報告します．
 温度場誤差も使う場合は，推定に使っていない共通の評価点とノルムを先に決めます．
@@ -126,7 +114,6 @@ $g_\sigma$ を領域内で正規化して同じ $Q$ を保つことで，境界�
 
 順ソルバの外部基準には製造解を使えます．
 たとえば
-
 $$
 \begin{aligned}
 \phi(x,y)
@@ -136,9 +123,7 @@ T_{\mathrm{m}}(x,y)
 &=T_b+\Delta T_{\mathrm{m}}\,\phi(x,y)
 \end{aligned}
 $$
-
 を正解とすれば，境界で $T_{\mathrm{m}}=T_b$ となり，対応する発熱は
-
 $$
 \begin{aligned}
 s_{\mathrm{m}}(x,y)
@@ -148,7 +133,6 @@ s_{\mathrm{m}}(x,y)
 \phi(x,y)
 \end{aligned}
 $$
-
 です．
 仮定した解を方程式へ代入してソース項を作り，格子を変えて誤差を測る手順は，[MOOSEのMethod of Manufactured Solutions公式資料](https://mooseframework.inl.gov/moose/getting_started/examples_and_tutorials/tutorial03_verification/step04_mms.html)で確認できます．
 期待する収束次数と許容誤差は，採用した離散化と誤差ノルムを根拠に定めます．

@@ -7,28 +7,26 @@ Laplace／Poisson方程式の離散化で現れる線形系は，格子を細か
 
 ## 現象と問いの案
 
-単位正方形 $\Omega=(0,1)^2$ で，まず次の問題を標準モデルにします．
-
+単位正方形 $\Omega=(0,1)^2$ で，まず次の問題
 $$
 -\nabla^2 u=f \quad \text{in }\Omega,
 \qquad
-u=g \quad \text{on }\partial\Omega.
+u=g \quad \text{on }\partial\Omega
 $$
+を標準モデルにします．
 
 内部格子点の未知数だけを $\boldsymbol{x}$ に並べ，Dirichlet境界の寄与を右辺へ移すと，5点差分から $A\boldsymbol{x}=\boldsymbol{b}$ を得ます．
 $-\nabla^2$ の符号を使ったこの構成では，$A$ は対称正定値（SPD）になるためCGを適用できます．
 境界点を未知数に残して行だけを単位行へ置き換える実装は対称性を壊すことがあるので，離散化とDirichlet処理を固定した後にSPDを確認してから比較へ進みます．
 
 各手法で初期値 $\boldsymbol{x}_0$ を揃え，solverが報告する値とは別に
-
 $$
 \begin{aligned}
 \boldsymbol{r}_k &= \boldsymbol{b}-A\boldsymbol{x}_k, \\
 \tau &= \max\!\left(\mathrm{atol},\mathrm{rtol}\lVert\boldsymbol{r}_0\rVert_2\right), \\
-\lVert\boldsymbol{r}_k\rVert_2 &\leq \tau.
+\lVert\boldsymbol{r}_k\rVert_2 &\leq \tau
 \end{aligned}
 $$
-
 を共通の停止契約にします．
 $\boldsymbol{r}_0=\boldsymbol{0}$ なら初期値で収束済みです．
 反復回数だけでなく，再計算した真の残差，製造解または小規模の直接解に対する解誤差，前処理構築を含むsetup time，solve time，両者の和であるtotal time，memoryを分けて記録します．

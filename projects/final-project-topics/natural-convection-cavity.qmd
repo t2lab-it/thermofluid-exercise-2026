@@ -10,11 +10,9 @@ Boussinesq近似を用いた二次元ソルバを自作し，自己整合性とd
 一辺 $L$ の正方形を，左下を原点とする無次元座標 $0\le x,y\le1$ で表します．
 左壁を高温 $T_h$，右壁を低温 $T_c$，上下壁を断熱とし，全壁に滑りなし条件を課します．
 温度を $\theta=(T-T_c)/(T_h-T_c)$，速度を熱拡散速度 $\alpha/L$ で無次元化すると，定常Boussinesq方程式の一例は
-
 $$
 \nabla\cdot\boldsymbol{u}=0,
 $$
-
 $$
 (\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
 =-\nabla p+\mathrm{Pr}\,\nabla^2\boldsymbol{u}
@@ -22,20 +20,16 @@ $$
 \qquad
 \boldsymbol{u}\cdot\nabla\theta=\nabla^2\theta
 $$
-
 です．
 ここで $\boldsymbol{u}=(u,v)$，$\alpha$ は熱拡散率，$\nu$ は動粘性係数，$g$ は重力加速度，$\beta$ は体膨張係数で，
-
 $$
 \mathrm{Pr}=\frac{\nu}{\alpha},
 \qquad
 \mathrm{Ra}=\frac{g\beta(T_h-T_c)L^3}{\nu\alpha}
 $$
-
 です．
 圧力や速度の無次元化を変えると式中の係数配置も変わるため，採用した式と尺度を実装・発表で明記してください．
 境界条件は
-
 $$
 \boldsymbol{u}=\boldsymbol{0}\quad\text{（全壁）},
 \qquad
@@ -46,13 +40,11 @@ $$
 \frac{\partial\theta}{\partial y}(x,0)
 =\frac{\partial\theta}{\partial y}(x,1)=0
 $$
-
 です．
 標準ルートでは空気に対応する $\mathrm{Pr}=0.71$ を固定し，$\mathrm{Ra}=10^3,10^4$ を比較します．
 格子数 $N$ は境界を含む各方向の節点数とし，$h=1/(N-1)$，$N=65,129$ の二格子を使います．
 
 高温壁の局所Nusselt数と壁面平均値は，たとえば
-
 $$
 \mathrm{Nu}_{\mathrm{local}}(y)
 =-\left.\frac{\partial\theta}{\partial x}\right|_{x=0},
@@ -60,7 +52,6 @@ $$
 \overline{\mathrm{Nu}}_h
 =\int_0^1\mathrm{Nu}_{\mathrm{local}}(y)\,dy
 $$
-
 で定義できます．
 低温壁でも正の熱流束になる符号で $\overline{\mathrm{Nu}}_c$ を求め，両壁の差を熱収支として確認します．
 比較表や図には，どちらの壁を使った値か，両壁の平均か，積分と壁面勾配の離散化を明記してください．

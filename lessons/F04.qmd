@@ -17,19 +17,18 @@ title: "数値微分と格子収束"
 厳密な導関数は $f'(x)=e^x(\sin(x)+\cos(x))$ です．
 刻み幅は $h=0.2,0.1,0.05,0.025$ とし，半分にするごとの誤差の減り方を比較します．
 
-三次元では，次の滑らかな場について[F03の四公式](F03.qmd)の残差を調べます．
-
+三次元では，次の滑らかな場
 $$
 \phi(x,y,z)=\sin(x)\cos(y)e^z,
 $$
-
 $$
 \boldsymbol{A}=\begin{pmatrix}
 \sin(y)e^{2z}+e^x\\
 \sin(z)e^{2x}+e^y\\
 \sin(x)e^{2y}+e^z
-\end{pmatrix}.
+\end{pmatrix}
 $$
+について[F03の四公式](F03.qmd)の残差を調べます．
 
 領域は $[-1,1]^3$，各方向の格子点数は $n=9,17$，格子間隔は $h=2/(n-1)$ とします．
 外側の差分に両隣の値が必要なため，内部格子点で評価します．
@@ -39,15 +38,12 @@ $$
 ## Taylor展開と前進差分
 
 十分滑らかな一変数関数について，
-
 $$
 f(x+h)=f(x)+h f'(x)+\frac{h^2}{2}f''(x)
 +\frac{h^3}{6}f'''(x)+\frac{h^4}{24}f''''(x)+O(h^5)
 $$
-
 です．
 両辺から $f(x)$ を引いて $h$ で割ると，
-
 $$
 \frac{f(x+h)-f(x)}{h}
 =f'(x)+\frac{h}{2}f''(x)+O(h^2).
@@ -58,14 +54,11 @@ $$
 ## 後退差分
 
 同様に
-
 $$
 f(x-h)=f(x)-h f'(x)+\frac{h^2}{2}f''(x)
 -\frac{h^3}{6}f'''(x)+\frac{h^4}{24}f''''(x)+O(h^5)
 $$
-
 なので，
-
 $$
 \frac{f(x)-f(x-h)}{h}
 =f'(x)-\frac{h}{2}f''(x)+O(h^2).
@@ -77,37 +70,30 @@ $$
 
 $f(x+h)$ の展開から $f(x-h)$ の展開を引くと，偶数次の項が相殺されます．
 4次の項は明示的に
-
 $$
 \frac{h^4}{24}f''''(x)-\frac{h^4}{24}f''''(x)=0
 $$
-
 となるため，
-
 $$
 f(x+h)-f(x-h)
 =2h f'(x)+\frac{h^3}{3}f'''(x)+O(h^5).
 $$
 
 よって
-
 $$
 \frac{f(x+h)-f(x-h)}{2h}
-=f'(x)+\frac{h^2}{6}f'''(x)+O(h^4),
+=f'(x)+\frac{h^2}{6}f'''(x)+O(h^4)
 $$
-
 となり，中心差分は二次精度です．
 
 ## 誤差比と観測次数
 
 刻み幅 $h$ の差分近似を $D_h f(x)$ と書き，厳密な導関数との差の絶対値 $E(h)=\lvert D_h f(x)-f'(x)\rvert\ge 0$ を誤差とします．
 $E(h)>0$ かつ $E(h/2)>0$ のとき，誤差比と観測次数を
-
 $$
 R(h)=\frac{E(h)}{E(h/2)},\qquad
 p_{\mathrm{obs}}=\log_2\!\left(\frac{E(h)}{E(h/2)}\right)
 $$
-
 と定義します．
 $E(h)\approx C h^p$ の領域では $R(h)\approx 2^p$，$p_{\mathrm{obs}}\approx p$ です．
 したがって一次精度では比が約2，二次精度では約4になります．
@@ -115,22 +101,18 @@ $E(h)\approx C h^p$ の領域では $R(h)\approx 2^p$，$p_{\mathrm{obs}}\approx
 ## 四公式の数値残差
 
 中心差分を各座標方向の偏微分に使った演算子を $\nabla_h$ と書くと，数値残差は
-
 $$
 \boldsymbol{r}_1=\nabla_h\times(\nabla\phi),\qquad
 r_2=\nabla_h\cdot(\nabla\times\boldsymbol{A}),
 $$
-
 $$
 r_3=\nabla_h\cdot(\phi\boldsymbol{A})
 -\left(\boldsymbol{A}\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol{A}\right),
 $$
-
 $$
 \boldsymbol{r}_4=\nabla_h\times(\nabla\times\boldsymbol{A})
 -\left(\nabla(\nabla\cdot\boldsymbol{A})-\nabla^2\boldsymbol{A}\right)
 $$
-
 です．
 $r_3$ は積の場 $\phi\boldsymbol{A}$ の発散を中心差分で求め，右辺は解析的に評価します．
 それ以外は内側の $\nabla\phi$，$\nabla\times\boldsymbol{A}$ を解析的に与え，外側だけを中心差分で近似します．

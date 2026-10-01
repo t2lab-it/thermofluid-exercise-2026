@@ -9,17 +9,14 @@ title: "湿潤床ダム崩壊"
 
 基準モデルは，水平・摩擦なしの一次元浅水方程式です．
 水深を $h\ [\mathrm{m}]$，深さ平均流速を $u\ [\mathrm{m\,s^{-1}}]$，単位幅流量を $q=hu\ [\mathrm{m^2\,s^{-1}}]$，重力加速度を $g\ [\mathrm{m\,s^{-2}}]$ とすると，質量と運動量の保存則は
-
 $$
 \frac{\partial h}{\partial t}+\frac{\partial (hu)}{\partial x}=0,
 \qquad
 \frac{\partial (hu)}{\partial t}
 +\frac{\partial}{\partial x}\left(hu^2+\frac12gh^2\right)=0
 $$
-
 です．
 ダム位置を $x_0$ とし，初期条件を
-
 $$
 h(x,0)=
 \begin{cases}
@@ -30,7 +27,6 @@ h_R,&x>x_0,
 u(x,0)=0,
 \qquad h_L>h_R>0
 $$
-
 とします．
 $h_R>0$ が湿潤床条件です．
 標準ケースは $g=9.81\ \mathrm{m\,s^{-2}}$，$-5\le x\le5\ \mathrm{m}$，$x_0=0$，$h_L=1.0\ \mathrm{m}$，$h_R=0.1\ \mathrm{m}$，終了時刻 $t=0.5\ \mathrm{s}$，透過境界です．
@@ -38,12 +34,10 @@ $h_R>0$ が湿潤床条件です．
 
 このRiemann問題のStoker解は，左状態，左向き希薄波，一定の中間状態，右向き衝撃波，右状態の順に並びます．
 中間水深 $h_m$ は
-
 $$
 2\left(\sqrt{gh_L}-\sqrt{gh_m}\right)
 =(h_m-h_R)\sqrt{\frac{g(h_m+h_R)}{2h_mh_R}}
 $$
-
 を満たし，標準ケースでは $h_m=0.3961748167994429\ \mathrm{m}$，$u_m=2.3213549956407444\ \mathrm{m\,s^{-1}}$ です．
 $t=0.5\ \mathrm{s}$ の希薄波先端，後端，衝撃波の位置は，それぞれ約 $-1.5660$，$0.1750$，$1.5526\ \mathrm{m}$ です．
 式と波領域の定義は，訂正版である [SWASHESのStoker湿潤床解](https://arxiv.org/html/1110.0288v7#S4.SS1.SSS1)で確認できます．
@@ -125,20 +119,16 @@ $ julia --startup-file=no preflight.jl
 
 配布CSVは標準ケースの疎な22点です．
 CSV位置へ数値解を評価または補間して比べる場合は，たとえば
-
 $$
 E_\mathrm{CSV}=\frac{1}{22}\sum_{j=1}^{22}
 \left|h_\mathrm{num}(x_j)-h_\mathrm{CSV}(x_j)\right|
 $$
-
 を使い，補間方法を記録します．
 SWASHESの式を各セル中心 $x_i$ で評価する場合は，領域長 $x_R-x_L$ で正規化した
-
 $$
 E_{L^1}=\frac{1}{x_R-x_L}\sum_i
 \left|h_i-h_\mathrm{Stoker}(x_i,t)\right|\Delta x
 $$
-
 を使えます．
 $E_\mathrm{CSV}$ と $E_{L^1}$ は評価点と重みが異なるため，同じ名称で直接比較しません．
 

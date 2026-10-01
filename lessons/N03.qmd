@@ -13,11 +13,9 @@ title: "一次元熱拡散と境界・熱量保存"
 ## 熱伝導と無次元化
 
 この回では，無次元化した一次元熱拡散方程式
-
 $$
 \frac{\partial u}{\partial t}=D\frac{\partial^2 u}{\partial x^2}
 $$
-
 を解きます．
 $u$ は基準温度からの温度差を規格化した無次元温度，$x$ と $t$ は無次元の位置と時間，$D$ は無次元の熱拡散率です．
 以降の $u,x,t,L,\Delta x,\Delta t,D$ はすべて無次元量で，コードの`diffusivity`は $D$ です．
@@ -26,41 +24,35 @@ $u$ は基準温度からの温度差を規格化した無次元温度，$x$ と
 
 一定物性，内部発熱なし，一定断面積の一次元熱伝導を考えます．
 温度 $T$ と熱流束 $q$ は，エネルギー保存とFourierの法則
-
 $$
 \rho c_p\frac{\partial T}{\partial t_{\rm phys}}
 =-\frac{\partial q}{\partial x_{\rm phys}},\qquad
 q=-k\frac{\partial T}{\partial x_{\rm phys}}
 $$
-
 に従います．
 ここで $\rho$ は密度，$c_p$ は比熱，$k$ は熱伝導率です．
-熱流束 $q$ を消去すると，有次元の熱拡散方程式が得られます．
-
+熱流束 $q$ を消去すると，有次元の熱拡散方程式
 $$
 \frac{\partial T}{\partial t_{\rm phys}}
 =\alpha_{\rm phys}\frac{\partial^2 T}{\partial x_{\rm phys}^2},\qquad
-\alpha_{\rm phys}=\frac{k}{\rho c_p}.
+\alpha_{\rm phys}=\frac{k}{\rho c_p}
 $$
+が得られます．
 
 熱伝導率 $k$ は温度勾配と熱流束の関係を，熱拡散率 $\alpha_{\rm phys}$ は温度分布が変化する速さを表します．
 基準温度 $T_{\rm ref}$，温度差 $\Delta T>0$，長さ $\ell_{\rm ref}>0$，時間 $t_{\rm ref}>0$ を使い，
-
 $$
 u=\frac{T-T_{\rm ref}}{\Delta T},\qquad
 x=\frac{x_{\rm phys}}{\ell_{\rm ref}},\qquad
 t=\frac{t_{\rm phys}}{t_{\rm ref}}
 $$
-
 と定義します．
 これらを有次元の方程式へ代入すると，
-
 $$
 \frac{\Delta T}{t_{\rm ref}}\frac{\partial u}{\partial t}
 =\alpha_{\rm phys}\frac{\Delta T}{\ell_{\rm ref}^2}
 \frac{\partial^2 u}{\partial x^2}
 $$
-
 となります．
 両辺を $\Delta T/t_{\rm ref}$ で割り，$D=\alpha_{\rm phys}t_{\rm ref}/\ell_{\rm ref}^2$ とおけば，冒頭の無次元方程式が得られます．
 
@@ -68,6 +60,7 @@ $$
 
 ## 解く問題と標準条件 {#problem-setup}
 
+方程式・領域・初期条件は
 $$
 u_t=D u_{xx},\qquad 0\le x\le L=2,\qquad
 u(x,0)=\begin{cases}1 &(0.5\le x\le1),\\0 &(\text{それ以外}).\end{cases}
@@ -88,8 +81,7 @@ N01・N02の矩形と同じ位置に温度の高い領域を置き，移動や�
 
 ## 内部点と境界の差分
 
-空間中心差分と陽Euler法を組み合わせます．
-
+空間中心差分と陽Euler法を組み合わせると，更新式は
 $$
 r=\frac{D\Delta t}{\Delta x^2},\qquad
 u_i^{n+1}=u_i^n+r(u_{i+1}^n-2u_i^n+u_{i-1}^n).
@@ -98,32 +90,28 @@ $$
 固定温度は新配列の両端を0にします．
 断熱端では，左のゴースト点を $u_0^n=u_2^n$ と鏡映して中心差分へ代入します．
 右端も対称に扱うため，
-
 $$
 u_1^{n+1}=u_1^n+2r(u_2^n-u_1^n),\qquad
 u_N^{n+1}=u_N^n+2r(u_{N-1}^n-u_N^n)
 $$
-
 となります．
 端点は半セルを代表し，内部点の半分の幅に同じ熱流束が作用するため，係数2が現れます．
 
 ## 台形則の熱量と保存
 
-熱量に比例する無次元積分を，端点に半分の重みを付けて定義します．
-
+熱量に比例する無次元積分を，端点に半分の重みを付けて
 $$
-H_h=\Delta x\left(\frac{u_1}{2}+\sum_{i=2}^{N-1}u_i+\frac{u_N}{2}\right).
+H_h=\Delta x\left(\frac{u_1}{2}+\sum_{i=2}^{N-1}u_i+\frac{u_N}{2}\right)
 $$
+と定義します．
 
 断面積 $A$ の物体の基準温度からの過剰熱量は $Q=\rho c_p A\Delta T\ell_{\rm ref}H_h$ です．
 図と数値要約の熱量は $H_h$ を表します．
 断熱の1ステップでは，
-
 $$
 \frac{H_h^{n+1}-H_h^n}{r\Delta x}
 =(u_2-u_1)+\sum_{i=2}^{N-1}(u_{i+1}-2u_i+u_{i-1})+(u_{N-1}-u_N)=0
 $$
-
 と相殺します（右辺はすべて時刻 $n$）．
 例えば旧配列`[1,2,4,3]`，$r=1/4$ は断熱で`[1.5,2.25,3.25,3.5]`へ進み，$\Delta x=1$ なら両者の $H_h$ は8です．
 
@@ -136,7 +124,7 @@ $$
 
 安定条件は $0<r\le1/2$ です．
 この範囲では内部点・断熱端とも旧値の非負の重み付き平均になり，標準計算の非負性と有界性を確認できます．
-
+時間刻みは
 $$
 \Delta t_{\rm nominal}=\frac{\mathrm{fo}\,\Delta x^2}{D},\qquad
 M=\left\lceil\frac{t_{\rm final}}{\Delta t_{\rm nominal}}\right\rceil,\qquad
@@ -153,14 +141,14 @@ N01・N02の移流CFLと異なり，格子幅を半分にすると必要ステ�
 ## 解析解による格子収束 {#convergence}
 
 [F04の誤差と観測次数](F04.qmd)を，滑らかな初期値`initial=:mode`に適用します．
-対応する解析解は次のとおりです．
-
+対応する解析解は
 $$
 \begin{aligned}
 \text{固定温度: }&u(x,t)=e^{-D(\pi/L)^2t}\sin(\pi x/L),\\
-\text{断熱: }&u(x,t)=\tfrac12+\tfrac12e^{-D(\pi/L)^2t}\cos(\pi x/L).
+\text{断熱: }&u(x,t)=\tfrac12+\tfrac12e^{-D(\pi/L)^2t}\cos(\pi x/L)
 \end{aligned}
 $$
+です．
 
 41・81・161点，指定`fo=0.4`，同じ最終時刻1で，全格子点の最大絶対誤差を比べます．
 観測次数は $\log_2(E_{\rm coarse}/E_{\rm fine})$ です．

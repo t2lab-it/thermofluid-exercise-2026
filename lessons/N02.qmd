@@ -12,12 +12,12 @@ title: "保存形Burgers方程式と非線形移流"
 
 ## 保存形Burgers方程式
 
-今回は以下の問題を数値的に解きます．
-
+今回は以下の問題
 $$
 \frac{\partial u}{\partial t}+\frac{\partial f(u)}{\partial x}=0,
-\qquad f(u)=\frac{u^2}{2}.
+\qquad f(u)=\frac{u^2}{2}
 $$
+を数値的に解きます．
 
 解 $u$ が滑らかな部分では，連鎖律と $f'(u)=u$ により $u_t+u u_x=0$ と書けます．
 すなわち，分布の値 $u$ 自体がその場所の移流速度になります．
@@ -26,14 +26,12 @@ N01で取り組んだ線形移流方程式では， $u$ がどのような値で
 ## 解く問題と標準条件 {#problem-setup}
 
 領域は $0\le x\le2$ とし，初期条件を
-
 $$
 u(x,0)=\begin{cases}
 2 & (0.5\le x\le1),\\
 1 & (\text{それ以外})
 \end{cases}
 $$
-
 とします．
 次の二つの境界条件で計算します．
 
@@ -67,8 +65,7 @@ N01の線形移流との波形比較では，N01の上流差分法も最終時�
 
 ## 流束の差分
 
-格子点値 $u_i^n$ に対して流束を計算し，後退差分と陽Euler法を組み合わせます．
-
+格子点値 $u_i^n$ に対して流束を計算し，後退差分と陽Euler法を組み合わせると
 $$
 u_i^{n+1}=u_i^n-\frac{\Delta t}{\Delta x}
 \left[f(u_i^n)-f(u_{\mathrm{left}(i)}^n)\right].
@@ -92,7 +89,6 @@ $$
 ## 周期境界での総和保存
 
 周期境界では，すべての格子点で差分を足し合わせると
-
 $$
 \begin{gathered}
 \sum_i (u_i^{n+1}- u_i^n)
@@ -101,7 +97,6 @@ $$
 =0
 \end{gathered}
 $$
-
 となります．
 各点の流束が一度ずつ足され，引かれるためです．
 この性質が保存形を使う利点です．
@@ -114,13 +109,11 @@ $$
 1ステップの全点で同じ時刻の値を読むため，更新中は旧配列を保持します．
 
 初期条件の最大速度 $a_0=\max_i|u_i^0|=2$ を使い，時間刻みを
-
 $$
 \Delta t_{\mathrm{nominal}}=\mathrm{CFL}_{\mathrm{requested}}\frac{\Delta x}{a_0},
 \quad N=\left\lceil\frac{t_{\mathrm{final}}}{\Delta t_{\mathrm{nominal}}}\right\rceil,
 \quad \Delta t=\frac{t_{\mathrm{final}}}{N}
 $$
-
 とします．
 非負の場では $\max_i|u_i|\Delta t/\Delta x\leq1$ が安定性の条件となります．
 各ステップの値から実効CFLを計算します．
@@ -137,11 +130,9 @@ $$
 周期系には特別な始点がありません．
 すなわち，配列の要素を循環させても同じ結果になります．
 周期1ステップを $S$，循環移動を `circshift` と書くと，確かめたい関係は
-
 $$
 S(\operatorname{circshift}(u,k))\approx\operatorname{circshift}(S(u),k)
 $$
-
 です．
 これにより，とくに配列の端の操作を間違えていないかを調べられます．
 どのような初期条件を使うとバグが見つけやすいかも考えてみてください．

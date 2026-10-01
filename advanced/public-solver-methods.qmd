@@ -29,9 +29,10 @@ title: "CFDソルバ in Julia"
 #### 扱う方程式・現象
 
 `WaterLily.jl`は，直交座標格子上で二次元または三次元の非定常・非圧縮性粘性流れを解き，格子に適合しない物体のまわりの流れを扱います．
-代表的な支配方程式は
 
 ::: {.table-responsive}
+
+代表的な支配方程式は
 $$
 \frac{\partial \boldsymbol{u}}{\partial t}
 + (\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
@@ -39,9 +40,10 @@ $$
 \qquad
 \nabla\cdot\boldsymbol{u}=0
 $$
+です．
+
 :::
 
-です．
 $\boldsymbol{u}$は速度，$p$は密度で規格化した圧力，$\nu$は動粘性係数です．
 後半の式は，各時刻で満たすべき非圧縮拘束です．
 
@@ -80,17 +82,18 @@ $\boldsymbol{u}$は速度，$p$は密度で規格化した圧力，$\nu$は動�
 
 ## 高次不連続Galerkin法と双曲型保存則
 
-双曲型保存則と釣合い則は，まとめて
-
 ::: {.table-responsive}
+
+双曲型保存則と釣合い則は，まとめて
 $$
 \frac{\partial \boldsymbol{U}}{\partial t}
 + \nabla\cdot\boldsymbol{F}(\boldsymbol{U})
 = \boldsymbol{S}(\boldsymbol{U}, \boldsymbol{x}, t)
 $$
+と書けます．
+
 :::
 
-と書けます．
 $\boldsymbol{U}$は保存変数，$\boldsymbol{F}$は流束，$\boldsymbol{S}$は地形などに由来するソース項です．
 ソース項がある場合は，流束だけでなく両者の離散的な釣合いも数値手法の一部になります．
 
@@ -100,9 +103,10 @@ $\boldsymbol{U}$は保存変数，$\boldsymbol{F}$は流束，$\boldsymbol{S}$�
 
 `Trixi.jl`は双曲型保存則を空間半離散化するための枠組みです．
 標準推奨課題では一次元圧縮性Euler方程式の衝撃波管を扱います．
-保存変数と流束は
 
 ::: {.table-responsive}
+
+保存変数と流束は
 $$
 \boldsymbol{U}=
 \begin{pmatrix}\rho\\ \rho u\\ E\end{pmatrix},
@@ -110,9 +114,10 @@ $$
 \boldsymbol{F}(\boldsymbol{U})=
 \begin{pmatrix}\rho u\\ \rho u^2+p\\ u(E+p)\end{pmatrix}
 $$
+です．
+
 :::
 
-です．
 $\rho$は密度，$u$は速度，$E$は全エネルギー，$p$は圧力です．
 
 #### アルゴリズム
@@ -156,9 +161,10 @@ $\rho$は密度，$u$は速度，$E$は全エネルギー，$p$は圧力です�
 
 `TrixiShallowWater.jl`は`Trixi.jl`の数値基盤を使い，浅水方程式固有の釣合い則を扱う専門パッケージです．
 現行の安定版資料では浅水方程式型は`Trixi.jl`本体ではなく，このパッケージから提供されます．
-一次元の代表式は
 
 ::: {.table-responsive}
+
+一次元の代表式は
 $$
 \frac{\partial h}{\partial t}+\frac{\partial (hu)}{\partial x}=0,
 \qquad
@@ -166,9 +172,10 @@ $$
 +\frac{\partial}{\partial x}\left(hu^2+\frac{g}{2}h^2\right)
 =-gh\frac{\partial b}{\partial x}
 $$
+です．
+
 :::
 
-です．
 `h`は水深，`u`は水深平均速度，`b`は河床・海底地形です．
 静水状態では圧力流束の勾配と地形ソース項が釣り合います．
 
@@ -213,6 +220,8 @@ $$
 標準推奨課題の水平対流では，浮力を運ぶ二次元非静力学流れを代表例とします．
 
 ::: {.table-responsive}
+
+代表的な支配方程式は
 $$
 \frac{\partial\boldsymbol{u}}{\partial t}
 +(\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
@@ -220,11 +229,11 @@ $$
 =-\nabla p+b\hat{\boldsymbol{z}}+\boldsymbol{D}_u,
 \qquad \nabla\cdot\boldsymbol{u}=0,
 $$
-
 $$
 \frac{\partial b}{\partial t}
 +\boldsymbol{u}\cdot\nabla b=D_b.
 $$
+
 :::
 
 ここで$\boldsymbol{u}$は速度，$p$は非圧縮拘束に対応する圧力，$b$は浮力，$f$は回転の効果，$\boldsymbol{D}_u$と$D_b$は拡散・クロージャなどの寄与をまとめた項です．
@@ -270,6 +279,8 @@ $$
 代表として`SingleLayerQG`のポテンシャル渦度方程式を，公式資料の一様背景流を$U=0$へ特殊化して示します．
 
 ::: {.table-responsive}
+
+この条件での代表式は
 $$
 \frac{\partial q}{\partial t}
 +J(\psi,q+\eta)+\beta\frac{\partial\psi}{\partial x}
@@ -279,6 +290,7 @@ q=\nabla^2\psi-\frac{\psi}{\ell^2},
 \qquad
 \eta=\frac{f_0h}{H}.
 $$
+
 :::
 
 $\psi$は流れ関数，$q$は相対渦度と渦伸長を合わせた予報ポテンシャル渦度，$\ell$はRossby変形半径，$\beta$は惑星渦度勾配，$\eta$は地形性ポテンシャル渦度です．
@@ -323,21 +335,22 @@ FFTで計算できた高波数成分が解像されているとは限らず，�
 
 `DispersiveShallowWater.jl`は，波長によって位相速度が変わる一次元の分散性浅水モデルを扱います．
 KdV，BBM，BBM-BBM，Svärd–Kalisch，Serre–Green–Naghdiなど複数の近似方程式があり，モデルごとに保持する分散と非線形性が異なります．
-変化する水底地形を含むBBM-BBMの代表式は
 
 ::: {.table-responsive}
+
+変化する水底地形を含むBBM-BBMの代表式は
 $$
 \eta_t+\bigl((\eta+D)v\bigr)_x
 -\frac{1}{6}\bigl(D^2\eta_{xt}\bigr)_x=0,
 $$
-
 $$
 v_t+g\eta_x+\left(\frac{v^2}{2}\right)_x
 -\frac{1}{6}\bigl(D^2v_t\bigr)_{xx}=0
 $$
+です．
+
 :::
 
-です．
 $\eta$は全水深，$v$は速度，$D$は静水深，$g$は重力加速度です．
 時間微分を含む高階空間項が非分散浅水方程式との主要な違いです．
 

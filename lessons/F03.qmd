@@ -15,7 +15,6 @@ title: "ベクトル解析"
 ## 直交座標での微分演算子
 
 スカラー場 $\phi(x,y,z)$ とベクトル場 $\boldsymbol{A}(x,y,z)=(A_x,A_y,A_z)$ に対し，勾配（gradient）を
-
 $$
 \nabla\phi=
 \left(
@@ -24,18 +23,14 @@ $$
 \frac{\partial\phi}{\partial z}
 \right),
 $$
-
 発散（divergence）を
-
 $$
 \nabla\cdot\boldsymbol{A}=
 \frac{\partial A_x}{\partial x}
 +\frac{\partial A_y}{\partial y}
 +\frac{\partial A_z}{\partial z},
 $$
-
 回転（curl）を
-
 $$
 \nabla\times\boldsymbol{A}=
 \left(
@@ -44,23 +39,18 @@ $$
 \frac{\partial A_y}{\partial x}-\frac{\partial A_x}{\partial y}
 \right),
 $$
-
 Laplacianを
-
 $$
 \nabla^2\phi=
 \frac{\partial^2\phi}{\partial x^2}
 +\frac{\partial^2\phi}{\partial y^2}
 +\frac{\partial^2\phi}{\partial z^2}
 $$
-
 と定義します．
 ベクトルLaplacianは直交座標の各成分について
-
 $$
 \nabla^2\boldsymbol{A}=(\nabla^2 A_x,\nabla^2 A_y,\nabla^2 A_z)
 $$
-
 と定義します．
 以下では，現れる二階偏微分が連続，すなわち場が対象領域で少なくとも $C^2$ 級であると仮定します．
 この条件により $\partial^2 f/(\partial x\partial y)=\partial^2 f/(\partial y\partial x)$ のように混合偏微分の順序を交換できます．
@@ -70,14 +60,12 @@ $$
 $x_1=x$，$x_2=y$，$x_3=z$ とし，$\partial_i=\partial/\partial x_i$ と書きます．
 同じ添字が一つの項に2回現れるときは，$i=1,2,3$ について和を取るというアインシュタインの総和規約を使います．
 例えば
-
 $$
 \nabla\cdot\boldsymbol{A}=\partial_i A_i,\qquad
 \nabla^2\phi=\partial_i\partial_i\phi.
 $$
 
 クロネッカーのデルタ（Kronecker delta）$\delta_{ij}$ は
-
 $$
 \delta_{ij}=
 \begin{cases}
@@ -87,27 +75,23 @@ $$
 \qquad
 \delta_{ij}B_j=B_i
 $$
-
 で定義します．
 エディントンのイプシロン（Levi--Civita記号）$\varepsilon_{ijk}$ は，$\varepsilon_{123}=1$，添字を2つ交換すると符号が反転し，添字が重なると0となる完全反対称な記号です．
 直交座標では
-
 $$
 (\nabla\phi)_i=\partial_i\phi,\qquad
 (\nabla\times\boldsymbol{A})_i=\varepsilon_{ijk}\partial_j A_k
 $$
-
-であり，次の縮約恒等式を使えます．
-
+であり，次の縮約恒等式
 $$
 \varepsilon_{ijk}\varepsilon_{k\ell m}
-=\delta_{i\ell}\delta_{jm}-\delta_{im}\delta_{j\ell}.
+=\delta_{i\ell}\delta_{jm}-\delta_{im}\delta_{j\ell}
 $$
+を使えます．
 
 ## 証明1: curl grad = 0
 
 回転の定義を添字で書くと，
-
 $$
 \begin{aligned}
 \left[\nabla\times(\nabla\phi)\right]_i
@@ -120,7 +104,6 @@ $$
 
 2行目はダミー添字 $j,k$ の入れ替え，3行目はイプシロンの反対称性，最後の等号は $C^2$ 級の場で混合偏微分を交換できることを使いました．
 したがって，
-
 $$
 \nabla\times(\nabla\phi)=\boldsymbol{0}.
 $$
@@ -128,7 +111,6 @@ $$
 ## 証明2: div curl = 0
 
 発散の定義と回転の添字表示を代入すると，
-
 $$
 \begin{aligned}
 \nabla\cdot(\nabla\times\boldsymbol{A})
@@ -145,7 +127,6 @@ $$
 ## 証明3: 積の発散
 
 添字記法で積の微分を適用すると，
-
 $$
 \begin{aligned}
 \nabla\cdot(\phi\boldsymbol{A})
@@ -162,7 +143,6 @@ $$
 ## 証明4: curl curl
 
 回転を2回適用し，先ほどのイプシロンとデルタの縮約恒等式を使うと，
-
 $$
 \begin{aligned}
 \left[\nabla\times(\nabla\times\boldsymbol{A})\right]_i
@@ -183,7 +163,6 @@ $\delta_{i\ell}\delta_{jm}\partial_j\partial_\ell A_m
 $\delta_{im}\delta_{j\ell}\partial_j\partial_\ell A_m
 =\partial_j\partial_j A_i$ を使いました．
 各成分 $i=1,2,3$ で成り立つので，
-
 $$
 \nabla\times(\nabla\times\boldsymbol{A})
 =\nabla(\nabla\cdot\boldsymbol{A})-\nabla^2\boldsymbol{A}.
@@ -199,22 +178,18 @@ $$
 
 [二次元非圧縮性Navier–Stokes](../projects/final-project-topics/incompressible-navier-stokes.qmd)では，密度と動粘性係数が一定の流れを扱います．
 その無次元運動方程式の圧力項は $-\nabla p$ なので，方程式全体のcurlを取ると
-
 $$
 \nabla\times(-\nabla p)=\boldsymbol{0}
 $$
-
 となります．
 この公式のおかげで，渦度を未知量にした式には圧力項が陽には現れません．
 二次元では $\boldsymbol{u}=(u,v,0)$，$\boldsymbol{\omega}=(0,0,\omega)$ と書け，外力のない場合の渦度方程式は
-
 $$
 \frac{\partial\omega}{\partial t}
 +u\frac{\partial\omega}{\partial x}
 +v\frac{\partial\omega}{\partial y}
 =\frac{1}{\mathrm{Re}}\nabla^2\omega
 $$
-
 です．
 最終プロジェクトでは，この式で渦度を進め，後述のPoisson方程式から速度を復元します．
 圧力項が消えるのは一定密度のモデルでの話です．
@@ -223,21 +198,17 @@ $$
 ### div curl：流れ関数から作った速度が連続の式を満たす
 
 同じ二次元流れで，$z$ に依存しない流れ関数 $\psi(x,y)$ を使い，
-
 $$
 \boldsymbol{A}=(0,0,-\psi),\qquad
 \boldsymbol{u}=\nabla\times\boldsymbol{A}
 =\left(-\frac{\partial\psi}{\partial y},\frac{\partial\psi}{\partial x},0\right)
 $$
-
 と置きます．
 すると，div curlの公式から
-
 $$
 \nabla\cdot\boldsymbol{u}
 =\nabla\cdot(\nabla\times\boldsymbol{A})=0
 $$
-
 となり，非圧縮性流れの連続の式を自動的に満たします．
 これが[渦度–流れ関数法](../projects/final-project-topics/incompressible-navier-stokes.qmd)で流れ関数を導入する理由です．
 ただし，壁面で流体が出入りしない条件やno-slip条件は別に与える必要があります．
@@ -247,7 +218,6 @@ $$
 
 単位体積あたりの輸送量を $q$ とし，生成・消滅や拡散がない場合を考えます．
 保存形の輸送方程式に積の発散の公式を使うと，
-
 $$
 \begin{aligned}
 \frac{\partial q}{\partial t}+\nabla\cdot(q\boldsymbol{u})&=0,\\
@@ -255,7 +225,6 @@ $$
 +q\nabla\cdot\boldsymbol{u}&=0
 \end{aligned}
 $$
-
 となります．
 非圧縮条件 $\nabla\cdot\boldsymbol{u}=0$ の下では最後の項が消えます．
 一定速度 $\boldsymbol{u}=(c,0,0)$ の一次元問題にすれば，$q_t+cq_x=0$ となり，[N01の線形移流方程式](N01.qmd)に一致します（N01では輸送される量を $u$ と表記します）．
@@ -263,12 +232,10 @@ $$
 [自然対流キャビティ](../projects/final-project-topics/natural-convection-cavity.qmd)の無次元温度 $\theta$ についても，非圧縮条件から $\nabla\cdot(\theta\boldsymbol{u})=\boldsymbol{u}\cdot\nabla\theta$ です．
 そのため，定常温度方程式 $\boldsymbol{u}\cdot\nabla\theta=\nabla^2\theta$ は，熱の移流流束と拡散の釣り合いとして読めます．
 また，熱伝導率 $k$ が場所によって変わる場合は，積の発散に $\phi=k$，$\boldsymbol{A}=\nabla T$ を代入すると
-
 $$
 \nabla\cdot(k\nabla T)
 =k\nabla^2T+\nabla k\cdot\nabla T
 $$
-
 となります．
 熱伝導項を単に $k\nabla^2T$ と書けるのは，$k$ が空間的に一定の場合です．
 
@@ -280,25 +247,21 @@ N02で流束差を使う理由は，数値計算でも保存性を保つため�
 ### curl curl：流れ関数のPoisson方程式と粘性項
 
 上で定義した $\boldsymbol{A}=(0,0,-\psi)$ は $\nabla\cdot\boldsymbol{A}=0$ なので，curl curlの公式から
-
 $$
 \boldsymbol{\omega}
 =\nabla\times(\nabla\times\boldsymbol{A})
 =-\nabla^2\boldsymbol{A}
 =(0,0,\nabla^2\psi)
 $$
-
 となります．
 したがって $\nabla^2\psi=\omega$ です．
 これが[二次元非圧縮性流れの課題](../projects/final-project-topics/incompressible-navier-stokes.qmd)で，渦度から流れ関数を求めるPoisson方程式です．
 流れ関数が求まれば，その一階微分から速度を復元できます．
 
 さらに，この公式を速度自身に適用すると，非圧縮条件の下で
-
 $$
 \nabla^2\boldsymbol{u}=-\nabla\times\boldsymbol{\omega}
 $$
-
 です．
 一定動粘性係数 $\nu$ の粘性項 $\nu\nabla^2\boldsymbol{u}$ は，渦度の空間変化とも結びついています．
 二次元では右辺は $(-\partial_y\omega,\partial_x\omega,0)$ です．
@@ -307,16 +270,13 @@ $$
 ## 数値微分への接続
 
 刻み幅 $h>0$ に対し，一変数関数 $f$ の前進差分，後退差分，中心差分を
-
 $$
 D_+f(x)=\frac{f(x+h)-f(x)}{h},\qquad
 D_-f(x)=\frac{f(x)-f(x-h)}{h},
 $$
-
 $$
 D_0f(x)=\frac{f(x+h)-f(x-h)}{2h}
 $$
-
 と定義します．
 三つの差分は微分の近似ですが，刻み幅に対する誤差の減り方が異なります．
 次回の[数値微分と格子収束](F04.qmd)では，その違いをTaylor展開で導き，同じ四公式の数値残差へつなげます．

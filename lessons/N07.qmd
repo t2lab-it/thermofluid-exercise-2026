@@ -9,8 +9,7 @@ title: "二次元拡散・移流拡散：境界熱流束と二成分Burgers"
 
 [N05](N05.qmd)・[N06](N06.qmd)の共通APIと二次元配列を使い，境界条件・熱収支・非線形性を調べます．
 実装と提出物は[N07課題](../assignments/N07.qmd)にまとめています．
-一定体積熱容量を1とする無次元温度$T$と熱流束$\boldsymbol J$を考えます．
-
+一定体積熱容量を1とする無次元温度$T$と熱流束$\boldsymbol J$を考えると，保存形の方程式と総熱量は
 $$
 \frac{\partial T}{\partial t}+\nabla\cdot\boldsymbol J=0,
 \qquad \boldsymbol J=\boldsymbol cT-\kappa\nabla T,
@@ -27,15 +26,14 @@ N07では，熱量を持つセルと熱が通る境界面を対応させるた�
 `T[i,j]`の座標は$x_i=(i-1/2)\Delta x$，$y_j=(j-1/2)\Delta y$です．
 
 内部のx面では，流れが正なら左セル，負なら右セルの温度を使います．
-
+正x方向の面流束は
 $$
 J^x_{i+1/2,j}=c_xT_{\mathrm{upwind}}
 -\kappa\frac{T_{i+1,j}-T_{i,j}}{\Delta x}.
 $$
 
 正y方向の面も同様です．
-二方向とも同じ旧場から流束を一度求め，陽Eulerで更新します．
-
+二方向とも同じ旧場から流束を一度求めると，陽Eulerの更新式は
 $$
 T^{n+1}_{i,j}=T^n_{i,j}-\Delta t\left[
 \frac{J^x_{i+1/2,j}-J^x_{i-1/2,j}}{\Delta x}
@@ -68,8 +66,7 @@ $$
 
 更新の中心係数が非負になる刻みを使います．
 セル中心の固定温度境界では，内部側の拡散係数1と壁側の係数2が加わります．
-各軸に固定温度または流入面があれば$a_x$または$a_y$を3，それ以外を2とします．
-
+各軸に固定温度または流入面があれば$a_x$または$a_y$を3，それ以外を2とすると，刻み上限は
 $$
 \Delta t_{\max}=\frac{s}{|c_x|/\Delta x+|c_y|/\Delta y
 +\kappa(a_x/\Delta x^2+a_y/\Delta y^2)},\qquad s=0.8.
@@ -81,13 +78,12 @@ $$
 west，east，south，northの順に，辺長を掛けた内向きレート$R_s$を記録します．
 例えば西辺では$R_\mathrm{west}=\Delta y\sum_jJ^x_{1/2,j}$，東辺では$R_\mathrm{east}=-\Delta y\sum_jJ^x_{n_x+1/2,j}$です．
 移流と拡散を分け，各ステップで実際に使った流束から$\Delta tR_s$を積算します．
-
+1ステップの熱収支は
 $$
 Q^{n+1}-Q^n=\Delta t\sum_s(R_{s,\mathrm{adv}}^n+R_{s,\mathrm{diff}}^n).
 $$
 
-保存区間$k$の輸送積分を$I_{s,k}$とすれば，保存時刻での残差は次です．
-
+保存区間$k$の輸送積分を$I_{s,k}$とすれば，保存時刻での残差は
 $$
 \varepsilon_Q(t_m)=Q(t_m)-Q(0)-\sum_{k<m}\sum_s
 \left(I_{s,k}^{\mathrm{adv}}+I_{s,k}^{\mathrm{diff}}\right).
@@ -111,8 +107,7 @@ $$
 | `channel_fixed` | $(1,0)$，$\kappa=0.05$ | 左$T_\mathrm{in}=1$・右流出・上下$T_w=0$，初期値$0.2$ |
 | `channel_insulated` | $(1,0)$，$\kappa=0.05$ | 左右は同じ・上下断熱，初期値$0.2$ |
 
-周期の初期値は次の3モードです．
-
+周期の初期値は次の3モード
 $$
 T_0=1+0.2\sin(\pi x)+0.3\cos(2\pi y)+0.1\sin(\pi x+2\pi y).
 $$
@@ -128,8 +123,7 @@ $$
 
 ## 二成分の粘性Burgers {#burgers}
 
-温度の一定速度場に対し，Burgersでは未知の速度$(u,v)$自身が二成分を運びます．
-
+温度の一定速度場に対し，Burgersでは未知の速度$(u,v)$自身が二成分を運び，方程式は
 $$
 u_t+u u_x+v u_y=\nu(u_{xx}+u_{yy}),\qquad
 v_t+u v_x+v v_y=\nu(v_{xx}+v_{yy}).
@@ -143,8 +137,7 @@ $u$が正ならx方向は後退差分，負なら前進差分を使い，y方向
 $\boldsymbol w=(u,v)$とすると，$\nabla\cdot(u\boldsymbol w)=\boldsymbol w\cdot\nabla u+u\nabla\cdot\boldsymbol w$です．
 Burgersで使うのは右辺の第1項で，$v$も同様です．
 
-安定刻みは毎ステップの旧速度場から求めます．
-
+毎ステップの旧速度場から求める安定刻みは
 $$
 \Delta t_{\max}=\frac{0.8}{
 \max_{i,j}(|u_{i,j}|/\Delta x+|v_{i,j}|/\Delta y)
@@ -155,12 +148,12 @@ $$
 
 ### Cole–Hopf変換による解析解
 
-$X=x-0.6t$，$Y=y+0.3t$として，次の正の関数を使います．
-
+$X=x-0.6t$，$Y=y+0.3t$として，次の正の関数
 $$
 \phi=1+0.2e^{-\nu\pi^2t}\cos(\pi X)
-+0.2e^{-4\nu\pi^2t}\cos(2\pi Y),\qquad \phi\ge0.6.
++0.2e^{-4\nu\pi^2t}\cos(2\pi Y),\qquad \phi\ge0.6
 $$
+を使うと，速度成分は
 $$
 u=0.6+\frac{0.4\nu\pi e^{-\nu\pi^2t}\sin(\pi X)}{\phi},
 \qquad
