@@ -51,7 +51,7 @@ t^*=t\sqrt{\frac{b_\star}{L_x}},
 U_\star=\sqrt{L_xb_\star}
 $$
 とします．
-二次元流れ関数を $u=\partial_z\psi$，$w=-\partial_x\psi$ と定義し，循環強度を $\Psi=\max|\psi|/(L_xU_\star)$ で比較します．
+二次元流れ関数を $u=\frac{\partial \psi}{\partial z}$，$w=-\frac{\partial \psi}{\partial x}$ と定義し，循環強度を $\Psi=\max|\psi|/(L_xU_\star)$ で比較します．
 運動エネルギーは
 $$
 K(t)=\frac{1}{L_xH}\int_\Omega\frac{u^2+w^2}{2}\,\mathrm{d}A
@@ -92,7 +92,7 @@ $Nu$，$K$，$\Psi$，$\delta_\chi/H$ は瞬時値と平均値を分け，採用
 その後，最初の追加候補を $Ra=10^7$ とし，$Pr=1$，$L_x/H=2$，$b_\star$，境界，$128\times64$格子，WENO，Runge--Kutta 3，CFL制御，出力と診断定義を固定します．
 両条件が平均可能な状態まで進まない場合は，短い結果から大小関係を断定せず，必要な積分時間と代替条件を教員またはTAと相談します．
 
-$t^*$に対する $Nu,K,\Psi$ の時系列，同じ色scaleでの $b/b_\star$，渦度 $\zeta=\partial_z u-\partial_xw$，$\chi$ の図，鉛直profile，$Nu$・$\Psi$・$\delta_\chi/H$・費用の表を作ります．
+$t^*$に対する $Nu,K,\Psi$ の時系列，同じ色scaleでの $b/b_\star$，渦度 $\zeta=\frac{\partial u}{\partial z}-\frac{\partial w}{\partial x}$，$\chi$ の図，鉛直profile，$Nu$・$\Psi$・$\delta_\chi/H$・費用の表を作ります．
 大きい $Ra$ ほど循環が強く表面側へ散逸が集中するという仮説を置けますが，二条件だけからscaling exponentを決めず，時間窓・格子・収支の差より条件差が大きいかを議論します．
 
 ### 問い2：格子細分化による表面境界層と収支の変化の程度 {#問い2格子を細かくすると表面境界層と収支はどこまで変わるか}
@@ -158,13 +158,14 @@ $$
 \begin{aligned}
 \mathcal{B}(t)
 &=\int_{\partial\Omega}
-\kappa b\,\partial_n b\,\mathrm{d}s,\\
+\kappa b\,\frac{\partial b}{\partial n}\,\mathrm{d}s,\\
 \mathcal{D}(t)
 &=\int_\Omega
 \kappa|\nabla b|^2\,\mathrm{d}A
 \end{aligned}
 $$
 と定義します．
+法線微分は外向き単位法線方向の微分です．
 impermeable境界での収支残差
 $$
 \begin{aligned}

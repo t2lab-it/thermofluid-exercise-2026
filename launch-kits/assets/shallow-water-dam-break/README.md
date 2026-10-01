@@ -19,9 +19,9 @@
 浅水方程式は
 
 \[
-h_t+(hu)_x=0,
+\frac{\partial h}{\partial t}+\frac{\partial (hu)}{\partial x}=0,
 \qquad
-(hu)_t+\left(hu^2+\frac12gh^2\right)_x=0
+\frac{\partial (hu)}{\partial t}+\frac{\partial}{\partial x}\left(hu^2+\frac12gh^2\right)=0
 \]
 
 です。Stoker解の中間水深 \(h_m\) は
