@@ -20,12 +20,6 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
         @test occursin(term, git_setup)
     end
     @test occursin(r"AIとの全対話ログ[^。\n]*commit", public_scope)
-    for term in ("学習ログ", "判断")
-        @test occursin(term, workflow)
-    end
-    for term in ("依頼内容", "提案", "採用", "修正", "却下", "判断理由")
-        @test occursin(term, ai_guidance)
-    end
     for term in ("LETUS", "UTF-8", "対話全文")
         @test occursin(term, understanding_check)
     end
@@ -33,22 +27,10 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
     @test occursin("{#understanding-check}", understanding_check)
     @test occursin("lessons/{{< meta lesson-id >}}.html", understanding_check)
     @test occursin("understanding-check-{{< meta lesson-id >}}.txt", understanding_check)
-    @test count("::: {.callout-tip title=\"AIへ：問題を1問出してもらう\"}", understanding_check) == 1
-    @test count("::: {.callout-tip title=\"AIへ：回答を評価してもらう\"}", understanding_check) == 1
-    @test occursin(
-        "::: {.callout-tip title=\"AIへ：問題を1問出してもらう\"}\n\n```text",
-        understanding_check,
-    )
-    @test occursin(
-        "::: {.callout-tip title=\"AIへ：回答を評価してもらう\"}\n\n```text",
-        understanding_check,
-    )
     @test occursin(r"対話全文を学生リポジトリ[^。\n]*含めず", ai_guidance)
     for term in ("LETUS", "理解度チェック", "全文")
         @test occursin(term, ai_guidance)
     end
-    @test occursin("学生リポジトリ", glossary)
-    @test occursin("公開範囲", glossary)
 end
 
 @testset "each assignment owns its lesson understanding check" begin

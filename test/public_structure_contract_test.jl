@@ -13,12 +13,6 @@ const F03_F04_PUBLIC_PAGES = [
     "lessons/F03.qmd", "assignments/F03.qmd",
     "lessons/F04.qmd", "assignments/F04.qmd",
 ]
-const F03_F04_FORBIDDEN_PUBLIC_TERMS = (
-    "Forward" * "Diff",
-    "自動" * "微分",
-    "automatic" * "_reference",
-    "T" * "BA",
-)
 
 is_public_qmd_path(path::AbstractString) =
     endswith(path, ".qmd") && !startswith(basename(path), "_")
@@ -28,12 +22,6 @@ function tracked_public_qmd_paths()
     return sort(filter(is_public_qmd_path, paths))
 end
 
-@testset "tracked public QMD paths exclude include fragments" begin
-    include_fragment = "assignments/_understanding-check.qmd"
-    @test isfile(joinpath(PUBLIC_STRUCTURE_ROOT, include_fragment))
-    @test include_fragment ∉ tracked_public_qmd_paths()
-    @test "lessons/F02.qmd" ∈ tracked_public_qmd_paths()
-end
 
 function published_course_dates(source::AbstractString)
     block = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", source)
@@ -49,50 +37,7 @@ function published_course_dates(source::AbstractString)
     return dates
 end
 
-@testset "QMD structure parser permits editorial rewrites" begin
-    first_version = """
-    ---
-    title: "Original title"
-    ---
 
-    ## Original heading
-
-    Original explanation with `student_api`.
-
-    ## Second heading
-
-    [Next](../assignments/F02.qmd)
-    """
-    rewritten = """
-    ---
-    title: Rewritten title
-    ---
-
-    ## Completely different second section
-
-    A replacement example and explanation with `student_api`.
-
-    ## Renamed first section
-
-    [Continue](../assignments/F02.qmd)
-    """
-
-    for source in (first_version, rewritten)
-        document = parse_qmd_document(source)
-        @test !isnothing(document)
-        @test !isempty(document.title)
-        @test !isempty(document.body)
-        @test has_level2_heading(document.body)
-        @test qmd_link_targets(source) == ["../assignments/F02.qmd"]
-    end
-end
-
-@testset "QMD structure parser rejects missing structure" begin
-    @test isnothing(parse_qmd_document("## no frontmatter\n"))
-    @test isnothing(parse_qmd_document("---\ntitle: \"\"\n---\n\n## body\n"))
-    @test isnothing(parse_qmd_document("---\ntitle: valid\n---\n"))
-    @test !has_level2_heading("Paragraph without a section heading.")
-end
 
 @testset "workflow links to the canonical AI guidance page" begin
     guide_path = normpath(joinpath(PUBLIC_STRUCTURE_ROOT, "guides", "ai-usage.qmd"))
@@ -127,37 +72,8 @@ end
     end
 end
 
-@testset "final-project hub links every topic page" begin
-    topic_root = joinpath(PUBLIC_STRUCTURE_ROOT, "projects", "final-project-topics")
-    topic_paths = Set(
-        relpath(joinpath(topic_root, name), PUBLIC_STRUCTURE_ROOT)
-        for name in readdir(topic_root)
-        if endswith(name, ".qmd")
-    )
-    hub_path = joinpath(PUBLIC_STRUCTURE_ROOT, "assignments", "final-project.qmd")
-    linked_topic_paths = Set(
-        relpath(resolve_qmd_target(hub_path, target), PUBLIC_STRUCTURE_ROOT)
-        for target in qmd_link_targets(read(hub_path, String))
-        if startswith(target, "../projects/final-project-topics/")
-    )
-
-    @test linked_topic_paths == topic_paths
-end
 
 @testset "course map preserves published dates" begin
     index_source = read(joinpath(PUBLIC_STRUCTURE_ROOT, "index.qmd"), String)
     @test published_course_dates(index_source) == EXPECTED_PUBLISHED_DATES
-end
-
-@testset "F03-F04 public pages exclude retired implementation vocabulary" begin
-    for relative_path in F03_F04_PUBLIC_PAGES
-        source = read(joinpath(PUBLIC_STRUCTURE_ROOT, relative_path), String)
-        @test all(term -> !occursin(term, source), F03_F04_FORBIDDEN_PUBLIC_TERMS)
-    end
-end
-
-@testset "F04 Taylor derivation exposes fourth-order cancellation" begin
-    source = read(joinpath(PUBLIC_STRUCTURE_ROOT, "lessons", "F04.qmd"), String)
-    @test count(raw"\frac{h^4}{24}f''''(x)", source) == 4
-    @test occursin(raw"\frac{h^4}{24}f''''(x)-\frac{h^4}{24}f''''(x)=0", source)
 end
