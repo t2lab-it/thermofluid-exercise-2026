@@ -221,51 +221,6 @@ function regular_course_hrefs(targets, kind)
     end
 end
 
-@testset "course indexes match the course map and sidebar in learning order" begin
-    root = NAVIGATION_SITE_ROOT
-    home_source = read(joinpath(root, "index.qmd"), String)
-    course_map = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", home_source)
-    @test !isnothing(course_map)
-    map_hrefs = isnothing(course_map) ? String[] : qmd_link_targets(course_map.captures[1])
-    @test filter(href -> startswith(href, "assignments/"), map_hrefs) == vcat(
-        ["assignments/$id.qmd" for id in REQUIRED_COURSE_ORDER],
-        fill("assignments/final-project.qmd", 4),
-    )
-
-    yaml = yaml_source_lines(read(joinpath(root, "_quarto.yml"), String))
-    sidebars = yaml_sequence_items(yaml, yaml_node(yaml, ("website", "sidebar")))
-    course_sidebars = filter(sidebars) do item
-        id = yaml_item_field(yaml, item, "id")
-        !isnothing(id) && id.value == "course"
-    end
-    @test length(course_sidebars) == 1
-    sidebar_hrefs = String[]
-    if length(course_sidebars) == 1
-        for section in sidebar_sections(yaml, only(course_sidebars))
-            append!(sidebar_hrefs, entry_hrefs(sidebar_section_entries(yaml, section)))
-        end
-    end
-
-    for kind in ("lessons", "assignments")
-        expected = ["$kind/$id.qmd" for id in REQUIRED_COURSE_ORDER]
-        source_path = joinpath(root, kind, "index.qmd")
-        index_hrefs = [normpath(joinpath(kind, href)) for href in qmd_link_targets(read(source_path, String))]
-        @testset "$kind: no missing, duplicate or out-of-order content pages" begin
-            regular_hrefs = regular_course_hrefs(index_hrefs, kind)
-            @test regular_hrefs == expected
-            @test regular_course_hrefs(map_hrefs, kind) == expected
-            @test regular_course_hrefs(sidebar_hrefs, kind) == expected
-            @test all(href -> isfile(joinpath(root, href)), index_hrefs)
-            if kind == "assignments"
-                course_and_project = filter(index_hrefs) do href
-                    href in regular_hrefs || href == "assignments/final-project.qmd"
-                end
-                @test course_and_project == vcat(expected, ["assignments/final-project.qmd"])
-            end
-        end
-    end
-end
-
 const NAVIGATION_LOADER = "assets/navigation-loader.html"
 const NAVIGATION_BEHAVIOR_TEST = joinpath(@__DIR__, "navigation_behavior_test.js")
 
@@ -485,6 +440,29 @@ end
                     EXPECTED_COURSE_HREFS,
                     fill("assignments/final-project.qmd", 4),
                 )
+
+                home_source = read(joinpath(public_root, "index.qmd"), String)
+                course_map = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", home_source)
+                @test !isnothing(course_map)
+                map_hrefs = isnothing(course_map) ? String[] : qmd_link_targets(course_map.captures[1])
+                for kind in ("lessons", "assignments")
+                    @testset "$kind index and course map follow the sidebar" begin
+                        expected = regular_course_hrefs(hrefs, kind)
+                        @test regular_course_hrefs(map_hrefs, kind) == expected
+                        source_path = joinpath(public_root, kind, "index.qmd")
+                        index_hrefs = [
+                            relpath(resolve_qmd_target(source_path, target), public_root)
+                            for target in qmd_link_targets(read(source_path, String))
+                        ]
+                        expected_index = kind == "assignments" ?
+                            vcat(expected, ["assignments/final-project.qmd"]) : expected
+                        regular_hrefs = regular_course_hrefs(index_hrefs, kind)
+                        listed_pages = filter(index_hrefs) do target
+                            target in regular_hrefs || target == "assignments/final-project.qmd"
+                        end
+                        @test listed_pages == expected_index
+                    end
+                end
             end
         end
     end
