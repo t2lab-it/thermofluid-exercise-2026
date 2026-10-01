@@ -35,7 +35,7 @@ $$
 Neumann・Gauss–Seidel・SORの以下の条件は任意発展に使います．
 
 発展も同じ領域・節点格子・初期推定・残差停止条件を使います．
-外向き法線微分$g_N=\partial_nu$を指定し，物理的な外向き拡散流束$-\kappa g_N$と区別します．
+外向き単位法線方向の微分$g_N=\frac{\partial u}{\partial n}$を指定し，物理的な外向き拡散流束$-\kappa g_N$と区別します．
 `bc`の辺順はwest，east，south，north，各辺は`(;kind=:dirichletまたは:neumann,values)`です．
 west／eastの`values`は長さ$n_y$，south／northは長さ$n_x$で，各境界節点の指定値を格納します．
 

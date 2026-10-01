@@ -33,7 +33,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 $$
 \begin{gathered}
 u(x,0)=\begin{cases}2&0.5\le x\le1,\\1&\text{それ以外},\end{cases}\\
-u(0,t)=1,\qquad u_x(2,t)=0.
+u(0,t)=1,\qquad \left.\frac{\partial u}{\partial x}\right|_{x=2}=0.
 \end{gathered}
 $$
 
