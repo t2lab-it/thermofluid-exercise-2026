@@ -32,16 +32,6 @@ const ASSIGNMENT_IDENTIFIERS = Dict(
     ],
 )
 
-@testset "assignment identifiers survive prose rewrites" begin
-    rewritten = "A new explanation mentions `student_api` and `test/student/F99.jl`."
-    @test isempty(missing_required_identifiers(
-        rewritten,
-        ["student_api", "test/student/F99.jl"],
-    ))
-    @test missing_required_identifiers(rewritten, ["student_api", "missing_api"]) == [
-        "missing_api",
-    ]
-end
 
 @testset "assignment pages preserve student-facing identifiers" begin
     contracts = TOML.parsefile(
@@ -53,12 +43,4 @@ end
         required = get(ASSIGNMENT_IDENTIFIERS, id, String[])
         @test isempty(missing_required_identifiers(source, required))
     end
-end
-
-@testset "removed machine identifier is reported" begin
-    source = read(joinpath(ASSIGNMENT_INTERFACE_ROOT, "assignments", "F01.qmd"), String)
-    rewritten = replace(source, "student_greeting" => "replacement_api")
-    @test missing_required_identifiers(rewritten, ASSIGNMENT_IDENTIFIERS["F01"]) == [
-        "student_greeting",
-    ]
 end

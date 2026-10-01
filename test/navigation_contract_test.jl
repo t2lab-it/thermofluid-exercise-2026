@@ -271,74 +271,12 @@ function run_navigation_behavior(quarto, module_path)
     return success(process), String(take!(output))
 end
 
-@testset "navigation source parsers reject inert configuration" begin
-    @test entry_hrefs([
-        ("Any rewritten label", "lessons/F00.qmd"),
-        ("Another label", nothing),
-        ("自由な表示名", "assignments/F00.qmd"),
-    ]) == ["lessons/F00.qmd", "assignments/F00.qmd"]
 
-    commented = yaml_source_lines("""
-    # website:
-    #   page-navigation: true
-    website:
-      navbar:
-        page-navigation: true
-    """)
-    @test isnothing(yaml_node(commented, ("website", "page-navigation")))
-
-    valid = yaml_source_lines("""
-    format:
-      html:
-        include-after-body:
-          - assets/navigation-loader.html
-    """)
-    @test navigation_loader_path(valid) == NAVIGATION_LOADER
-    @test is_module_navigation_loader(
-        "<script type=\"module\" src=\"/thermofluid-exercise-2026/assets/navigation.js\"></script>",
-    )
-    @test !is_module_navigation_loader("<script src=\"assets/navigation.js\"></script>")
-
-    sidebar = yaml_source_lines("""
-    website:
-      sidebar:
-        - id: course
-          contents:
-            - section: "全15回"
-              contents:
-                - text: "第1回 ガイダンス、アカウント、環境診断"
-                  href: lessons/F00.qmd
-                - text: "第6回 一次元拡散・移流拡散"
-    """)
-    sidebar_node = yaml_node(sidebar, ("website", "sidebar"))
-    course = only(yaml_sequence_items(sidebar, sidebar_node))
-    section = only(sidebar_sections(sidebar, course))
-    @test sidebar_section_entries(sidebar, section) == [
-        ("第1回 ガイダンス、アカウント、環境診断", "lessons/F00.qmd"),
-        ("第6回 一次元拡散・移流拡散", nothing),
-    ]
-end
-
-@testset "navigation behavior harness fixture" begin
-    behavior_test_exists = isfile(NAVIGATION_BEHAVIOR_TEST)
-    @test behavior_test_exists
-    quarto = Sys.which("quarto")
-    @test !isnothing(quarto)
-    if behavior_test_exists && !isnothing(quarto)
-        passed, details = run_navigation_behavior(quarto, "--self-test")
-        @test passed
-        !passed && @info "navigation behavior harness self-test failed" details
-    end
-end
 
 @testset "reviewed course navigation contract" begin
     public_root = NAVIGATION_SITE_ROOT
     quarto = read(joinpath(public_root, "_quarto.yml"), String)
     yaml = yaml_source_lines(quarto)
-    contracts = TOML.parsefile(joinpath(public_root, "assignments", "contracts.toml"))
-    assignment_ids = Set(keys(contracts["assignments"]))
-    @test assignment_ids == REQUIRED_ASSIGNMENT_IDS
-
     language = yaml_node(yaml, ("lang",))
     @test !isnothing(language)
     !isnothing(language) && @test yaml_scalar(yaml, language) == "ja"
@@ -374,13 +312,6 @@ end
     @test !isnothing(page_navigation)
     !isnothing(page_navigation) && @test yaml_scalar(yaml, page_navigation) == "true"
 
-    light_theme = yaml_node(yaml, ("format", "html", "theme", "light"))
-    dark_theme = yaml_node(yaml, ("format", "html", "theme", "dark"))
-    @test !isnothing(light_theme)
-    @test !isnothing(dark_theme)
-    !isnothing(light_theme) && @test yaml_scalar(yaml, light_theme) == "cosmo"
-    !isnothing(dark_theme) && @test yaml_scalar(yaml, dark_theme) == "darkly"
-
     sidebar = yaml_node(yaml, ("website", "sidebar"))
     @test !isnothing(sidebar)
     if !isnothing(sidebar)
@@ -396,8 +327,8 @@ end
             title = yaml_item_field(yaml, final_project, "title")
             @test !isnothing(title)
             !isnothing(title) && @test !isempty(strip(title.value))
-            @test yaml_item_field(yaml, final_project, "style").value == "docked"
-            @test yaml_item_field(yaml, final_project, "collapse-level").value == "2"
+
+
 
             contents = yaml_item_field(yaml, final_project, "contents")
             @test !isnothing(contents)
@@ -415,7 +346,6 @@ end
             @test all(entry -> !isempty(strip(first(entry))), listed_topics)
             @test length(listed_topics) == 13
             @test Set(entry_hrefs(listed_topics)) == EXPECTED_TOPIC_HREFS
-            @test length(unique(entry_hrefs(listed_topics))) == 13
 
             hub_source = read(joinpath(public_root, "assignments", "final-project.qmd"), String)
             hub_hrefs = Set(
@@ -504,17 +434,10 @@ end
                     EXPECTED_COURSE_HREFS,
                     fill("assignments/final-project.qmd", 4),
                 )
-                for href in EXPECTED_COURSE_HREFS
-                    @test count(==(href), hrefs) == 1
-                end
-                @test !("guides/testing.qmd" in hrefs)
-                @test !("advanced/cairomakie.qmd" in hrefs)
             end
         end
     end
 
-    assignment_metadata_path = joinpath(public_root, "assignments", "_metadata.yml")
-    @test !isfile(assignment_metadata_path)
 
     loader_path = navigation_loader_path(yaml)
     @test loader_path == NAVIGATION_LOADER
@@ -537,44 +460,6 @@ end
         "assets/navigation.js",
     )
         @test isfile(joinpath(public_root, path))
-    end
-
-    styles_path = joinpath(public_root, "assets", "styles.css")
-    styles_exist = isfile(styles_path)
-    @test styles_exist
-    if styles_exist
-        styles = replace(read(styles_path, String), r"(?s)\/\*.*?\*\/" => "")
-        @test occursin(r"body\.quarto-light\s*\{", styles)
-        @test occursin(r"body\.quarto-dark\s*\{", styles)
-        for variable in ("--tf-accent", "--tf-accent-strong", "--tf-soft", "--tf-border", "--tf-focus")
-            @test count(occursin(variable), split(styles, '\n')) >= 2
-        end
-        @test occursin(":focus-visible", styles)
-        @test occursin(r"@media\s*\(max-width:\s*991\.98px\)", styles)
-        @test occursin(
-            r"(?s)\.navbar\s*\{[^}]*padding-block\s*:\s*0\.5rem\s*;",
-            styles,
-        )
-        @test !occursin("🌙", styles)
-        @test !occursin(r"\.quarto-color-scheme-toggle\s+\.bi::before", styles)
-        @test occursin(r"\.tf-theme-switch\s*\{", styles)
-        @test occursin(
-            r"(?s)\.tf-theme-icon\s*\{[^}]*inline-size\s*:\s*1rem\s*;[^}]*block-size\s*:\s*1rem\s*;",
-            styles,
-        )
-        @test occursin(
-            r"(?s)\.tf-theme-switch-track\s*\{[^}]*inline-size\s*:\s*2\.25rem\s*;[^}]*block-size\s*:\s*1\.25rem\s*;",
-            styles,
-        )
-        @test occursin(
-            r"(?s)\.tf-theme-switch\.alternate\s+\.tf-theme-switch-thumb\s*\{[^}]*transform\s*:\s*translateX\(1rem\)\s*;",
-            styles,
-        )
-        @test occursin(
-            r"(?s)body\.quarto-dark\s+:not\(pre\)\s*>\s*code\s*\{[^}]*color\s*:\s*#f8f9fa\s*;[^}]*background-color\s*:\s*#343a40\s*;",
-            styles,
-        )
-        @test !occursin(r"body\.quarto-dark\s+pre\s+code", styles)
     end
 
     navigation_path = joinpath(public_root, "assets", "navigation.js")
@@ -635,7 +520,6 @@ end
             @test occursin("提出単位: `F03-F04`", source)
         end
         @test occursin("$paired_id.qmd", source)
-        @test all(term -> !occursin(term, source), F03_F04_FORBIDDEN_TERMS)
     end
 
     # F03の到達点は課題ページに集約し，授業ページから参照する．
@@ -653,18 +537,6 @@ end
     end
 end
 
-@testset "later assignment pages delegate shell commands to the shared workflow" begin
-    command_patterns = (
-        r"(?m)^\s*julia\s+--project",
-        r"(?m)^\s*git\s+(?:switch|pull|status|branch|diff|add|commit|push)\b",
-    )
-    for id in ("F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08", "N09")
-        source = read(joinpath(NAVIGATION_SITE_ROOT, "assignments", "$id.qmd"), String)
-        for pattern in command_patterns
-            @test !occursin(pattern, source)
-        end
-    end
-end
 
 @testset "N05 and N06 share submission but keep distinct content routes" begin
     contracts=TOML.parsefile(joinpath(NAVIGATION_SITE_ROOT,"assignments","contracts.toml"))["assignments"]

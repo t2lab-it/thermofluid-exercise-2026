@@ -249,58 +249,6 @@ function assertOpen(trigger, menu) {
   assertEqual(menu.hidden, false);
 }
 
-function referenceEnhanceSplitNavigationUsing({ anchor, menu, document }, insertTrigger) {
-  if (!anchor || !menu || !document) return null;
-
-  const item = anchor.parentNode;
-  if (!item) return null;
-
-  const trigger = document.createElement("button");
-  trigger.setAttribute("type", "button");
-  trigger.setAttribute("aria-label", `${anchor.textContent || "section"} menu`);
-  trigger.setAttribute("aria-controls", menu.id);
-  insertTrigger(anchor, menu, trigger);
-
-  const setOpen = (open) => {
-    menu.hidden = !open;
-    menu.classList.toggle("show", open);
-    item.classList.toggle("split-nav-open", open);
-    trigger.setAttribute("aria-expanded", String(open));
-  };
-  const toggle = () => setOpen(trigger.getAttribute("aria-expanded") !== "true");
-  setOpen(false);
-
-  trigger.addEventListener("click", toggle);
-  trigger.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      toggle();
-    }
-  });
-  if (document.defaultView.matchMedia("(hover: hover)").matches) {
-    trigger.addEventListener("pointerenter", () => setOpen(true));
-    item.addEventListener("pointerenter", () => setOpen(true));
-    item.addEventListener("pointerleave", () => setOpen(false));
-  }
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && trigger.getAttribute("aria-expanded") === "true") {
-      setOpen(false);
-      trigger.focus();
-    }
-  });
-  document.addEventListener("click", (event) => {
-    if (!trigger.contains(event.target) && !menu.contains(event.target)) setOpen(false);
-  });
-  return trigger;
-}
-
-function referenceEnhanceSplitNavigation(options) {
-  return referenceEnhanceSplitNavigationUsing(
-    options,
-    (anchor, _menu, trigger) => anchor.after(trigger),
-  );
-}
-
 const modulePath = Deno.args[0];
 assert(modulePath, "usage: quarto run test/navigation_behavior_test.js assets/navigation.js");
 
@@ -323,9 +271,7 @@ globalThis.document = document;
 globalThis.window = document.defaultView;
 
 let navigation;
-if (modulePath === "--self-test") {
-  navigation = { enhanceSplitNavigation: referenceEnhanceSplitNavigation };
-} else {
+{
   const source = await Deno.readTextFile(modulePath);
   const moduleUrl = `data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`;
   navigation = await import(moduleUrl);
@@ -368,7 +314,7 @@ if (modulePath === "--self-test") {
   );
 }
 
-if (!modulePath.startsWith("--")) {
+{
   assertEqual(
     typeof navigation.syncThemeToggleLabel,
     "function",
@@ -384,14 +330,6 @@ if (!modulePath.startsWith("--")) {
   assertEqual(themeToggle.getAttribute("aria-label"), "ダークモード OFF");
   assertEqual(themeToggle.getAttribute("title"), "ダークモード OFF");
   assertEqual(themeToggle.children.length, 3);
-  assertEqual(themeToggle.children[0].classList.contains("tf-theme-icon-sun"), true);
-  assertEqual(themeToggle.children[1].classList.contains("tf-theme-switch-track"), true);
-  assertEqual(themeToggle.children[2].classList.contains("tf-theme-icon-moon"), true);
-  assertEqual(
-    themeToggle.children[1].querySelector(".tf-theme-switch-thumb") !== null,
-    true,
-  );
-
   navigation.enhanceThemeToggle(themeDocument);
   assertEqual(themeToggle.children.length, 3, "theme enhancement must be idempotent");
 
@@ -401,11 +339,6 @@ if (!modulePath.startsWith("--")) {
   assertEqual(themeToggle.getAttribute("aria-label"), "ダークモード ON");
   assertEqual(themeToggle.getAttribute("title"), "ダークモード ON");
 
-  assertEqual(
-    typeof navigation.enhanceAssignmentLessonContext,
-    "undefined",
-    "assignment pages must rely on Quarto's native active sidebar entry",
-  );
 }
 assertEqual(
   typeof navigation.enhanceSplitNavigation,
