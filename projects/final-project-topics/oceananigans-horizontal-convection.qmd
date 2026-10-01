@@ -9,7 +9,6 @@ title: "Oceananigans.jlによる水平対流"
 
 公式例の領域を $\Omega=[-L_x/2,L_x/2]\times[-H,0]$ とし，速度を $\boldsymbol{u}=(u,w)$，kinematic pressureを $p$，浮力を $b$ とします．
 回転を含まないBoussinesq系は
-
 $$
 \begin{aligned}
 \frac{\partial\boldsymbol{u}}{\partial t}
@@ -22,21 +21,17 @@ $$
 &=\kappa\nabla^2b
 \end{aligned}
 $$
-
 です．
 $\nu$は動粘性係数，$\kappa$は浮力拡散係数です．
 有限体積法，staggered配置，圧力射影の役割は[CFDソルバ in Julia](../../advanced/public-solver-methods.qmd#有限体積法とboussinesq流体)でも確認できます．
 
 基準条件は $L_x=2H$ の二次元領域で，初期場を $u=w=b=0$ とし，上面に
-
 $$
 b_s(x)=b(x,0)=-b_\star\cos\left(\frac{2\pi x}{L_x}\right)
 $$
-
 を課します．
 他の浮力境界はzero-flux，速度は全境界でimpermeableかつfree-slipです．
 公式例と同じ定義で
-
 $$
 \begin{aligned}
 Ra&=\frac{b_\star L_x^3}{\nu\kappa},\\
@@ -45,30 +40,24 @@ Pr&=\frac{\nu}{\kappa},\\
 \kappa&=\sqrt{\frac{b_\star L_x^3}{Pr\,Ra}}
 \end{aligned}
 $$
-
 とします．
 基準は $b_\star=H=1$，$L_x=2$，$Ra=10^8$，$Pr=1$ です．
 Rayleigh数だけを変えるときは $Pr$，領域，境界，格子，移流，時間積分，診断と平均規則を固定し，上式から $\nu$ と $\kappa$ を一緒に変えます．
 
 時間と速度のscaleを
-
 $$
 t^*=t\sqrt{\frac{b_\star}{L_x}},
 \qquad
 U_\star=\sqrt{L_xb_\star}
 $$
-
 とします．
 二次元流れ関数を $u=\partial_z\psi$，$w=-\partial_x\psi$ と定義し，循環強度を $\Psi=\max|\psi|/(L_xU_\star)$ で比較します．
 運動エネルギーは
-
 $$
 K(t)=\frac{1}{L_xH}\int_\Omega\frac{u^2+w^2}{2}\,\mathrm{d}A
 $$
-
 とし，$K/(L_xb_\star)$ を報告します．
 浮力散逸密度 $\chi=\kappa|\nabla b|^2$ から，瞬時のNusselt数を
-
 $$
 \begin{aligned}
 Nu(t)&=\frac{\langle\chi\rangle_A}{\chi_{\mathrm{diff}}},\\
@@ -77,17 +66,14 @@ Nu(t)&=\frac{\langle\chi\rangle_A}{\chi_{\mathrm{diff}}},\\
 \tanh\left(\frac{2\pi H}{L_x}\right)
 \end{aligned}
 $$
-
 と定義します．
 $\langle\cdot\rangle_A$は領域平均です．
 表面境界層は平均浮力・$\chi$の鉛直profileを必ず示し，補助的な厚さ指標には閾値を置かない散逸重心
-
 $$
 \frac{\delta_\chi}{H}
 =\frac{\int_\Omega(-z)\chi\,\mathrm{d}A}
 {H\int_\Omega\chi\,\mathrm{d}A}
 $$
-
 を使います．
 $Nu$，$K$，$\Psi$，$\delta_\chi/H$ は瞬時値と平均値を分け，採用した平均窓 $[t_0^*,t_1^*]$ を全条件で記録します．
 
@@ -154,7 +140,6 @@ $b,\zeta,\chi$ の場，平均profile，$Nu$，$\Psi$，$K$，$\delta_\chi/H$を
 自分が固定したenvironmentで，raw fieldと診断値を再生成します．
 
 同じ境界条件の純拡散解は
-
 $$
 \begin{aligned}
 b_{\mathrm{diff}}(x,z)
@@ -164,13 +149,11 @@ b_{\mathrm{diff}}(x,z)
 {\cosh(2\pi H/L_x)}
 \end{aligned}
 $$
-
 です．
 この場を同じ格子と離散勾配で評価し，格子を細かくしたとき $Nu\to1$ となることを，Nusselt postprocessingの外部基準にします．
 水平対流ではnetの鉛直浮力fluxだけを見ると相殺されるため，Rayleigh--Bénard対流のflux定義をそのまま使いません．
 
 浮力分散 $E_b=\tfrac12\int_\Omega b^2\,\mathrm{d}A$ と，境界からの供給 $\mathcal{B}$，領域内の散逸 $\mathcal{D}$ を
-
 $$
 \begin{aligned}
 \mathcal{B}(t)
@@ -181,10 +164,8 @@ $$
 \kappa|\nabla b|^2\,\mathrm{d}A
 \end{aligned}
 $$
-
 と定義します．
 impermeable境界での収支残差
-
 $$
 \begin{aligned}
 R_{b^2}={}&E_b(t_1)-E_b(t_0)\\
@@ -192,7 +173,6 @@ R_{b^2}={}&E_b(t_1)-E_b(t_0)\\
 &+\int_{t_0}^{t_1}\mathcal{D}(t)\,\mathrm{d}t
 \end{aligned}
 $$
-
 を調べます．
 zero-fluxの側面・底面は $\mathcal{B}$ へ寄与せず，上面のface flux，外向き法線，時間積分の符号を小格子で確認します．
 $\|\nabla_h\cdot\boldsymbol{u}_h\|$はabsolute値と $U_\star/L_x$ で規格化した値を示します．

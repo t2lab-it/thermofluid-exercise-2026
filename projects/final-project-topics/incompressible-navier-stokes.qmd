@@ -9,7 +9,6 @@ title: "二次元非圧縮性Navier–Stokes"
 
 標準モデルは，一辺が $L$ の正方形領域内にある，密度と動粘性係数 $\nu$ が一定の二次元非圧縮性流れです．
 上壁の速さ $U$，長さ $L$，移流時間 $L/U$ で無次元化すると，速度 $\boldsymbol{u}=(u,v)$，圧力 $p$，位置 $(x,y)$，時刻 $t$ に対する方程式は
-
 $$
 \begin{aligned}
 \frac{\partial\boldsymbol{u}}{\partial t}
@@ -19,14 +18,12 @@ $$
 \mathrm{Re}&=\frac{UL}{\nu}
 \end{aligned}
 $$
-
 です．
 $\mathrm{Re}$ は慣性と粘性の比を表します．
 標準ルートでは $U=L=1$ とし，$\mathrm{Re}=100,400$ の二条件だけを比較します．
 密度変化，圧縮性，温度，外力，三次元性，乱流モデルは含めません．
 
 流れ関数 $\psi$ と渦度 $\omega$ を
-
 $$
 \begin{aligned}
 u&=-\frac{\partial\psi}{\partial y},\\
@@ -34,9 +31,7 @@ v&=\frac{\partial\psi}{\partial x},\\
 \omega&=\frac{\partial v}{\partial x}-\frac{\partial u}{\partial y}=\nabla^2\psi
 \end{aligned}
 $$
-
 と定義すると，離散化前の連続の式は自動的に満たされ，解く式は
-
 $$
 \begin{aligned}
 \frac{\partial\omega}{\partial t}+J(\psi,\omega)
@@ -47,14 +42,12 @@ J(\psi,\omega)
 -\frac{\partial\psi}{\partial y}\frac{\partial\omega}{\partial x}
 \end{aligned}
 $$
-
 になります．
 キャビティは $0\leq x,y\leq1$ とし，上壁で $u=1,v=0$，他の三壁で $u=v=0$，初期の内部流れは静止とします．
 不透過条件から全壁で同じ定数，例えば $\psi=0$ を置き，接線方向のno-slip条件は採用した差分と整合する壁面渦度として与えます．
 上壁と側壁が交わる角では速度条件が不連続になるため，角の格子値をどう扱ったかを記録し，格子間と $\mathrm{Re}$ 間で変えません．
 
 周期境界の確認には，$0\leq x,y<2\pi$ におけるTaylor–Green渦
-
 $$
 \begin{aligned}
 a(t)&=\exp\!\left(-\frac{2t}{\mathrm{Re}}\right),\\
@@ -62,7 +55,6 @@ a(t)&=\exp\!\left(-\frac{2t}{\mathrm{Re}}\right),\\
 \omega(x,y,t)&=-2\sin x\sin y\,a(t)
 \end{aligned}
 $$
-
 を使えます．
 この解では $J(\psi,\omega)=0$ で，速度と渦度の振幅は $\exp(-2t/\mathrm{Re})$，運動エネルギーとエンストロフィは初期値に対して $\exp(-4t/\mathrm{Re})$ で減衰します．
 [Shirani・Ferziger・ReynoldsのNASA技術報告](https://ntrs.nasa.gov/citations/19820003521)では，この二次元Taylor–Green解をコード検証に使った箇所を確認できます．

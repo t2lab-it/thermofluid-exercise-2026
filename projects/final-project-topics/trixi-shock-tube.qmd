@@ -8,7 +8,6 @@ title: "Trixi.jlによる一次元衝撃波管"
 ## 現象と問いの案
 
 一次元の圧縮性Euler方程式を
-
 $$
 \begin{aligned}
 \frac{\partial \boldsymbol{U}}{\partial t}
@@ -21,24 +20,20 @@ $$
 \begin{pmatrix}\rho u\\ \rho u^2+p\\ u(E+p)\end{pmatrix}
 \end{aligned}
 $$
-
 と書きます．
 $\rho$は密度，$u$は速度，$E$は単位体積あたりの全エネルギー，$p$は圧力です．
 比熱比を$\gamma$とする理想気体では
-
 $$
 \begin{aligned}
 p&=(\gamma-1)\left(E-\frac12\rho u^2\right),\\
 c&=\sqrt{\frac{\gamma p}{\rho}}
 \end{aligned}
 $$
-
 で閉じ，$c$は音速です．
 保存変数，数値流束，DGSEMの役割は[CFDソルバ in Julia](../../advanced/public-solver-methods.qmd#高次不連続galerkin法と双曲型保存則)でも確認できます．
 
 標準の初期値は，公式exampleが採用するmodified Sod問題です．
 $0\leq x\leq1$，$\gamma=1.4$，初期不連続位置$x_0=0.3$として，primitive変数を
-
 $$
 \begin{gathered}
 \boldsymbol{w}=(\rho,u,p),\\
@@ -49,7 +44,6 @@ $$
 \end{cases}
 \end{gathered}
 $$
-
 とします．
 Riemann解は，連続的に広がる1-familyの希薄波，速度と圧力が連続で密度が跳ぶ接触不連続，Rankine--Hugoniot条件とentropy条件を満たす3-familyの衝撃波から成ります．
 同じ評価時刻$t_*=0.2$で，exact Riemann解から希薄波の両端，接触不連続，衝撃波の位置を求め，数値解の$\rho,u,p$へ重ねます．
@@ -117,7 +111,6 @@ level 6は64要素，次数3は各要素4節点なので，基準は1変数あ�
 可視化用の高次補間値だけで保存や正値性を判定せず，native DG nodes・quadratureでの診断と，全条件で共通の可視化・誤差評価gridを区別します．
 
 同じ$x$座標と$t_*$で，primitive変数$q\in\{\rho,u,p\}$の平均絶対誤差を
-
 $$
 \begin{gathered}
 \varepsilon_1(q)=\frac{1}{x_R-x_L}\\
@@ -125,11 +118,9 @@ $$
 |q_h(x,t_*)-q_{\mathrm{ref}}(x,t_*)|\,\mathrm{d}x
 \end{gathered}
 $$
-
 と定義します．
 参照解のsampling点数または積分分割を増やしても，比較する差に対して$\varepsilon_1$が安定することを確認します．
 外れ値は同じ評価gridで
-
 $$
 \begin{aligned}
 O_q^+
@@ -138,14 +129,12 @@ O_q^-
 &=\max\!\left(0,\min q_{\mathrm{ref}}-\min q_h\right)
 \end{aligned}
 $$
-
 とし，点ごとの誤差図も併記します．
 正値性は全保存時刻のnative nodesで$\min\rho$，$\min p$，非有限値の個数を確認します．
 
 このexampleは非周期境界で，左状態には速度があります．
 したがって質量，運動量，全エネルギーがそれぞれ単純に一定とは限りません．
 $\boldsymbol{Q}_h(t)=\int\boldsymbol{U}_h\,\mathrm{d}x$として，境界流束を含む収支残差
-
 $$
 \begin{aligned}
 \boldsymbol{R}_{\mathrm{bal}}(t)=
@@ -154,7 +143,6 @@ $$
 \left[\boldsymbol{F}_R(\tau)-\boldsymbol{F}_L(\tau)\right]\,\mathrm{d}\tau
 \end{aligned}
 $$
-
 を調べます．
 符号，境界状態，積分方法を小さいcaseで確認し，各成分のabsolute値と採用したscaleで規格化した値を併記します．
 

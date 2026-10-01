@@ -11,11 +11,9 @@ title: "プロファイリングと性能最適化"
 新しいJulia processで一回だけ解くまでの **latency** には起動，package読み込み，JITコンパイルが含まれますが，事前実行後に同じ処理を繰り返す時間はwarm-up後のlatencyです．
 一定時間に処理できる格子点，time step，反復，またはsolve数を **throughput** と呼ぶなら，仕事量 $W$ と測定時間 $T$ を定義して $W/T$ と書きます．
 基準版と変更版のwarm-up後の代表時間を $T_\mathrm{base},T_\mathrm{change}$ とすると，speedupは
-
 $$
 S=\frac{T_\mathrm{base}}{T_\mathrm{change}}
 $$
-
 です．
 ただし，入力，問題規模，仕事量，実行範囲が同じで，出力の正しさが保たれた場合にだけ意味があります．
 

@@ -10,16 +10,13 @@ title: "一次元Stefan問題"
 基準モデルは，左端から加熱される一次元の**一相融解**です．
 液相がある $0<x<s(t)$ だけを熱拡散の対象とし，固相側の熱伝導，流動，温度依存物性はまだ含めません．
 温度を $T$，界面位置を $s$，密度を $\rho$，比熱を $c_p$，熱伝導率を $k$，潜熱を $L$ とすると，液相内の熱方程式と界面のエネルギー条件は
-
 $$
 \rho c_p \frac{\partial T}{\partial t}=k\frac{\partial^2T}{\partial x^2},
 \qquad T(0,t)=T_\mathrm{left},\quad T(s(t),t)=T_m,
 $$
-
 $$
 \rho L\frac{\mathrm{d}s}{\mathrm{d}t}=-k\left.\frac{\partial T}{\partial x}\right|_{s(t)^-}
 $$
-
 です．
 $T_m$ は相変化温度，$T_\mathrm{left}$ は加熱端の温度です．
 標準ケースは $0\le x\le0.1\ \mathrm{m}$，$T(x,0)=T_m=0\ ^\circ\mathrm{C}$，$T_\mathrm{left}=10\ ^\circ\mathrm{C}$，右端 $T(0.1,t)=T_m$ とします．
@@ -34,12 +31,10 @@ $T_m$ は相変化温度，$T_\mathrm{left}$ は加熱端の温度です．
 
 このとき $\alpha=k/(\rho c_p)=10^{-6}\ \mathrm{m^2\,s^{-1}}$，$\mathrm{Ste}=c_p(T_\mathrm{left}-T_m)/L=0.1$ です．
 一相問題の相似解は
-
 $$
 s(t)=2\lambda\sqrt{\alpha t},\qquad
-\sqrt{\pi}\lambda e^{\lambda^2}\operatorname{erf}(\lambda)=\mathrm{Ste},
+\sqrt{\pi}\lambda e^{\lambda^2}\operatorname{erf}(\lambda)=\mathrm{Ste}
 $$
-
 となり，基準ケースでは $\lambda=0.2200162727429379$ です．
 式の導出と係数の役割は[一相Stefan問題の相似解](https://doi.org/10.3390/fractalfract9070397)で確認し，後述のCSVを外部比較の基準として使います．
 有限領域では，比較時刻に界面が右端から十分遠いことも確かめてください．
