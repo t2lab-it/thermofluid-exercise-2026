@@ -7,7 +7,7 @@ title: "受講環境の準備"
 
 この演習では，macOS・native Linux，および Windows 上の WSL2 Ubuntu 24.04 LTS の Linux 側を正式にサポートします．
 Windows での演習コマンドは WSL2 Ubuntu 内で実行し，Windows ネイティブ側の Julia・Git・Git Bash は使いません．
-受講開始までに，Julia 1.13.0，Git，Visual Studio Code（VS Code），Julia 拡張機能，および対応するコーディングエージェントのうち一つを準備してください．
+受講開始までに，Julia 1.13系，Git，Visual Studio Code（VS Code），Julia 拡張機能，および対応するコーディングエージェントのうち一つを準備してください．
 
 Windows では，まず [Microsoft公式のWSLインストール手順](https://learn.microsoft.com/en-us/windows/wsl/install) に従って Ubuntu 24.04 LTS を準備します．
 その後，[VS Code Remote - WSL の公式チュートリアル](https://code.visualstudio.com/docs/remote/wsl-tutorial) に従い，Windows版VS CodeからWSL2のリポジトリを開きます．
@@ -22,7 +22,7 @@ Windows では，まず [Microsoft公式のWSLインストール手順](https://
 | 項目 | 必須条件 | 確認方法 |
 |---|---|---|
 | 実行環境 | Windows: WSL2 Ubuntu 24.04 LTS，または native macOS / native Linux | uname -a と pwd |
-| Julia | Juliaup で Julia 1.13.0 を選択 | julia --version |
+| Julia | Juliaup で Julia 1.13系 を選択 | julia --version |
 | Git | 実行環境の Linux/macOS 側から実行可能 | git --version |
 | VS Code | WindowsではRemote-WSL接続，macOS/Linuxではローカル起動 | リポジトリを開く |
 | Julia 拡張機能 | 接続中の環境で Julia を実行できる | Julia ファイルを開いて実行 |

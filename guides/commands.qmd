@@ -27,7 +27,7 @@ F00から始める手順は[初回セットアップとF00のpreflight](workflow
 
 | コマンド | 目的 |
 |---|---|
-| `julia --version` | Julia 1.13.0を確認する |
+| `julia --version` | Julia 1.13系を確認する |
 | `git --version` | Gitを確認する |
 | `julia --project=. -e 'using Pkg; Pkg.instantiate()'` | 配布されたJulia環境を復元する |
 : {tbl-colwidths="[38, 62]"}
