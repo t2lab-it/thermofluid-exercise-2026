@@ -8,7 +8,7 @@
 
 ## 必要なローカル環境
 
-- Julia 1.13.0
+- Julia 1.13系
 - Quarto 1.9.31
 - Git
 
@@ -22,7 +22,7 @@ julia --version
 quarto --version
 ```
 
-JuliaとQuartoの表示がそれぞれ`1.13.0`，`1.9.31`であることを確認します．
+Juliaが1.13系，Quartoが`1.9.31`であることを確認します．
 
 ## レンダリング
 
