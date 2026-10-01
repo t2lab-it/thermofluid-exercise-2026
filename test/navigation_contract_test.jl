@@ -215,6 +215,12 @@ end
 
 entry_hrefs(entries) = [href for (_, href) in entries if !isnothing(href)]
 
+function regular_course_hrefs(targets, kind)
+    return filter(targets) do target
+        startswith(target, "$kind/") && occursin(r"^[FN][0-9]+\.qmd$", basename(target))
+    end
+end
+
 const NAVIGATION_LOADER = "assets/navigation-loader.html"
 const NAVIGATION_BEHAVIOR_TEST = joinpath(@__DIR__, "navigation_behavior_test.js")
 
@@ -434,6 +440,29 @@ end
                     EXPECTED_COURSE_HREFS,
                     fill("assignments/final-project.qmd", 4),
                 )
+
+                home_source = read(joinpath(public_root, "index.qmd"), String)
+                course_map = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", home_source)
+                @test !isnothing(course_map)
+                map_hrefs = isnothing(course_map) ? String[] : qmd_link_targets(course_map.captures[1])
+                for kind in ("lessons", "assignments")
+                    @testset "$kind index and course map follow the sidebar" begin
+                        expected = regular_course_hrefs(hrefs, kind)
+                        @test regular_course_hrefs(map_hrefs, kind) == expected
+                        source_path = joinpath(public_root, kind, "index.qmd")
+                        index_hrefs = [
+                            relpath(resolve_qmd_target(source_path, target), public_root)
+                            for target in qmd_link_targets(read(source_path, String))
+                        ]
+                        expected_index = kind == "assignments" ?
+                            vcat(expected, ["assignments/final-project.qmd"]) : expected
+                        regular_hrefs = regular_course_hrefs(index_hrefs, kind)
+                        listed_pages = filter(index_hrefs) do target
+                            target in regular_hrefs || target == "assignments/final-project.qmd"
+                        end
+                        @test listed_pages == expected_index
+                    end
+                end
             end
         end
     end
