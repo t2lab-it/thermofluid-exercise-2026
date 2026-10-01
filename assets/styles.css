@@ -63,6 +63,16 @@ body.quarto-dark :not(pre) > code {
   border-bottom: 3px solid var(--tf-soft);
 }
 
+/* Center the complete desktop layout, including navigation and the TOC. */
+@media (min-width: 992px) {
+  #quarto-content,
+  #quarto-header .navbar-container,
+  .nav-footer {
+    max-width: 1440px;
+    margin-inline: auto;
+  }
+}
+
 .eyebrow {
   margin-bottom: 0.35rem;
   color: var(--tf-accent);
