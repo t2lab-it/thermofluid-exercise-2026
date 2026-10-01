@@ -10,7 +10,7 @@ const LINE_URL = r"https://github\.com/t2lab-it/thermofluid-exercise-student-202
 """Extract every line-linked student symbol, including the Elliptic module."""
 function source_links(source)
     [ (; name=last(split(first(split(m[1], '(')), '.')),
-         url=String(m[2]), commit=String(m[3]), path=String(m[4]),
+         url=String(m[2]), ref=String(m[3]), path=String(m[4]),
          line=parse(Int, m[5])) for m in eachmatch(LINK, source) ]
 end
 
@@ -24,7 +24,7 @@ function definition_name(line)
     nothing
 end
 
-"""Verify labels against exact definition lines, using a commit-aware reader."""
+"""Verify main links against exact definition lines, using a ref-aware reader."""
 function check_links(source, page, read_source; io=devnull)
     errors = String[]
     links = source_links(source)
@@ -32,12 +32,12 @@ function check_links(source, page, read_source; io=devnull)
     length(links) == length(collect(eachmatch(LINE_URL, source))) ||
         push!(errors, "$page: unsupported student definition link format")
     for link in links
-        if !occursin(r"^[0-9a-f]{40}$", link.commit)
-            push!(errors, "$page: $(link.name): immutable full commit required: $(link.url)")
+        if link.ref != "main"
+            push!(errors, "$page: $(link.name): student main required: $(link.url)")
             continue
         end
         try
-            lines = split(read_source(link.commit, link.path), '\n')
+            lines = split(read_source(link.ref, link.path), '\n')
             if !(1 <= link.line <= length(lines))
                 push!(errors, "$page: $(link.name): line out of range: $(link.url)")
             elseif definition_name(lines[link.line]) != link.name
@@ -46,13 +46,15 @@ function check_links(source, page, read_source; io=devnull)
                 println(io, "$page | $(link.name) | $(link.url) | $(strip(lines[link.line]))")
             end
         catch error
-            push!(errors, "$page: $(link.name): cannot read $(link.commit):$(link.path): $(sprint(showerror, error))")
+            push!(errors, "$page: $(link.name): cannot read $(link.ref):$(link.path): $(sprint(showerror, error))")
         end
     end
     errors
 end
 
-"""Read-only audit: julia --project=. scripts/verify_n08_n09_source_links.jl STUDENT_ROOT [PUBLIC_ROOT]."""
+"""Read-only audit against local student main; synchronize it before running.
+Usage: julia --project=. scripts/verify_n08_n09_source_links.jl STUDENT_ROOT [PUBLIC_ROOT].
+"""
 function main(args)
     if !(1 <= length(args) <= 2)
         println(stderr, "Usage: verify_n08_n09_source_links.jl STUDENT_ROOT [PUBLIC_ROOT]")
@@ -60,10 +62,12 @@ function main(args)
     end
     student = abspath(args[1])
     public = length(args) == 2 ? abspath(args[2]) : normpath(joinpath(@__DIR__, ".."))
-    cache = Dict{Tuple{String,String},String}()
-    read_source = (commit, path) -> get!(cache, (commit, path)) do
-        # Read the immutable Git blob; never use the worktree or mutable main.
-        read(`git -C $student show $(commit * ":" * path)`, String)
+    # Resolve main once for a consistent audit and record the tested revision.
+    revision = strip(read(`git -C $student rev-parse --verify "refs/heads/main^{commit}"`, String))
+    println("Student main checked at $revision (local main; synchronize before running).")
+    cache = Dict{String,String}()
+    read_source = (ref, path) -> get!(cache, path) do
+        read(`git -C $student show $(revision * ":" * path)`, String)
     end
     errors = String[]
     count = 0
