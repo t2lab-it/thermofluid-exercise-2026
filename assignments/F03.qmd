@@ -29,14 +29,14 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 スカラー場を$\phi$，ベクトル場を$\boldsymbol A=(A_x,A_y,A_z)$とすると，直交座標の定義は
 $$
 \begin{aligned}
-\nabla\phi&=(\partial_x\phi,\partial_y\phi,\partial_z\phi),\\
-\nabla\cdot\boldsymbol A&=\partial_xA_x+\partial_yA_y+\partial_zA_z,\\
+\nabla\phi&=(\frac{\partial \phi}{\partial x},\frac{\partial \phi}{\partial y},\frac{\partial \phi}{\partial z}),\\
+\nabla\cdot\boldsymbol A&=\frac{\partial A_x}{\partial x}+\frac{\partial A_y}{\partial y}+\frac{\partial A_z}{\partial z},\\
 \nabla\times\boldsymbol A&=\begin{pmatrix}
-\partial_yA_z-\partial_zA_y\\
-\partial_zA_x-\partial_xA_z\\
-\partial_xA_y-\partial_yA_x
+\frac{\partial A_z}{\partial y}-\frac{\partial A_y}{\partial z}\\
+\frac{\partial A_x}{\partial z}-\frac{\partial A_z}{\partial x}\\
+\frac{\partial A_y}{\partial x}-\frac{\partial A_x}{\partial y}
 \end{pmatrix},\\
-\nabla^2\phi&=\partial_x^2\phi+\partial_y^2\phi+\partial_z^2\phi.
+\nabla^2\phi&=\frac{\partial^2 \phi}{\partial x^2}+\frac{\partial^2 \phi}{\partial y^2}+\frac{\partial^2 \phi}{\partial z^2}.
 \end{aligned}
 $$
 
@@ -108,7 +108,7 @@ $$
 $$
 を証明してください．
 
-まず第1成分 $\partial_y(\phi A_z)-\partial_z(\phi A_y)$ に積の微分を使い，残りの成分も同様に整理します．
+まず第1成分 $\frac{\partial}{\partial y}\left(\phi A_z\right)-\frac{\partial}{\partial z}\left(\phi A_y\right)$ に積の微分を使い，残りの成分も同様に整理します．
 外積の順序を逆にすると符号が変わる点に注意してください．
 
 応用として，密度 $\rho>0$ が空間的に変化するとき，圧力による加速度について
@@ -130,7 +130,7 @@ $$
 $$
 を証明してください．
 
-左辺の第1成分は $u\partial_xu+v\partial_yu+w\partial_zu$ です．
+左辺の第1成分は $u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y}+w\frac{\partial u}{\partial z}$ です．
 右辺の勾配と外積を展開して比べ，残りの成分も確かめてください．
 この恒等式自体に非圧縮条件が必要かどうかも説明してください．
 

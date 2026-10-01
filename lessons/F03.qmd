@@ -53,16 +53,16 @@ $$
 $$
 と定義します．
 以下では，現れる二階偏微分が連続，すなわち場が対象領域で少なくとも $C^2$ 級であると仮定します．
-この条件により $\partial^2 f/(\partial x\partial y)=\partial^2 f/(\partial y\partial x)$ のように混合偏微分の順序を交換できます．
+この条件により $\frac{\partial^2 f}{\partial x\partial y}=\frac{\partial^2 f}{\partial y\partial x}$ のように混合偏微分の順序を交換できます．
 
 ## 証明に使う添字記法
 
-$x_1=x$，$x_2=y$，$x_3=z$ とし，$\partial_i=\partial/\partial x_i$ と書きます．
+$x_1=x$，$x_2=y$，$x_3=z$ を座標とし，$A_i$ はベクトルの第i成分を表します．
 同じ添字が一つの項に2回現れるときは，$i=1,2,3$ について和を取るというアインシュタインの総和規約を使います．
 例えば
 $$
-\nabla\cdot\boldsymbol{A}=\partial_i A_i,\qquad
-\nabla^2\phi=\partial_i\partial_i\phi.
+\nabla\cdot\boldsymbol{A}=\frac{\partial A_i}{\partial x_i},\qquad
+\nabla^2\phi=\frac{\partial^2 \phi}{\partial x_i\partial x_i}.
 $$
 
 クロネッカーのデルタ（Kronecker delta）$\delta_{ij}$ は
@@ -79,8 +79,8 @@ $$
 エディントンのイプシロン（Levi--Civita記号）$\varepsilon_{ijk}$ は，$\varepsilon_{123}=1$，添字を2つ交換すると符号が反転し，添字が重なると0となる完全反対称な記号です．
 直交座標では
 $$
-(\nabla\phi)_i=\partial_i\phi,\qquad
-(\nabla\times\boldsymbol{A})_i=\varepsilon_{ijk}\partial_j A_k
+(\nabla\phi)_i=\frac{\partial \phi}{\partial x_i},\qquad
+(\nabla\times\boldsymbol{A})_i=\varepsilon_{ijk}\frac{\partial A_k}{\partial x_j}
 $$
 であり，次の縮約恒等式
 $$
@@ -95,10 +95,10 @@ $$
 $$
 \begin{aligned}
 \left[\nabla\times(\nabla\phi)\right]_i
-&=\varepsilon_{ijk}\partial_j\partial_k\phi\\
-&=\varepsilon_{ikj}\partial_k\partial_j\phi\\
-&=-\varepsilon_{ijk}\partial_k\partial_j\phi\\
-&=-\varepsilon_{ijk}\partial_j\partial_k\phi=0.
+&=\varepsilon_{ijk}\frac{\partial^2 \phi}{\partial x_j\partial x_k}\\
+&=\varepsilon_{ikj}\frac{\partial^2 \phi}{\partial x_k\partial x_j}\\
+&=-\varepsilon_{ijk}\frac{\partial^2 \phi}{\partial x_k\partial x_j}\\
+&=-\varepsilon_{ijk}\frac{\partial^2 \phi}{\partial x_j\partial x_k}=0.
 \end{aligned}
 $$
 
@@ -114,11 +114,11 @@ $$
 $$
 \begin{aligned}
 \nabla\cdot(\nabla\times\boldsymbol{A})
-&=\partial_i\left(\varepsilon_{ijk}\partial_j A_k\right)\\
-&=\varepsilon_{ijk}\partial_i\partial_j A_k\\
-&=\varepsilon_{jik}\partial_j\partial_i A_k\\
-&=-\varepsilon_{ijk}\partial_j\partial_i A_k\\
-&=-\varepsilon_{ijk}\partial_i\partial_j A_k=0.
+&=\frac{\partial}{\partial x_i}\left(\varepsilon_{ijk}\frac{\partial A_k}{\partial x_j}\right)\\
+&=\varepsilon_{ijk}\frac{\partial^2 A_k}{\partial x_i\partial x_j}\\
+&=\varepsilon_{jik}\frac{\partial^2 A_k}{\partial x_j\partial x_i}\\
+&=-\varepsilon_{ijk}\frac{\partial^2 A_k}{\partial x_j\partial x_i}\\
+&=-\varepsilon_{ijk}\frac{\partial^2 A_k}{\partial x_i\partial x_j}=0.
 \end{aligned}
 $$
 
@@ -130,9 +130,9 @@ $$
 $$
 \begin{aligned}
 \nabla\cdot(\phi\boldsymbol{A})
-&=\partial_i(\phi A_i)\\
-&=(\partial_i\phi)A_i+\phi\,\partial_i A_i\\
-&=A_i\partial_i\phi+\phi\,\partial_i A_i\\
+&=\frac{\partial}{\partial x_i}\left(\phi A_i\right)\\
+&=(\frac{\partial \phi}{\partial x_i})A_i+\phi\,\frac{\partial A_i}{\partial x_i}\\
+&=A_i\frac{\partial \phi}{\partial x_i}+\phi\,\frac{\partial A_i}{\partial x_i}\\
 &=\boldsymbol{A}\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol{A}.
 \end{aligned}
 $$
@@ -146,22 +146,22 @@ $$
 $$
 \begin{aligned}
 \left[\nabla\times(\nabla\times\boldsymbol{A})\right]_i
-&=\varepsilon_{ijk}\partial_j
-  \left(\varepsilon_{k\ell m}\partial_\ell A_m\right)\\
+&=\varepsilon_{ijk}\frac{\partial}{\partial x_j}
+  \left(\varepsilon_{k\ell m}\frac{\partial A_m}{\partial x_\ell}\right)\\
 &=\varepsilon_{ijk}\varepsilon_{k\ell m}
-  \partial_j\partial_\ell A_m\\
+  \frac{\partial^2 A_m}{\partial x_j\partial x_\ell}\\
 &=(\delta_{i\ell}\delta_{jm}-\delta_{im}\delta_{j\ell})
-  \partial_j\partial_\ell A_m\\
-&=\partial_i\partial_j A_j-\partial_j\partial_j A_i\\
-&=\partial_i(\nabla\cdot\boldsymbol{A})-\nabla^2 A_i.
+  \frac{\partial^2 A_m}{\partial x_j\partial x_\ell}\\
+&=\frac{\partial^2 A_j}{\partial x_i\partial x_j}-\frac{\partial^2 A_i}{\partial x_j\partial x_j}\\
+&=\frac{\partial}{\partial x_i}\left(\nabla\cdot\boldsymbol{A}\right)-\nabla^2 A_i.
 \end{aligned}
 $$
 
 第4行ではデルタが対応する添字を同一視する縮約
-$\delta_{i\ell}\delta_{jm}\partial_j\partial_\ell A_m
-=\partial_i\partial_j A_j$ と
-$\delta_{im}\delta_{j\ell}\partial_j\partial_\ell A_m
-=\partial_j\partial_j A_i$ を使いました．
+$\delta_{i\ell}\delta_{jm}\frac{\partial^2 A_m}{\partial x_j\partial x_\ell}
+=\frac{\partial^2 A_j}{\partial x_i\partial x_j}$ と
+$\delta_{im}\delta_{j\ell}\frac{\partial^2 A_m}{\partial x_j\partial x_\ell}
+=\frac{\partial^2 A_i}{\partial x_j\partial x_j}$ を使いました．
 各成分 $i=1,2,3$ で成り立つので，
 $$
 \nabla\times(\nabla\times\boldsymbol{A})
@@ -227,7 +227,7 @@ $$
 $$
 となります．
 非圧縮条件 $\nabla\cdot\boldsymbol{u}=0$ の下では最後の項が消えます．
-一定速度 $\boldsymbol{u}=(c,0,0)$ の一次元問題にすれば，$q_t+cq_x=0$ となり，[N01の線形移流方程式](N01.qmd)に一致します（N01では輸送される量を $u$ と表記します）．
+一定速度 $\boldsymbol{u}=(c,0,0)$ の一次元問題にすれば，$\frac{\partial q}{\partial t}+c\frac{\partial q}{\partial x}=0$ となり，[N01の線形移流方程式](N01.qmd)に一致します（N01では輸送される量を $u$ と表記します）．
 
 [自然対流キャビティ](../projects/final-project-topics/natural-convection-cavity.qmd)の無次元温度 $\theta$ についても，非圧縮条件から $\nabla\cdot(\theta\boldsymbol{u})=\boldsymbol{u}\cdot\nabla\theta$ です．
 そのため，定常温度方程式 $\boldsymbol{u}\cdot\nabla\theta=\nabla^2\theta$ は，熱の移流流束と拡散の釣り合いとして読めます．
@@ -239,7 +239,7 @@ $$
 となります．
 熱伝導項を単に $k\nabla^2T$ と書けるのは，$k$ が空間的に一定の場合です．
 
-[N02のBurgers方程式](N02.qmd)では，滑らかな部分で $\partial_x(u^2/2)=u\partial_xu$ となります．
+[N02のBurgers方程式](N02.qmd)では，滑らかな部分で $\frac{\partial}{\partial x}\left(u^2/2\right)=u\frac{\partial u}{\partial x}$ となります．
 流束が $u^2$ ではなく $u^2/2$ である点に注意してください．
 こうした連続の式の書き換えができても，離散化した保存形と移流形が同じ更新になるとは限りません．
 N02で流束差を使う理由は，数値計算でも保存性を保つためです．
@@ -264,7 +264,7 @@ $$
 $$
 です．
 一定動粘性係数 $\nu$ の粘性項 $\nu\nabla^2\boldsymbol{u}$ は，渦度の空間変化とも結びついています．
-二次元では右辺は $(-\partial_y\omega,\partial_x\omega,0)$ です．
+二次元では右辺は $(-\frac{\partial \omega}{\partial y},\frac{\partial \omega}{\partial x},0)$ です．
 速度を各成分ごとに拡散させる表現と，渦度から見た表現を結ぶのがcurl curlの公式です．
 
 ## 数値微分への接続

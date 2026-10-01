@@ -38,7 +38,7 @@ u(x,0)=\begin{cases}1&0.5\le x\le1,\\0&\text{それ以外}.\end{cases}
 $$
 
 両端を固定温度0とする`:fixed`と，両端の法線微分0とする`:insulated`を比較します．
-固定温度は$u(0,t)=u(L,t)=0$，断熱は$u_x(0,t)=u_x(L,t)=0$です．
+固定温度は$u(0,t)=u(L,t)=0$，断熱は$\left.\frac{\partial u}{\partial x}\right|_{x=0}=\left.\frac{\partial u}{\partial x}\right|_{x=L}=0$です．
 
 #### 離散化と時間刻み {#discretization}
 

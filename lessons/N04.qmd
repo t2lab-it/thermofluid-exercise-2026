@@ -12,14 +12,14 @@ title: "一次元移流拡散"
 全量を無次元とし，領域は $x\in[0,L)$，$L=2$ とします．
 共通の保存形は
 $$
-u_t+\partial_x f(u)=D u_{xx}
+\frac{\partial u}{\partial t}+\frac{\partial f(u)}{\partial x}=D \frac{\partial^2 u}{\partial x^2}
 $$
 です．
 線形では $f(u)=cu$，標準速度は $c=1$ です．
-一定流速で温度が運ばれる $T_t+c_{\rm phys}T_x=\alpha_{\rm phys}T_{xx}$ に対応します．
+一定流速で温度が運ばれる $\frac{\partial T}{\partial t}+c_{\rm phys}\frac{\partial T}{\partial x}=\alpha_{\rm phys}\frac{\partial^2 T}{\partial x^2}$ に対応します．
 $x=x_{\rm phys}/\ell$，$t=t_{\rm phys}/\tau$，$u=(T-T_{\rm ref})/\Delta T$ とすれば，$c=c_{\rm phys}\tau/\ell$，$D=\alpha_{\rm phys}\tau/\ell^2$ です．
 
-非線形では $f(u)=u^2/2$ とし，粘性Burgers方程式 $u_t+uu_x=D u_{xx}$ を扱います．
+非線形では $f(u)=u^2/2$ とし，粘性Burgers方程式 $\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}=D \frac{\partial^2 u}{\partial x^2}$ を扱います．
 $u$ は無次元速度，$D$ は無次元粘性係数です．
 速度が大きい場所ほど速く移動し，分布が変形します．
 N02と同じ非負速度の範囲だけを扱います．
@@ -114,4 +114,4 @@ N03の約2次収束と異なる理由を，空間差分と $\Delta t$ の調整�
 ## 発展
 
 他方のモデルにも取り組むか，固定・流出境界へ拡張できます．
-固定・流出境界では，移流流束 $f(u)$ と拡散流束 $-Du_x$ を合わせた境界フラックスの収支を検証します．
+固定・流出境界では，移流流束 $f(u)$ と拡散流束 $-D\frac{\partial u}{\partial x}$ を合わせた境界フラックスの収支を検証します．

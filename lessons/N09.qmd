@@ -48,7 +48,7 @@ $V$は全辺で0なので，境界値はLaplaceと同じ$H$です．
 
 ## 発展：混合境界から純Neumannへ {#neumann}
 
-外向き法線微分$g_N=\partial u/\partial n$を指定し，物理的な外向き拡散流束$-\kappa g_N$と区別します．
+外向き単位法線方向の微分$g_N=\frac{\partial u}{\partial n}$を指定し，物理的な外向き拡散流束$-\kappa g_N$と区別します．
 辺順はwest，east，south，northで，`bc`の各辺は`(;kind=:dirichletまたは:neumann,values)`です．
 west／eastのvalues長はny，south／northはnxです．
 

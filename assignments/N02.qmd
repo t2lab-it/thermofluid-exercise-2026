@@ -37,7 +37,7 @@ $$
 ::: {.table-responsive}
 | 境界の指定 | 領域・格子 | 境界条件・更新対象 |
 |---|---|---|
-| `:fixed` | $[0,2]$の端点を含む81点，$\Delta x=2/(n_x-1)$ | 左$u=1$，右$u_x=0$；内部$i=2,\ldots,n_x-1$ |
+| `:fixed` | $[0,2]$の端点を含む81点，$\Delta x=2/(n_x-1)$ | 左$u=1$，右$\frac{\partial u}{\partial x}=0$；内部$i=2,\ldots,n_x-1$ |
 | `:periodic` | $[0,2)$の80点，$\Delta x=2/n_x$ | $u(x+2,t)=u(x,t)$；全点$i=1,\ldots,n_x$ |
 :::
 

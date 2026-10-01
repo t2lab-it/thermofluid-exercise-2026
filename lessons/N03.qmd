@@ -62,7 +62,7 @@ $$
 
 方程式・領域・初期条件は
 $$
-u_t=D u_{xx},\qquad 0\le x\le L=2,\qquad
+\frac{\partial u}{\partial t}=D \frac{\partial^2 u}{\partial x^2},\qquad 0\le x\le L=2,\qquad
 u(x,0)=\begin{cases}1 &(0.5\le x\le1),\\0 &(\text{それ以外}).\end{cases}
 $$
 
@@ -73,7 +73,7 @@ $$
 | 指定Fourier数 | `fo=0.4` |
 | 最終時刻 | `t_final=1.0` |
 | 固定温度 `:fixed` | 両端 $u=0$（物理的には $T_{\rm ref}$） |
-| 断熱 `:insulated` | 両端 $u_x=0$，端点の温度も時間発展 |
+| 断熱 `:insulated` | 両端 $\frac{\partial u}{\partial x}=0$，端点の温度も時間発展 |
 : {tbl-colwidths="[24, 76]"}
 
 両境界で同じ格子・初期値・刻みを使います．

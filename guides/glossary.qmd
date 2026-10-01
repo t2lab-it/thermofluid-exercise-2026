@@ -99,8 +99,8 @@ GitHub CLIの`gh`は別のコマンド体系で，[発展資料](../advanced/git
 |---|---|
 | 偏微分方程式（PDE）・ソルバ | PDEは時間・空間など複数の変数の偏微分を含む方程式．ソルバは指定した問題を数値的に解くプログラムや方法． |
 | CFD | 数値流体力学．流れを表す方程式を離散化し，計算機で解いて調べること． |
-| 移流・線形移流 | 流れによって量が運ばれること．N01では一定速度$c$の式$u_t+c u_x=0$を扱う． |
-| 非線形移流・Burgers方程式 | N02では$u_t+\partial_x(u^2/2)=0$を扱い，滑らかな部分では$u$自身が移流速度になる． |
+| 移流・線形移流 | 流れによって量が運ばれること．N01では一定速度$c$の式$\frac{\partial u}{\partial t}+c \frac{\partial u}{\partial x}=0$を扱う． |
+| 非線形移流・Burgers方程式 | N02では$\frac{\partial u}{\partial t}+\frac{\partial}{\partial x}\left(u^2/2\right)=0$を扱い，滑らかな部分では$u$自身が移流速度になる． |
 | 拡散・移流拡散 | 拡散は勾配による輸送が分布をなだらかにする過程．移流拡散は移流と拡散の両方を含む． |
 | Laplace方程式・Poisson方程式 | ラプラシアンが0となる式と，右辺に与えられたソース項を持つ式．熱伝導や圧力・流れ関数の計算に現れる．右辺の符号は各ページの定義を確認する． |
 | 初期条件・境界条件 | 初期条件は開始時刻の状態，境界条件は計算領域の端で課す値や関係．方程式と合わせて解く問題を定める． |
@@ -181,7 +181,7 @@ GitHub CLIの`gh`は別のコマンド体系で，[発展資料](../advanced/git
 | Stefan数（Ste） | 顕熱と潜熱の比．[一相融解の課題](../projects/final-project-topics/stefan-problem.qmd)では$c_p(T_\mathrm{left}-T_m)/L$で，$L$は単位質量当たりの潜熱． |
 | Mach数（M）・チョーク | Mach数は流速と音速の比．チョークはノズルの喉部で音速に達し，所定の上流状態・形状で流量が制約される状態．[準一次元ノズル](../projects/final-project-topics/quasi-1d-nozzle.qmd)を参照． |
 | 非圧縮性流れ・Navier–Stokes方程式 | 非圧縮性では速度の発散が0となる．Navier–Stokes方程式は粘性を含む流体の運動方程式．[自作ソルバ課題](../projects/final-project-topics/incompressible-navier-stokes.qmd)では一定密度の二次元流れを扱う． |
-| 渦度・流れ関数 | 渦度は速度の回転．二次元の流れ関数はその微分で速度を表す関数．[キャビティ課題](../projects/final-project-topics/incompressible-navier-stokes.qmd)では$u=-\psi_y$，$v=\psi_x$の符号を使う． |
+| 渦度・流れ関数 | 渦度は速度の回転．二次元の流れ関数はその微分で速度を表す関数．[キャビティ課題](../projects/final-project-topics/incompressible-navier-stokes.qmd)では$u=-\frac{\partial \psi}{\partial y}$，$v=\frac{\partial \psi}{\partial x}$の符号を使う． |
 | キャビティ・滑りなし条件 | キャビティは壁に囲まれた領域．滑りなし条件は流体速度が壁の速度に一致する条件で，動く壁では速度0ではない．[ふた駆動流れ](../projects/final-project-topics/incompressible-navier-stokes.qmd)を参照． |
 | 自然対流・Boussinesq近似 | 自然対流は密度差による浮力が駆動する流れ．Boussinesq近似では密度変化を主に浮力項に残す．[自然対流キャビティ](../projects/final-project-topics/natural-convection-cavity.qmd)で使う． |
 | 水平対流 | 表面で水平方向に異なる浮力条件を与えて生じる循環．[Oceananigans.jlの課題](../projects/final-project-topics/oceananigans-horizontal-convection.qmd)で扱う． |

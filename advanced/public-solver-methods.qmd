@@ -294,7 +294,7 @@ $$
 :::
 
 $\psi$は流れ関数，$q$は相対渦度と渦伸長を合わせた予報ポテンシャル渦度，$\ell$はRossby変形半径，$\beta$は惑星渦度勾配，$\eta$は地形性ポテンシャル渦度です．
-$J(a,b)=a_xb_y-a_yb_x$は二次元Jacobianです．
+$J(a,b)=\frac{\partial a}{\partial x}\frac{\partial b}{\partial y}-\frac{\partial a}{\partial y}\frac{\partial b}{\partial x}$は二次元Jacobianです．
 
 #### アルゴリズム
 
@@ -340,12 +340,16 @@ KdV，BBM，BBM-BBM，Svärd–Kalisch，Serre–Green–Naghdiなど複数の�
 
 変化する水底地形を含むBBM-BBMの代表式は
 $$
-\eta_t+\bigl((\eta+D)v\bigr)_x
--\frac{1}{6}\bigl(D^2\eta_{xt}\bigr)_x=0,
+\begin{aligned}
+&\frac{\partial \eta}{\partial t}+\frac{\partial}{\partial x}\bigl((\eta+D)v\bigr)\\
+&\quad-\frac{1}{6}\frac{\partial}{\partial x}\left(D^2\frac{\partial^2\eta}{\partial x\partial t}\right)=0,
+\end{aligned}
 $$
 $$
-v_t+g\eta_x+\left(\frac{v^2}{2}\right)_x
--\frac{1}{6}\bigl(D^2v_t\bigr)_{xx}=0
+\begin{aligned}
+&\frac{\partial v}{\partial t}+g\frac{\partial \eta}{\partial x}+\frac{\partial}{\partial x}\left(\frac{v^2}{2}\right)\\
+&\quad-\frac{1}{6}\frac{\partial^2}{\partial x^2}\left(D^2\frac{\partial v}{\partial t}\right)=0
+\end{aligned}
 $$
 です．
 

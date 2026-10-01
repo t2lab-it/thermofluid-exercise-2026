@@ -33,8 +33,8 @@ $$
 二成分Burgersでは，次の二つの方程式
 $$
 \begin{aligned}
-u_t+u u_x+v u_y&=\nu(u_{xx}+u_{yy}),\\
-v_t+u v_x+v v_y&=\nu(v_{xx}+v_{yy})
+\frac{\partial u}{\partial t}+u \frac{\partial u}{\partial x}+v \frac{\partial u}{\partial y}&=\nu(\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}),\\
+\frac{\partial v}{\partial t}+u \frac{\partial v}{\partial x}+v \frac{\partial v}{\partial y}&=\nu(\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2})
 \end{aligned}
 $$
 を同時に進めます．
@@ -102,16 +102,16 @@ T_{ij}^{n+1}&=T_{ij}^n\\
 $$
 で更新します．
 
-境界の定式化では外向き法線方向を正とし，$T_c$を境界に隣接するセル値，$h$を法線方向の格子幅とします．
+境界の定式化では外向き単位法線方向を正とし，$T_c$を境界に隣接するセル値，$h$を法線方向の格子幅とします．
 下表の外向き流束を，西・南では符号反転，東・北ではそのまま面配列へ書きます．
 
 ::: {.table-responsive}
 | 境界の種類 | 外向き移流流束 | 外向き拡散流束 |
 |---|---|---|
 | 閉じた固定温度$T_b$ | 0 | $2\kappa(T_c-T_b)/h$ |
-| 閉じた断熱$\partial_nT=0$ | 0 | 0 |
+| 閉じた断熱$\frac{\partial T}{\partial n}=0$ | 0 | 0 |
 | 西流入，$c_x>0$，温度$T_{\mathrm{in}}$ | $-c_xT_{\mathrm{in}}$ | $2\kappa(T_c-T_{\mathrm{in}})/\Delta x$ |
-| 東流出，$\partial_xT=0$ | $c_xT_c$ | 0 |
+| 東流出，$\frac{\partial T}{\partial x}=0$ | $c_xT_c$ | 0 |
 :::
 
 周期面は対向する末尾・先頭セルを内部面と同じ式で結び，面配列の両端へ同じ正方向流束を書きます．

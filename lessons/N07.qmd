@@ -125,8 +125,10 @@ $$
 
 温度の一定速度場に対し，Burgersでは未知の速度$(u,v)$自身が二成分を運び，方程式は
 $$
-u_t+u u_x+v u_y=\nu(u_{xx}+u_{yy}),\qquad
-v_t+u v_x+v v_y=\nu(v_{xx}+v_{yy}).
+\begin{aligned}
+\frac{\partial u}{\partial t}+u \frac{\partial u}{\partial x}+v \frac{\partial u}{\partial y}&=\nu(\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}),\\
+\frac{\partial v}{\partial t}+u \frac{\partial v}{\partial x}+v \frac{\partial v}{\partial y}&=\nu(\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2}).
+\end{aligned}
 $$
 
 動粘性係数は$\nu=0.05$です．
@@ -160,7 +162,7 @@ u=0.6+\frac{0.4\nu\pi e^{-\nu\pi^2t}\sin(\pi X)}{\phi},
 v=-0.3+\frac{0.8\nu\pi e^{-4\nu\pi^2t}\sin(2\pi Y)}{\phi}.
 $$
 
-これは$u=0.6-2\nu\partial_X\log\phi$，$v=-0.3-2\nu\partial_Y\log\phi$を明示微分した式です．
+これは$u=0.6-2\nu\frac{\partial \log\phi}{\partial X}$，$v=-0.3-2\nu\frac{\partial \log\phi}{\partial Y}$を明示微分した式です．
 
 ![Burgersの二成分と解析解誤差](../assets/n07-reference/burgers_fields.png){fig-alt="上段u，下段vについて数値解・解析解・誤差を並べ，誤差には各成分のゼロ対称色範囲を使う図"}
 
