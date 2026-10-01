@@ -18,8 +18,7 @@ understanding-check-points:
 
 [N02授業](../lessons/N02.qmd)の内容を使って，以下に取り組みます．
 
-取り組む方程式は，保存形の非粘性Burgers方程式です．
-
+取り組む方程式は，保存形の非粘性Burgers方程式
 $$
 \frac{\partial u}{\partial t}+\frac{\partial f(u)}{\partial x}=0,
 \qquad f(u)=\frac{u^2}{2}.
@@ -30,8 +29,7 @@ $$
 ### 問題設定と標準条件 {#problem-setup}
 
 未知量$u$は非負の無次元速度で，$x,t$も無次元です．
-最終時刻は$t_f=1$，指定CFLは0.5，初期条件は次の矩形です．
-
+最終時刻は$t_f=1$，指定CFLは0.5，初期条件は次の矩形
 $$
 u(x,0)=\begin{cases}2&0.5\le x\le1,\\1&\text{それ以外}.\end{cases}
 $$
@@ -51,7 +49,7 @@ $$
 
 非負速度に対する左側の保存形上流流束を使い，全更新を同じ旧配列から計算します．
 周期では下式の$i-1$を周期左隣に置き換えます．
-
+更新式は
 $$
 \begin{aligned}
 u_i^{n+1}=u_i^n&-\frac{\Delta t}{\Delta x}\\

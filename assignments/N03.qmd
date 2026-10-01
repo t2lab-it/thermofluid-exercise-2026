@@ -18,8 +18,7 @@ understanding-check-points:
 
 熱拡散と境界条件の物理的意味，差分式の導出は[N03授業](../lessons/N03.qmd)で学びます．
 
-取り組む方程式は，一次元の熱拡散方程式です．
-
+取り組む方程式は，一次元の熱拡散方程式
 $$
 \frac{\partial u}{\partial t}=D\frac{\partial^2 u}{\partial x^2}.
 $$
@@ -33,8 +32,7 @@ N02完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
 無次元座標$x=x_{\mathrm{phys}}/\ell_{\mathrm{ref}}$，時刻$t=t_{\mathrm{phys}}/t_{\mathrm{ref}}$を使い，拡散係数は$D=\alpha t_{\mathrm{ref}}/\ell_{\mathrm{ref}}^2=0.1$とします．
 領域は$[0,L]$，$L=2$，最終時刻は$t_f=1$です．
 端点を含む$n_x=81$点を$x_i=(i-1)\Delta x$，$\Delta x=L/(n_x-1)$に配置します．
-初期条件`initial=:pulse`は次の矩形です．
-
+初期条件`initial=:pulse`は次の矩形
 $$
 u(x,0)=\begin{cases}1&0.5\le x\le1,\\0&\text{それ以外}.\end{cases}
 $$
@@ -44,30 +42,30 @@ $$
 
 #### 離散化と時間刻み {#discretization}
 
-内部点は中心差分＋前進Eulerで更新します．
-
+内部点は中心差分＋前進Eulerの式
 $$
 \begin{gathered}
 u_i^{n+1}=u_i^n+r(u_{i+1}^n-2u_i^n+u_{i-1}^n),\\
-r=\frac{D\Delta t}{\Delta x^2}.
+r=\frac{D\Delta t}{\Delta x^2}
 \end{gathered}
 $$
+で更新します．
 
 固定温度では更新後の両端を0にします．
-断熱ではゴースト$u_0^n=u_2^n$，$u_{n_x+1}^n=u_{n_x-1}^n$を消去した次式で端点も更新します．
-
+断熱ではゴースト$u_0^n=u_2^n$，$u_{n_x+1}^n=u_{n_x-1}^n$を消去した次式
 $$
 \begin{aligned}
 u_1^{n+1}&=u_1^n+2r(u_2^n-u_1^n),\\
-u_{n_x}^{n+1}&=u_{n_x}^n+2r(u_{n_x-1}^n-u_{n_x}^n).
+u_{n_x}^{n+1}&=u_{n_x}^n+2r(u_{n_x-1}^n-u_{n_x}^n)
 \end{aligned}
 $$
+で端点も更新します．
 
 内部・端点とも同じ旧配列を参照し，新配列への書込みが終わってから交換します．
 指定Fourier数は0.4で，$\Delta t_{\max}=0.4\Delta x^2/D$，$N_t=\lceil t_f/\Delta t_{\max}\rceil$，$\Delta t=t_f/N_t$です．
 実効値$r$を記録し，安定条件$0<r\le1/2$を確認します．
-熱量は端点を半分に重み付けする台形則で，断熱では保存されます．
-
+熱量は端点を半分に重み付けする台形則で定義し，断熱では保存されます．
+その定義は
 $$
 H_h=\Delta x\left(\frac{u_1}{2}+\sum_{i=2}^{n_x-1}u_i+\frac{u_{n_x}}2\right).
 $$
@@ -75,15 +73,15 @@ $$
 #### 解析解と比較条件
 
 `initial=:mode`では次の解析解の$t=0$を初期条件にします．
-$\lambda=D(\pi/L)^2$として記します．
-
+$\lambda=D(\pi/L)^2$とすると，解析解は
 $$
 \begin{aligned}
 u_{*,\mathrm{fixed}}&=e^{-\lambda t}\sin(\pi x/L),\\
 u_{*,\mathrm{insulated}}&=\tfrac12\\
-&\quad+\tfrac12e^{-\lambda t}\cos(\pi x/L).
+&\quad+\tfrac12e^{-\lambda t}\cos(\pi x/L)
 \end{aligned}
 $$
+です．
 
 両境界を41・81・161点，指定Fourier数0.4，最終時刻1で比較します．
 全格子点での最大絶対誤差$E=\max_i|u_i-u_*(x_i,1)|$と，両区間の$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を計算し，約2次の収束を確認します．

@@ -18,13 +18,13 @@ understanding-check-points:
 [N08](N08.qmd)と同じ提出単位`N08-N09`・課題フォルダ[`exercises/N08-N09_laplace_poisson/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/exercises/N08-N09_laplace_poisson)を使います．
 全辺DirichletのJacobi法でPoissonを実装し，Laplace・Poissonの両方の実験と検証を完成させます．
 
-取り組む方程式は，生成項$f$を持つ二次元のPoisson方程式です．
 $f=0$の場合はLaplace方程式になります．
-
+取り組む方程式は，生成項$f$を持つ二次元のPoisson方程式
 $$
 \Delta u=\frac{\partial^2 u}{\partial x^2}
-+\frac{\partial^2 u}{\partial y^2}=f.
++\frac{\partial^2 u}{\partial y^2}=f
 $$
+です．
 
 授業内の検証は[N08-check](N08.qmd#classroom)，提出前の検証は`all`です．
 
@@ -39,8 +39,8 @@ Neumann・Gauss–Seidel・SORの以下の条件は任意発展に使います�
 `bc`の辺順はwest，east，south，north，各辺は`(;kind=:dirichletまたは:neumann,values)`です．
 west／eastの`values`は長さ$n_y$，south／northは長さ$n_x$で，各境界節点の指定値を格納します．
 
-Neumann辺の節点も未知として更新し，外向き符号で次のゴースト値を消去します．
-
+Neumann辺の節点も未知として更新します．
+外向き符号で消去するゴースト値は
 $$
 \begin{aligned}
 u_{0,j}&=u_{2,j}+2\Delta x\,g_{W,j},\\
@@ -58,8 +58,7 @@ normはNeumann辺・角を含む全未知節点で計算します．
 
 混合境界は西・東をDirichlet，南・北をNeumannにします．
 `mixed_laplace_flux`では$u_*=H,f=0$，`mixed_poisson_flux`では$u_*=H+V,f=-((\pi/2)^2+\pi^2)V$を使います．
-西・東は必修と同じ境界値で，$s_x=\sin(\pi x/2)$と書くと南・北の外向き微分は次式です．
-
+西・東は必修と同じ境界値で，$s_x=\sin(\pi x/2)$と書くと南・北の外向き微分は
 $$
 \begin{aligned}
 g_{S,H}&=-1-\frac{\pi s_x}{2\sinh(\pi/2)},\\
@@ -82,15 +81,15 @@ $$
 :::
 
 各軸の端点重み$a_i,b_j$を1/2，内部を1とし，$w_{ij}=\Delta x\Delta y\,a_ib_j$を使います．
-計算前に次の離散可解条件を確認します．
-
+計算前に次の離散可解条件
 $$
 \begin{aligned}
 \sum_{i,j}w_{ij}f_{ij}
 &=\Delta y\sum_jb_j(g_{W,j}+g_{E,j})\\
-&\quad+\Delta x\sum_ia_i(g_{S,i}+g_{N,i}).
+&\quad+\Delta x\sum_ia_i(g_{S,i}+g_{N,i})
 \end{aligned}
 $$
+を確認します．
 
 差の許容値は`1e-12*max(1,sum(abs,w.*f),各辺のabs流束積分の総和)`です．
 初期推定は0で，初回と各更新後に$\bar u_w=\sum wu/\sum w$を全節点から引き，重み付き平均0を公式基準にします．

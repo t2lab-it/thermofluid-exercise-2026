@@ -15,8 +15,7 @@ understanding-check-points:
 
 ### 必修と授業内の到達点 {#必修と授業内の到達点}
 
-N08で取り組む方程式は，二次元のLaplace方程式です．
-
+N08で取り組む方程式は，二次元のLaplace方程式
 $$
 \Delta u=\frac{\partial^2 u}{\partial x^2}
 +\frac{\partial^2 u}{\partial y^2}=0.

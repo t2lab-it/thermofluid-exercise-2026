@@ -11,11 +11,9 @@ title: "一次元移流拡散"
 
 全量を無次元とし，領域は $x\in[0,L)$，$L=2$ とします．
 共通の保存形は
-
 $$
 u_t+\partial_x f(u)=D u_{xx}
 $$
-
 です．
 線形では $f(u)=cu$，標準速度は $c=1$ です．
 一定流速で温度が運ばれる $T_t+c_{\rm phys}T_x=\alpha_{\rm phys}T_{xx}$ に対応します．
@@ -40,8 +38,7 @@ N02と同じ非負速度の範囲だけを扱います．
 ## 同じ旧配列からの合成更新
 
 周期の左隣を $i-$，右隣を $i+$ とします．
-移流には後退差分，拡散には中心差分，時間には陽Eulerを使います．
-
+移流には後退差分，拡散には中心差分，時間には陽Eulerを使うと，更新式は
 $$
 u_i^{n+1}=u_i^n-\frac{\Delta t}{\Delta x}\left[f(u_i^n)-f(u_{i-}^n)\right]
 +\frac{D\Delta t}{\Delta x^2}\left(u_{i+}^n-2u_i^n+u_{i-}^n\right).
@@ -58,6 +55,7 @@ $$
 
 ## 合成安定条件 {#stability}
 
+移流と拡散を合わせた安定条件は
 $$
 C=\frac{a\Delta t}{\Delta x},\qquad r=\frac{D\Delta t}{\Delta x^2},\qquad C+2r\le1.
 $$
@@ -69,13 +67,13 @@ $$
 
 個別条件 $C\le1$ と $r\le1/2$ の上限の小さい方を選ぶだけでは不十分です．
 例えば $a=2$，$\Delta x=0.5$，$D=0.1$ で，個別上限の最小値は0.25ですが，そのとき $C+2r=1.2$ です．
-合成条件から次の刻みを使います．
-
+合成条件から次の刻み
 $$
 \Delta t_{\rm nominal}=\frac{\mathrm{safety}}{a/\Delta x+2D/\Delta x^2},\quad
 M=\max\left(1,\left\lceil\frac{t_{\rm final}}{\Delta t_{\rm nominal}}\right\rceil\right),\quad
-\Delta t=\frac{t_{\rm final}}{M}.
+\Delta t=\frac{t_{\rm final}}{M}
 $$
+を使います．
 
 ## 3条件の比較
 
@@ -89,28 +87,22 @@ $$
 矩形の比較とは別に，滑らかな周期解析モードを使います．
 [F04](F04.qmd)・[N03](N03.qmd#convergence)で学んだ誤差評価を適用します．
 $k=2\pi/L$ とした線形の解析解は
-
 $$
 u(x,t)=1+\tfrac12 e^{-Dk^2t}\sin[k(x-ct)]
 $$
-
 です．
 非線形では $A(t)=0.5e^{-Dk^2t}$，$\theta=k(x-t)$ として
-
 $$
 u(x,t)=1+\frac{2Dk A(t)\sin\theta}{1+A(t)\cos\theta}
 $$
-
 を使います．
 平均速度は1です．
 
 初期値は対応する式の $t=0$ とし，40・80・160点，同じ `safety=0.8`，最終時刻1で比較します．
 誤差と観測次数は
-
 $$
 E=\max_i|u_i-u_{\rm exact}(x_i,1)|,\qquad p=\log_2(E_{\rm coarse}/E_{\rm fine})
 $$
-
 です．
 この統合条件では移流の空間1次誤差が支配し，約1次収束へ近づきます．
 基準の観測次数は線形で約0.827・0.902，非線形で約0.813・0.890です．

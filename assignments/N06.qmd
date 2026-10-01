@@ -20,7 +20,7 @@ understanding-check-points:
 提出単位: `N05-N06`．
 [N05課題](N05.qmd)と同じbranch・PR・学習ログを使います．
 [下の公式条件](#problem-setup)で，定速度の二次元線形移流・両方向周期境界を実装します．
-
+取り組む方程式は
 $$
 \frac{\partial u}{\partial t}+c_x\frac{\partial u}{\partial x}
 +c_y\frac{\partial u}{\partial y}=0.
@@ -36,8 +36,7 @@ $$
 両方向を周期境界とし，$u(x+L_x,y,t)=u(x,y,t)$，$u(x,y+L_y,t)=u(x,y,t)$を課します．
 格子は$(n_x,n_y)=(40,30),(80,60),(160,120)$です．
 $\Delta x=L_x/n_x$，$\Delta y=L_y/n_y$，$x_i=(i-1)\Delta x$，$y_j=(j-1)\Delta y$とし，`u[i,j]`は$(x_i,y_j)$の値です．
-初期条件は次式です．
-
+初期条件は
 $$
 \begin{aligned}
 u_0(x,y)&=1+0.2\sin(\pi x)\\
@@ -52,18 +51,18 @@ $$
 #### 離散化と時間刻み {#discretization}
 
 $i_-,j_-$は各軸の周期左隣（先頭では各軸の末尾）です．
-速度は非負として，全点を同じ旧配列から二方向上流差分＋前進Eulerで更新します．
-
+速度は非負として，全点を同じ旧配列から二方向上流差分＋前進Eulerの式
 $$
 \begin{gathered}
 C_x=\frac{c_x\Delta t}{\Delta x},\qquad C_y=\frac{c_y\Delta t}{\Delta y},\\
 \begin{aligned}
 u_{ij}^{n+1}&=u_{ij}^n\\
 &\quad-C_x(u_{ij}^n-u_{i_-,j}^n)\\
-&\quad-C_y(u_{ij}^n-u_{i,j_-}^n).
+&\quad-C_y(u_{ij}^n-u_{i,j_-}^n)
 \end{aligned}
 \end{gathered}
 $$
+で更新します．
 
 安定条件は$C_x+C_y\le1$です．
 $s=0.8$として$\Delta t_{\max}=s/(c_x/\Delta x+c_y/\Delta y)$を使います．
@@ -74,16 +73,17 @@ $s=0.8$として$\Delta t_{\max}=s/(c_x/\Delta x+c_y/\Delta y)$を使います�
 
 $M=n_xn_y$，$e_{ij}=u_{ij}-u_*(x_i,y_j,t)$とします．
 格子収束には最終時刻のRMS型L2誤差を使います．
-
+保存量・誤差・分散の定義は
 $$
 \begin{aligned}
 I_h&=\Delta x\Delta y\sum_{i,j}u_{ij},\\
 \bar u&=\frac1M\sum_{i,j}u_{ij},\\
 E_2&=\sqrt{\frac1M\sum_{i,j}e_{ij}^2},\\
 E_\infty&=\max_{i,j}|e_{ij}|,\\
-\operatorname{Var}(u)&=\frac1M\sum_{i,j}(u_{ij}-\bar u)^2.
+\operatorname{Var}(u)&=\frac1M\sum_{i,j}(u_{ij}-\bar u)^2
 \end{aligned}
 $$
+です．
 
 周期積分$I_h$の初期値は2で，全時刻で保存されます．
 分散は上の定義式を使い，保存時刻の各場から再計算します．

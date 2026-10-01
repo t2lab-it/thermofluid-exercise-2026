@@ -6,15 +6,15 @@
 公式の節点数は$(n_x,n_y)=(17,13),(33,25),(65,49)$とします．
 $\Delta x=2/(n_x-1)$，$\Delta y=1/(n_y-1)$，$x_i=(i-1)\Delta x$，$y_j=(j-1)\Delta y$で，`u[i,j]`は$(x_i,y_j)$の値です．
 
-既知解を次の$H,V$で定義します．
-
+既知解を次の$H,V$
 $$
 \begin{aligned}
 H(x,y)&=1+\frac{x}{2}+y\\
 &\quad+\sin\left(\frac{\pi x}{2}\right)\frac{\sinh(\pi y/2)}{\sinh(\pi/2)},\\
-V(x,y)&=\sin(\pi x/2)\sin(\pi y).
+V(x,y)&=\sin(\pi x/2)\sin(\pi y)
 \end{aligned}
 $$
+で定義します．
 
 ::: {.table-responsive}
 | 内容ID | 方程式 | 既知解 | 生成項 |
@@ -24,16 +24,16 @@ $$
 :::
 
 定常熱伝導$\kappa\Delta T+q=0$に対応させると$f=-q/\kappa$になります．
-両問題とも全辺Dirichletで，$V$が境界で0のため同じ$H$を指定します．
-
+両問題とも全辺Dirichletで，$V$が境界で0のため同じ$H$
 $$
 \begin{aligned}
 u(0,y)&=1+y,\\
 u(2,y)&=2+y,\\
 u(x,0)&=1+x/2,\\
-u(x,1)&=2+x/2+\sin(\pi x/2).
+u(x,1)&=2+x/2+\sin(\pi x/2)
 \end{aligned}
 $$
+を指定します．
 
 内部は0，全辺・角は上の境界値として反復を開始します．
 境界値配列`g`の内部は0です．
@@ -42,17 +42,17 @@ $$
 
 新場と旧場には別の配列を使い，境界値のコピーでは内部値を保持します．
 内部点$i=2,\ldots,n_x-1$，$j=2,\ldots,n_y-1$を，同じ旧場から同時更新します．
-$a_x=1/\Delta x^2$，$a_y=1/\Delta y^2$，$d=2(a_x+a_y)$として，五点差分と候補値は次式です．
-
+$a_x=1/\Delta x^2$，$a_y=1/\Delta y^2$，$d=2(a_x+a_y)$として，五点差分と候補値は
 $$
 \begin{aligned}
 B^x_{ij}(u)&=a_x(u_{i-1,j}+u_{i+1,j}),\\
 B^y_{ij}(u)&=a_y(u_{i,j-1}+u_{i,j+1}),\\
 \Delta_hu_{ij}&=B^x_{ij}(u)+B^y_{ij}(u)-du_{ij},\\
 u_{ij}^{k+1}&=\frac{B^x_{ij}(u^k)+B^y_{ij}(u^k)-f_{ij}}{d},\\
-r_{ij}&=f_{ij}-\Delta_hu_{ij}.
+r_{ij}&=f_{ij}-\Delta_hu_{ij}
 \end{aligned}
 $$
+です．
 
 N08では$f=0$を使います．
 新場の全辺・角を境界値に保ち，新場から残差を求めてからバッファを交換します．
@@ -61,21 +61,21 @@ N08では$f=0$を使います．
 #### 停止条件と格子収束 {#standard-conditions}
 
 初期推定へ境界値を適用した後の残差normを$R_0=\max_{\mathrm{内部}}|r^0|$とします．
-`atol=1e-10`，`rtol=1e-12`，`maxiter=200000`を使い，次の条件で収束と判定します．
-
+`atol=1e-10`，`rtol=1e-12`，`maxiter=200000`を使い，次の条件
 $$
-R_k=\max_{\mathrm{内部}}|r^k|\le\max(\mathrm{atol},\mathrm{rtol}\,R_0).
+R_k=\max_{\mathrm{内部}}|r^k|\le\max(\mathrm{atol},\mathrm{rtol}\,R_0)
 $$
+で収束と判定します．
 
 停止判定は真の残差で行い，更新量の最大値も記録します．
-内部点数$M=(n_x-2)(n_y-2)$，$e_{ij}=u_{ij}-u_*(x_i,y_j)$として誤差を測ります．
-
+内部点数$M=(n_x-2)(n_y-2)$，$e_{ij}=u_{ij}-u_*(x_i,y_j)$として，誤差を
 $$
 \begin{gathered}
 E_2=\sqrt{\frac1M\sum_{\mathrm{内部}}e_{ij}^2},\\
-E_\infty=\max_{\mathrm{内部}}|e_{ij}|.
+E_\infty=\max_{\mathrm{内部}}|e_{ij}|
 \end{gathered}
 $$
+で測ります．
 
 境界誤差は別に全辺・角の最大絶対誤差を測り，保存場から残差を独立に再計算します．
 3格子の両区間・両誤差で$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$が$1.8\le p\le2.2$となることを確認します．

@@ -26,8 +26,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 ### 解析的な証明
 
 次の直交座標の定義から，四式を成分へ展開して証明します．
-スカラー場は$\phi$，ベクトル場は$\boldsymbol A=(A_x,A_y,A_z)$です．
-
+スカラー場を$\phi$，ベクトル場を$\boldsymbol A=(A_x,A_y,A_z)$とすると，直交座標の定義は
 $$
 \begin{aligned}
 \nabla\phi&=(\partial_x\phi,\partial_y\phi,\partial_z\phi),\\
@@ -43,16 +42,14 @@ $$
 
 ベクトルのLaplacianは各成分へスカラーのLaplacianを適用します．
 混合偏微分を交換する四公式の証明では，対象の場を$C^2$級とします．
-
+四公式は
 $$
 \nabla\times(\nabla\phi)=\boldsymbol{0},\qquad
 \nabla\cdot(\nabla\times\boldsymbol{A})=0,
 $$
-
 $$
 \nabla\cdot(\phi\boldsymbol{A})=\boldsymbol{A}\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol{A},
 $$
-
 $$
 \nabla\times(\nabla\times\boldsymbol{A})=\nabla(\nabla\cdot\boldsymbol{A})-\nabla^2\boldsymbol{A}.
 $$
@@ -63,14 +60,11 @@ $$
 
 F03–F04の数値検証では，[`exercises/F03-F04_vector_calculus/F03.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl)に定義済みの次の関数を使います．
 スカラー場 [`scalar_field(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L6) は
-
 $$
 \phi(x,y,z)=\sin x\cos y\,e^z
 $$
-
 です．
 ベクトル場 [`vector_field(point)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L8-L12) は
-
 $$
 \boldsymbol{A}(x,y,z)=
 \begin{pmatrix}
@@ -79,7 +73,6 @@ $$
 \sin x\,e^{2y}+e^z
 \end{pmatrix}
 $$
-
 です．
 どちらも全空間で滑らかで，混合偏微分の順序を交換できます．
 コードでは座標を `point = (x, y, z)` として渡します．
@@ -87,15 +80,15 @@ $$
 
 ### 差分関数の定式化 {#discretization}
 
-評価点$x\in\mathbb R$，刻み幅$h>0$について，次の三式を実装します．
-
+評価点$x\in\mathbb R$，刻み幅$h>0$について，次の三式
 $$
 \begin{aligned}
 D_h^+f(x)&=\frac{f(x+h)-f(x)}{h},\\
 D_h^-f(x)&=\frac{f(x)-f(x-h)}{h},\\
-D_h^0f(x)&=\frac{f(x+h)-f(x-h)}{2h}.
+D_h^0f(x)&=\frac{f(x+h)-f(x-h)}{2h}
 \end{aligned}
 $$
+を実装します．
 
 手計算例は$f(x)=x^2$，$x=2$，$h=0.5$とし，期待値は前進4.5，後退3.5，中心4です．
 
@@ -107,59 +100,53 @@ $$
 
 #### 積の回転
 
-スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し，次の公式を証明してください．
-
+スカラー場 $\phi$ とベクトル場 $\boldsymbol{A}$ に対し，次の公式
 $$
 \nabla\times(\phi\boldsymbol{A})
 =\nabla\phi\times\boldsymbol{A}
-+\phi(\nabla\times\boldsymbol{A}).
++\phi(\nabla\times\boldsymbol{A})
 $$
+を証明してください．
 
 まず第1成分 $\partial_y(\phi A_z)-\partial_z(\phi A_y)$ に積の微分を使い，残りの成分も同様に整理します．
 外積の順序を逆にすると符号が変わる点に注意してください．
 
 応用として，密度 $\rho>0$ が空間的に変化するとき，圧力による加速度について
-
 $$
 \nabla\times\left(-\frac{1}{\rho}\nabla p\right)
 =\frac{1}{\rho^2}\nabla\rho\times\nabla p
 $$
-
 を導いてください（ここでは $p$ は $C^2$ 級とします）．
 密度一定の場合と，密度勾配・圧力勾配の外積の大きさが正になる場合を比べ，渦度方程式に圧力由来の項が残る条件を説明してください．
 [授業の圧力項の説明](../lessons/F03.qmd#thermofluid-connections)で，一定密度を仮定した理由を確かめる課題です．
 
 #### 移流項の変形
 
-速度 $\boldsymbol{u}=(u,v,w)$ と渦度 $\boldsymbol{\omega}=\nabla\times\boldsymbol{u}$ に対し，次の恒等式を証明してください．
-
+速度 $\boldsymbol{u}=(u,v,w)$ と渦度 $\boldsymbol{\omega}=\nabla\times\boldsymbol{u}$ に対し，次の恒等式
 $$
 (\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
 =\nabla\left(\frac{|\boldsymbol{u}|^2}{2}\right)
--\boldsymbol{u}\times\boldsymbol{\omega}.
+-\boldsymbol{u}\times\boldsymbol{\omega}
 $$
+を証明してください．
 
 左辺の第1成分は $u\partial_xu+v\partial_yu+w\partial_zu$ です．
 右辺の勾配と外積を展開して比べ，残りの成分も確かめてください．
 この恒等式自体に非圧縮条件が必要かどうかも説明してください．
 
 次に，[二次元非圧縮性Navier–Stokesの課題](../projects/final-project-topics/incompressible-navier-stokes.qmd)で使う，一定密度・一定動粘性係数，外力なしの無次元運動方程式
-
 $$
 \frac{\partial\boldsymbol{u}}{\partial t}
 +(\boldsymbol{u}\cdot\nabla)\boldsymbol{u}
 =-\nabla p+\frac{1}{\mathrm{Re}}\nabla^2\boldsymbol{u}
 $$
-
 を，この恒等式で
-
 $$
 \frac{\partial\boldsymbol{u}}{\partial t}
 -\boldsymbol{u}\times\boldsymbol{\omega}
 =-\nabla\left(p+\frac{|\boldsymbol{u}|^2}{2}\right)
 +\frac{1}{\mathrm{Re}}\nabla^2\boldsymbol{u}
 $$
-
 と書き換えてください．
 速度の大きさに由来する勾配を圧力の勾配とまとめると，移流項の残りが速度と渦度の外積になることを確認します．
 さらに渦なしの領域 $\boldsymbol{\omega}=\boldsymbol{0}$ では，移流項がどのような形になるか説明してください．

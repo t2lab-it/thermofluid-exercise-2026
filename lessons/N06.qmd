@@ -9,7 +9,7 @@ title: "共通化から二次元移流へ：二次元線形移流"
 
 [N05](N05.qmd)の共通APIを使い，無次元スカラーの二次元線形移流を解きます．
 実装・テスト・提出物は[N06課題](../assignments/N06.qmd)で確認します．
-
+方程式と領域は
 $$
 \frac{\partial u}{\partial t}+c_x\frac{\partial u}{\partial x}
 +c_y\frac{\partial u}{\partial y}=0,
@@ -25,15 +25,15 @@ $$
 | 最終時刻・保存時刻 | `t_final=1`，`[0,0.25,0.5,0.75,1]` |
 | 代表表示 | `(80,60)` |
 
-初期値と解析解を次のように定めます．
-
+初期値と解析解を，それぞれ
 $$
 u_0(x,y)=1+0.2\sin(\pi x)+0.3\cos(2\pi y)+0.1\sin(\pi x+2\pi y),
 $$
 $$
 u_{\mathrm{exact}}(x,y,t)=u_0\bigl(\operatorname{mod}(x-c_xt,2),
-\operatorname{mod}(y-c_yt,1)\bigr).
+\operatorname{mod}(y-c_yt,1)\bigr)
 $$
+と定めます．
 
 解析解は初期分布を両方向に平行移動したものです．
 数値解で振幅が小さくなる場合，解析解と比較して数値拡散を読み取ります．
@@ -52,8 +52,7 @@ Julia配列`u[i,j]`は座標`x[i],y[j]`に対応します．
 
 ## 二方向の更新と合成CFL {#stability}
 
-非負速度に対して，一次精度の風上差分を二方向に適用します．
-
+非負速度に対して，一次精度の風上差分を二方向に適用すると，更新式は
 $$
 u_{i,j}^{n+1}=u_{i,j}^n
 -C_x(u_{i,j}^n-u_{i-1,j}^n)
@@ -63,7 +62,7 @@ $$
 
 旧値の係数は`1-Cx-Cy`なので，安定条件は二方向の寄与を合わせた`Cx+Cy <= 1`です．
 両方向の個別上限の最小値では，この係数が負になる場合があります．
-
+合成条件から求める刻み上限は
 $$
 \Delta t_{\max}=\frac{\mathrm{safety}}{c_x/\Delta x+c_y/\Delta y},
 \qquad 0<\mathrm{safety}\le1.
@@ -92,7 +91,7 @@ C系の読み手は`U[k,j,i]`で同じ物理点を読みます．
 
 周期境界では，離散積分`mass=dx*dy*sum(u)`が丸め誤差の範囲で保存されます．
 保存は必要な確認ですが，誤った方向へ移動する解も保存し得るため，解析解の誤差と組み合わせます．
-
+誤差の定義は
 $$
 E_{L2}=\sqrt{\frac{\Delta x\Delta y}{L_xL_y}
 \sum_{i,j}(u_{i,j}-u_{\mathrm{exact},i,j})^2},

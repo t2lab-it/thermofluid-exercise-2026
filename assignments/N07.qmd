@@ -20,24 +20,24 @@ understanding-check-points:
 提出単位は`N07`で，1 branch・1 PR・1学習ログを使います．
 `N05-N06`を完了し，[N07授業](../lessons/N07.qmd)の温度境界条件・熱収支・二成分Burgersを実装します．
 
-温度輸送では，次の移流拡散方程式に取り組みます．
 移流のみでは$\kappa=0$，拡散のみでは$\boldsymbol c=\boldsymbol 0$とします．
-
+温度輸送では，次の移流拡散方程式
 $$
 \begin{aligned}
 \frac{\partial T}{\partial t}+\nabla\cdot\boldsymbol J&=0,\\
-\boldsymbol J&=\boldsymbol cT-\kappa\nabla T.
+\boldsymbol J&=\boldsymbol cT-\kappa\nabla T
 \end{aligned}
 $$
+に取り組みます．
 
-二成分Burgersでは，次の二つの方程式を同時に進めます．
-
+二成分Burgersでは，次の二つの方程式
 $$
 \begin{aligned}
 u_t+u u_x+v u_y&=\nu(u_{xx}+u_{yy}),\\
-v_t+u v_x+v v_y&=\nu(v_{xx}+v_{yy}).
+v_t+u v_x+v v_y&=\nu(v_{xx}+v_{yy})
 \end{aligned}
 $$
+を同時に進めます．
 
 **固定温度・断熱，移流・拡散・移流拡散，開いた系の移流と拡散を合わせた熱収支，二成分Burgersをすべて必修**とします．
 授業内の最低到達点は，開境界1ステップの流入・流出・壁熱流束を説明して熱収支を照合し，小配列でBurgersの二成分同時更新と風上方向を確認することです．
@@ -51,16 +51,16 @@ $\Delta x=2/n_x$，$\Delta y=1/n_y$，$x_i=(i-1/2)\Delta x$，$y_j=(j-1/2)\Delta
 境界面と隣接セル中心の距離は半セルです．
 最終時刻は1，保存時刻は$0,0.25,0.5,0.75,1$です．
 
-温度の初期場を$F(x,y)$，$S(x,y)$として定義します．
-
+温度の初期場を$F(x,y)$，$S(x,y)$として
 $$
 \begin{aligned}
 F(x,y)&=1+0.2\sin(\pi x)\\
 &\quad+0.3\cos(2\pi y)\\
 &\quad+0.1\sin(\pi x+2\pi y),\\
-S(x,y)&=\sin(\pi x/2)\sin(\pi y).
+S(x,y)&=\sin(\pi x/2)\sin(\pi y)
 \end{aligned}
 $$
+と定義します．
 
 ::: {.table-responsive}
 | ケース | $(c_x,c_y)$ | $\kappa$ | 境界条件 | 初期場 |
@@ -79,28 +79,28 @@ $$
 
 ### 温度の流束・更新・境界条件 {#discretization}
 
-内部面の正x向き流束は，次式の移流と拡散の和です．
 y方向も同様に正y向きを正とします．
-
+内部面の正x向き流束は，次式の移流と拡散の和
 $$
 \begin{aligned}
 J^a_{i+1/2,j}&=c_xT_{\mathrm{upwind}},\\
 T_{\mathrm{upwind}}&=\begin{cases}T_{ij}&c_x\ge0,\\T_{i+1,j}&c_x<0,\end{cases}\\
-J^d_{i+1/2,j}&=-\kappa\frac{T_{i+1,j}-T_{ij}}{\Delta x}.
+J^d_{i+1/2,j}&=-\kappa\frac{T_{i+1,j}-T_{ij}}{\Delta x}
 \end{aligned}
 $$
+です．
 
 `adv_x[i+1,j]`と`diff_x[i+1,j]`がこの内部面に対応し，添字1が西境界，$n_x+1$が東境界です．
 y面も`[i,j+1]`が内部面で，添字1が南境界，$n_y+1$が北境界です．
-全セルを同じ旧場から次式で更新します．
-
+全セルを同じ旧場から次式
 $$
 \begin{aligned}
 T_{ij}^{n+1}&=T_{ij}^n\\
 &\quad-\frac{\Delta t}{\Delta x}(J_{i+1/2,j}^n-J_{i-1/2,j}^n)\\
-&\quad-\frac{\Delta t}{\Delta y}(J_{i,j+1/2}^n-J_{i,j-1/2}^n).
+&\quad-\frac{\Delta t}{\Delta y}(J_{i,j+1/2}^n-J_{i,j-1/2}^n)
 \end{aligned}
 $$
+で更新します．
 
 境界の定式化では外向き法線方向を正とし，$T_c$を境界に隣接するセル値，$h$を法線方向の格子幅とします．
 下表の外向き流束を，西・南では符号反転，東・北ではそのまま面配列へ書きます．
@@ -120,68 +120,67 @@ $$
 #### 安定刻み
 
 $a_x$は西・東のいずれかが固定温度または流入なら3，それ以外は2，$a_y$も南・北について同様です．
-$s=0.8$として次式を使い，各ステップの刻みを次の保存時刻までの残り時間以下へ短縮します．
-
+$s=0.8$として次式
 $$
 \begin{aligned}
 \lambda_T&=|c_x|/\Delta x+|c_y|/\Delta y\\
 &\quad+\kappa(a_x/\Delta x^2+a_y/\Delta y^2),\\
-\Delta t_{\max}&=s/\lambda_T.
+\Delta t_{\max}&=s/\lambda_T
 \end{aligned}
 $$
+を使い，各ステップの刻みを次の保存時刻までの残り時間以下へ短縮します．
 
 更新の安定条件は$\Delta t\lambda_T\le1$です．
 
 #### 辺別熱輸送と熱収支 {#heat-budget}
 
 熱量は$Q_h=\Delta x\Delta y\sum_{i,j}T_{ij}$です．
-移流・拡散ごとに面流束から次の辺別レートを求め，**内向き正**で返します．
-
+移流・拡散ごとに面流束から次の辺別レート
 $$
 \begin{aligned}
 R_W&=\Delta y\sum_jJ_{1/2,j},\\
 R_E&=-\Delta y\sum_jJ_{n_x+1/2,j},\\
 R_S&=\Delta x\sum_iJ_{i,1/2},\\
-R_N&=-\Delta x\sum_iJ_{i,n_y+1/2}.
+R_N&=-\Delta x\sum_iJ_{i,n_y+1/2}
 \end{aligned}
 $$
+を求め，**内向き正**で返します．
 
-1ステップの熱量変化は次式で，$b$は西・東・南・北の4辺を走ります．
-
+$b$が西・東・南・北の4辺を走るとすると，1ステップの熱量変化は
 $$
-Q_h^{n+1}-Q_h^n=\Delta t\sum_b(R_b^a+R_b^d).
+Q_h^{n+1}-Q_h^n=\Delta t\sum_b(R_b^a+R_b^d)
 $$
+です．
 
 保存区間ごとに，各実ステップの$\Delta tR_b$を足して辺別輸送積分を記録します．
 `heat_budget`の`net_input`は各区間の移流・拡散・4辺の積分の総和，`cumulative_input`は先頭0からの累積和です．
-`cumulative_input[m]`を$I_m$と書くと，収支残差は次式です．
-
+`cumulative_input[m]`を$I_m$と書くと，収支残差は
 $$
-\varepsilon_Q(t_m)=Q_h(t_m)-Q_h(0)-I_m.
+\varepsilon_Q(t_m)=Q_h(t_m)-Q_h(0)-I_m
 $$
+です．
 
 許容値は`1e-12*max(1,abs(Q0),sum(abs,advective_integrals)+sum(abs,diffusive_integrals))`です．
 
 ### Burgersの初期境界条件・更新 {#burgers-formulation}
 
 `periodic_burgers`は同じセル中心領域で両方向周期，$\nu=0.05$です．
-初期場は次の解析解を$t=0$で評価して作ります．
-
+初期場は次の解析解
 $$
 \begin{gathered}
 X=x-0.6t,\quad Y=y+0.3t,\\
 A=0.2e^{-\nu\pi^2t},\quad B=0.2e^{-4\nu\pi^2t},\\
 \phi=1+A\cos(\pi X)+B\cos(2\pi Y),\\
 u_*=0.6+\frac{2\nu A\pi\sin(\pi X)}{\phi},\\
-v_*=-0.3+\frac{4\nu B\pi\sin(2\pi Y)}{\phi}.
+v_*=-0.3+\frac{4\nu B\pi\sin(2\pi Y)}{\phi}
 \end{gathered}
 $$
+を$t=0$で評価して作ります．
 
 $w=u,v$について，移流速度は両成分とも旧場の$u,v$を使います．
 風上微分$D_x^{\mathrm{up}}w$は$u_{ij}\ge0$で$(w_{ij}-w_{i_-,j})/\Delta x$，負で$(w_{i_+,j}-w_{ij})/\Delta x$です．
 $D_y^{\mathrm{up}}w$も旧$v_{ij}$の符号で選び，添字は両方向とも周期です．
-中心差分Laplacian$\Delta_hw$と前進Eulerにより，両成分を同じ旧場から同時に更新します．
-
+中心差分Laplacian$\Delta_hw$と前進Eulerにより，両成分を同じ旧場から次式
 $$
 \begin{aligned}
 w_{ij}^{n+1}=w_{ij}^n
@@ -190,24 +189,24 @@ w_{ij}^{n+1}=w_{ij}^n
 &+\nu\Delta t\,\Delta_hw_{ij}^n,\\
 \Delta_hw_{ij}
 &=\frac{w_{i_+,j}-2w_{ij}+w_{i_-,j}}{\Delta x^2}\\
-&\quad+\frac{w_{i,j_+}-2w_{ij}+w_{i,j_-}}{\Delta y^2}.
+&\quad+\frac{w_{i,j_+}-2w_{ij}+w_{i,j_-}}{\Delta y^2}
 \end{aligned}
 $$
+で同時に更新します．
 
-刻み上限は毎ステップの旧場から再計算し，保存時刻までの残り時間以下にします．
-
+刻み上限は毎ステップの旧場から
 $$
 \begin{gathered}
 a_B=\max_{i,j}(|u_{ij}|/\Delta x+|v_{ij}|/\Delta y),\\
 \lambda_B=a_B+2\nu(1/\Delta x^2+1/\Delta y^2),\\
-\Delta t_{\max}=0.8/\lambda_B.
+\Delta t_{\max}=0.8/\lambda_B
 \end{gathered}
 $$
+で再計算し，保存時刻までの残り時間以下にします．
 
 #### 温度の解析解と誤差指標
 
-周期温度の解析解は$X=x-c_xt$，$Y=y-c_yt$として次式です．
-
+周期温度の解析解は$X=x-c_xt$，$Y=y-c_yt$として
 $$
 \begin{aligned}
 T_*&=1+0.2e^{-\kappa\pi^2t}\sin(\pi X)\\

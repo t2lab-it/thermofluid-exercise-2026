@@ -18,7 +18,7 @@ understanding-check-points:
 
 1次元線形移流方程式の数値計算を実装し，上流差分法 + Euler法と中心差分法 + Euler法を同じ条件で比較します．
 数値手法の導出と安定性の解説は[N01授業](../lessons/N01.qmd)で学びます．
-
+取り組む方程式は
 $$
 \frac{\partial u}{\partial t}+c\frac{\partial u}{\partial x}=0.
 $$
@@ -29,8 +29,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 未知量$u$，座標$x$，時刻$t$は無次元量です．
 領域は$0\le x\le2$，速度は$c=1>0$，最終時刻は$t_f=0.5$とします．
-初期条件と境界条件は次のとおりです．
-
+初期条件と境界条件は
 $$
 \begin{gathered}
 u(x,0)=\begin{cases}2&0.5\le x\le1,\\1&\text{それ以外},\end{cases}\\
@@ -44,12 +43,10 @@ $$
 #### 離散化と時間刻み {#discretization}
 
 同じ旧配列から内部点$i=2,\ldots,n_x-1$の新値を求めます．
-$C=c\Delta t/\Delta x$として，上流差分と中心差分の更新式を使います．
-
+$C=c\Delta t/\Delta x$として，上流差分と中心差分の更新式は，それぞれ
 $$
 u_i^{n+1}=u_i^n-C(u_i^n-u_{i-1}^n),
 $$
-
 $$
 u_i^{n+1}=u_i^n-\frac C2(u_{i+1}^n-u_{i-1}^n).
 $$

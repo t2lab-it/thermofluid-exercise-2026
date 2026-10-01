@@ -19,8 +19,7 @@ understanding-check-points:
 
 [下の問題設定・標準条件](#problem-setup)について，線形または非線形を選択します．
 
-取り組む方程式は，一次元の移流拡散方程式です．
-
+取り組む方程式は，一次元の移流拡散方程式
 $$
 \begin{gathered}
 \frac{\partial u}{\partial t}+\frac{\partial f(u)}{\partial x}
@@ -41,8 +40,7 @@ N03完了後に，[課題の開始](../guides/workflow.qmd#start-exercise)で課
 $x,t$は無次元，$u$は線形モデルでは無次元温度，非線形モデルでは無次元速度です．
 線形速度$c=1$，拡散係数$D=0.1$，領域は$[0,L)$，$L=2$，境界は$u(x+L,t)=u(x,t)$とします．
 格子は$n_x=80$点，$\Delta x=L/n_x$，$x_i=(i-1)\Delta x$です．
-最終時刻は$t_f=1$，初期条件`initial=:pulse`は次のとおりです．
-
+最終時刻は$t_f=1$，初期条件`initial=:pulse`は
 $$
 u(x,0)=\begin{cases}2&0.5\le x\le1,\\1&\text{それ以外}.\end{cases}
 $$
@@ -50,28 +48,28 @@ $$
 #### 離散化と時間刻み {#discretization}
 
 $i_-$は周期左隣（先頭では$n_x$），$i_+$は周期右隣（末尾では1）です．
-全点を同じ旧配列から保存形上流差分＋中心差分＋前進Eulerで更新します．
-
+全点を同じ旧配列から保存形上流差分＋中心差分＋前進Eulerの式
 $$
 \begin{aligned}
 u_i^{n+1}=u_i^n
 &-\frac{\Delta t}{\Delta x}\bigl(f(u_i^n)-f(u_{i_-}^n)\bigr)\\
-&+\frac{D\Delta t}{\Delta x^2}(u_{i_+}^n-2u_i^n+u_{i_-}^n).
+&+\frac{D\Delta t}{\Delta x^2}(u_{i_+}^n-2u_i^n+u_{i_-}^n)
 \end{aligned}
 $$
+で更新します．
 
 移流のみは$D=0$，拡散のみは流束差の項を0にします．
 速度上限$a$は線形で$c$，非線形で初期場の$\max|u|$，拡散のみで0です．
-$C=a\Delta t/\Delta x$，$r=D\Delta t/\Delta x^2$の合成条件$C+2r\le1$から刻みを求めます．
-
+$C=a\Delta t/\Delta x$，$r=D\Delta t/\Delta x^2$の合成条件$C+2r\le1$から刻みを
 $$
 \begin{gathered}
 \lambda=a/\Delta x+2D/\Delta x^2,\\
 \Delta t_{\max}=s/\lambda,\qquad s=0.8,\\
 N_t=\max\left(1,\left\lceil\frac{t_f}{\Delta t_{\max}}\right\rceil\right),\\
-\Delta t=\frac{t_f}{N_t}.
+\Delta t=\frac{t_f}{N_t}
 \end{gathered}
 $$
+と定めます．
 
 公式の3条件比較は，移流拡散の刻みを移流のみ・拡散のみにも使います．
 周期積分$I_h=\Delta x\sum_i u_i$を各時刻で記録し，初期値との差を確認します．
@@ -79,20 +77,20 @@ $$
 #### 解析解と格子収束
 
 $k=2\pi/L$として，`initial=:mode`は選択モデルの次の解析解の$t=0$です．
-
+線形・非線形の解析解は，それぞれ
 $$
 \begin{aligned}
 u_{*,\mathrm{linear}}&=1\\
-&\quad+\tfrac12e^{-Dk^2t}\sin\bigl(k(x-ct)\bigr).
+&\quad+\tfrac12e^{-Dk^2t}\sin\bigl(k(x-ct)\bigr),
 \end{aligned}
 $$
-
 $$
 \begin{gathered}
 A(t)=\tfrac12e^{-Dk^2t},\qquad\theta=k(x-t),\\
-u_{*,\mathrm{nonlinear}}(x,t)=1+\frac{2DkA(t)\sin\theta}{1+A(t)\cos\theta}.
+u_{*,\mathrm{nonlinear}}(x,t)=1+\frac{2DkA(t)\sin\theta}{1+A(t)\cos\theta}
 \end{gathered}
 $$
+です．
 
 40・80・160点，$D=0.1$，$s=0.8$，$t_f=1$で移流拡散を計算します．
 最大絶対誤差$E=\max_i|u_i-u_*(x_i,1)|$と，両区間の$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を用います．

@@ -80,11 +80,9 @@ julia> set_left!(u; value=1.0)
 ## 偏微分方程式の意味 {#偏微分方程式が表すこと}
 
 正の一定速度$c>0$で形を右へ運ぶ1次元線形移流方程式は
-
 $$
 \frac{\partial u}{\partial t}+c\frac{\partial u}{\partial x}=0
 $$
-
 です．
 $u(x,t)$は位置$x$と時刻$t$で決まる量です．
 時間変化$\partial u/\partial t$と空間変化$c\,\partial u/\partial x$が釣り合うため，厳密解では初期分布が形を変えず右へ移動します．
@@ -114,11 +112,9 @@ $u(x,t)$は位置$x$と時刻$t$で決まる量です．
 
 領域$x_{\min}\le x\le x_{\max}$に`nx`個の等間隔格子点を置きます．
 格子間隔と座標は
-
 $$
-\Delta x=\frac{x_{\max}-x_{\min}}{n_x-1},\qquad x_i=x_{\min}+(i-1)\Delta x.
+\Delta x=\frac{x_{\max}-x_{\min}}{n_x-1},\qquad x_i=x_{\min}+(i-1)\Delta x
 $$
-
 です．
 Juliaの添字`i`は1から始まり，座標$x_i$は長さを持つ物理量です．
 `i=2`なら，配列の2番目の値`u[2]`が座標$x_2=x_{\min}+\Delta x$に対応します．
@@ -132,11 +128,9 @@ coordinate: xmin   xmin+dx  xmin+2dx  ...   xmax
 ## 後退差分と中心差分
 
 正の速度で使う後退差分と，比較に使う中心差分は
-
 $$
 \left.\frac{\partial u}{\partial x}\right|_i\approx\frac{u_i-u_{i-1}}{\Delta x},\qquad\left.\frac{\partial u}{\partial x}\right|_i\approx\frac{u_{i+1}-u_{i-1}}{2\Delta x}
 $$
-
 です．
 後退差分の有効添字は `i = 2, ..., length(u)`，中心差分は `i = 2, ..., length(u)-1` なことに注意します．
 つまり，内部点と両端（境界条件）は別に扱わなければなりません．
@@ -180,22 +174,19 @@ u[end] = u[end - 1]
 
 正の$c$では風上側が左なので，空間微分に後退差分を使います．
 陽Euler法と組み合わせると
-
 $$
 u_i^{n+1}=u_i^n-\nu\left(u_i^n-u_{i-1}^n\right),
 \qquad \nu=\frac{c\Delta t}{\Delta x}
 $$
-
 です．
 $0\le\nu\le1$なら更新値は現在値と左隣の間に収まり，初期範囲を越えません．
 ただし段差は数値拡散でなだらかになります．
 
 ## 中心差分法 + Euler法 {#centered-euler}
 
-中心差分は左右の値を対称に使います．
-
+中心差分は左右の値を対称に使い，更新式は
 $$
-u_i^{n+1}=u_i^n-\frac{\nu}{2}\left(u_{i+1}^n-u_{i-1}^n\right)
+u_i^{n+1}=u_i^n-\frac{\nu}{2}\left(u_{i+1}^n-u_{i-1}^n\right).
 $$
 
 中心差分法 + Euler法はこの方程式に対して不安定です．
@@ -226,11 +217,9 @@ end
 
 CFL数$\nu=c\Delta t/\Delta x$は，1ステップで情報が格子間隔の何倍進むかを表します．
 指定CFLから候補`dt`を作り，必要なステップ数を切り上げた後，
-
 $$
 \Delta t=\frac{t_{\mathrm{final}}}{N_{\mathrm{steps}}}
 $$
-
 と調整するため，数学的には`steps * dt`が要求した`t_final`へ到達します．
 ただし浮動小数点では丸め誤差が入るので，`==`で完全一致を求めず，`isapprox(steps * dt, t_final; atol=100eps())`で十分近いことを確認します．
 `100eps()`は，この計算で許すごく小さな丸め誤差の幅です．

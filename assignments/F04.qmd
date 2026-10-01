@@ -20,8 +20,7 @@ understanding-check-points:
 
 [F04授業](../lessons/F04.qmd)で学んだ三つの一次元差分を実装し，一次元の観測次数とF03の四公式の格子収束を確認して，[F03課題](F03.qmd)から続く一つの提出を完成させます．
 
-実装する前進・後退・中心差分は，それぞれ次の式です．
-
+実装する前進・後退・中心差分は，それぞれ
 $$
 \begin{aligned}
 D_h^+f(x)&=\frac{f(x+h)-f(x)}{h},\\
@@ -30,19 +29,16 @@ D_h^0f(x)&=\frac{f(x+h)-f(x-h)}{2h}.
 \end{aligned}
 $$
 
-三次元で数値的に検証する対象は，次の四公式です．
 場・刻み幅・残差の作り方は，下の[検証問題と標準条件](#problem-setup)で指定します．
-
+三次元で数値的に検証する対象は，次の四公式
 $$
 \nabla\times(\nabla\phi)=\boldsymbol 0,
 \qquad \nabla\cdot(\nabla\times\boldsymbol A)=0,
 $$
-
 $$
 \nabla\cdot(\phi\boldsymbol A)
 =\boldsymbol A\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol A,
 $$
-
 $$
 \nabla\times(\nabla\times\boldsymbol A)
 =\nabla(\nabla\cdot\boldsymbol A)-\nabla^2\boldsymbol A.
@@ -52,8 +48,8 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 ### 検証問題と標準条件 {#problem-setup}
 
-一次元では次の関数を$x=0.4$で評価し，刻み幅$h=0.2,0.1,0.05,0.025$を使います．
-
+一次元では$x=0.4$で評価し，刻み幅$h=0.2,0.1,0.05,0.025$を使います．
+関数とその導関数は
 $$
 \begin{gathered}
 f(x)=\sin x\,e^x,\\
@@ -61,13 +57,11 @@ f'(x)=e^x(\sin x+\cos x).
 \end{gathered}
 $$
 
-三次元の場は次の式で，全空間で滑らかです．
-座標は`point=(x,y,z)`として渡します．
-
+三次元の場は全空間で滑らかで，座標は`point=(x,y,z)`として渡します．
+場の定義は
 $$
 \phi(x,y,z)=\sin x\cos y\,e^z,
 $$
-
 $$
 \boldsymbol A(x,y,z)=\begin{pmatrix}
 \sin y\,e^{2z}+e^x\\
@@ -83,21 +77,18 @@ $$
 
 #### 残差と誤差の定義 {#discretization}
 
-各座標の外側微分を中心差分に置き換えた演算子を$\nabla_h$と書き，次の残差を集計します．
 内側の微分と右辺は，提供済みの解析関数で評価します．
-
+各座標の外側微分を中心差分に置き換えた演算子を$\nabla_h$と書くと，集計する残差は
 $$
 \begin{gathered}
 \boldsymbol r_1=\nabla_h\times(\nabla\phi),\\
 r_2=\nabla_h\cdot(\nabla\times\boldsymbol A),
 \end{gathered}
 $$
-
 $$
 r_3=\nabla_h\cdot(\phi\boldsymbol A)
 -\bigl(\boldsymbol A\cdot\nabla\phi+\phi\nabla\cdot\boldsymbol A\bigr),
 $$
-
 $$
 \begin{aligned}
 \boldsymbol r_4&=\nabla_h\times(\nabla\times\boldsymbol A)\\
