@@ -1,0 +1,256 @@
+---
+title: "worktreeで同じ課題の別案を比較する"
+sidebar: advanced
+---
+
+このページは，**任意の発展資料**です．
+同じ課題で実装や表示の別案を試し，元のコードと結果を残して比較したいときに使います．
+F00の環境診断や，通常課題の完了条件・提出要件への追加はありません．
+課題の開始と提出には[課題ワークフロー](../guides/workflow.qmd)を使い，提出単位の順に一課題ずつ進めます．
+
+## branch・clone・worktreeの違い
+
+branchは，commitの履歴上で作業の先端を示す名前です．
+一つのディレクトリでbranchを切り替えると，その場所で扱うファイルも切り替わります．
+worktreeは，同じGitリポジトリの別branchを，別のディレクトリで開く仕組みです．
+元の課題と別案を並べて開き，それぞれのコードや結果を確認できます．
+cloneは別のGitリポジトリを作る操作であり，worktreeの追加ではcloneやremoteの追加は行いません．
+
+| 要素 | worktreeでの扱い |
+|---|---|
+| commit履歴・branch参照・remote設定 | 同じリポジトリで共有する |
+| HEAD・index（stageした内容）・作業ファイル | 各worktreeで扱う．一方の編集やstageは，他方の作業ファイルやstageを変更しない |
+| `course_progress.toml` | 起点commitの内容から始まる各作業先のファイル．Gitで除外された独立データではない |
+| `Project.toml`・`Manifest.toml` | 起点commitの環境定義を使う．`--project=.`は実行するworktreeのルートを指す |
+| Juliaの導入済みパッケージ・キャッシュ | 通常は同じdepotを利用するため，完全に独立した実行環境にはならない |
+| 課題の`results/`・`scratch/` | 各worktreeのパスへ生成する．commit済みなら起点から取得し，未commit・未追跡・ignoredなら自動では引き継がれない |
+: {tbl-colwidths="[32, 68]"}
+
+## 起点となる課題作業を保存する {#checkpoint}
+
+ここでは，[N01課題](../assignments/N01.qmd)をすでに開始した課題branchから，別案を作る例を使います．
+ルートの確認方法は[コマンドを実行する場所](../guides/workflow.qmd#repository-root)も参照してください．
+N01のコードは`exercises/N01_linear_advection/run.jl`，テストは同じフォルダの`tests.jl`です．
+Windowsでは，[Gitの準備](../setup/git-github.qmd)と同じWSL2のLinux側で操作します．
+ほかの環境の準備も同ページを参照してください．
+
+**元の学生リポジトリのルート**で，現在地と課題branchを確認します．
+
+~~~console
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git rev-parse --show-toplevel
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git branch --show-current
+（開始済みのN01課題branch名を表示）
+
+$ git status --short
+（変更があれば状態とパスを表示．変更がなければ出力なし）
+
+$ git diff
+（stage前の変更を表示）
+
+$ git diff --cached
+（stage済みの変更を表示）
+~~~
+
+`pwd`とGitのルートが一致することを確認します．
+以降の`SOURCE_BRANCH`は，ここで表示された**元の課題branch名**へ置き換えます．
+`main`ではなく，今回比較する課題のbranchを起点にしてください．
+パスの`YOUR_COURSE_REPOSITORY`は，元ディレクトリの実際の名前へ置き換えます．
+パスに空白がある場合は，パス全体を引用符で囲みます．
+これらは説明用のプレースホルダーであり，シェル変数の設定は不要です．
+
+比較したいコード・テスト・進捗を，[変更確認とcommit](../guides/workflow.qmd#commit)に従ってcheckpointとしてcommitします．
+未追跡のファイルもstatusで確認し，記録するファイルを選んでください．
+必要な変更がcommitされ，`git status --short`に出力がないことを確認してから比較先を作ります．
+未commit・未追跡・ignoredのファイルは，別worktreeへ自動転送されません．
+F00からF01へ引き継ぐ未commitの進捗を，worktreeへ移す手順には使いません．
+
+## 比較用worktreeを作る {#create}
+
+引き続き，**元の学生リポジトリのルート**で実行します．
+比較先は元と同じ親ディレクトリに置く`../YOUR_COURSE_REPOSITORY-compare`，比較branchは`experiment/N01-comparison`とします．
+作成前に，親ディレクトリの一覧，branch，既存worktreeを確認します．
+
+~~~console
+$ ls -a ..
+（親ディレクトリの一覧を表示）
+
+$ git branch --list experiment/N01-comparison
+（未使用なら出力なし）
+
+$ git worktree list
+（登録済みのディレクトリ・commit・branchを表示）
+~~~
+
+同じパスやbranch名が使われていれば，既存作業を確認して再開するか，未使用の名前を選び，以降の例もその名前へ置き換えます．
+既存のディレクトリやbranchを上書きしないでください．
+両方が未使用なら，`SOURCE_BRANCH`とパスを置換して作成します．
+
+~~~console
+$ git worktree add -b experiment/N01-comparison ../YOUR_COURSE_REPOSITORY-compare SOURCE_BRANCH
+Preparing worktree (new branch 'experiment/N01-comparison')
+（起点commitの情報を表示）
+
+$ git worktree list
+（元の課題branchとexperiment/N01-comparisonが別ディレクトリに表示されます）
+~~~
+
+比較branchは，元課題のcheckpointと同じcommitから始まります．
+既存branchを未使用のパスで開く構文は`git worktree add PATH EXISTING_BRANCH`です．
+同じbranchは同時に二つのworktreeでcheckoutできないため，元課題とは別の比較branchを使います．
+
+## 比較先で実装・実行する {#compare-work}
+
+**元の学生リポジトリのルートから**，比較先へ移ります．
+
+~~~console
+$ cd ../YOUR_COURSE_REPOSITORY-compare
+
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY-compare
+
+$ git rev-parse --show-toplevel
+/home/student/YOUR_COURSE_REPOSITORY-compare
+
+$ git branch --show-current
+experiment/N01-comparison
+
+$ git status --short
+（作成直後は出力なし）
+~~~
+
+VS Codeでも，比較先フォルダを別ウィンドウで開きます．
+編集先フォルダと，ターミナルの現在地・branchが比較先になっていることを確認します．
+元の課題は`YOUR_COURSE_REPOSITORY`，別案は`YOUR_COURSE_REPOSITORY-compare`で扱います．
+
+比較先のコードを編集し，**比較先のルート**で実行・テストします．
+課題に必要な実装や自作テストを完成させてから，次を実行してください．
+
+~~~console
+$ julia --project=. exercises/N01_linear_advection/run.jl
+（N01の計算結果と出力先を表示）
+
+$ julia --project=. exercises/N01_linear_advection/tests.jl
+（N01単独のテスト結果を表示）
+
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+（現在課題と通過済みの提出単位に連動したテスト結果を表示）
+~~~
+
+課題単独テストと進捗連動の`Pkg.test()`の意味は元の作業先と同じです．
+詳しくは[課題ワークフローのテスト](../guides/workflow.qmd#tests)と[テスト結果の読み方](../guides/testing.qmd#test-results)を参照してください．
+比較用branchで`course.jl start`やpreflightを実行して進捗を進めたり，`course_progress.toml`を手動で編集したりしません．
+Julia環境が不足する場合は，現在地を確認し，[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)に従います．
+未実装やテスト失敗があれば比較先のコードを確認し，修正して再実行します．
+worktreeの作成成功や実行終了だけでは，課題の完了を示しません．
+
+N01では，各ディレクトリの`exercises/N01_linear_advection/results/`にある`summary.toml`，`upwind.png`，`centered-euler.png`を比較します．
+元の結果と別案の結果を，同じ計算条件で生成してから開いてください．
+比較先の結果を生成しても，元ディレクトリの結果は更新されません．
+結果を開くときも，どちらのディレクトリのファイルかを確認します．
+
+## 差分を確認して元課題へ採用する {#adopt}
+
+**比較先のルート**でstatusとdiffを読み，採用する変更を選んで[既存のcommit手順](../guides/workflow.qmd#commit)で保存します．
+学習ログにも，比較条件と採用理由を記録してください．
+commit後，`SOURCE_BRANCH`を元の課題branch名へ置換して確認します．
+
+~~~console
+$ git diff SOURCE_BRANCH...experiment/N01-comparison
+（分岐点から比較branchのcommitまでの変更を表示）
+~~~
+
+この差分はcommitした変更の比較です．
+未commitのコードや生成結果は含まれないため，結果の比較には各ディレクトリの実ファイルを使います．
+
+**比較先のルートから元ディレクトリへ戻り**，元課題のbranchとclean状態を確認します．
+
+~~~console
+$ cd ../YOUR_COURSE_REPOSITORY
+
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git rev-parse --show-toplevel
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git branch --show-current
+（SOURCE_BRANCHに指定した元の課題branch名を表示）
+
+$ git status --short
+（変更がなければ出力なし）
+~~~
+
+元の課題branchで，必要な変更を保存したclean状態であることを確認してから取り込みます．
+取り込みは元の課題branchで行い，`main`へ直接mergeしません．
+
+~~~console
+$ git merge --ff-only experiment/N01-comparison
+（Fast-forwardと変更一覧を表示）
+~~~
+
+元課題側がcheckpointから進んでいなければ，比較branchのcommitを取り込めます．
+fast-forwardできず拒否されたら，両方のbranchと作業を保持し，差分を確認して教員・TAへ相談します．
+成功として次へ進めたり，強制的に統合したりしないでください．
+
+採用後は**元ディレクトリのルート**で，上のN01の実行・単独テスト・`Pkg.test()`をもう一度行います．
+コードを取り込んでも，比較先の未commitの生成結果は移らないため，元ディレクトリで結果を再生成して確認します．
+[公式出力の確認](../guides/workflow.qmd#official-results)を終えたら，元の課題branchから[通常の提出手順](../guides/workflow.qmd#submit-pr)へ戻ります．
+比較branch用の別提出は必要ありません．
+
+## 比較結果を保存して後片付けする {#cleanup}
+
+必要なcommitが元課題へ取り込まれ，通常の提出手順で保存済みであることを確認します．
+残したい比較結果は，比較先ディレクトリの外の保管先へ保存し，保管したファイルを開いて確認します．
+未採用・未保存の作業があれば，比較用worktreeを保持してください．
+
+**元ディレクトリのルートから比較先へ移り**，未commit・未追跡・ignoredのファイルを確認します．
+
+~~~console
+$ cd ../YOUR_COURSE_REPOSITORY-compare
+
+$ git status --short
+（未commit・未追跡のファイルを表示）
+
+$ git status --short --ignored
+（上記に加え，ignoredのパスを !! で表示）
+~~~
+
+**ignoredの結果は通常のstatusに出ず，通常のremoveでも削除され得ます．**
+`results/`や`scratch/`などの中身も確認して，保管するものを判断してください．
+変更・未追跡のファイルがある場合は通常のremoveが拒否されるので，作業と結果を保存できるまで保持します．
+
+保存の確認ができ，通常のremoveで整理可能になったら，**比較先の外へ出て元ディレクトリのルート**で実行します．
+
+~~~console
+$ cd ../YOUR_COURSE_REPOSITORY
+
+$ git worktree remove ../YOUR_COURSE_REPOSITORY-compare
+（成功時は出力なし）
+
+$ git worktree list
+（比較先が一覧から消えます）
+~~~
+
+removeは比較先ディレクトリとそのworktree登録を取り除きます．
+比較branchとcommitは残りますが，commitしていないファイルの保管にはなりません．
+
+## 失敗したときに確認すること
+
+| 状況 | 確認と次の行動 |
+|---|---|
+| 元の変更が比較先に現れない | 元のstatus・diffを読み，必要な変更がcheckpointへcommitされているか確認する |
+| 作成先が存在する・branch名が使用済み | 親ディレクトリ・`git branch --list`・`git worktree list`を確認し，既存作業を再開するか未使用名を選ぶ |
+| branchが別worktreeでcheckout済み | `git worktree list`で担当ディレクトリを確認し，その場所を使うか新しい比較branchを作る |
+| 実行場所や結果が違う | `pwd`・Gitのルート・branch・実際の結果パスを照合してから再実行する |
+| 未実装・テスト失敗 | 比較先の課題コードと[テスト案内](../guides/testing.qmd#test-results)を確認する．worktree作成の失敗や課題完了とは扱わない |
+| fast-forwardできない | 両branchを保持し，差分を確認して教員・TAへ相談する |
+| removeが拒否される | 比較先の未commit・未追跡・ignoredを確認し，作業・結果を保存する．通常のremoveが可能になるまで保持する |
+| Git管理領域の権限不足 | エラーと実行場所を記録して教員・TAへ相談する．`sudo`やGit管理ファイルの手動削除で対処しない |
+: {tbl-colwidths="[32, 68]"}
+
+Gitの仕様は[公式のworktree資料](https://git-scm.com/docs/git-worktree)，[diffの資料](https://git-scm.com/docs/git-diff)，[mergeの資料](https://git-scm.com/docs/git-merge)を参照してください．
