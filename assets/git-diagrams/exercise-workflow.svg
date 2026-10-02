@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="1844" viewBox="0 0 400 1844" role="img" aria-labelledby="title desc">
+  <title id="title">通常課題の開始から次の課題まで</title>
+  <desc id="desc">F00完了後，1課題開始，2手元で実装・テスト・公式出力，3学習ログ・diff・stage・commit，4push・PR作成，5共有commitのActions・セルフレビュー，6GitHubでmerge，7手元main更新を経て次の課題へ進む．F01は進捗変更を保持してbranchを手動作成し，F02以降は更新済みmainからcourse.jl start TASK_IDを使う．テスト失敗・出力不足は2で修正，Actionsやレビューでの修正は2から3・4・5をやり直す．push失敗，確認未完了，merge不能，pull拒否では次へ進まず状態を記録して相談する．チェックポイントではmerge前に教員・TAの確認を受ける．</desc>
+  <defs>
+    <marker id="next" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#185d78"/></marker>
+    <marker id="return" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#8a3e22"/></marker>
+  </defs>
+  <style>
+    text { font-family: "Noto Sans JP", "Noto Sans CJK JP", sans-serif; font-size: 18px; fill: #172d3a; }
+    .heading { font-size: 21px; font-weight: 700; }
+    .label { font-weight: 700; }
+    .stop { fill: #8a3e22; font-weight: 700; }
+    .next { fill: none; stroke: #185d78; stroke-width: 2.5; marker-end: url(#next); }
+    .return { fill: none; stroke: #8a3e22; stroke-width: 2.5; stroke-dasharray: 7 4; marker-end: url(#return); }
+  </style>
+  <rect width="400" height="1844" rx="14" fill="#eef3f6"/>
+  <text class="heading" x="32" y="36">通常課題：F00完了後から</text>
+  <text x="32" y="66">TASK_IDは各課題の提出単位</text>
+  <!-- The left gutter is reserved for the correction loop back to local verification. -->
+  <rect x="42" y="90" width="346" height="626" rx="12" fill="#e6f2f7" stroke="#185d78"/>
+  <text class="heading" x="62" y="121">手元（ローカル）</text>
+  <rect x="62" y="139" width="306" height="150" rx="10" fill="#fff" stroke="#185d78"/>
+  <text class="heading" x="78" y="171">1 課題開始</text>
+  <text x="78" y="203">F01：branchを手動作成</text>
+  <text class="label" x="78" y="230">F00の進捗変更を保持</text>
+  <text x="78" y="257">F02以降：更新済みmainから</text>
+  <text class="label" x="78" y="280">course.jl start TASK_ID</text>
+  <path class="next" d="M200 290V342"/>
+  <text x="218" y="323">開始を確認</text>
+  <rect x="62" y="347" width="306" height="142" rx="10" fill="#fff" stroke="#185d78"/>
+  <text class="heading" x="78" y="377">2 実装・テスト・公式出力</text>
+  <text x="78" y="407">手元の内容を検証</text>
+  <text class="stop" x="78" y="435">失敗・出力不足なら修正し，</text>
+  <text class="stop" x="78" y="463">この段階をやり直す</text>
+  <path class="next" d="M200 490V542"/>
+  <text x="218" y="523">要件を満たす</text>
+  <rect x="62" y="547" width="306" height="152" rx="10" fill="#fff" stroke="#185d78"/>
+  <text class="heading" x="78" y="577">3 学習ログ・diff・commit</text>
+  <text x="78" y="606">学習ログとdiffを確認</text>
+  <text x="78" y="633">提出内容をstageし，diffを確認</text>
+  <text x="78" y="660">確認した内容をcommit</text>
+  <text x="78" y="687">再編集した内容も含めるか確認</text>
+  <path class="next" d="M200 700V831"/>
+  <text class="label" x="218" y="761">commitを共有</text>
+  <rect x="42" y="784" width="346" height="660" rx="12" fill="#fff4df" stroke="#8a5b16" stroke-width="2"/>
+  <text class="heading" x="62" y="815">GitHub</text>
+  <!-- Repeat the connector over the area background, ending at the PR step. -->
+  <path class="next" d="M200 785V831"/>
+  <rect x="62" y="836" width="306" height="166" rx="10" fill="#fff" stroke="#8a5b16"/>
+  <text class="heading" x="78" y="870">4 push・PR作成</text>
+  <text x="78" y="899">課題branchのcommitを共有</text>
+  <text x="78" y="927">mainへのPRを作成</text>
+  <text x="78" y="955">push・PR作成ではmainは不変</text>
+  <text class="stop" x="78" y="983">push失敗なら共有未完了・停止</text>
+  <path class="next" d="M200 1003V1059"/>
+  <text x="218" y="1038">共有後に確認</text>
+  <rect x="62" y="1064" width="306" height="215" rx="10" fill="#fff" stroke="#8a5b16"/>
+  <text class="heading" x="78" y="1096">5 Actions・セルフレビュー</text>
+  <text x="78" y="1126">共有commitのCI・差分を確認</text>
+  <text class="stop" x="78" y="1154">修正 → 2→3→4→5をやり直す</text>
+  <text x="78" y="1182">通常課題：セルフレビュー</text>
+  <text x="78" y="1209">チェックポイント：教員・TA</text>
+  <text x="78" y="1236">の確認をmerge前に受ける</text>
+  <text class="stop" x="78" y="1263">確認未完了なら停止</text>
+  <path class="return" d="M62 1150H24V418H58"/>
+  <path class="next" d="M200 1280V1329"/>
+  <text x="218" y="1312">確認後だけ進む</text>
+  <rect x="62" y="1334" width="306" height="94" rx="10" fill="#fff" stroke="#8a5b16"/>
+  <text class="heading" x="78" y="1364">6 GitHub上でmerge</text>
+  <text x="78" y="1392">GitHub上のmainへ統合</text>
+  <text class="stop" x="78" y="1417">merge不能なら停止</text>
+  <path class="next" d="M200 1429V1509"/>
+  <text class="label" x="218" y="1483">手元へ取込み</text>
+  <rect x="42" y="1514" width="346" height="202" rx="12" fill="#e6f2f7" stroke="#185d78"/>
+  <text class="heading" x="62" y="1544">手元（ローカル）</text>
+  <rect x="62" y="1559" width="306" height="143" rx="10" fill="#fff" stroke="#185d78"/>
+  <text class="heading" x="78" y="1590">7 main更新</text>
+  <text class="label" x="78" y="1618">git switch main</text>
+  <text class="label" x="78" y="1645">git pull --ff-only origin main</text>
+  <text x="78" y="1671">更新・クリーンなmainを確認</text>
+  <text class="stop" x="78" y="1696">pull拒否なら更新未完了・停止</text>
+  <path class="next" d="M200 1717V1748"/>
+  <text class="label" x="62" y="1780">成功後，1へ戻って次の課題</text>
+  <text class="stop" x="32" y="1820">停止時：状態・エラーを記録して相談</text>
+</svg>

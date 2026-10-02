@@ -8,6 +8,28 @@ title: "学生向け課題ワークフロー"
 このページでは，学生リポジトリで課題を進めるときの手順をまとめます．
 実装・テスト・理解度チェックの条件は[各課題ページ](../assignments/index.qmd)を参照してください．
 
+![通常課題は手元で検証・commitし，GitHubで確認・mergeした後，手元mainを更新して次へ進む](../assets/git-diagrams/exercise-workflow.svg){#fig-git-exercise-workflow fig-alt="F00完了後，1課題開始，2実装・テスト・公式出力，3学習ログ・diff・stage・commit，4push・PR，5共有commitのActions・セルフレビュー，6GitHubでmerge，7手元main更新を経て次の課題へ進む．F01は進捗変更を保持してbranchを手動作成し，F02以降は更新済みmainからstart TASK_IDを使う．テスト失敗は2で修正し，Actionsやレビューでの修正は2から3・4・5をやり直す．push失敗・確認未完了・merge不能・pull拒否では停止する"}
+
+図はF00の初回準備を終えた後に，新たに取り組む通常課題の流れです．
+F01ではF00で変更した未commitの`course_progress.toml`を保持してbranchを手動作成し，F02以降は更新済みのクリーンな`main`から`course.jl start TASK_ID`で開始します．
+`TASK_ID`は各課題の提出単位です．
+作業環境を再準備して既習課題を通過する場合は，[既習課題の進め方](#previous-exercises)を参照してください．
+保存・stage・commitとbranch・PRの基本概念は[F01授業](../lessons/F01.qmd#fig-git-change-lifecycle)で確認できます．
+
+1. [課題開始](#start-exercise)で課題branchを用意する．
+2. [実装](#exercise-work)，[テスト](#tests)，[公式出力の確認](#official-results)を各課題の要件に沿って行う．
+3. [学習ログ・diff・stage・commit](#commit)で提出する内容と証拠を揃える．
+4. [push・PR作成](#submit-pr)でcommit済みの課題branchを共有する．
+5. [Actions・セルフレビュー](#submit-pr)で共有したcommitのCIとPRの差分・説明を確認する．
+6. [merge前の確認条件](#submit-pr)を満たしてGitHub上の`main`へ統合する．
+7. [手元mainの更新](#after-merge)が成功し，クリーンな状態を確認してから次の課題を始める．
+
+ローカルテストは未commit変更も含む手元の内容，Actionsは共有したcommit・PRのCI対象を検査します．
+テスト失敗や必要な出力の不足は図の2へ戻り，Actions失敗やレビューで修正が必要な場合は，手元で修正して必要な検証・diff確認・commit・pushをやり直し，更新後のPRとActionsを再確認します．
+通常課題はActionsの成功とセルフレビュー後にmergeし，教員・TAの確認が必要なチェックポイントではmerge前に確認を受けます．
+push失敗，確認未完了，merge不能では次の段階へ進まず，エラーと状態を[トラブル対応](troubleshooting.qmd#最初の証拠を残す)に沿って記録してください．
+`pull --ff-only`が分岐で拒否された場合もmain更新は未完了として現在の状態を保ち，強制操作をせず[教員・TAへ相談](troubleshooting.qmd#教員taへ相談する)してください．
+
 ## コマンドを実行する場所 {#repository-root}
 
 このページにあるコマンドは，**学生リポジトリのルートディレクトリ**で実行します．
