@@ -5,6 +5,7 @@ const NAVIGATION_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
 isdefined(@__MODULE__, :qmd_link_targets) ||
     include(joinpath(@__DIR__, "support", "qmd_contracts.jl"))
 const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
+const N05_N06_START_COMMAND = "julia --project=. scripts/course.jl start N05-N06"
 const F03_F04_FORBIDDEN_TERMS = (
     "Forward" * "Diff",
     "自動" * "微分",
