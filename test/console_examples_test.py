@@ -98,18 +98,20 @@ julia> twice(3)
         source = (ROOT / 'advanced' / 'git-worktree.qmd').read_text()
         commands = render(source, commands_only=True)
         for command in (
-            'git worktree add -b experiment/N01-comparison ../YOUR_COURSE_REPOSITORY-compare SOURCE_BRANCH',
-            'cd ../YOUR_COURSE_REPOSITORY-compare',
+            'git check-ignore .worktrees/experiment/N01-comparison',
+            'mkdir -p .worktrees/experiment',
+            'git worktree add -b experiment/N01-comparison .worktrees/experiment/N01-comparison SOURCE_BRANCH',
+            'cd .worktrees/experiment/N01-comparison',
             'pwd',
             'git rev-parse --show-toplevel',
             'git branch --show-current',
             'git status --short',
             'git worktree list',
             'git diff SOURCE_BRANCH...experiment/N01-comparison',
-            'cd ../YOUR_COURSE_REPOSITORY',
+            'cd ../../..',
             'git merge --ff-only experiment/N01-comparison',
             'git status --short --ignored',
-            'git worktree remove ../YOUR_COURSE_REPOSITORY-compare',
+            'git worktree remove .worktrees/experiment/N01-comparison',
         ):
             self.assertIn(command, commands)
         self.assertTrue(commands)

@@ -65,12 +65,18 @@ $ git diff --cached
 ## 比較用worktreeの作成 {#create}
 
 引き続き，**元の学生リポジトリのルート**で実行します．
-比較先は元と同じ親ディレクトリに置く`../YOUR_COURSE_REPOSITORY-compare`，比較branchは`experiment/N01-comparison`とします．
-作成前に，親ディレクトリの一覧，branch，既存worktreeを確認します．
+比較先はリポジトリルート配下の`.worktrees/experiment/N01-comparison`，比較branchは`experiment/N01-comparison`とします．
+学生用リポジトリの`.gitignore`には`.worktrees/`が設定されています．
+作成先がGitの追跡対象から除外されていることを確認し，親ディレクトリを用意して，作成先とbranch名を確認します．
 
 ~~~console
-$ ls -a ..
-（親ディレクトリの一覧を表示）
+$ git check-ignore .worktrees/experiment/N01-comparison
+.worktrees/experiment/N01-comparison
+
+$ mkdir -p .worktrees/experiment
+
+$ ls -a .worktrees/experiment
+（比較用worktreeの親ディレクトリの一覧を表示）
 
 $ git branch --list experiment/N01-comparison
 （未使用なら出力なし）
@@ -80,10 +86,10 @@ $ git worktree list
 ~~~
 
 比較先のパスとbranch名には未使用の名前を選び，以降の例もその名前へ置き換えます．
-`SOURCE_BRANCH`とパスを置換して作成します．
+`SOURCE_BRANCH`を元の課題branch名へ置換して作成します．
 
 ~~~console
-$ git worktree add -b experiment/N01-comparison ../YOUR_COURSE_REPOSITORY-compare SOURCE_BRANCH
+$ git worktree add -b experiment/N01-comparison .worktrees/experiment/N01-comparison SOURCE_BRANCH
 Preparing worktree (new branch 'experiment/N01-comparison')
 （起点commitの情報を表示）
 
@@ -98,13 +104,13 @@ $ git worktree list
 **元の学生リポジトリのルートから**，比較先へ移ります．
 
 ~~~console
-$ cd ../YOUR_COURSE_REPOSITORY-compare
+$ cd .worktrees/experiment/N01-comparison
 
 $ pwd
-/home/student/YOUR_COURSE_REPOSITORY-compare
+/home/student/YOUR_COURSE_REPOSITORY/.worktrees/experiment/N01-comparison
 
 $ git rev-parse --show-toplevel
-/home/student/YOUR_COURSE_REPOSITORY-compare
+/home/student/YOUR_COURSE_REPOSITORY/.worktrees/experiment/N01-comparison
 
 $ git branch --show-current
 experiment/N01-comparison
@@ -152,10 +158,10 @@ $ git diff SOURCE_BRANCH...experiment/N01-comparison
 
 このコマンドでcommitした変更を比較し，生成結果は各ディレクトリの実ファイルで比較します．
 
-**比較先のルートから元ディレクトリへ戻り**，元課題のbranchとclean状態を確認します．
+**比較先のルートから3階層上の元ディレクトリへ戻り**，元課題のbranchとclean状態を確認します．
 
 ~~~console
-$ cd ../YOUR_COURSE_REPOSITORY
+$ cd ../../..
 
 $ pwd
 /home/student/YOUR_COURSE_REPOSITORY
@@ -193,7 +199,7 @@ fast-forwardできず拒否されたら，両方のbranchと作業を保持し�
 **元ディレクトリのルートから比較先へ移り**，未commit・未追跡・ignoredのファイルを確認します．
 
 ~~~console
-$ cd ../YOUR_COURSE_REPOSITORY-compare
+$ cd .worktrees/experiment/N01-comparison
 
 $ git status --short
 （未commit・未追跡のファイルを表示）
@@ -209,9 +215,9 @@ $ git status --short --ignored
 保存を確認したら，**元ディレクトリのルート**で比較先を削除します．
 
 ~~~console
-$ cd ../YOUR_COURSE_REPOSITORY
+$ cd ../../..
 
-$ git worktree remove ../YOUR_COURSE_REPOSITORY-compare
+$ git worktree remove .worktrees/experiment/N01-comparison
 （成功時は出力なし）
 
 $ git worktree list
@@ -225,7 +231,7 @@ removeは比較先ディレクトリとそのworktree登録を取り除き，比
 | 状況 | 確認と次の行動 |
 |---|---|
 | 元の変更が比較先に現れない | 元のstatus・diffを読み，必要な変更がcheckpointへcommitされているか確認する |
-| 作成先やbranch名が使用済み・別worktreeでcheckout済み | 親ディレクトリ・`git branch --list`・`git worktree list`を確認し，未使用のパスと比較branch名を選ぶ |
+| 作成先やbranch名が使用済み・別worktreeでcheckout済み | `.worktrees/experiment/`の一覧・`git branch --list`・`git worktree list`を確認し，未使用のパスと比較branch名を選ぶ |
 | 実行場所や結果が違う | `pwd`・Gitのルート・branch・実際の結果パスを照合してから再実行する |
 | 未実装・テスト失敗 | 比較先の課題コードと[テスト案内](../guides/testing.qmd#test-results)を確認し，修正して再実行する |
 | fast-forwardできない | 両branchを保持し，差分を確認して教員・TAへ相談する |
