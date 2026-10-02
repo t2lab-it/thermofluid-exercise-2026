@@ -1,5 +1,5 @@
 ---
-title: "worktreeで同じ課題の別案を比較する"
+title: "worktreeで並行して作業する"
 sidebar: advanced
 ---
 
