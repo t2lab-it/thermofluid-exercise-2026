@@ -1,0 +1,149 @@
+---
+title: "プロンプト装飾"
+---
+
+ターミナルの入力待ち表示を**プロンプト**と呼びます．
+[Starship](https://starship.rs/guide/)を使うと，現在のディレクトリ，Gitのブランチ名，変更の有無をプロンプトで確認できます．
+この設定は，希望する人向けの**任意設定**です．
+対象は**WSL2 Ubuntu 24.04・Bash**です．
+[Git・GitHubの準備](../setup/git-github.qmd)を済ませ，Ubuntu側のターミナルで作業してください．
+
+## 表示例と読み方 {#read-prompt}
+
+このページでは，[Starshipの設定例](https://gist.github.com/ryo-ARAKI/48a11585299f9032fa4bda60c9bba593)からGit関連の設定を抜粋して使います．
+次は，未ステージの変更で2行を追加し，1行を削除したときの表示例です．
+ディレクトリ名とブランチ名は自分のものに読み替えてください．
+
+```text
+YOUR_COURSE_REPOSITORY on 🍣 exercise/F01 +2 -1 📝 ×1
+❯
+```
+
+`🍣`に続く`exercise/F01`は現在のブランチ名です．
+Gitの状態は次の絵文字と記号で表示されます．
+
+| 表示例 | 意味 |
+|---|---|
+| `📭 ×1` | 未追跡ファイルが1個ある |
+| `📝 ×1` | 未ステージの変更が1ファイルにある |
+| `📚 ×1` | ステージ済みの変更が1ファイルにある |
+| `📛 ×1` | ステージ済みの名前変更が1ファイルにある |
+| `🚮 ×1` | 削除されたファイルが1個ある |
+| `🥊` | mergeなどの競合がある |
+| `📦 ×1` | stashに退避した変更が1件ある |
+| `🚗 ×1` | ローカルのcommitが追跡先より1個先にある |
+| `🐢 ×1` | ローカルのcommitが追跡先より1個遅れている |
+| `🔱 🚗 ×1 🐢 ×1` | ローカルと追跡先が分岐し，双方に固有のcommitが1個ある |
+| `+2 -1` | 追跡済みファイルの差分で2行追加・1行削除されている |
+: {tbl-colwidths="[28, 72]"}
+
+`+2 -1`は，追跡済みファイルのステージ済み・未ステージの変更を合わせた**差分の行数**です．
+`×1`は，ファイルやcommitなど，各状態の件数を表します．
+
+## Starshipの導入 {#install-starship}
+
+Starshipの導入は，[公式のインストール手順](https://starship.rs/guide/#step-1-install-starship)に従ってUbuntu側で行います．
+
+## Git表示の設定 {#git-display}
+
+Ubuntu側の`~/.config`ディレクトリを用意します．
+
+```console
+$ mkdir -p "$HOME/.config"
+（成功時は出力なし）
+```
+
+エディタで`~/.config/starship.toml`を作成し，以下をコピーして保存してください．
+既存の設定ファイルがある場合は，別名で退避してから内容を置き換えます．
+
+```toml
+format = "$directory$git_branch$git_metrics$git_status$line_break$character"
+
+[git_branch]
+format = "on [$symbol$branch]($style) "
+symbol = "🍣 "
+style = "bold cyan"
+
+[git_metrics]
+disabled = false
+format = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
+added_style = "bold green"
+deleted_style = "bold red"
+only_nonzero_diffs = true
+
+[git_status]
+conflicted = "🥊 "
+ahead = "🚗 ×${count} "
+behind = "🐢 ×${count} "
+diverged = "🔱 🚗 ×${ahead_count} 🐢 ×${behind_count} "
+untracked = "📭 ×${count} "
+stashed = "📦 ×${count} "
+modified = "📝 ×${count} "
+staged = "📚 ×${count} "
+renamed = "📛 ×${count} "
+deleted = "🚮 ×${count} "
+format = "$all_status$ahead_behind"
+```
+
+## Bashへの設定 {#shell-setup}
+
+まず`~/.bashrc`を別名で保存します．
+表示された退避先のパスを控えてください．
+
+```console
+$ backup=$(mktemp "$HOME/.bashrc.before-starship.XXXXXXXX") && cp -p "$HOME/.bashrc" "$backup" && printf 'Bash設定の退避先: %s\n' "$backup"
+Bash設定の退避先: /home/USER/.bashrc.before-starship.XXXXXXXX
+（パスは環境ごとに異なる）
+```
+
+退避が成功したら，エディタで`~/.bashrc`を開き，**末尾**へ次の設定を追記して保存します．
+
+```bash
+export STARSHIP_CONFIG="$HOME/.config/starship.toml"
+eval "$(starship init bash)"
+```
+
+ターミナルを開き直すと設定が読み込まれます．
+
+## 動作確認と使いどころ {#verify-prompt}
+
+ターミナルを開き直し，`starship --version`が実行できることを確認します．
+続いて[個人課題用リポジトリ](../setup/git-github.qmd#個人課題用リポジトリを複製する)へ移動し，`🍣`と現在のブランチ名が表示されることを確認してください．
+現在の状態との対応を一度確認します．
+
+```console
+$ git status --short --branch
+## exercise/F01
+（ブランチ名とファイルの状態を表示する例）
+```
+
+次の課題でファイルを編集・保存すると`📝`や`📭`，`git add`すると`📚`が表示されます．
+追跡先があるブランチでcommitすると，追跡先より先にある場合は`🚗`が表示されます．
+普段はプロンプトでブランチと変更の有無を確認し，commit前には`git diff`と`git diff --staged`で内容を確認してください．
+
+`🚗`と`🐢`は，追跡先を設定したブランチで，ローカルに保存された追跡先の情報と比較して表示されます．
+GitHubの最新情報を反映するには，`git fetch origin`を実行します．
+教材配布元の`upstream`の更新を調べる手順は[教材の更新](commands.qmd#material-updates)を参照してください．
+提出時は[課題ワークフロー](workflow.qmd)に従って状態と差分を確認してください．
+
+### 絵文字とフォントの確認 {#font-check}
+
+`🍣 📭 📝 📚 📛 🚮 🥊 📦 🚗 🐢 🔱`の表示を確認します．
+入力行で短いコマンドを入力し，左右キーで移動して，カーソル位置と文字の位置が合うことを確認してください．
+
+Windows TerminalやWindows版VS Codeの表示フォントは**Windows側**で設定します．
+欠けや幅の問題があれば，Windows TerminalのUbuntuプロファイルの[フォント設定](https://learn.microsoft.com/en-us/windows/terminal/customize-settings/profile-appearance#font-face)，またはVS Codeの[`terminal.integrated.fontFamily`](https://code.visualstudio.com/docs/terminal/appearance#text-style)を確認してください．
+必要に応じてWindows側に表示できるフォントを用意して選択し，ターミナルを開き直して再確認します．
+
+## 表示トラブルへの対応と復旧 {#troubleshooting}
+
+| 状況 | 対応 |
+|---|---|
+| `starship`が見つからない | Ubuntu側の導入先とPATHを確認し，`starship --version`が成功してから初期化する |
+| 設定の警告が出る | 保存した設定を確認し，警告とStarshipのバージョンを記録して相談する |
+| ブランチ名が出ない | `pwd`と`git rev-parse --show-toplevel`でリポジトリ内にいるか確認する |
+| 絵文字が欠ける・入力位置がずれる | [Windows側のフォント設定](#font-check)を確認する |
+: {tbl-colwidths="[30, 70]"}
+
+表示を元に戻すには，`~/.bashrc`に追記した2行を外し，ターミナルを開き直してください．
+既存のStarship設定を復元する場合は，退避したファイルの内容を`~/.config/starship.toml`へ戻します．
