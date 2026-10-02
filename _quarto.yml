@@ -45,6 +45,8 @@ website:
             text: SSHでGitHubへ接続する
           - href: advanced/github-cli.qmd
             text: GitHub CLIでpull requestを操作する
+          - href: advanced/git-worktree.qmd
+            text: worktreeで並行して作業する
           - href: advanced/cairomakie.qmd
             text: CairoMakieによる可視化
           - href: advanced/package-built-solvers.qmd
@@ -168,6 +170,8 @@ website:
           text: "SSHでGitHubへ接続する"
         - href: advanced/github-cli.qmd
           text: "GitHub CLIでpull requestを操作する"
+        - href: advanced/git-worktree.qmd
+          text: "worktreeで並行して作業する"
         - href: advanced/cairomakie.qmd
           text: "CairoMakieによる可視化"
         - href: advanced/package-built-solvers.qmd

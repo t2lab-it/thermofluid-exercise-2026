@@ -31,6 +31,7 @@ const EXPECTED_GUIDE_HREFS = Set([
 ])
 const EXPECTED_ADVANCED_HREFS = Set([
     "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
+    "advanced/git-worktree.qmd",
     "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
     "advanced/public-solver-methods.qmd",
 ])
@@ -504,6 +505,29 @@ end
         @test passed
         if !passed
             @info "navigation behavior contract failed" details
+        end
+    end
+end
+
+@testset "optional worktree comparison is reachable from the shared workflow" begin
+    tutorial = joinpath(NAVIGATION_SITE_ROOT, "advanced", "git-worktree.qmd")
+    @test isfile(tutorial)
+    for relative in ("advanced/index.qmd", "guides/workflow.qmd")
+        path = joinpath(NAVIGATION_SITE_ROOT, relative)
+        source = read(path, String)
+        if relative == "guides/workflow.qmd"
+            section = match(r"(?ms)^## [^\n]*\{#exercise-work\}\s*\n(.*?)(?=^## |\z)", source)
+            @test !isnothing(section)
+            source = isnothing(section) ? "" : section.captures[1]
+        end
+        targets = qmd_link_targets(source)
+        @test tutorial in resolve_qmd_target.(Ref(path), targets)
+    end
+    if isfile(tutorial)
+        source = read(tutorial, String)
+        targets = resolve_qmd_target.(Ref(tutorial), qmd_link_targets(source))
+        for relative in ("guides/workflow.qmd", "guides/testing.qmd", "assignments/N01.qmd", "assignments/F00.qmd")
+            @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
         end
     end
 end
