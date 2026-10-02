@@ -30,6 +30,8 @@ website:
             text: テスト
           - href: guides/commands.qmd
             text: コマンド
+          - href: guides/terminal-prompt.qmd
+            text: プロンプト装飾
           - href: guides/troubleshooting.qmd
             text: トラブル対応
           - href: guides/glossary.qmd
@@ -150,6 +152,8 @@ website:
           text: "テストと数値検証"
         - href: guides/commands.qmd
           text: "コマンド一覧"
+        - href: guides/terminal-prompt.qmd
+          text: "プロンプト装飾"
         - href: guides/troubleshooting.qmd
           text: "トラブル対応"
         - href: guides/final-project-handoff.qmd
