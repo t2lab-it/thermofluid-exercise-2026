@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="1100" viewBox="0 0 400 1100" role="img" aria-labelledby="title desc">
+  <title id="title">commitへの参照としてのbranchとPR・merge</title>
+  <desc id="desc">branch作成直後はmainと課題branchが同じcommit Bを指す．課題branchでCとDをcommitすると課題branchだけがDへ進み，AとBは両branchの共通履歴である．push後，GitHub上の課題branchをhead，mainをbaseとするPRで差分・説明・検証結果を確認する．PR作成だけではmainは更新されず，確認後のmergeでGitHub上のmainへ統合する．手元mainの更新は別途pullで行う．履歴の線は矢印のない関係線，PRは破線の比較線，mergeは統合の矢印で示す．</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#185d78"/></marker>
+  </defs>
+  <style>
+    text { font-family: "Noto Sans JP", "Noto Sans CJK JP", sans-serif; font-size: 18px; fill: #172d3a; }
+    .heading { font-size: 21px; font-weight: 700; }
+    .label { font-weight: 700; }
+    .history { fill: none; stroke: #172d3a; stroke-width: 2.5; }
+    .pointer { fill: none; stroke: #627d8c; stroke-width: 1.5; }
+    .compare { fill: none; stroke: #8a5b16; stroke-width: 2.5; stroke-dasharray: 7 4; }
+    .operation { fill: none; stroke: #185d78; stroke-width: 2.5; marker-end: url(#arrow); }
+    .node { fill: #e6f2f7; stroke: #185d78; stroke-width: 2; }
+    .task-node { fill: #fff4df; stroke: #8a5b16; stroke-width: 2; }
+  </style>
+  <rect width="400" height="1100" rx="14" fill="#eef3f6"/>
+  <rect x="12" y="12" width="376" height="460" rx="12" fill="#f8fafc" stroke="#627d8c"/>
+  <text class="heading" x="32" y="44">手元：branchはcommitへの参照</text>
+  <text class="label" x="32" y="84">① branch作成直後</text>
+  <!-- Solid undirected lines show history, not the direction of parent references. -->
+  <path class="history" d="M72 143H160"/>
+  <circle class="node" cx="72" cy="143" r="18"/><circle class="node" cx="160" cy="143" r="18"/>
+  <text x="72" y="150" text-anchor="middle">A</text><text x="160" y="150" text-anchor="middle">B</text>
+  <rect x="226" y="104" width="130" height="34" rx="6" fill="#e6f2f7"/>
+  <text class="label" x="240" y="127">main</text>
+  <rect x="226" y="150" width="130" height="34" rx="6" fill="#fff4df"/>
+  <text class="label" x="240" y="174">課題branch</text>
+  <path class="pointer" d="M226 121L179 141M226 167L179 146"/>
+  <text x="32" y="215">branch作成はcommitを増やさない</text>
+  <text class="label" x="32" y="256">② 課題branchでcommitを重ねる</text>
+  <path class="history" d="M72 317H160L236 374H322"/>
+  <circle class="node" cx="72" cy="317" r="18"/><circle class="node" cx="160" cy="317" r="18"/>
+  <circle class="task-node" cx="236" cy="374" r="18"/><circle class="task-node" cx="322" cy="374" r="18"/>
+  <text x="72" y="324" text-anchor="middle">A</text><text x="160" y="324" text-anchor="middle">B</text>
+  <text x="236" y="381" text-anchor="middle">C</text><text x="322" y="381" text-anchor="middle">D</text>
+  <rect x="135" y="275" width="78" height="28" rx="6" fill="#e6f2f7"/>
+  <text class="label" x="145" y="295">main</text>
+  <path class="pointer" d="M160 303V299"/>
+  <rect x="228" y="406" width="130" height="32" rx="6" fill="#fff4df"/>
+  <text class="label" x="240" y="429">課題branch</text>
+  <path class="pointer" d="M322 406V394"/>
+  <text x="32" y="368">A・Bは</text><text x="32" y="394">共通の履歴</text>
+  <path class="operation" stroke-dasharray="7 4" d="M200 473V526"/>
+  <text class="label" x="218" y="507">pushで共有</text>
+  <rect x="12" y="530" width="376" height="378" rx="12" fill="#fff4df" stroke="#8a5b16" stroke-width="2"/>
+  <text class="heading" x="32" y="564">GitHub上で確認・統合</text>
+  <rect x="32" y="590" width="150" height="70" rx="8" fill="#fff" stroke="#185d78"/>
+  <text class="label" x="48" y="618">main（base）</text><text x="48" y="646">先端：B</text>
+  <rect x="206" y="590" width="162" height="70" rx="8" fill="#fff" stroke="#8a5b16"/>
+  <text class="label" x="219" y="618">課題branch</text><text x="219" y="646">head・先端：D</text>
+  <path class="compare" d="M107 660V688H287V660"/>
+  <rect x="32" y="704" width="336" height="90" rx="8" fill="#fff" stroke="#8a5b16" stroke-dasharray="7 4" stroke-width="2"/>
+  <path class="compare" d="M200 688V704"/>
+  <text class="heading" x="48" y="736">PR：差分・説明・検証の確認</text>
+  <text x="48" y="766">作成だけではmainは変わらない</text>
+  <path class="operation" d="M200 795V843"/>
+  <text class="label" x="218" y="825">確認後にmerge</text>
+  <rect x="32" y="847" width="336" height="43" rx="8" fill="#e6f2f7" stroke="#185d78" stroke-width="2"/>
+  <text class="label" x="48" y="875">GitHub上のmainへ統合</text>
+  <text x="32" y="943">merge方式は既存の条件に従う</text>
+  <text class="label" x="32" y="976">手元mainは別途pullで更新する</text>
+  <!-- The integration box does not prescribe a merge-commit topology. -->
+  <path class="history" d="M28 1018H62"/><text x="78" y="1024">実線：commit間の履歴の関係</text>
+  <path class="compare" d="M28 1047H62"/><text x="78" y="1053">破線：PRで比較・確認</text>
+  <path class="operation" d="M28 1076H62"/><text x="78" y="1082">mergeの矢印：mainへ統合</text>
+</svg>

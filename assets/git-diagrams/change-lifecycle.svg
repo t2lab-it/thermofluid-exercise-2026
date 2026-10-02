@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="922" viewBox="0 0 400 922" role="img" aria-labelledby="title desc">
+  <title id="title">保存・stage・commitと履歴の共有・取込み</title>
+  <desc id="desc">手元では保存がworking treeを変え，git addがその時点の指定内容をstaging areaへ選び，git commitがstage済み内容をローカル履歴へ記録する．add後の再編集は自動でstageされない．pushはcommit済み履歴をGitHub上の個人リポジトリへ共有する．mainへswitchした後のgit pull --ff-only origin mainはGitHub側の更新を取得し，手元のmainとファイルへ反映する．originは通信先の名前である．</desc>
+  <defs>
+    <marker id="state" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#185d78"/></marker>
+    <marker id="transfer" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#6c4814"/></marker>
+  </defs>
+  <style>
+    text { font-family: "Noto Sans JP", "Noto Sans CJK JP", sans-serif; font-size: 18px; fill: #172d3a; }
+    .heading { font-size: 21px; font-weight: 700; }
+    .label { font-weight: 700; }
+    .state { fill: none; stroke: #185d78; stroke-width: 2.5; marker-end: url(#state); }
+    .transfer { fill: none; stroke: #6c4814; stroke-width: 2.5; stroke-dasharray: 7 4; marker-end: url(#transfer); }
+  </style>
+  <rect width="400" height="922" rx="14" fill="#eef3f6"/>
+  <!-- State changes stay inside the local area. Files are not moved by add or commit. -->
+  <rect x="12" y="12" width="376" height="548" rx="12" fill="#f8fafc" stroke="#627d8c"/>
+  <text class="heading" x="32" y="44">手元（ローカル）</text>
+  <text x="38" y="82">編集して保存</text>
+  <path class="state" d="M200 67V108"/>
+  <rect x="32" y="112" width="336" height="106" rx="10" fill="#fff" stroke="#185d78" stroke-width="2"/>
+  <text class="heading" x="48" y="142">working tree</text>
+  <text x="48" y="172">手元で編集しているファイル群</text>
+  <text x="48" y="200">保存で内容が変わる</text>
+  <path class="state" d="M200 219V280"/>
+  <text class="label" x="220" y="257">git add</text>
+  <rect x="32" y="284" width="336" height="126" rx="10" fill="#fff4df" stroke="#8a5b16" stroke-width="2"/>
+  <text class="heading" x="48" y="314">staging area</text>
+  <text x="48" y="344">指定した内容をその時点でstage</text>
+  <text x="48" y="372">add後に再編集した内容は</text>
+  <text class="label" x="48" y="397">自動ではstageされない</text>
+  <path class="state" d="M200 411V456"/>
+  <text class="label" x="220" y="440">git commit</text>
+  <rect x="32" y="460" width="336" height="86" rx="10" fill="#e6f2f7" stroke="#185d78" stroke-width="2"/>
+  <text class="heading" x="48" y="490">ローカルcommit履歴</text>
+  <text x="48" y="522">stage済み内容と親の履歴を記録</text>
+  <!-- Dashed arrows transfer committed history; they do not send unsaved/staged files. -->
+  <path class="transfer" d="M60 547V734"/>
+  <text class="label" x="78" y="594">push</text>
+  <text x="78" y="622">commit済み</text>
+  <text x="78" y="648">履歴を共有</text>
+  <path class="transfer" d="M352 736V550"/>
+  <text x="198" y="592">mainへswitch後</text>
+  <text class="label" x="198" y="621">git pull</text>
+  <text class="label" x="198" y="647">--ff-only</text>
+  <text class="label" x="198" y="673">origin main</text>
+  <text x="198" y="704">手元mainへ反映</text>
+  <rect x="12" y="740" width="376" height="122" rx="12" fill="#fff4df" stroke="#8a5b16" stroke-width="2"/>
+  <text class="heading" x="32" y="770">GitHub上の個人リポジトリ</text>
+  <text x="32" y="800">共有されたbranchとcommit履歴</text>
+  <text x="32" y="831">originはこの通信先の名前</text>
+  <path class="state" d="M26 889H57"/>
+  <text x="69" y="895">状態変化</text>
+  <path class="transfer" d="M206 889H237"/>
+  <text x="249" y="895">転送・反映</text>
+</svg>
