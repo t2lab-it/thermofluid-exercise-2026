@@ -4,6 +4,7 @@ title: "発展資料"
 
 準備に必須のSSH手順と，任意の発展資料を紹介します．
 
+- [プロンプト装飾](terminal-prompt.qmd) — Starshipでブランチ名・変更・追跡先との差を表示します（任意）．
 - [SSHでGitHubへ接続する](github-ssh.qmd) — 個人課題用リポジトリを複製する前にSSH接続を準備します．
   既存のHTTPS originを切り替える手順も含みます．
 - [GitHub CLIでpull requestを操作する](github-cli.qmd) — SSH接続後に，既存PRの確認と次の実課題でのPR作成・確認をCLIで行います．

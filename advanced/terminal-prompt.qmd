@@ -126,8 +126,8 @@ $ git status --short --branch
 
 `🚗`と`🐢`は，追跡先を設定したブランチで，ローカルに保存された追跡先の情報と比較して表示されます．
 GitHubの最新情報を反映するには，`git fetch origin`を実行します．
-教材配布元の`upstream`の更新を調べる手順は[教材の更新](commands.qmd#material-updates)を参照してください．
-提出時は[課題ワークフロー](workflow.qmd)に従って状態と差分を確認してください．
+教材配布元の`upstream`の更新を調べる手順は[教材の更新](../guides/commands.qmd#material-updates)を参照してください．
+提出時は[課題ワークフロー](../guides/workflow.qmd)に従って状態と差分を確認してください．
 
 ### 絵文字とフォントの確認 {#font-check}
 
