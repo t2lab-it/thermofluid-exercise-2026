@@ -26,12 +26,12 @@ const EXPECTED_COURSE_HREFS = [
 ]
 const EXPECTED_GUIDE_HREFS = Set([
     "guides/testing.qmd", "guides/commands.qmd",
-    "guides/terminal-prompt.qmd",
     "guides/troubleshooting.qmd", "guides/glossary.qmd",
     "guides/links.qmd",
     "guides/final-project-handoff.qmd",
 ])
 const EXPECTED_ADVANCED_HREFS = Set([
+    "advanced/terminal-prompt.qmd",
     "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
     "advanced/git-worktree.qmd",
     "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
