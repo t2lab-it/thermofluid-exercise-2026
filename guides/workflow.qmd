@@ -182,6 +182,8 @@ $ julia --project=. exercises/<課題フォルダ>/run.jl
 （課題ごとの実行結果や，生成した出力ファイルの場所を表示）
 ~~~
 
+実行が止まった場合は，[環境とコードの問題の切り分け](troubleshooting.qmd#environment-code-triage)に沿って，最初に失敗した段階を確認します．
+
 ## テストの作成と実行 {#tests}
 
 ### 自作テストの場所と書き方
@@ -197,6 +199,7 @@ Test Summary: | Pass  Total  Time
 ~~~
 
 テスト結果の読み方は[警告とエラー](testing.qmd#test-results)を参照してください．
+テストを始められない場合や例外の原因が不明な場合は，[環境とコードの問題の切り分け](troubleshooting.qmd#environment-code-triage)を確認してください．
 
 未記入の`@test false`を，課題に合った入力・期待値・判定を持つテストへ置き換えてください．
 `TODO(必須)`と`TODO(自作)`の両方を確認し，各課題が求めるテスト数と判定基準を保って記入します．
@@ -281,7 +284,11 @@ GitHubで`YOUR_EXERCISE_BRANCH`から`main`へのPRを作成し，PRテンプレ
 PR本文には提出単位，テスト結果，公式出力，作業branch上の学習ログURL，diffで確認した内容を記載します．
 
 GitHub Actionsが成功することを確認してください．
-失敗した場合はエラー文を読んでその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
+失敗した場合は，最初に失敗したステップと前後のログを読み，[環境とコードの問題の切り分け](troubleshooting.qmd#environment-code-triage)に沿って原因を調べます．
+リポジトリの取得や環境準備で止まった場合は，その段階の通信・認証・権限・環境を確認します．
+課題テストで止まった場合は，課題ID，対象コードとテスト，最初の例外または期待値不一致を確認します．
+コードや設定を変更した場合は，関連するテストを実行してからcommit，pushしてPRを更新します．
+対応後はActionsの結果を再確認し，原因や対応方法が不明なら[教員・TAへ相談](troubleshooting.qmd#教員taへ相談する)してください．
 
 Actionsが成功した後，GitHubの`Files changed`を読んで以下を確認します．
 
