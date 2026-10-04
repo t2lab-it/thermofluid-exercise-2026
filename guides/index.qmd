@@ -4,6 +4,7 @@ title: "ガイド"
 
 - [課題ワークフロー](workflow.qmd): 環境診断，課題の開始，テスト，PRによる提出の手順
 - [AI利用と安全](ai-usage.qmd): 利用記録，理解度チェックの提出，[依頼テンプレートと説明・調査・実装・レビューの具体例](ai-usage.qmd#ai-request-examples)
+- [Julia環境のしくみ](julia-environment.qmd): 配布環境の選択・復元と実行場所の関係
 - [テストと数値検証](testing.qmd): テスト層，許容誤差，公式出力の読み方
 - [コマンド一覧](commands.qmd): セットアップと課題ですでに扱ったコマンド
 - [トラブル対応](troubleshooting.qmd): 最初に残す証拠，[エラーメッセージの読み方](troubleshooting.qmd#reading-errors)，環境とコードの問題の切り分け，再現条件の縮小，相談手順

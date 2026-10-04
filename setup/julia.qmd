@@ -31,6 +31,8 @@ julia version 1.13.0
 
 最後のコマンドでJulia 1.13系が表示されることを確認してください．
 
+学生リポジトリをcloneしたら，[Julia環境のしくみ](../guides/julia-environment.qmd)で配布ファイル・環境選択・実行場所の関係を確認し，[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)へ進んでください．
+
 ## シェルとJulia REPLの区別 {#シェルとjulia-replを区別する}
 
 `$` の入力はターミナルで実行します．
@@ -67,8 +69,7 @@ VS Code上の操作は公式資料も参照してください．
 - `julia --version`が異なる
   - ターミナルやVS Codeを開き直し，`juliaup status`と`juliaup default 1.13.0`を確認する．
 - パッケージを読み込めない
-  - リポジトリのルートディレクトリと現在のbranchを確認し，`Pkg.instantiate()`を再実行する．
-  依存関係は配布された`Project.toml`と`Manifest.toml`から復元する．
+  - [Julia環境の切り分け](../guides/julia-environment.qmd#environment-failures)で実行場所・選択環境・復元の終了状態を確認する．
 - REPLでは動くがスクリプトやテストが失敗する
   - `Julia: Run File in New Process`または上のCLIで，残ったREPL状態に依存していないか確認する．
 - 保存時整形や警告表示が動かない

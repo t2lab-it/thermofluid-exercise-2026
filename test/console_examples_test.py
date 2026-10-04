@@ -46,6 +46,20 @@ def render(source, commands_only=False):
 
 
 class ConsoleExamplesTest(unittest.TestCase):
+    def test_environment_diagnostics_copy_without_paths_or_output(self):
+        page = ROOT / 'guides' / 'julia-environment.qmd'
+        self.assertTrue(page.is_file(), 'the environment guide must exist')
+        commands = render(page.read_text(), commands_only=True)
+        self.assertEqual(commands, [
+            'pwd',
+            'git rev-parse --show-toplevel',
+            'julia --version',
+            "julia --project=. -e 'println(pwd()); println(Base.active_project())'",
+            'using Pkg',
+            'Pkg.activate(".")',
+            'Base.active_project()',
+        ])
+
     def test_shell_copy_excludes_output_and_keeps_literal_dollar_and_continuation(self):
         blocks = render('''```console
 $ printf '%s\\n' "$HOME" \\

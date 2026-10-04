@@ -72,6 +72,7 @@ $ julia --project=. -e 'println(Base.active_project()); println(DEPOT_PATH)'
 環境の選択と依存パッケージの導入は別の操作です．
 依存パッケージの導入には[F00のJulia環境の復元](../assignments/F00.qmd#julia環境を復元する)を参照してください．
 仕組みの詳細は[Julia Pkg公式資料「環境の管理」](https://pkgdocs.julialang.org/v1/environments/)を参照してください．
+選択中の環境や復元結果の確認は，[Julia環境の切り分け](julia-environment.qmd#environment-failures)を参照してください．
 
 環境診断には次を実行します．
 

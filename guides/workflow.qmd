@@ -26,6 +26,7 @@ $ git rev-parse --show-toplevel
 ~~~
 
 `pwd`と`git rev-parse --show-toplevel`が同じファイルパス（学生リポジトリのルート）を出力することを確認します．
+`--project=.`による環境選択と実行場所の関係は，[Julia環境のしくみ](julia-environment.qmd#select-environment)を参照してください．
 環境の準備は[受講環境の準備](../setup/index.qmd)，cloneとGitHubの設定は[Git・GitHub](../setup/git-github.qmd)を参照してください．
 [プロンプト装飾](../advanced/terminal-prompt.qmd)を使うと，作業中のブランチ名と変更の有無をターミナルに表示できます（任意）．
 
