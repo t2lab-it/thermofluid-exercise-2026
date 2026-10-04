@@ -9,7 +9,7 @@ title: "トラブル対応"
 
 1. 失敗したコマンドを一つ特定する．
 2. エラーメッセージを先頭から末尾まで読む．
-3. リポジトリのルートで次を実行する．
+3. 学生リポジトリのルートで次を実行する．
 
 ```console
 $ pwd
@@ -39,7 +39,89 @@ origin  git@github.com:OWNER/REPOSITORY.git (push)
 4. WindowsならWSL2 Ubuntu 24.04内で実行したか，pwdが/home/<user>/...か，uname -aにWSL2が含まれるかを確認する．
    macOS・native LinuxではOS名を記録する．
 5. OS，期待した結果，実際の結果，失敗直前に行った操作をメモする．
-6. 秘密情報や個人情報が含まれていないことを確認する．
+6. 秘密情報や個人情報を除いて記録する．
+
+## 環境とコードの問題の切り分け {#environment-code-triage style="scroll-margin-top: 5rem;"}
+
+ログから，どの処理で最初に失敗したかを確認します．
+次の順序で原因を調べ，条件を一つずつ変更して同じコマンドを再実行します．
+
+### 1. 実行場所の確認
+
+`pwd`とOSの表示を読み，学生リポジトリのルートに`Project.toml`と実行対象のファイルがあるか確認します．
+場所が違う場合は，[コマンドを実行する場所](workflow.qmd#repository-root)に沿ってルートへ移動します．
+
+WindowsではWSL2 Ubuntu 24.04のLinux側ホーム以下を使います．
+OSごとの手順は[受講環境の準備](../setup/index.qmd)を参照してください．
+
+### 2. Julia環境の確認
+
+Julia・Gitの導入は[受講環境の準備](../setup/index.qmd)，Julia 1.13系の選択は[Juliaの導入](../setup/julia.qmd#juliaupでjuliaを導入する)を参照してください．
+`--project=.`は現在のディレクトリのJulia環境を選ぶ指定です．
+学生リポジトリのルートで，選択されたプロジェクトとパッケージなどの保存先を表示できます．
+
+```console
+$ julia --project=. -e 'println(Base.active_project()); println(DEPOT_PATH)'
+/home/student/YOUR_COURSE_REPOSITORY/Project.toml
+["/home/student/.julia", "（ほかの保存先は省略）"]
+（パスと保存先の数は環境によって異なります）
+```
+
+最初の行が学生リポジトリの`Project.toml`を指すか，失敗したコマンドにも`--project=.`があるかを確認します．
+`DEPOT_PATH`はパッケージやコンパイル済みコードなどの保存先の一覧です．
+環境の選択と依存パッケージの導入は別の操作です．
+依存パッケージの導入には[F00のJulia環境の復元](../assignments/F00.qmd#julia環境を復元する)を参照してください．
+仕組みの詳細は[Julia Pkg公式資料「環境の管理」](https://pkgdocs.julialang.org/v1/environments/)を参照してください．
+選択中の環境や復元結果の確認は，[Julia環境の切り分け](julia-environment.qmd#environment-failures)を参照してください．
+
+環境診断には次を実行します．
+
+```console
+$ julia --project=. scripts/course.jl preflight
+（Runtime・作業場所・Julia・Gitの診断結果と，手動確認の状態を表示）
+```
+
+Runtime・作業場所・Julia・Gitの各項目を読み，未確認・失敗の項目に対応します．
+このコマンドは診断結果を表示し，現在の進捗を保持します．
+VS Code・GitHub・AIの手動確認とF00の完了記録は[F00の手動確認](../assignments/F00.qmd#手動確認を完了として記録する)に沿って行います．
+
+### 3. 権限と保存先の確認
+
+`Permission denied`，`EACCES`，`EROFS`などが出たら，拒否された操作とパスをログから探します．
+パッケージ保存先，キャッシュ，一時領域，課題の出力先のどこで失敗したかを区別してください．
+課題の出力先では，書き込み権限と課題の指定を確認します．
+
+### 4. 通信と認証の確認
+
+パッケージ取得，リポジトリの複製，GitHubへの認証のうち，どの操作がどの接続先で失敗したかを記録します．
+パッケージ取得は[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)，複製・認証は[Git・GitHub](../setup/git-github.qmd)の手順とログを照合します．
+
+### 5. テストの実行と判定の確認
+
+環境準備で止まった場合は，準備を整えてから対象テストを実行し，判定結果を確認します．
+実際に実行された課題IDとテストセット，最初の失敗または例外，対象ファイルと行を確認します．
+期待値と実際値が違う場合は，入力，式，添字，境界条件，[期待値と判定基準](testing.qmd#期待値と判定基準を決める)を調べます．
+
+例外の場合は，環境準備中か，課題の計算中か，出力処理中かを対象行とログから確認します．
+`Pkg.test()`の現在課題・通過済み課題の扱いは[警告とエラー](testing.qmd#test-results)，課題単独の`tests.jl`との違いは[課題単独のテスト](workflow.qmd#課題単独のテスト)を参照します．
+
+### 短いログの例
+
+失敗した処理と次の確認を，説明用のログ抜粋で示します．
+
+- **環境準備中の書き込み拒否**：`ERROR: IOError: mkdir("/home/student/.julia/compiled/..."): permission denied (EACCES)`．
+  保存先と権限を確認し，準備が整ったら課題テストを実行する．
+- **依存パッケージ取得の通信失敗**：`ERROR: Downloads.RequestError: Could not resolve host`．
+  直前の取得ログから接続先を確認し，通信の問題を調べてから元のテストを再実行する．
+- **課題コード実行後の期待値不一致**：`Test Failed`に続き，`Expression: actual == expected`，`Evaluated: 2 == 3`．
+  実行した課題と対象行を確認し，入力・実装・期待値の根拠を照合する．
+
+::: {.callout-note}
+### AIエージェント内の実行制限
+
+実行制限が疑われる場合は，自分の通常の端末で，実行場所，Juliaの版，プロジェクト，コマンドを揃えて実行し，結果を比較します．
+同じ条件で端末では成功し，エージェント内だけで失敗する場合は，エージェントの書き込み・通信などの制限を確認します．
+:::
 
 ## エラーメッセージの読み方 {#reading-errors}
 
@@ -180,13 +262,9 @@ ERROR: LoadError: Some tests did not pass: 0 passed, 1 failed, 0 errored, 0 brok
 
 ## 自分で確認する範囲
 
-- 実行環境が不明，WSL1，Windowsネイティブ側，または/mnt/c以下: [受講環境の準備](../setup/index.qmd)へ戻る．
-- `julia`や`git`が見つからない: [受講環境の準備](../setup/index.qmd)へ戻る．
-- Juliaの版が違う: [Julia 1.13とVS Code](../setup/julia.qmd)を確認する．
-- 選択中のJulia環境が不明，環境復元やパッケージ読み込みで止まる: [Julia環境の切り分け](julia-environment.qmd#environment-failures)で作業場所とProject，失敗段階を確認する．
-- 複製・認証で止まる: [Git・GitHub](../setup/git-github.qmd)の順序を確認する．
-- テストが失敗する: 最初の失敗，対象ファイル，期待値と実値を[テストガイド](testing.qmd)に沿って読む．
-- branchやmainを誤操作した: commitやpushを追加せず，現在の状態を残す．
+- 実行・テストが止まる: [環境とコードの問題の切り分け](#environment-code-triage)に沿って，最初に失敗した段階を調べる．
+- branchやmainを誤操作した: 操作を止め，現在の状態を保存する．
+- 原因や対応方法が不明: 確認結果を添えて[教員・TAへ相談](#教員taへ相談する)する．
 
 ## 再現条件の縮小と不具合の調査 {#reduce-bug}
 
@@ -307,5 +385,13 @@ mainでの作業，commit，直接pushに気づいたら，強制push，`reset`�
 ## 教員・TAへの相談 {#教員taへ相談する}
 
 上の証拠と，問題を再現する最小の手順を共有します．
-課題ID，現在branch，未commit変更の有無も伝えてください．
-mainへ直接commit・pushした，秘密情報を表示した，復旧方法が複数考えられる場合は，自分だけで履歴を書き換えず直ちに相談してください．
+次を，秘密情報と個人情報を除いて伝えてください．
+
+- 課題ID，現在branch，未commit変更の有無
+- OS，Juliaの版，実行主体，実行場所，選択されたプロジェクト
+- 失敗した完全なコマンド，期待した結果，実際の結果
+- 最初のエラーと前後のログ，対象ファイルと行
+- 試した確認，変更した条件，再実行の結果
+
+コマンド・URL・ログに含まれるトークンなども除いて共有します．
+mainへ直接commit・pushした場合や秘密情報を表示した場合は，現在の状態を保存して教員・TAへ連絡してください．
