@@ -41,6 +41,155 @@ origin  git@github.com:OWNER/REPOSITORY.git (push)
 5. OS，期待した結果，実際の結果，失敗直前に行った操作をメモする．
 6. 秘密情報や個人情報が含まれていないことを確認する．
 
+## エラーメッセージの読み方 {#reading-errors}
+
+実行したコマンドと出力を対応させ，次の順に確認します．
+
+1. **最初の具体的な失敗を探す**：末尾の「テスト全体が失敗した」という要約だけで原因を決めない．
+2. **種類と内容を読む**：エラー種類とその直後のメッセージを読む．
+   テスト失敗では，テスト名，`Expression`（判定式），`Evaluated`（評価された値）も確認する．
+3. **自分のファイルと行番号を探す**：`Stacktrace`（呼出しの記録）や出力のパスをたどり，自分が編集したファイルの関係する行を開く．
+   最上段がJulia本体やライブラリの行でも，そこを修正対象と決めない．
+   REPLで表示される`REPL[n]:行番号`は，保存したファイルのパスではなく，REPLへ入力した式の場所を示す．
+4. **その行の入力と根拠を確認する**：失敗の種類に応じて，型，引数，添字，配列サイズ，期待値の根拠を照合する．
+5. **一つ修正して再確認する**：根拠を持って修正し，同じ入力・コマンドで再実行する．
+   その失敗が消えても，全課題の成功や提出完了とは判断しない．
+
+以下は，課題から独立した，**意図的に失敗する3例**です．
+試す場合は，課題ファイルを上書きせず，別の作業用ディレクトリに指定の名前で保存し，そのディレクトリから実行してください．
+Julia 1.13.0で確認した出力の抜粋を載せています．
+作業ディレクトリの絶対パスは，架空の`/home/student/error-reading/`へ置き換えています．
+行番号は掲載ソースに対応し，`（…）`は省略を示します．
+Juliaの版やOSによってライブラリのパス・行番号は変わり，テストの実行時間も変わります．
+
+### MethodError：関数へ渡した型と定義の照合
+
+次を`method_error.jl`へ保存します．
+整数を受け取る関数に文字列を渡すため，実行すると失敗します．
+
+```{.julia .numberLines}
+function double_count(n::Int)
+    return 2 * n
+end
+
+double_count("3")
+```
+
+```console
+$ julia method_error.jl
+ERROR: LoadError: MethodError: no method matching double_count(::String)
+The function `double_count` exists, but no method is defined for this combination of argument types.
+
+Closest candidates are:
+  double_count(!Matched::Int64)
+   @ Main /home/student/error-reading/method_error.jl:1
+
+Stacktrace:
+ [1] top-level scope
+   @ /home/student/error-reading/method_error.jl:5
+（…）
+```
+
+**注目箇所**：`MethodError`の直後の`double_count(::String)`は，関数名と渡した引数の型を示します．
+`Closest candidates`の`!Matched::Int64`は，この環境では定義が整数を受け付け，渡した文字列とは一致しないことを示します．
+定義は`method_error.jl:1`，失敗した呼出しは`method_error.jl:5`です．
+
+**次の確認**：5行目の`"3"`と，1行目の`n::Int`を照合します．
+どんな入力を受け取る関数なのかを確認し，渡す値の型・引数の数と定義を合わせてください．
+型変換を加える前に，入力が文字列になった理由と，関数が受け付けるべき型を確認します．
+
+### BoundsError：配列サイズと要求した添字の照合
+
+次を`bounds_error.jl`へ保存します．
+3要素の配列の4番目を読もうとするため，実行すると失敗します．
+
+```{.julia .numberLines}
+function sample_value(values)
+    return values[4]
+end
+
+values = [10, 20, 30]
+sample_value(values)
+```
+
+```console
+$ julia bounds_error.jl
+ERROR: LoadError: BoundsError: attempt to access 3-element Vector{Int64} at index [4]
+Stacktrace:
+ [1] throw_boundserror(A::Vector{Int64}, I::Tuple{Int64})
+   @ Base ./essentials.jl:14
+ [2] checkbounds
+   @ ./essentials.jl:389 [inlined]
+ [3] getindex
+   @ ./essentials.jl:969 [inlined]
+ [4] sample_value(values::Vector{Int64})
+   @ Main /home/student/error-reading/bounds_error.jl:2
+ [5] top-level scope
+   @ /home/student/error-reading/bounds_error.jl:6
+（…）
+```
+
+**注目箇所**：`3-element`は配列の要素数が3，`index [4]`は要求した添字が4であることを示します．
+先頭の`Base ./essentials.jl:14`はJulia本体の行です．
+自分のコードは`bounds_error.jl:2`の配列アクセスで，6行目の呼出しからそこへ進んでいます．
+
+**次の確認**：2行目の添字`4`と，5行目で作った配列の有効な添字`1:3`を照合します．
+本来読むべき要素を確認し，ループ内ならループの終端や境界の扱いも確認してください．
+配列を大きくしたり例外を隠したりするだけでは，どの要素を読むべきかという問題は解決しません．
+
+### テスト失敗：判定式，期待値と実値の照合
+
+次を`test_failure.jl`へ保存します．
+幅3，高さ4の長方形の面積は`3 * 4 = 12`ですが，この関数は足し算をしているため，テストが失敗します．
+
+```{.julia .numberLines}
+using Test
+
+function rectangle_area(width, height)
+    return width + height
+end
+
+@testset "rectangle area" begin
+    actual = rectangle_area(3, 4)
+    expected = 12
+    @test actual == expected
+end
+```
+
+```console
+$ julia test_failure.jl
+rectangle area: Test Failed at /home/student/error-reading/test_failure.jl:10
+  Expression: actual == expected
+   Evaluated: 7 == 12
+  Stacktrace:
+   [1] top-level scope
+     @ /home/student/error-reading/test_failure.jl:8
+（…）
+Test Summary:  | Fail  Total  Time
+rectangle area |    1      1  2.0s
+（…）
+ERROR: LoadError: Some tests did not pass: 0 passed, 1 failed, 0 errored, 0 broken.
+（…）
+```
+
+**注目箇所**：`rectangle area: Test Failed`は失敗したテスト名を示し，`test_failure.jl:10`は判定した行です．
+`Expression`の左側`actual`は8行目で関数から得た実値，右側`expected`は9行目で指定した期待値です．
+`Evaluated: 7 == 12`から，実値7が期待値12と一致しなかったと読めます．
+末尾の`Some tests did not pass`は全体の要約なので，原因は上の判定式と値へ戻って調べます．
+
+**次の確認**：10行目の判定式，8行目の入力，4行目の計算を順に照合します．
+期待値12の根拠は長方形の面積の定義なので，計算側の足し算を確認してください．
+実値7に合わせて期待値を変えたり，許容誤差を広げて通したりしません．
+期待値の根拠は[期待値と判定基準の設定](testing.qmd#期待値と判定基準を決める)，浮動小数点の比較は[許容誤差の設定](testing.qmd#tolerances)を参照してください．
+
+### 原因を特定できない場合
+
+要約しか残っていなければ，上にある具体的な失敗出力を確認し，出力が欠けている場合は同じ操作のログを取り直します．
+Juliaや対象コードの実行前に環境・権限・通信で止まった場合は，その結果から課題実装の正否を判断せず，[自分で確認する範囲](#自分で確認する範囲)と[受講環境の準備](../setup/index.qmd)へ戻ります．
+自分のファイルが見つからない，期待値の根拠が分からない，確認しても直らない場合は，[最初の証拠](#最初の証拠を残す)と問題を再現する最小の手順を用意し，[教員・TAへ相談](#教員taへ相談する)してください．
+共有前に秘密情報や個人情報を除きます．
+課題の実行・提出の手順は[課題ワークフロー](workflow.qmd)で確認してください．
+
 ## 自分で確認する範囲
 
 - 実行環境が不明，WSL1，Windowsネイティブ側，または/mnt/c以下: [受講環境の準備](../setup/index.qmd)へ戻る．
