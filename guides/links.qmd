@@ -17,6 +17,9 @@ title: "リンク集"
 #### Julia・VS Code
 
 - [Juliaのインストール案内](https://julialang.org/downloads/)
+- [Pkg：環境の管理](https://pkgdocs.julialang.org/v1/environments/)
+- [Pkg：Project.tomlとManifest.toml](https://pkgdocs.julialang.org/v1/toml-files/)
+- [Julia：コマンドライン](https://docs.julialang.org/en/v1/manual/command-line-interface/)
 - [VS CodeでのJuliaコードの実行](https://www.julia-vscode.org/docs/latest/userguide/runningcode/)
 - [Julia拡張のformatter](https://www.julia-vscode.org/docs/latest/userguide/formatter/)
 - [Julia拡張のlinter](https://www.julia-vscode.org/docs/stable/userguide/linter/)

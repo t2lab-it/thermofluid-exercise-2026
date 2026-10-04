@@ -25,6 +25,8 @@ F00から始める手順は[初回セットアップとF00のpreflight](workflow
 
 ## 環境と復元
 
+配布ファイル，`--project=.`，環境復元の関係は，[Julia環境のしくみ](julia-environment.qmd)を参照してください．
+
 | コマンド | 目的 |
 |---|---|
 | `julia --version` | Julia 1.13系を確認する |

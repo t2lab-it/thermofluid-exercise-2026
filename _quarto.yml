@@ -26,6 +26,8 @@ website:
       - text: ガイド
         rel: split-navigation split-navigation-guides
         menu:
+          - href: guides/julia-environment.qmd
+            text: Julia環境のしくみ
           - href: guides/testing.qmd
             text: テスト
           - href: guides/commands.qmd
@@ -150,6 +152,8 @@ website:
       contents:
         - href: guides/index.qmd
           text: "ガイド一覧"
+        - href: guides/julia-environment.qmd
+          text: "Julia環境のしくみ"
         - href: guides/testing.qmd
           text: "テストと数値検証"
         - href: guides/commands.qmd

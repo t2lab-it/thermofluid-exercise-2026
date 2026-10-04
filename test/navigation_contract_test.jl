@@ -25,6 +25,7 @@ const EXPECTED_COURSE_HREFS = [
     for href in ("lessons/$id.qmd", "assignments/$id.qmd")
 ]
 const EXPECTED_GUIDE_HREFS = Set([
+    "guides/julia-environment.qmd",
     "guides/testing.qmd", "guides/commands.qmd",
     "guides/troubleshooting.qmd", "guides/glossary.qmd",
     "guides/links.qmd",
@@ -281,6 +282,37 @@ function run_navigation_behavior(quarto, module_path)
 end
 
 
+
+@testset "student environment guide connects preparation and restoration" begin
+    guide = joinpath(NAVIGATION_SITE_ROOT, "guides", "julia-environment.qmd")
+    restoration = joinpath(NAVIGATION_SITE_ROOT, "assignments", "F00.qmd")
+    restoration_source = read(restoration, String)
+    restoration_section = match(r"(?ms)^## [^\n]*\{#julia環境を復元する\}\s*\n(.*?)(?=^## |\z)", restoration_source)
+    @test !isnothing(restoration_section)
+    for relative in ("guides/index.qmd", "setup/julia.qmd", "assignments/F00.qmd",
+                     "guides/workflow.qmd", "guides/commands.qmd", "guides/troubleshooting.qmd")
+        path = joinpath(NAVIGATION_SITE_ROOT, relative)
+        source = read(path, String)
+        if path == restoration
+            source = isnothing(restoration_section) ? "" : restoration_section.captures[1]
+        end
+        @test guide in resolve_qmd_target.(Ref(path), qmd_link_targets(source))
+    end
+    @test isfile(guide)
+    if isfile(guide)
+        source = read(guide, String)
+        for anchor in ("environment-files", "select-environment", "restore-environment", "environment-failures")
+            @test occursin(Regex("(?m)^## [^\\n]*\\{#" * anchor * "\\}"), source)
+        end
+        links = [m.captures[1] for m in eachmatch(r"(?<!!)\[[^\]]+\]\(([^)\s]+\.qmd#[^)\s]+)\)", source)]
+        @test any(links) do link
+            target, fragment = split(link, '#'; limit=2)
+            resolve_qmd_target(guide, target) == restoration &&
+                fragment == "julia環境を復元する" &&
+                occursin("{#" * fragment * "}", restoration_source)
+        end
+    end
+end
 
 @testset "reviewed course navigation contract" begin
     public_root = NAVIGATION_SITE_ROOT

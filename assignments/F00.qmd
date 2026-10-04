@@ -48,6 +48,8 @@ $ git rev-parse --show-toplevel
 
 ## 1. Julia環境の復元 {#julia環境を復元する}
 
+配布ファイルと環境選択・復元の意味は，[Julia環境のしくみ](../guides/julia-environment.qmd)を参照してください．
+
 cloneした学生リポジトリのルートで以下のコマンドを実行します．
 Gitは，`git switch`が使える`2.23`以上を目安にしてください．
 
