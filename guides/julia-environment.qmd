@@ -1,0 +1,150 @@
+---
+title: "Julia環境のしくみ"
+---
+
+::: {.course-position}
+参照・Julia環境
+:::
+
+このページでは，通常課題の学生リポジトリに配布されたJulia環境を，選択して復元する意味を説明します．
+初回の復元手順は[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)，課題の実行・提出手順は[課題ワークフロー](workflow.qmd)を参照してください．
+最終プロジェクトで新しい環境を構築するときは，[最終プロジェクトへのコード移行](final-project-handoff.qmd)へ進みます．
+
+## 配布ファイルの役割 {#environment-files}
+
+学生リポジトリをcloneすると，課題コードとともに`Project.toml`と`Manifest.toml`を取得します．
+この2ファイルは，課題に必要なパッケージの構成を記録しています．
+
+| ファイル | 記録するもの |
+|---|---|
+| `Project.toml` | 直接使う依存パッケージと，Julia・パッケージの互換範囲など，プロジェクトの要求 |
+| `Manifest.toml` | 間接依存を含む，解決済みの依存関係・具体的な版・取得元など |
+: {tbl-colwidths="[45, 55]"}
+
+`Project.toml`だけでは，全依存の具体的な版は固定されません．
+通常課題では，配布された`Project.toml`と`Manifest.toml`の組を使います．
+cloneで取得するのはこれらの記録と課題コードであり，パッケージ本体は環境復元時にローカルへ導入します．
+導入したパッケージや関連キャッシュは，通常，ユーザー側のJulia保存領域（`~/.julia/`）に置かれます．
+
+授業ではJulia 1.13系を使い，配布ManifestとCIの再現基準は1.13.0です．
+Juliaupは**Julia本体の実行版**を選び，Pkgは**依存パッケージの環境**を選択・復元します．
+Manifestの`julia_version`は作成時のJuliaの版を記録するもので，Julia本体を配布したり，実行版を切り替えたりする機能ではありません．
+実行版は`julia --version`で確認し，違う場合は[Juliaupの手順](../setup/julia.qmd#juliaupでjuliaを導入する)へ戻ります．
+
+## 環境選択と実行場所 {#select-environment}
+
+`julia --project=.`の`.`は，**Juliaを起動するときの作業ディレクトリ**を指します．
+この指定で，そこで使う依存環境を選択します．
+スクリプトの所在ディレクトリやGitのルートを自動で選ぶ指定ではなく，依存パッケージの導入も別の操作です．
+
+### 学生リポジトリのルートで確認する
+
+WindowsではWSL2 Ubuntu 24.04 LTSのLinux側で，`/home/<user>/...`にcloneした学生リポジトリを使います．
+macOS・Linuxではnative環境の学生リポジトリを使います．
+以下の`/home/student/YOUR_COURSE_REPOSITORY`は表示用の例で，自分のclone先に読み替えてください．
+シェルの`$`は入力と出力を区別する表示で，コピー用ボタンではコマンドだけを取得できます．
+
+```console
+$ pwd
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ git rev-parse --show-toplevel
+/home/student/YOUR_COURSE_REPOSITORY
+
+$ julia --version
+julia version 1.13.0
+
+$ julia --project=. -e 'println(pwd()); println(Base.active_project())'
+/home/student/YOUR_COURSE_REPOSITORY
+/home/student/YOUR_COURSE_REPOSITORY/Project.toml
+```
+
+`pwd`とGitのルートが一致し，`Base.active_project()`が**学生rootの`Project.toml`**を指すことを確認します．
+最後のコマンドは，Julia内の作業場所と選択中のProjectを表示する読み取り用の確認です．
+
+### 課題サブディレクトリから起動すると
+
+同じ診断コマンドを`exercises/F01_first_pull_request/`で実行すると，次の関係になります．
+
+| 確認 | 学生rootで実行 | 課題サブディレクトリで実行 |
+|---|---|---|
+| `pwd` | 学生root | 学生rootの`exercises/F01_first_pull_request/` |
+| Gitのルート | 学生root | 学生root |
+| `--project=.`の対象 | 学生root | 課題サブディレクトリ |
+: {tbl-colwidths="[38, 22, 40]"}
+
+後者の`Base.active_project()`は，`exercises/F01_first_pull_request/Project.toml`を指します．
+そのファイルが存在しなくても，Juliaはそこを新しい環境として選択して起動できます．
+「Juliaが起動できた」だけでは，配布環境を選べたと判断できません．
+この場所では観察だけに留め，復元は学生rootへ戻ってから[F00の手順](../assignments/F00.qmd#julia環境を復元する)で行います．
+
+`--project`は作業ディレクトリを変更しません．
+相対指定したスクリプトパスは作業ディレクトリを基準に探され，コードが相対出力先を使う場合もその基準は別に確認する必要があります．
+通常課題の実行場所と公式出力先は，[課題ワークフロー](workflow.qmd#repository-root)と各課題ページに従ってください．
+
+### すでに開いたREPLでの環境選択
+
+学生rootで起動したREPLでは，次の操作で現在のセッションの環境を選択できます．
+
+```julia-repl
+julia> using Pkg
+
+julia> Pkg.activate(".")
+  Activating project at `/home/student/YOUR_COURSE_REPOSITORY`
+
+julia> Base.active_project()
+"/home/student/YOUR_COURSE_REPOSITORY/Project.toml"
+```
+
+`Pkg.activate(".")`の`.`も，その時点の作業ディレクトリを指します．
+起動前の`--project=.`に対応する環境選択であり，不足する依存パッケージの導入は復元操作で行います．
+REPLには定義済みの関数や変数，読み込んだパッケージが残るため，CLIと結果が違う場合は環境と残った状態を確認し，新しいJuliaプロセスで[既存の実行手順](workflow.qmd#exercise-work)を試します．
+
+## 配布環境の復元 {#restore-environment}
+
+学生rootと選択中のProjectを確認したら，[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)にある`Pkg.instantiate()`のコマンドを実行します．
+配布Manifestがある場合，記録された依存構成に従って，不足するパッケージを導入します．
+Manifestがない場合はProjectの要求に従って依存関係を解決し，Manifestを生成するため，配布環境の復元と同じ条件にはなりません．
+通常課題で配布Manifestが見当たらないときは，[下の切り分け](#environment-failures)でファイルの状態を確認してください．
+
+初回はパッケージの取得やプリコンパイルに時間がかかることがあります．
+これは課題の計算処理とは別の準備で，所要時間や表示内容は端末と依存環境によって変わります．
+復元済みなら出力が少ない，またはない場合もあるので，出力量ではなく，コマンドがエラーなく終了したことを確認します．
+
+復元は同じ依存構成を準備する操作であり，学生の課題コード・計算結果を復元する操作ではありません．
+課題コードの正しさや，異なるOSでの計算結果の完全一致を保証するものでもありません．
+
+| 確認 | 確かめること |
+|---|---|
+| 環境復元 | 選択中の配布環境に必要な依存の準備 |
+| F00の機械診断 | runtime，workspace，Julia，Gitの状態 |
+| 課題テスト | 実行されたコードと入力・期待値の対応 |
+: {tbl-colwidths="[30, 70]"}
+
+復元コマンドは`course_progress.toml`を更新する操作ではありません．
+復元後は[F00の機械診断と手動確認](../assignments/F00.qmd#f00の機械診断)へ進み，進捗更新の条件を満たします．
+F00の機械診断は依存パッケージの復元完了を検査するものではなく，F00完了後の未実装テストの失敗は[課題テストの出発点](../assignments/F00.qmd#手動確認を完了として記録する)として扱います．
+
+## 失敗の切り分け {#environment-failures}
+
+まず上の診断例で，Juliaの版，学生root，選択中のProjectを確認します．
+その後，失敗した段階に応じて次へ進みます．
+
+| 失敗した段階・状態 | 次に確認すること |
+|---|---|
+| 作業場所・Projectが想定と違う | 学生rootへ戻り，診断例を再実行する |
+| 配布Manifestがない・Projectとの整合性が疑わしい | 作業場所，branch，`git status --short`，対象ファイルのdiffを確認し，配布ファイルの状態を教員・TAへ相談する |
+| 通信・権限・容量などで復元に失敗 | 失敗コマンド，最初のエラーと関連するログ，OS，作業場所，Juliaの版を記録し，[相談手順](troubleshooting.qmd#教員taへ相談する)へ進む |
+| `using`でパッケージを読み込めない | 選択環境と復元の終了状態を確認し，[F00の復元手順](../assignments/F00.qmd#julia環境を復元する)と[トラブル対応](troubleshooting.qmd)を参照する |
+| コードが実行され，課題テストが失敗 | 最初の失敗，対象行，期待値と実値を[テストと数値検証](testing.qmd)に沿って読む |
+: {tbl-colwidths="[32, 68]"}
+
+配布ファイルの問題では，Manifestの削除・再生成や`Pkg.update()`を通常の復旧手順にせず，状態を保って相談してください．
+通信や権限などで復元が止まった場合，その失敗だけでは課題コードの正否を判断できません．
+相談用の記録は[最初の証拠の記録](troubleshooting.qmd#最初の証拠を残す)に沿ってまとめ，秘密情報を除いて共有します．
+
+## 公式資料
+
+- [Pkg：環境の管理](https://pkgdocs.julialang.org/v1/environments/) — 環境選択，Manifestの有無による復元の違い，プリコンパイル．
+- [Pkg：Project.tomlとManifest.toml](https://pkgdocs.julialang.org/v1/toml-files/) — 各ファイルが記録する情報．
+- [Julia：コマンドライン](https://docs.julialang.org/en/v1/manual/command-line-interface/) — 起動時の`--project=<dir>`の指定．
