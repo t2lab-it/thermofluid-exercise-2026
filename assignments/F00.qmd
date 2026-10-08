@@ -12,6 +12,8 @@ understanding-check-points:
 第1回・課題 2/2 · 課題ID: F00
 :::
 
+{{< include _template-update.qmd >}}
+
 ## 目的
 
 [F00授業](../lessons/F00.qmd)で学んだ開発環境を診断し，手動確認を完了します．

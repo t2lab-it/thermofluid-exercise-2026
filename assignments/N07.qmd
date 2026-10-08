@@ -13,6 +13,8 @@ understanding-check-points:
 第9回・課題 · 課題ID: N07
 :::
 
+{{< include _template-update.qmd >}}
+
 ## 定式化と実装条件 {#formulation}
 
 ### 必修の範囲 {#必修の範囲}

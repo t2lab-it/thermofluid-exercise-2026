@@ -12,6 +12,8 @@ understanding-check-points:
 第5回・課題 2/2 · 課題ID: F04
 :::
 
+{{< include _template-update.qmd >}}
+
 提出単位: `F03-F04`（1 branch，1 PR，1学習ログ）
 
 ## 定式化と実装条件 {#formulation}

@@ -1,0 +1,15 @@
+::: {.callout-important}
+## 課題を始める前に：テンプレート更新
+
+学生リポジトリのルートでテンプレート更新を確認します．
+
+~~~console
+$ git switch main
+$ git pull --ff-only origin main
+$ git fetch upstream
+$ git log --oneline main..upstream/main
+~~~
+
+commitが表示されたら，[配布教材の更新手順](../guides/commands.qmd#material-updates)に従って統合してから課題を開始します．
+表示されなければ，更新の統合は不要です．
+:::
