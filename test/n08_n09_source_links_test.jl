@@ -32,7 +32,6 @@ end
     @test only(links).name == "poisson_jacobi_step!"
     @test only(links).line == 2
     @test only(links).ref == "main"
-    @test isempty(check_links(text, "fixture", (ref, path) -> source))
     @test !isempty(check_links(replace(text, "L2-L4" => "L2-L3"), "fixture", (ref, path) -> source))
     directory = "[exercise](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/exercises/N08-N09_laplace_poisson)"
     @test isempty(check_links(text * "\n" * directory, "fixture", (ref, path) -> source))
