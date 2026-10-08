@@ -11,6 +11,8 @@ understanding-check-points:
 第8回・課題 · 課題ID: N05
 :::
 
+{{< include _template-update.qmd >}}
+
 ## 定式化と実装条件 {#formulation}
 
 ### N05・N06の提出単位 {#n05n06の提出単位}

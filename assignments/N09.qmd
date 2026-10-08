@@ -11,6 +11,8 @@ understanding-check-points:
 第10回・課題 · 内容ID: N09 · 提出単位: N08-N09
 :::
 
+{{< include _template-update.qmd >}}
+
 ## 定式化と実装条件 {#formulation}
 
 ### Poissonへの拡張と課題の完成 {#poissonへの拡張と課題の完成}

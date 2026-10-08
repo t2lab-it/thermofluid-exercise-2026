@@ -12,6 +12,8 @@ understanding-check-points:
 第7回・課題 · 課題ID: N03
 :::
 
+{{< include _template-update.qmd >}}
+
 ## 定式化と実装条件 {#formulation}
 
 ### 取り組む課題 {#取り組む課題}

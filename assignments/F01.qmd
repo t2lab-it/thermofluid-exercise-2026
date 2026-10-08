@@ -11,6 +11,8 @@ understanding-check-points:
 第2回・課題 2/2 · 課題ID: F01
 :::
 
+{{< include _template-update.qmd >}}
+
 ## 目的
 
 [F01授業](../lessons/F01.qmd)で学んだ操作を使い，Juliaの"Hello, World"コードを新しいbranch上で変更し，テスト・PR・mergeまで進めます．

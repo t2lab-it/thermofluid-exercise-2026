@@ -80,7 +80,7 @@ commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新
 
 ## 配布教材の更新の取り込み {#material-updates}
 
-教員から学生用配布リポジトリの更新案内があったときに使います．
+各課題の開始前や，教員から学生用配布リポジトリの更新案内があったときに使います．
 配布元の`upstream`から更新を取得し，自分の更新用branchへ取り込みます．
 
 ### 別PCでcloneしたとき：配布元の再登録 {#register-upstream}

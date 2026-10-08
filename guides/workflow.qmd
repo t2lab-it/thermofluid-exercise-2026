@@ -421,7 +421,8 @@ $ julia --project=. -e 'using SHA; for name in ("temperature.h5", "burgers.h5");
 
 ## 配布教材の更新 {#material-updates}
 
-教員から更新案内があったら，[コマンド一覧の配布更新手順](commands.qmd#material-updates)に従います．
+各課題の開始前に，課題ページ冒頭の手順で学生リポジトリのテンプレート更新を確認します．
+更新がある場合や教員から更新案内があった場合は，[コマンド一覧の配布更新手順](commands.qmd#material-updates)に従います．
 クリーンな`main`から更新branchを作り，`upstream/main`を通常のmergeで取り込んで確認します．
 更新用PRは**Create a merge commit**で統合し，配布元のcommitを個人リポジトリの祖先として保持します．
 

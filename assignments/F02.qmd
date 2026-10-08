@@ -12,6 +12,8 @@ understanding-check-points:
 第3回・課題 2/2 · 課題ID: F02
 :::
 
+{{< include _template-update.qmd >}}
+
 ## 定式化と実装条件 {#formulation}
 
 ### 目的 {#目的}
