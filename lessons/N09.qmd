@@ -26,7 +26,7 @@ u_{ij}^{(k+1)}&=\frac{A_x+A_y-f_{ij}}{2/dx^2+2/dy^2}.
 $$
 
 更新式では$-f$，残差では$r=f-\Delta_hu$になることを式から説明します．
-[`poisson_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L62)と[`poisson_residual!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L70)を実装し，$f=0$でLaplaceの更新・残差と一致することを確かめます．
+[`poisson_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L293-L302)と[`poisson_residual!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L328-L337)を実装し，$f=0$でLaplaceの更新・残差と一致することを確かめます．
 
 ## 製造解と3格子収束 {#manufactured}
 

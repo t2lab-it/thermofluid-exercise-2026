@@ -64,7 +64,7 @@ exercise/F01-first-pull-request
 
 ## 2. 実装 {#実装する}
 
-[`exercises/F01_first_pull_request/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl)の[`student_greeting(name::AbstractString)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl#L11-L16)を実装してください．
+[`exercises/F01_first_pull_request/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl)の[`student_greeting(name::AbstractString)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl#L25-L31)を実装してください．
 修正したプログラムは以下のコマンドで実行します．
 
 ```console

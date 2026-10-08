@@ -231,7 +231,7 @@ $M=n_xn_y$として，温度誤差は$E_T=\sqrt{\sum(T-T_*)^2/M}$，Burgers誤�
 `periodic`，`dirichlet`，`insulated`，左`inflow`，右`outflow`の組合せ検証は提供されます．
 流束は`(;adv_x,diff_x,adv_y,diff_y)`で，x面は`(nx+1,ny)`，y面は`(nx,ny+1)`です．
 正x・正y方向の移流／拡散流束を全要素に書き，`fluxes`を返します．
-[`thermal_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L87)は同じ旧場から面流束を一度だけ構築し，`(;temperature=Tnew,boundary_rates)`を返します．
+[`thermal_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L469-L478)は同じ旧場から面流束を一度だけ構築し，`(;temperature=Tnew,boundary_rates)`を返します．
 `boundary_rates`の`advective`と`diffusive`はそれぞれ`(;west,east,south,north)`で，辺長で積分した**内向き正**のレートです．
 Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`を返します．
 
@@ -263,19 +263,19 @@ N05の周期添字と共通検証を再利用し，N06の完成ソルバは維�
 
 ## 固定API {#api}
 
-[`ThermofluidExercise.N07`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L1)内に次の関数を実装します．
+[`ThermofluidExercise.N07`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L4)内に次の関数を実装します．
 
-- [`thermal_stable_timestep(cx, cy, kappa, dx, dy, bc; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L74)
-- [`thermal_fluxes!(fluxes, T, dx, dy; cx, cy, kappa, bc)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L81)
-- [`thermal_step!(Tnew, Told, dt, dx, dy; cx, cy, kappa, bc)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L87)
-- [`burgers_stable_timestep(u, v, nu, dx, dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L102)
-- [`burgers_step!(unew, vnew, uold, vold, dt, dx, dy; nu)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L109)
+- [`thermal_stable_timestep(cx, cy, kappa, dx, dy, bc; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L393-L400)
+- [`thermal_fluxes!(fluxes, T, dx, dy; cx, cy, kappa, bc)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L432-L439)
+- [`thermal_step!(Tnew, Told, dt, dx, dy; cx, cy, kappa, bc)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L469-L478)
+- [`burgers_stable_timestep(u, v, nu, dx, dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L564-L571)
+- [`burgers_step!(unew, vnew, uold, vold, dt, dx, dy; nu)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N07Transport.jl#L601-L615)
 
 関数の入力・返却形式は[冒頭の契約](#input-contract)に従います．
 
 [`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N07_2d_advection_diffusion/analyze.jl)では次を実装します．
 
-- [`heat_budget(time, heat, advective_integrals, diffusive_integrals)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N07_2d_advection_diffusion/analyze.jl#L4)
+- [`heat_budget(time, heat, advective_integrals, diffusive_integrals)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N07_2d_advection_diffusion/analyze.jl#L31-L35)
 
 [冒頭の熱収支と配列契約](#input-contract)に従って実装します．
 

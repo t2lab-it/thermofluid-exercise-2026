@@ -33,7 +33,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 - `values`は1要素以上の実数の一次元配列とする．
 - すべての値が有限であることを確認する．
 - 整数，`Float32`，その他の実数型を含む`AbstractVector`で意味のある結果を返す．
-- [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)は入力と同じ長さの新しい配列を返し，入力の値を保持する．
+- [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L75-L79)は入力と同じ長さの新しい配列を返し，入力の値を保持する．
 - 入力条件を満たさない場合はエラーにする．
 
 ## 学生リポジトリ内の場所
@@ -50,11 +50,11 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 
 ## 実装するAPI {#api}
 
-### [`mean_temperature(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L13-L17)
+### [`mean_temperature(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L50-L54)
 
 温度列`values`について，上の式で定義した算術平均を返します．
 
-### [`temperature_anomaly(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)
+### [`temperature_anomaly(values)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L75-L79)
 
 [冒頭の定義と入力契約](#formulation)に従い，各要素の偏差を返します．
 
@@ -65,7 +65,7 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 
 1. 一つの有限値配列について，平均と偏差配列が一致する．
 2. 偏差の総和が丸め誤差の範囲で0になる．
-3. [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L19-L23)の呼び出し前後で入力配列が同じである．
+3. [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L75-L79)の呼び出し前後で入力配列が同じである．
 4. 空配列，`NaN`，`Inf`から一つ選び，対象APIが拒否する．
 
 自作TODOでは，戻り値の型，別の数学的性質，または必須とは異なる不正入力から一つ選んでください．

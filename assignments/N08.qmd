@@ -31,16 +31,16 @@ Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N
 
 ## 編集先とAPI {#api}
 
-[`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L1)へ次を実装します．
+[`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L4)へ次を実装します．
 
-- [`apply_dirichlet!(u,g)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L28)
-- [`laplace_jacobi_step!(u_new,u_old,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L36)
-- [`laplace_residual!(r,u,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L44)
-- [`residual_converged(rnorm,rinitial;atol=1e-10,rtol=1e-12)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L52)
+- [`apply_dirichlet!(u,g)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L147-L155)
+- [`laplace_jacobi_step!(u_new,u_old,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L182-L191)
+- [`laplace_residual!(r,u,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L216-L225)
+- [`residual_converged(rnorm,rinitial;atol=1e-10,rtol=1e-12)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L248-L265)
 
-[`apply_dirichlet!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L28)は[冒頭の境界条件](#problem-setup)を適用します．
+[`apply_dirichlet!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L147-L155)は[冒頭の境界条件](#problem-setup)を適用します．
 step／residualは出力配列を返します．
-入力検査と，反復を進める[`solve_laplace(u0,g,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L106)は提供済みです．
+入力検査と，反復を進める[`solve_laplace(u0,g,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L484-L485)は提供済みです．
 停止基準は上の[停止条件](#standard-conditions)を使います．
 計算結果の`u`，`converged`，`iterations`，`residual_history`，`update_history`，`threshold`を使って解と反復を確認します．
 
