@@ -69,6 +69,32 @@ julia --project=. scripts/verify_contracts.jl \
 
 契約検証には公開教材リポジトリと学生リポジトリのルートディレクトリを明示的に渡します．
 
+## 学生ソースへのリンク監査
+
+公開ページの学生コードリンクは`main`を参照します．
+監査では，別の一時コピーで取得した学生mainを一度だけSHAへ解決し，同じGitスナップショットと全公開対象QMDを照合します．
+既存の学生checkoutや進捗・成果物は変更しません．
+以下はfishで実行できます．
+
+```fish
+set PUBLIC_ROOT (pwd)
+set STUDENT_ROOT (mktemp -d)
+git clone --no-checkout https://github.com/t2lab-it/thermofluid-exercise-student-2026.git "$STUDENT_ROOT"
+set STUDENT_SHA (git -C "$STUDENT_ROOT" rev-parse refs/remotes/origin/main)
+git -C "$STUDENT_ROOT" checkout --detach "$STUDENT_SHA"
+julia --project=. scripts/verify_student_source_links.jl "$STUDENT_ROOT" "$PUBLIC_ROOT" --student-revision "$STUDENT_SHA"
+```
+
+監査器は学生コードを実行せず，Git objectの種別，関数定義の全範囲（Docstringを除く），定数の宣言行，moduleの参照意図を確認します．
+名前空間は表示ラベルと同じ段落のmodule参照から解決し，曖昧な参照や未対応fragmentはエラーとして報告します．
+`_quarto.yml`の`project.render`を対象の正本とし，現在のQMDパスとglob形式を読み取ります．
+未対応の設定形式では監査を失敗させます．
+検証したSHAと各URL，エラー件数を出力し，成功は終了コード0，監査不一致は1，引数の形式が不正な場合は2になります．
+監査後にGitHubの学生mainが動いた場合は，新しいSHAと変更パスを確認し，影響するリンクを再監査してください．
+
+通常のテストはオフラインfixtureで完結し，学生リポジトリへのネットワーク接続を要求しません．
+既存のN08/N09専用CLIと`source_links`・`check_links`も維持し，単一の定義開始行と関数全体の範囲リンクを検証できます．
+
 ## 学生・プロジェクトリポジトリの公開契約
 
 学生用配布リポジトリは公開済みです．
