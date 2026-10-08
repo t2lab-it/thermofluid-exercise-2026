@@ -115,15 +115,15 @@ $$
 
 | 学生API | 実装・契約 |
 |---|---|
-| [`advective_flux(u; model=SELECTED_MODEL, speed=1.0)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L10-L20) | 選択したモデルの流束を返す |
-| [`stable_timestep(max_speed, dx, diffusivity; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L23-L27) | 合成安定条件から正の有限な刻みを返す |
-| [`advection_diffusion_step!(u_new, u_old, dt, dx, diffusivity; model=SELECTED_MODEL, advection=true, speed=1.0)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L30-L38) | 周期全点を同じ旧配列から更新し，新配列を返す |
+| [`advective_flux(u; model=SELECTED_MODEL, speed=1.0)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L38-L51) | 選択したモデルの流束を返す |
+| [`stable_timestep(max_speed, dx, diffusivity; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L76-L80) | 合成安定条件から正の有限な刻みを返す |
+| [`advection_diffusion_step!(u_new, u_old, dt, dx, diffusivity; model=SELECTED_MODEL, advection=true, speed=1.0)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L119-L136) | 周期全点を同じ旧配列から更新し，新配列を返す |
 : {tbl-colwidths="[34, 66]"}
 
 [冒頭の更新式と条件切替](#discretization)に従って実装します．
 
-[`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl)は入力検証，[`initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L67-L73)，[`analytic_solution`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L75-L87)，[`conserved_integral`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L89-L96)，診断・描画・保存を提供します．
-[`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L43-L91)は時間積分を，[`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L94-L103)は選択モデルの3条件と格子収束の計算・出力を行います．
+[`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl)は入力検証，[`initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L356-L371)，[`analytic_solution`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L392-L409)，[`conserved_integral`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L427-L438)，診断・描画・保存を提供します．
+[`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L171-L286)は時間積分を，[`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L302-L314)は選択モデルの3条件と格子収束の計算・出力を行います．
 これらを読み，式・旧配列・診断値・バッファ交換の対応を説明してください．
 
 ## 必須4群と自作2件

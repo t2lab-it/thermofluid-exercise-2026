@@ -199,7 +199,7 @@ small_values = Float32[10, 20, 30]
 `if`は条件が真のときだけ中の処理を実行し，`!`は真偽を反転します．
 `throw(ArgumentError(...))`は入力が不適切であることを知らせ，その呼び出しを中断します．
 
-次は配布済みの[`validate_temperatures`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L5)と同じ検査内容を，分岐とループで読むための例です．
+次は配布済みの[`validate_temperatures`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L23-L29)と同じ検査内容を，分岐とループで読むための例です．
 有効な入力なら`nothing`を返します．
 `AbstractVector{<:Real}`は「実数要素の一次元配列を受け取る」と読みます．
 

@@ -109,14 +109,14 @@ $\omega=1$がGauss–Seidel，SORの比較値は1.5，入力範囲は$0<\omega<2
 
 ## 編集先とAPI {#api}
 
-[`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L1)へ次を実装します．
+[`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L4)へ次を実装します．
 
-- [`poisson_jacobi_step!(u_new,u_old,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L62)
-- [`poisson_residual!(r,u,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L70)
+- [`poisson_jacobi_step!(u_new,u_old,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L293-L302)
+- [`poisson_residual!(r,u,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L328-L337)
 
 [Laplaceの実装](N08.qmd#api)を基に，更新式の$-f$と残差の$+f$を加えます．
 $f=0$でLaplaceと一致することを確かめます．
-反復を進める[`solve_poisson(u0,g,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L107)は提供済みで，入力・出力の扱いはN08と共通です．
+反復を進める[`solve_poisson(u0,g,f,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L505-L506)は提供済みで，入力・出力の扱いはN08と共通です．
 
 ## 実験と自作2群 {#student-tests}
 
@@ -165,8 +165,8 @@ $f=0$でLaplaceと一致することを確かめます．
 
 Neumann・Gauss–Seidel・SORは，任意に取り組む発展です．
 
-- [`extensions/neumann.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl)：可解条件，重み付き平均0，ゴースト消去，緩和更新と残差を実装する．APIは[`neumann_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L59)・[`neumann_residual!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L68)・[`solve_neumann`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L76)．
-- [`extensions/relaxation.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl)：[`gauss_seidel_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl#L15)・[`sor_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl#L5)を実装し，[冒頭の更新・比較条件](#relaxation-formulation)を検証する．
+- [`extensions/neumann.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl)：可解条件，重み付き平均0，ゴースト消去，緩和更新と残差を実装する．APIは[`neumann_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L286-L296)・[`neumann_residual!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L324-L331)・[`solve_neumann`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/neumann.jl#L364-L440)．
+- [`extensions/relaxation.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl)：[`gauss_seidel_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl#L61)・[`sor_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/extensions/relaxation.jl#L33-L43)を実装し，[冒頭の更新・比較条件](#relaxation-formulation)を検証する．
 
 [冒頭のNeumannの条件](#neumann-formulation)に沿って，混合境界から純Neumannへ進みます．
 DCT-Iのk=0モードは可解条件と定数自由度の説明に使います．

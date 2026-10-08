@@ -363,7 +363,7 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/analyze.jl
 `spatial_variance`が`nothing`を返す間も基本解析は成功しますが，`summary.toml`には分散を保存せず，`diagnostics_complete=false`を記録します．
 この段階では作図と必修完了検査が未完成を拒否するため，基本解析の成功だけで必修完了とはしません．
 
-[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)の[`spatial_variance`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl#L4)を完成させ，同じHDF5から再解析します．
+[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)の[`spatial_variance`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl#L23-L28)を完成させ，同じHDF5から再解析します．
 その後[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)の表示設定を変え，再作図します．
 
 ~~~console
@@ -412,7 +412,7 @@ $ julia --project=. -e 'using Pkg; Pkg.test()'
 $ julia --project=. scripts/course.jl check-results
 ~~~
 
-[`N05.jl verify`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L93)は既存の基準結果に対する回帰を確認し，N07を含む現在のソースのhashを回帰記録に反映します．
+[`N05.jl verify`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L321-L353)は既存の基準結果に対する回帰を確認し，N07を含む現在のソースのhashを回帰記録に反映します．
 再解析・再作図の前後に次を実行し，両HDF5のSHA-256の一致を確認します．
 
 ~~~console

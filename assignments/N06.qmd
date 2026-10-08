@@ -98,12 +98,12 @@ $$
 
 #### 入力・戻り値の契約 {#input-contract}
 
-[`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N06Advection.jl#L11-L20)は合成CFLから正の`Float64`を返します．
+[`ThermofluidExercise.N06.stable_timestep(cx,cy,dx,dy; safety=0.8)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N06Advection.jl#L74-L90)は合成CFLから正の`Float64`を返します．
 速度は非負で少なくとも一方が正，格子幅は正，`0 < safety <= 1`とします．
-[`advection_step!(u_new,u_old,dt,dx,dy; cx=1.0,cy=0.5)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N06Advection.jl#L21-L32)は上の更新式を使い，新配列を返します．
+[`advection_step!(u_new,u_old,dt,dx,dy; cx=1.0,cy=0.5)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N06Advection.jl#L121-L139)は上の更新式を使い，新配列を返します．
 旧・新配列は独立した記憶領域を使い，合成CFLを検証してから新配列へ結果を書き込みます．
 
-[`spatial_variance(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl#L3-L9)は各保存時刻の空間分散を`Float64`で返します．
+[`spatial_variance(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl#L23-L28)は各保存時刻の空間分散を`Float64`で返します．
 
 ## 編集対象
 
@@ -121,7 +121,7 @@ $$
 
 [冒頭の入力・戻り値の契約](#input-contract)に従って，刻み関数・更新関数・空間分散を実装します．
 分散を実装して再解析し，`diagnostics_complete=true`を確認してください．
-[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)の[`COLORMAP`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L5)，[`COLOR_LIMITS`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L6)，[`DISPLAY_CASE`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L7)から表示条件を変更します．
+[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)の[`COLORMAP`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L7)，[`COLOR_LIMITS`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L8)，[`DISPLAY_CASE`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L9)から表示条件を変更します．
 計算条件を変えず，初期場・数値解・解析解の色の上下限を共通に保って比較します．
 
 時間積分・解析解・HDF5入出力・基本診断・収束反復・描画は提供コードです．
