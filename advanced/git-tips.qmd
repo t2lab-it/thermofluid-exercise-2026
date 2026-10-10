@@ -5,17 +5,6 @@ sidebar: advanced
 
 このページは，希望する人向けの**任意の発展資料**です．
 基本操作と提出順序は[課題ワークフロー](../guides/workflow.qmd)，短い早見表は[コマンド一覧](../guides/commands.qmd)を参照してください．
-例は学生リポジトリのルートで実行します．
-以下の出力は**表示例**であり，hash，日付，名前，branch，行番号，変更内容は自分の状態に読み替えてください．
-長い結果がページ送りで表示されたら，`q`で表示を終了できます．
-
-| やりたいこと | 該当節 |
-|---|---|
-| commitのつながりや特定の変更を探す | [履歴を見る・探す](#history) |
-| diffの規模・対象や現在のファイルを調べる | [diffと管理対象を調べる](#files) |
-| commitに含める変更を選び，作業を切り替える | [変更を選ぶ・作業を切り替える](#stage) |
-| 長い表示コマンドを短縮する | [Bashのalias](#bash-alias) |
-: {tbl-colwidths="[55, 45]"}
 
 ## 履歴を見る・探す {#history}
 
@@ -345,3 +334,5 @@ $ unalias glg glp
 短縮名が見つからない場合は，Bashであること，設定行の引用符，読み込み，`alias glg`の結果を確認します．
 構文エラーが出たら追記した行を修正し，成功してから使います．
 参考：[Bashのalias](https://www.gnu.org/software/bash/manual/html_node/Aliases.html)，[Bashの起動時設定](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html)．
+
+[zshのalias展開機能](https://zsh.sourceforge.io/Doc/Release/Completion-System.html)や[fishのabbr](https://fishshell.com/docs/current/cmds/abbr.html)を使うと，短縮名を入力中に長いコマンドへ展開し，実行前に編集できます．
