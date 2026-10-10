@@ -49,6 +49,10 @@ website:
             text: SSHでGitHubへ接続する
           - href: advanced/github-cli.qmd
             text: GitHub CLIでpull requestを操作する
+          - href: advanced/git-tips.qmd
+            text: Gitの便利なコマンドとオプション
+          - href: advanced/git-stash.qmd
+            text: stashで作業途中の変更を一時退避する
           - href: advanced/git-worktree.qmd
             text: worktreeで並行して作業する
           - href: advanced/cairomakie.qmd
@@ -178,6 +182,10 @@ website:
           text: "SSHでGitHubへ接続する"
         - href: advanced/github-cli.qmd
           text: "GitHub CLIでpull requestを操作する"
+        - href: advanced/git-tips.qmd
+          text: "Gitの便利なコマンドとオプション"
+        - href: advanced/git-stash.qmd
+          text: "stashで作業途中の変更を一時退避する"
         - href: advanced/git-worktree.qmd
           text: "worktreeで並行して作業する"
         - href: advanced/cairomakie.qmd

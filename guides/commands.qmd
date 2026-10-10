@@ -76,6 +76,8 @@ Test Summary: | Pass  Total  Time
 | `git log --oneline -5` | 直近のcommitを確認する |
 : {tbl-colwidths="[38, 62]"}
 
+履歴の検索，diffの表示，管理対象の確認，部分的なstage選択，Bashのaliasは，任意の発展資料[Gitの便利なコマンドとオプション](../advanced/git-tips.qmd)を参照してください．
+
 commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新の順序は[学習ログ，diff，commit](workflow.qmd#commit)から[merge後](workflow.qmd#after-merge)までを参照してください．
 
 ## 配布教材の更新の取り込み {#material-updates}
