@@ -49,6 +49,10 @@ website:
             text: SSHでGitHubへ接続する
           - href: advanced/github-cli.qmd
             text: GitHub CLIでpull requestを操作する
+          - href: advanced/git-tips.qmd
+            text: Gitの便利なコマンドとオプション
+          - href: advanced/git-stash.qmd
+            text: stashで作業途中の変更を一時退避する
           - href: advanced/git-worktree.qmd
             text: worktreeで並行して作業する
           - href: advanced/cairomakie.qmd
@@ -178,6 +182,10 @@ website:
           text: "SSHでGitHubへ接続する"
         - href: advanced/github-cli.qmd
           text: "GitHub CLIでpull requestを操作する"
+        - href: advanced/git-tips.qmd
+          text: "Gitの便利なコマンドとオプション"
+        - href: advanced/git-stash.qmd
+          text: "stashで作業途中の変更を一時退避する"
         - href: advanced/git-worktree.qmd
           text: "worktreeで並行して作業する"
         - href: advanced/cairomakie.qmd
@@ -227,7 +235,7 @@ website:
               text: "自由提案"
   page-footer:
     left: "Copyright © 2026 荒木 亮（ARAKI, Ryo）"
-    right: "教材・図: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) / コード: [MIT](LICENSE-MIT.txt)"
+    right: "教材・図: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) / コード: [MIT](/LICENSE-MIT.txt)"
 
 format:
   html:

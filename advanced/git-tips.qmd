@@ -1,0 +1,320 @@
+---
+title: "Gitの便利なコマンドとオプション"
+sidebar: advanced
+---
+
+このページは，希望する人向けの**任意の発展資料**です．
+基本操作と提出順序は[課題ワークフロー](../guides/workflow.qmd)，短い早見表は[コマンド一覧](../guides/commands.qmd)を参照してください．
+
+## 履歴の表示・検索 {#history}
+
+### commitの一覧表示
+
+直近の変更を一覧にするときは，`--oneline`でhashの短縮形とcommitメッセージの先頭行を表示します．
+`-5`は表示するcommitを最大5件に絞ります．
+
+```console
+$ git log --oneline -5
+c3d4e5f Add N01 learning notes
+b2c3d4e Implement upwind step
+（残りは省略）
+```
+
+上ほど新しいcommitです．
+日付や作成者も読みたい場合は，表示する項目を指定します．
+
+```console
+$ git log --pretty=format:"%h %ad %an %s" --date=short
+c3d4e5f 2026-10-10 Student Add N01 learning notes
+b2c3d4e 2026-10-09 Student Implement upwind step
+（残りは省略）
+```
+
+`%h`は短いhash，`%ad`は作成者の日付，`%an`は作成者名，`%s`はメッセージの先頭行です．
+`--date=short`により，`%ad`を年月日で表示します．
+ダブルクォートは，空白を含むformat全体を一つの引数にまとめます．
+
+### branchとcommitの関係
+
+複数のbranchが分岐・mergeした位置を調べます．
+
+```console
+$ git log --graph --oneline --decorate --all
+*   e5f6a7b (HEAD -> main) Merge N01 comparison
+|\
+| * d4e5f6a (experiment/N01-comparison) Compare schemes
+* | c3d4e5f Add N01 learning notes
+|/
+* b2c3d4e Implement upwind step
+```
+
+`--graph`の線はcommitの親子関係を示します．
+merge commitは複数の親commitにつながり，表示例では最上段の`e5f6a7b`が該当します．
+`--decorate`の括弧内はbranchやタグなどの参照のラベルで，`HEAD -> main`は現在のbranchを示します．
+通常の`log`は現在のcommitからたどれる履歴を表示し，`--all`は**手元にあるすべての参照**を表示対象に加えます．
+配布元の更新確認は[教材の更新](../guides/commands.qmd#material-updates)に従います．
+
+### ファイル・メッセージによる絞り込み
+
+学習ログだけの変更を追うときは，`--`の後ろにファイルを指定します．
+名前変更より前も追いたい場合は，**1ファイル**に`--follow`を使います．
+
+```console
+$ git log --oneline -- exercises/N01_linear_advection/learning_log.md
+c3d4e5f Add N01 learning notes
+
+$ git log --oneline --follow -- README.md
+a1b2c3d Rename course overview
+098abcd Add course overview
+```
+
+`--`はオプション・履歴指定とファイルの区切りです．
+`--follow`は名前変更より前の履歴もたどります．
+commitメッセージに`N01`を含む変更は，`--grep`で探せます．
+
+```console
+$ git log --oneline --grep='N01'
+c3d4e5f Add N01 learning notes
+```
+
+検索対象は**commitメッセージ**です．
+
+### コードの変更履歴の検索
+
+課題コードの`upwind_step!`が加わった変更を探す場合は，`-S`を使います．
+
+```console
+$ git log --oneline -S 'upwind_step!' -- exercises/N01_linear_advection/run.jl
+b2c3d4e Implement upwind step
+```
+
+`-S`は指定した文字列の**出現数が変わるdiff**を探します．
+文字列を含む行の書き換えも探す場合は，`-G`で追加・削除行に一致する正規表現を指定します．
+
+```console
+$ git log -G 'upwind_step!' -- exercises/N01_linear_advection/run.jl
+commit d4e5f6a（hashなどは省略）
+    Adjust upwind_step! arguments
+（残りは省略）
+```
+
+たとえば`upwind_step!(u_new, u_old)`を`upwind_step!(u_new, u_old, c, dt, dx)`へ変えたdiffは，`-G`に一致します．
+現在のファイルの内容は，[`git grep`による検索](#tracked-files)で調べます．
+
+### 特定のcommit・ファイル・行の確認
+
+見つけたcommitの内容は`show`で確認します．
+次の`COMMIT`は，一覧で確認したhashへ置き換えてください．
+
+```console
+$ git show COMMIT -- README.md
+commit c3d4e5f（hashなどは省略）
+    Add N01 learning notes
+（README.mdのdiffを表示）
+
+$ git show COMMIT:README.md
+# 熱流体力学演習
+（そのcommitに保存されたREADME.mdの内容）
+```
+
+空白と`--`でファイルを指定した例は**変更内容**，`COMMIT:README.md`はその時点の**ファイル全体**を表示します．
+READMEの1〜5行目を最後に変更したcommitは，`blame -L`で調べます．
+
+```console
+$ git blame -L 1,5 -- README.md
+^098abcd (Student 2026-10-08 10:00:00 +0900 1) # 熱流体力学演習
+（2〜5行目は省略）
+```
+
+各行のhash，作成者，日時，行番号，内容から最終変更を確認できます．
+hashの先頭に`^`が付いている場合は，`^`を除いた部分（表示例なら`098abcd`）を`show`に渡してください．
+`show`にはcommit済みの行のhashを使います．
+参考：[log](https://git-scm.com/docs/git-log)，[show](https://git-scm.com/docs/git-show)，[blame](https://git-scm.com/docs/git-blame)．
+
+## diffと管理対象の確認 {#files}
+
+### diffの規模・名前・変更種別
+
+変更が多いときは，内容を読む前に規模や対象を確認します．
+次の例は，**stage前の追跡済みファイルの変更**を対象にします．
+
+```console
+$ git diff --stat
+ README.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+$ git diff --name-only
+README.md
+
+$ git diff --name-status
+M	README.md
+```
+
+`--stat`はファイルごとの規模と合計，`--name-only`は名前だけ，`--name-status`は変更種別も表示します．
+`M`は変更，`A`は追加，`D`は削除，`R`は名前変更を表します．
+stage済みの変更なら`git diff --cached --stat`など，`--cached`を加えます．
+未追跡ファイルは`status`や未追跡一覧で確認します．
+
+### 語単位・文字単位の比較
+
+READMEの長い行で，変わった語を見つけやすくします．
+
+```console
+$ git diff --word-diff -- README.md
+（diffの見出しは省略）
+Use [-upwind-]{+centered+} scheme.
+
+$ git diff --word-diff-regex='.' -- README.md
+（diffの見出しは省略）
+Use [-upwi-]{+ce+}n{+tere+}d scheme.
+```
+
+既定の`--word-diff`は空白で区切られた語を比較し，`[-...-]`が削除，`{+...+}`が追加です．
+`--word-diff-regex='.'`は1文字を比較単位とするため，日本語や小さな綴りの修正にも使えます．
+内容を確認する補助表示として使い，commit前には[通常のdiff確認](../guides/workflow.qmd#commit)も行ってください．
+参考：[diff](https://git-scm.com/docs/git-diff)．
+
+### 追跡済み・未追跡・無視されたファイル {#tracked-files}
+
+Gitが管理するファイルと，新しく作ったファイルを区別します．
+
+```console
+$ git ls-files
+README.md
+exercises/N01_linear_advection/run.jl
+（残りは省略）
+
+$ git ls-files --others --exclude-standard
+notes.txt
+```
+
+既定の`ls-files`は**index（stage）の管理対象**を表示します．
+`--others`は未追跡，`--exclude-standard`は`.gitignore`などの標準の無視規則を適用し，無視された生成物を除きます．
+追跡済みファイルの**現在の作業ファイルの内容**を検索するときは，`grep -n`を使います．
+
+```console
+$ git grep -n 'upwind_step!' -- exercises/N01_linear_advection/run.jl
+exercises/N01_linear_advection/run.jl:68:function upwind_step!(u_new, u_old, c::Real, dt::Real, dx::Real)
+（残りは省略）
+```
+
+`-n`は行番号を付けます．
+生成物が一覧から外れる理由を調べる場合は，実際の生成物のパスを指定します．
+
+```console
+$ git check-ignore -v results/N01/summary.toml
+.gitignore:12:results/	results/N01/summary.toml
+```
+
+出力は規則のファイル，行番号，パターン，対象パスの順です．
+参考：[ls-files](https://git-scm.com/docs/git-ls-files)，[grep](https://git-scm.com/docs/git-grep)，[check-ignore](https://git-scm.com/docs/git-check-ignore)．
+
+## 変更の選択・作業の切り替え {#stage}
+
+### stageに入れる変更の選択
+
+追跡済みのREADMEを2か所編集し，片方だけをcommitしたいときは，`add -p`で差分のまとまりごとに選びます．
+
+```console
+$ git add -p README.md
+（最初の差分を表示）
+(1/2) Stage this hunk [y,n,q,a,d,j,J,g,/,e,?]?
+```
+
+対話中に`y`で差分をstageへ入れ，`n`で作業ファイルに残し，`q`で選択を終了します．
+選択後は，stageに入った部分と作業ファイルに残った部分を確認します．
+
+```console
+$ git diff --cached -- README.md
+（選択した差分だけを表示）
+
+$ git diff -- README.md
+（作業ファイルに残した差分を表示）
+```
+
+`add -p`はindexを更新し，作業ファイルの編集内容は保持します．
+
+### stageの取り消し
+
+選択をやり直す場合は，対象のstageをHEADの状態に戻します．
+
+```console
+$ git restore --staged README.md
+（成功時は出力なし）
+
+$ git diff --cached -- README.md
+（この例では出力なし）
+
+$ git diff -- README.md
+（2か所の編集内容が残る）
+```
+
+`--staged`によってindexだけを戻し，**作業ファイルの編集は保持**します．
+commitする内容は[学習ログ，diff，commit](../guides/workflow.qmd#commit)の手順で確認してください．
+参考：[add](https://git-scm.com/docs/git-add)，[restore](https://git-scm.com/docs/git-restore)．
+
+### 作業の切り替え
+
+短時間だけ別の作業へ移る場合は，[stashで作業途中の変更を一時退避する](git-stash.qmd)を使えます．
+別案のコードと結果を並べて比較する場合は，[worktreeで並行して作業する](git-worktree.qmd)を参照してください．
+課題の開始・提出は[共通ワークフロー](../guides/workflow.qmd)に従います．
+
+## aliasによるコマンドの短縮（Bash） {#bash-alias}
+
+### 設定と反映
+
+対象は**WSL2 Ubuntu 24.04で使うBash**です．
+aliasはコマンドの短縮名で，ここでは`glg`をgraph表示，`glp`を日付・作成者付きの履歴表示に使います．
+追記前に`type glg glp`で既存のコマンドやaliasを調べ，同名のものがあれば別名を選んでください．
+まず既存の`~/.bashrc`を一意の名前で退避し，表示されたパスを控えます．
+
+```console
+$ backup=$(mktemp "$HOME/.bashrc.before-git-alias.XXXXXXXX") && cp -p "$HOME/.bashrc" "$backup" && printf 'Bash設定の退避先: %s\n' "$backup"
+Bash設定の退避先: /home/USER/.bashrc.before-git-alias.XXXXXXXX
+```
+
+退避が成功したら，エディタで`~/.bashrc`を開き，末尾へ以下の**設定行**を追記して保存します．
+
+```bash
+alias glg='git log --graph --oneline --decorate --all'
+alias glp='git log --pretty=format:"%h %ad %an %s" --date=short'
+```
+
+外側のシングルクォートはaliasの値全体を囲み，内側のダブルクォートはformatの空白を含む引数をまとめます．
+設定ファイルへの保存と，現在のBashへの反映は別の操作です．
+
+```console
+$ source ~/.bashrc
+（成功時は出力なし）
+
+$ alias glg
+alias glg='git log --graph --oneline --decorate --all'
+```
+
+### 実行・変更・削除
+
+学生リポジトリのルートで，短縮名を**別の入力行**に入力して実行します．
+追加のオプションは短縮名の後ろに渡せます．
+
+```console
+$ glg
+（git log --graph --oneline --decorate --allと同じ表示）
+
+$ glg -10
+（最大10件に絞ったgraph表示）
+
+$ glp -5
+（最大5件の日付・作成者付きの履歴表示）
+```
+
+定義を変えるときは`~/.bashrc`の該当行を編集し，`source ~/.bashrc`を実行して`alias glg`などで確認します．
+削除するときは`~/.bashrc`の設定行を削除して保存し，`unalias`で現在のBashの定義も削除します．
+
+```console
+$ unalias glg glp
+（成功時は出力なし）
+```
+
+参考：[Bashのalias](https://www.gnu.org/software/bash/manual/html_node/Aliases.html)，[Bashの起動時設定](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html)．
+
+[zshのalias展開機能](https://zsh.sourceforge.io/Doc/Release/Completion-System.html)や[fishのabbr](https://fishshell.com/docs/current/cmds/abbr.html)を使うと，短縮名を入力中に長いコマンドへ展開し，実行前に編集できます．

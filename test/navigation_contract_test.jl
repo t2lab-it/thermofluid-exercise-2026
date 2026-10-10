@@ -34,7 +34,7 @@ const EXPECTED_GUIDE_HREFS = Set([
 const EXPECTED_ADVANCED_HREFS = Set([
     "advanced/terminal-prompt.qmd",
     "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
-    "advanced/git-worktree.qmd",
+    "advanced/git-tips.qmd", "advanced/git-stash.qmd", "advanced/git-worktree.qmd",
     "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
     "advanced/public-solver-methods.qmd",
 ])
@@ -310,6 +310,47 @@ end
             resolve_qmd_target(guide, target) == restoration &&
                 fragment == "julia環境を復元する" &&
                 occursin("{#" * fragment * "}", restoration_source)
+        end
+    end
+end
+
+@testset "optional Git materials retain their routes and order" begin
+    expected = ["advanced/git-tips.qmd", "advanced/git-stash.qmd", "advanced/git-worktree.qmd"]
+    yaml = yaml_source_lines(read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String))
+    menu = navbar_item_by_rel(yaml, "split-navigation-advanced")
+    navbar_hrefs = entry_hrefs(navbar_menu_entries(yaml, menu))
+    @test filter(href -> href in expected, navbar_hrefs) == expected
+
+    sidebars = yaml_sequence_items(yaml, yaml_node(yaml, ("website", "sidebar")))
+    advanced = filter(sidebars) do item
+        something(yaml_item_field(yaml, item, "id"), (value="",)).value == "advanced"
+    end
+    @test length(advanced) == 1
+    if length(advanced) == 1
+        contents = yaml_item_field(yaml, only(advanced), "contents")
+        hrefs = isnothing(contents) ? String[] : entry_hrefs(navigation_entries(yaml, contents.node))
+        @test filter(href -> href in expected, hrefs) == expected
+    end
+
+    index = joinpath(NAVIGATION_SITE_ROOT, "advanced", "index.qmd")
+    index_hrefs = [relpath(resolve_qmd_target(index, target), NAVIGATION_SITE_ROOT)
+                   for target in qmd_link_targets(read(index, String))]
+    @test filter(href -> href in expected, index_hrefs) == expected
+    commands = joinpath(NAVIGATION_SITE_ROOT, "guides", "commands.qmd")
+    @test joinpath(NAVIGATION_SITE_ROOT, first(expected)) in
+          resolve_qmd_target.(Ref(commands), qmd_link_targets(read(commands, String)))
+
+    for relative in expected[1:2]
+        path = joinpath(NAVIGATION_SITE_ROOT, relative)
+        @test isfile(path)
+        if isfile(path)
+            source = read(path, String)
+            @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+            targets = resolve_qmd_target.(Ref(path), qmd_link_targets(source))
+            @test joinpath(NAVIGATION_SITE_ROOT, "guides", "workflow.qmd") in targets
+            @test joinpath(NAVIGATION_SITE_ROOT, "advanced", "git-worktree.qmd") in targets
+            other = relative == first(expected) ? expected[2] : expected[1]
+            @test joinpath(NAVIGATION_SITE_ROOT, other) in targets
         end
     end
 end

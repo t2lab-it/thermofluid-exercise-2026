@@ -108,6 +108,53 @@ julia> twice(3)
             self.assertIn(base + stage + '.jl all', blocks)
         self.assertIn(base + 'tests.jl N08-check', blocks)
 
+    def test_git_tips_copy_preserves_options_and_alias_quotes(self):
+        source = (ROOT / 'advanced' / 'git-tips.qmd').read_text()
+        commands = render(source, commands_only=True)
+        for command in (
+            'git log --graph --oneline --decorate --all',
+            'git log --pretty=format:"%h %ad %an %s" --date=short',
+            "git log -G 'upwind_step!' -- exercises/N01_linear_advection/run.jl",
+            "git diff --word-diff-regex='.' -- README.md",
+            'git add -p README.md',
+            'git restore --staged README.md',
+            'source ~/.bashrc',
+            'alias glg',
+            'glg', 'glg -10', 'glp -5',
+            'unalias glg glp',
+        ):
+            self.assertIn(command, commands)
+        self.assertIn(
+            "alias glg='git log --graph --oneline --decorate --all'\n"
+            'alias glp=\'git log --pretty=format:"%h %ad %an %s" --date=short\'',
+            render(source),
+        )
+        for command in commands:
+            self.assertEqual(len(command.splitlines()), 1)
+            self.assertFalse(command.startswith(('$ ', '> ')))
+            self.assertNotIn('（', command)
+
+    def test_stash_steps_copy_keep_the_selected_record_quoted(self):
+        source = (ROOT / 'advanced' / 'git-stash.qmd').read_text()
+        commands = render(source, commands_only=True)
+        for command in (
+            "git stash push -u -m 'N01: 風上差分と学習ログの作業途中'",
+            'git stash list',
+            "git stash show -p -u 'stash@{0}'",
+            "git stash apply 'stash@{0}'",
+            "git stash apply --index 'stash@{0}'",
+            "git stash drop 'stash@{0}'",
+            "git stash pop 'stash@{0}'",
+            'git diff --name-only --diff-filter=U',
+            'git diff --cached',
+        ):
+            self.assertIn(command, commands)
+        self.assertNotIn('git merge --abort', commands)
+        for command in commands:
+            self.assertEqual(len(command.splitlines()), 1)
+            self.assertFalse(command.startswith(('$ ', '> ')))
+            self.assertNotIn('（', command)
+
     def test_worktree_steps_copy_as_commands_without_prompts_or_output(self):
         source = (ROOT / 'advanced' / 'git-worktree.qmd').read_text()
         commands = render(source, commands_only=True)

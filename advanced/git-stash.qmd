@@ -1,0 +1,253 @@
+---
+title: "stashで作業途中の変更を一時退避する"
+sidebar: advanced
+---
+
+このページは，希望する人向けの**任意の発展資料**です．
+短時間だけ別の作業へ移る場合はstash，別案を並べて比較する場合は[worktree](git-worktree.qmd)を使えます．
+stashはローカルに保存する一時記録です．
+課題の提出は[commit・push・PRの手順](../guides/workflow.qmd#commit)に従います．
+
+## 保存対象と基本手順 {#save}
+
+### 保存対象
+
+| 状態 | 通常の`stash push` | `stash push -u` |
+|---|---|---|
+| 追跡済みファイルのstage前の変更 | 保存する | 保存する |
+| stage済みの変更 | 保存する | 保存する |
+| 未追跡ファイル | 作業場所に残る | 保存する |
+| ignoreされたファイル | 作業場所に残る | 作業場所に残る |
+: {tbl-colwidths="[36, 32, 32]"}
+
+`-u`は未追跡ファイルを対象に加えます．
+追跡済みかどうかと無視規則の確認は，[管理対象の確認](git-tips.qmd#tracked-files)を参照してください．
+同じリポジトリのworktree間ではstash一覧を共有するため，別のworktreeで保存した記録も現れます．
+
+### 1. 元のbranchと変更の確認
+
+まず元のbranch名を表示して控え，stage前・stage済み・未追跡の変更を区別します．
+この例では`exercise/N01`で，コードのstage前の変更，stage済みの学習ログ，未追跡の`notes.txt`がある状態を使います．
+
+```console
+$ git branch --show-current
+exercise/N01
+
+$ git status --short
+M  exercises/N01_linear_advection/learning_log.md
+ M exercises/N01_linear_advection/run.jl
+?? notes.txt
+
+$ git diff
+（stage前のコードの変更）
+
+$ git diff --cached
+（stage済みの学習ログの変更）
+```
+
+短いstatusの左列はindex，右列は作業ファイルの状態で，`??`は未追跡です．
+保存後と比べられるように，今回保存する内容を確認してください．
+
+### 2. 説明付きの保存
+
+```console
+$ git stash push -u -m 'N01: 風上差分と学習ログの作業途中'
+Saved working directory and index state On exercise/N01: N01: 風上差分と学習ログの作業途中
+
+$ git status --short
+（この例では出力なし）
+```
+
+対象の変更がstashへ保存され，作業場所から退避されます．
+
+### 3. 保存した記録と内容の確認
+
+```console
+$ git stash list
+stash@{0}: On exercise/N01: N01: 風上差分と学習ログの作業途中
+
+$ git stash show -p -u 'stash@{0}'
+（コード・学習ログ・未追跡notes.txtのdiff）
+```
+
+`-p`はdiffを表示し，`-u`は保存された未追跡ファイルも表示します．
+説明と内容が今回の変更に一致することを確認してください．
+`stash@{0}`は最新の記録で，保存や削除によって番号は変わります．
+
+### 4. 別作業と元のbranchへの復帰
+
+短い例として，`main`の履歴を確認して戻ります．
+以下の`exercise/N01`は，最初に控えた自分のbranch名へ置き換えてください．
+**切り替えが成功したことを確認してから，次の操作を実行**します．
+
+```console
+$ git switch main
+Switched to branch 'main'
+
+$ git log --oneline -5
+（mainの直近のcommit）
+
+$ git switch exercise/N01
+Switched to branch 'exercise/N01'
+
+$ git branch --show-current
+exercise/N01
+
+$ git status --short
+（この例では出力なし）
+```
+
+別作業の変更をcommitやstashで整理し，元のbranchへ戻って作業場所がcleanな状態で復元します．
+
+## 復元と後片付け {#restore}
+
+### 5. 記録を保持した復元
+
+元のbranchと作業状態を確認したら，stashの説明と内容をもう一度照合して復元します．
+
+```console
+$ git stash list
+stash@{0}: On exercise/N01: N01: 風上差分と学習ログの作業途中
+
+$ git stash apply 'stash@{0}'
+（復元後の状態を表示）
+```
+
+`apply`は作業内容を戻し，**stash記録を保持**します．
+この例では，保存時にstage済みだった学習ログもstage前の変更として戻ります．
+エラーや競合があれば，復元操作を止めて[失敗後の状態を確認](#failures)します．
+
+### 6. ファイル・stage・記録の確認
+
+```console
+$ git status --short
+ M exercises/N01_linear_advection/learning_log.md
+ M exercises/N01_linear_advection/run.jl
+?? notes.txt
+
+$ git diff
+（戻ったコードと学習ログの変更）
+
+$ git diff --cached
+（この例では出力なし）
+
+$ git stash list
+stash@{0}: On exercise/N01: N01: 風上差分と学習ログの作業途中
+```
+
+未追跡の`notes.txt`はエディタで内容も確認します．
+`diff`と`diff --cached`の両方を読み，保存前の意図した変更が保持されているか確認してください．
+必要なstage選択は[変更の選択](git-tips.qmd#stage)と共通ワークフローに沿って行います．
+
+### 7. 確認済みの記録の削除
+
+復元内容に問題がなければ，削除直前にも一覧・説明・内容を確認します．
+番号が変わっていたら，次の参照を実際の対象へ読み替えてください．
+
+```console
+$ git stash list
+stash@{0}: On exercise/N01: N01: 風上差分と学習ログの作業途中
+
+$ git stash show -p -u 'stash@{0}'
+（削除対象の保存内容）
+
+$ git stash drop 'stash@{0}'
+Dropped stash@{0}（記録のhashは省略）
+
+$ git stash list
+（ほかの記録がなければ出力なし）
+
+$ git status --short
+（復元したファイルの変更は残る）
+```
+
+`drop`は選んだstash記録だけを削除し，復元済みの作業ファイルは保持します．
+復元内容に問題があれば，stash記録を保持します．
+その後は[通常の課題作業](../guides/workflow.qmd#exercise-work)へ戻ります．
+
+### stageの復元・復元後の記録の削除
+
+stage構成も復元したい場合は，主手順の`apply`の**代わりに**次を使います．
+
+```console
+$ git stash apply --index 'stash@{0}'
+（成功時は保存時のstage構成も復元）
+```
+
+`--index`は保存時のindexも復元します．
+実行後はstatusと両方のdiffでstageの状態を確認し，エラーや競合があれば[失敗後の状態を確認](#failures)します．
+主手順の保存例なら，成功時には学習ログがstage済み，コードがstage前，`notes.txt`が未追跡へ戻ります．
+
+復元と記録の削除をまとめて行う場合は，主手順の`apply`の**代わりに**`pop`を使います．
+
+```console
+$ git stash pop 'stash@{0}'
+（成功時は復元後に対象記録を削除）
+```
+
+`pop`は成功すると記録を削除し，競合した場合は記録を保持します．
+復元内容を確認してから記録を削除したい場合は，主手順の`apply`を使ってください．
+
+## 失敗時の確認と競合の解消 {#failures}
+
+### 失敗後の状態の確認
+
+失敗後の確認には，次を使います．
+
+```console
+$ git branch --show-current
+（現在のbranch）
+
+$ git status --short
+（実際のファイルとstageの状態）
+
+$ git diff
+（stage前のdiff．競合時は競合の内容も表示）
+
+$ git diff --cached
+（stage済みのdiff）
+
+$ git stash list
+（保持されている記録）
+```
+
+復元途中でエラーが出ると，一部の変更が適用された状態で止まることがあります．
+現在のファイルとstash記録を保ち，判断に迷う場合は[最初の証拠の記録](../guides/troubleshooting.qmd#最初の証拠を残す)に沿って教員・TAへ相談してください．
+
+### 競合の解消
+
+競合したファイルを絞ります．
+
+```console
+$ git status --short
+UU README.md
+
+$ git diff --name-only --diff-filter=U
+README.md
+```
+
+対象ファイルをエディタで開き，現在の変更と退避した変更の両方を読み，必要な内容を残します．
+`<<<<<<<`，`=======`，`>>>>>>>`の競合マーカーを除去して保存し，解消したファイルごとにstageへ入れます．
+以下は`README.md`で競合した場合の例です．
+
+```console
+$ git add README.md
+（成功時は出力なし）
+
+$ git diff --name-only --diff-filter=U
+（未解決の競合がなければ出力なし）
+
+$ git diff
+（stage前に残る変更）
+
+$ git diff --cached
+（解消してstageへ入れた内容）
+
+$ git diff --cached --check
+（空白の問題や残った競合マーカーがなければ出力なし）
+```
+
+diffを読み直し，[必要な課題テスト](../guides/workflow.qmd#tests)を実行して，問題を修正してください．
+解消後は通常の課題作業へ戻り，復元内容を確認してから対象のstashを削除できます．
+
+仕様の詳細は[Git公式のstash資料](https://git-scm.com/docs/git-stash)を参照してください．
