@@ -235,7 +235,7 @@ website:
               text: "自由提案"
   page-footer:
     left: "Copyright © 2026 荒木 亮（ARAKI, Ryo）"
-    right: "教材・図: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) / コード: [MIT](LICENSE-MIT.txt)"
+    right: "教材・図: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) / コード: [MIT](/LICENSE-MIT.txt)"
 
 format:
   html:
