@@ -141,6 +141,8 @@ $ git blame -L 1,5 -- README.md
 ```
 
 各行のhash，作成者，日時，行番号，内容から最終変更を読み，必要ならそのhashを`show`に渡します．
+hashの先頭に`^`が付いている場合は，`^`を除いた部分（表示例なら`098abcd`）を`show`に渡してください．
+未commitの編集行は，`00000000`などの全桁0のhashと`Not Committed Yet`で表示され，commitのhashとして`show`に渡せません．
 `blame`は行の変更元を調べる表示で，実装の正しさを判定するものではありません．
 参考：[log](https://git-scm.com/docs/git-log)，[show](https://git-scm.com/docs/git-show)，[blame](https://git-scm.com/docs/git-blame)．
 
