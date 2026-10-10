@@ -48,7 +48,8 @@ $ git log --graph --oneline --decorate --all
 * b2c3d4e Implement upwind step
 ```
 
-`--graph`の線はcommitの親子関係を示し，2本の線が合流するcommitではmergeが行われています．
+`--graph`の線はcommitの親子関係を示します．
+merge commitは複数の親commitにつながり，表示例では最上段の`e5f6a7b`が該当します．
 `--decorate`の括弧内はbranchやタグなどの参照のラベルで，`HEAD -> main`は現在のbranchを示します．
 通常の`log`は現在のcommitからたどれる履歴を表示し，`--all`は**手元にあるすべての参照**を表示対象に加えます．
 配布元の更新確認は[教材の更新](../guides/commands.qmd#material-updates)に従います．
