@@ -6,9 +6,9 @@ sidebar: advanced
 このページは，希望する人向けの**任意の発展資料**です．
 基本操作と提出順序は[課題ワークフロー](../guides/workflow.qmd)，短い早見表は[コマンド一覧](../guides/commands.qmd)を参照してください．
 
-## 履歴を見る・探す {#history}
+## 履歴の表示・検索 {#history}
 
-### commitを短く表示する
+### commitの一覧表示
 
 直近の変更を一覧にするときは，`--oneline`でhashの短縮形とcommitメッセージの先頭行を表示します．
 `-5`は表示するcommitを最大5件に絞ります．
@@ -34,7 +34,7 @@ b2c3d4e 2026-10-09 Student Implement upwind step
 `--date=short`により，`%ad`を年月日で表示します．
 ダブルクォートは，空白を含むformat全体を一つの引数にまとめます．
 
-### branchとcommitのつながりを見る
+### branchとcommitの関係
 
 複数のbranchが分岐・mergeした位置を調べます．
 
@@ -51,10 +51,9 @@ $ git log --graph --oneline --decorate --all
 `--graph`の線はcommitの親子関係を示し，2本の線が合流するcommitではmergeが行われています．
 `--decorate`の括弧内はbranchやタグなどの参照のラベルで，`HEAD -> main`は現在のbranchを示します．
 通常の`log`は現在のcommitからたどれる履歴を表示し，`--all`は**手元にあるすべての参照**を表示対象に加えます．
-`--all`はGitHubからの取得操作を含みません．
 配布元の更新確認は[教材の更新](../guides/commands.qmd#material-updates)に従います．
 
-### ファイルとメッセージで絞る
+### ファイル・メッセージによる絞り込み
 
 学習ログだけの変更を追うときは，`--`の後ろにファイルを指定します．
 名前変更より前も追いたい場合は，**1ファイル**に`--follow`を使います．
@@ -69,7 +68,7 @@ a1b2c3d Rename course overview
 ```
 
 `--`はオプション・履歴指定とファイルの区切りです．
-`--follow`は名前変更をたどるため，現在の名前だけで絞った一覧にない古いcommitも表示されることがあります．
+`--follow`は名前変更より前の履歴もたどります．
 commitメッセージに`N01`を含む変更は，`--grep`で探せます．
 
 ```console
@@ -77,9 +76,9 @@ $ git log --oneline --grep='N01'
 c3d4e5f Add N01 learning notes
 ```
 
-この検索は**commitメッセージ**を対象とし，ファイルの中身は検索しません．
+検索対象は**commitメッセージ**です．
 
-### コードの変更から探す
+### コードの変更履歴の検索
 
 課題コードの`upwind_step!`が加わった変更を探す場合は，`-S`を使います．
 
@@ -89,7 +88,6 @@ b2c3d4e Implement upwind step
 ```
 
 `-S`は指定した文字列の**出現数が変わるdiff**を探します．
-同じ文字列を1回含む行が別の行へ書き換わり，出現数が同じままなら対象になりません．
 文字列を含む行の書き換えも探す場合は，`-G`で追加・削除行に一致する正規表現を指定します．
 
 ```console
@@ -100,11 +98,9 @@ commit d4e5f6a（hashなどは省略）
 ```
 
 たとえば`upwind_step!(u_new, u_old)`を`upwind_step!(u_new, u_old, c, dt, dx)`へ変えたdiffは，`-G`に一致します．
-`-S`と`-G`は変更履歴の検索であり，[現在の内容の検索](#tracked-files)とは対象が違います．
-該当するcommitがなければ出力はありません．
-検索語，ファイルのパス，現在のbranchからたどれる履歴を確認してください．
+現在のファイルの内容は，[`git grep`による検索](#tracked-files)で調べます．
 
-### 特定のcommit・ファイル・行を読む
+### 特定のcommit・ファイル・行の確認
 
 見つけたcommitの内容は`show`で確認します．
 次の`COMMIT`は，一覧で確認したhashへ置き換えてください．
@@ -129,13 +125,12 @@ $ git blame -L 1,5 -- README.md
 （2〜5行目は省略）
 ```
 
-各行のhash，作成者，日時，行番号，内容から最終変更を読み，必要ならそのhashを`show`に渡します．
+各行のhash，作成者，日時，行番号，内容から最終変更を確認できます．
 hashの先頭に`^`が付いている場合は，`^`を除いた部分（表示例なら`098abcd`）を`show`に渡してください．
-未commitの編集行は，`00000000`などの全桁0のhashと`Not Committed Yet`で表示され，commitのhashとして`show`に渡せません．
-`blame`は行の変更元を調べる表示で，実装の正しさを判定するものではありません．
+`show`にはcommit済みの行のhashを使います．
 参考：[log](https://git-scm.com/docs/git-log)，[show](https://git-scm.com/docs/git-show)，[blame](https://git-scm.com/docs/git-blame)．
 
-## diffと管理対象を調べる {#files}
+## diffと管理対象の確認 {#files}
 
 ### diffの規模・名前・変更種別
 
@@ -157,9 +152,9 @@ M	README.md
 `--stat`はファイルごとの規模と合計，`--name-only`は名前だけ，`--name-status`は変更種別も表示します．
 `M`は変更，`A`は追加，`D`は削除，`R`は名前変更を表します．
 stage済みの変更なら`git diff --cached --stat`など，`--cached`を加えます．
-未追跡ファイルは通常の`diff`には現れないので，`status`や未追跡一覧も確認します．
+未追跡ファイルは`status`や未追跡一覧で確認します．
 
-### 語単位・文字単位で読む
+### 語単位・文字単位の比較
 
 READMEの長い行で，変わった語を見つけやすくします．
 
@@ -203,8 +198,6 @@ exercises/N01_linear_advection/run.jl:68:function upwind_step!(u_new, u_old, c::
 ```
 
 `-n`は行番号を付けます．
-既定の`git grep`は追跡済みファイルを検索し，未追跡や過去のcommitメッセージは対象にしません．
-一致しなければ出力がなく，終了状態は1になります．
 生成物が一覧から外れる理由を調べる場合は，実際の生成物のパスを指定します．
 
 ```console
@@ -213,14 +206,11 @@ $ git check-ignore -v results/N01/summary.toml
 ```
 
 出力は規則のファイル，行番号，パターン，対象パスの順です．
-これは`results/`を無視する規則がある場合の表示例で，規則の実際の位置・内容は自分のリポジトリで確認します．
-規則に一致しない場合は出力がなく，終了状態は1です．
-追跡済みファイルは通常この確認の対象外で，ignore規則を追加しても自動で未追跡には戻りません．
 参考：[ls-files](https://git-scm.com/docs/git-ls-files)，[grep](https://git-scm.com/docs/git-grep)，[check-ignore](https://git-scm.com/docs/git-check-ignore)．
 
-## 変更を選ぶ・作業を切り替える {#stage}
+## 変更の選択・作業の切り替え {#stage}
 
-### 一部の変更だけをstageへ入れる
+### stageに入れる変更の選択
 
 追跡済みのREADMEを2か所編集し，片方だけをcommitしたいときは，`add -p`で差分のまとまりごとに選びます．
 
@@ -230,23 +220,20 @@ $ git add -p README.md
 (1/2) Stage this hunk [y,n,q,a,d,j,J,g,/,e,?]?
 ```
 
-対話中に`y`でこの差分を選び，次の差分で`n`なら残し，`q`ならそこで選択を終了します．
-選択肢は状態で変わり，`?`で説明を読めます．
-差分が一つにまとまっていれば，`s`が表示される場合に分割できます．
-選択や中断の後に，stageに入った部分と残った部分を両方確認します．
+対話中に`y`で差分をstageへ入れ，`n`で作業ファイルに残し，`q`で選択を終了します．
+選択後は，stageに入った部分と作業ファイルに残った部分を確認します．
 
 ```console
 $ git diff --cached -- README.md
 （選択した差分だけを表示）
 
 $ git diff -- README.md
-（選択しなかった差分を表示）
+（作業ファイルに残した差分を表示）
 ```
 
 `add -p`はindexを更新し，作業ファイルの編集内容は保持します．
-この例は追跡済みのテキストファイルを対象にします．
 
-### stageだけを戻す
+### stageの取り消し
 
 選択をやり直す場合は，対象のstageをHEADの状態に戻します．
 
@@ -265,21 +252,19 @@ $ git diff -- README.md
 commitする内容は[学習ログ，diff，commit](../guides/workflow.qmd#commit)の手順で確認してください．
 参考：[add](https://git-scm.com/docs/git-add)，[restore](https://git-scm.com/docs/git-restore)．
 
-### 作業を切り替える
+### 作業の切り替え
 
 短時間だけ別の作業へ移る場合は，[stashで作業途中の変更を一時退避する](git-stash.qmd)を使えます．
 別案のコードと結果を並べて比較する場合は，[worktreeで並行して作業する](git-worktree.qmd)を参照してください．
-どちらも任意の操作で，通常の課題開始・提出は共通ワークフローに従います．
+課題の開始・提出は[共通ワークフロー](../guides/workflow.qmd)に従います．
 
-## 長いコマンドをaliasで短縮する（Bash） {#bash-alias}
+## aliasによるコマンドの短縮（Bash） {#bash-alias}
 
 ### 設定と反映
 
 対象は**WSL2 Ubuntu 24.04で使うBash**です．
 aliasはコマンドの短縮名で，ここでは`glg`をgraph表示，`glp`を日付・作成者付きの履歴表示に使います．
-名前は変更できます．
 追記前に`type glg glp`で既存のコマンドやaliasを調べ，同名のものがあれば別名を選んでください．
-未定義なら`not found`と表示されます．
 まず既存の`~/.bashrc`を一意の名前で退避し，表示されたパスを控えます．
 
 ```console
@@ -322,17 +307,13 @@ $ glp -5
 ```
 
 定義を変えるときは`~/.bashrc`の該当行を編集し，`source ~/.bashrc`を実行して`alias glg`などで確認します．
-削除するときは設定行を削除して保存したうえで，現在のBashからも定義を外します．
+削除するときは`~/.bashrc`の設定行を削除して保存し，`unalias`で現在のBashの定義も削除します．
 
 ```console
 $ unalias glg glp
 （成功時は出力なし）
 ```
 
-設定行を削除して`source ~/.bashrc`を実行するだけでは，**現在のBashにあるaliasは消えません**．
-`unalias`を実行するか，設定行を削除した後に新しいBashのターミナルを開いてください．
-短縮名が見つからない場合は，Bashであること，設定行の引用符，読み込み，`alias glg`の結果を確認します．
-構文エラーが出たら追記した行を修正し，成功してから使います．
 参考：[Bashのalias](https://www.gnu.org/software/bash/manual/html_node/Aliases.html)，[Bashの起動時設定](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html)．
 
 [zshのalias展開機能](https://zsh.sourceforge.io/Doc/Release/Completion-System.html)や[fishのabbr](https://fishshell.com/docs/current/cmds/abbr.html)を使うと，短縮名を入力中に長いコマンドへ展開し，実行前に編集できます．
