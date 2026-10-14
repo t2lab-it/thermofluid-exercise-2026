@@ -3,11 +3,11 @@
 
 学生リポジトリのルートでテンプレート更新を確認します．
 
-~~~console
-$ git switch main
-$ git pull --ff-only origin main
-$ git fetch upstream
-$ git log --oneline main..upstream/main
+~~~bash
+git switch main
+git pull --ff-only origin main
+git fetch upstream
+git log --oneline main..upstream/main
 ~~~
 
 commitが表示されたら，[配布教材の更新手順](../guides/commands.qmd#material-updates)に従って統合してから課題を開始します．
