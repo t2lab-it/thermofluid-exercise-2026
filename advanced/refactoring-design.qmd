@@ -37,7 +37,6 @@ cd /tmp/n05-refactoring-example
 ├─ after.jl        共通側へ委譲する入口
 ├─ wide.jl         広い入口を持つ比較案
 ├─ strict.jl       入力条件を変えた比較案（意図した失敗）
-├─ retained.jl     本体を残した比較案
 ├─ checks.jl       同じ契約を調べる検査
 └─ compare.jl      比較案の観察
 ```
@@ -331,30 +330,6 @@ end
 end
 ```
 
-## 証拠の組合せ {#evidence}
-
-### 比較する案と保つ約束
-
-次の案は共通側を読み込み，旧入口に抽出前の本体を残しています．
-`after.jl`と数値が同じなら，共通側を使ったと言えるでしょうか．
-保つ約束は，値や副作用の互換性に加えて，旧入口が意図した共通部品へ実際に委譲することです．
-
-**`retained.jl`：値は同じでも本体を残した案**
-
-```{.julia .refactoring-example #rd-retained}
-include("common.jl")
-# 旧入口の本体はbefore.jlで定義され，更新もその本体が担当する。
-include("before.jl")
-```
-
-### 予想・実行・観察
-
-`retained.jl`の旧入口は抽出前の本体を使うため，次の契約検査も成功します．
-
-```sh
-julia --startup-file=no --compiled-modules=no --project=. checks.jl retained
-```
-
 **`compare.jl`：意味の違いと意図した失敗をまとめて観察する**
 
 ```{.julia .refactoring-example #rd-compare}
@@ -402,5 +377,3 @@ julia --startup-file=no --compiled-modules=no --project=. compare.jl
   新しいプロセスで部品だけを呼んでも動くか．
 - 呼出し側との約束は何か．
   最小の有効入力・拒否入力・変更順序を，抽出前後で同じ条件で確かめたか．
-- 今回の確認で何が分かり，何が残るか．
-  値の一致・実際の委譲・物理的妥当性を，それぞれどの確認で確かめたか．

@@ -4,7 +4,7 @@ using Test
 function refactoring_design_blocks(source)
     matches = collect(eachmatch(r"```\{\.julia \.refactoring-example #([^}]+)\}\n(.*?)\n```"s, source))
     expected = Set(["rd-before", "rd-common", "rd-after", "rd-wide",
-                    "rd-strict", "rd-retained", "rd-checks", "rd-compare"])
+                    "rd-strict", "rd-checks", "rd-compare"])
     ids = [m[1] for m in matches]
     Set(ids) == expected && length(ids) == length(expected) ||
         error("refactoring example inventory mismatch")
@@ -35,7 +35,7 @@ end
                 write(joinpath(root, replace(id, "rd-" => "") * ".jl"), code)
             end
             # Execute each entry in a fresh Julia process, including the standalone common module.
-            for stage in ("before", "after", "common", "retained")
+            for stage in ("before", "after", "common")
                 @test run_refactoring_file(root, "checks.jl", stage)
             end
             @test run_refactoring_file(root, "compare.jl")
@@ -84,37 +84,6 @@ end
             """)
             for stage in ("before", "after", "common")
                 @test run_refactoring_file(root, "contract.jl", stage)
-            end
-            # Same numeric outputs can conceal retained duplication. Replace only
-            # the disposable example's common method, never real student code.
-            write(joinpath(root, "delegation.jl"), raw"""
-            using Test
-            stage = only(ARGS)
-            include(stage * ".jl")
-            const calls = Float64[]
-            const token = Ref(:common_return)
-            @eval BoundaryCore function inlet_outlet!(u::Vector{Float64}; left_value::Float64=1.0)
-                push!(Main.calls, left_value)
-                u[1] = left_value + 10.0
-                return Main.token
-            end
-            @testset "actual delegation: $stage" begin
-                u = [8.,9.]
-                if stage == "after"
-                    @test apply_boundary!(u; left_value=2.) === token
-                    @test u == [12.,9.]
-                    @test apply_boundary!(u) === token
-                    @test u == [11.,9.]
-                    @test calls == [2.,1.]
-                else
-                    @test apply_boundary!(u; left_value=2.) === u
-                    @test u == [2.,2.]
-                    @test isempty(calls)
-                end
-            end
-            """)
-            for stage in ("after", "retained")
-                @test run_refactoring_file(root, "delegation.jl", stage)
             end
         end
     end
