@@ -98,7 +98,6 @@ $$
 ### 提供済みの時間ループ
 
 抜粋元は学生用配布リポジトリの[`N01LinearAdvection.simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L197-L246)です．
-照合した版は`e240b6e8ec10a6313f867adca785d67baebe4a0c`で，以下は初期配列の作成から時間ループ末尾までの抜粋です．
 
 境界条件と時間ループは提供済みで，`rectangular_initial_condition`，`upwind_step!`，`centered_step!`が学生の実装箇所です．
 直前で入力検査，格子`x`，`dx`，刻み`dt`，`steps`，実効CFLの決定が済んでいることを前提とします．
