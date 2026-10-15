@@ -8,7 +8,7 @@
 
 ::: {.callout-tip title="AIへ：数問で理解を確かめる"}
 
-```text
+```{.default code-copy=true}
 私は，https://t2lab-it.github.io/thermofluid-exercise-2026/lessons/{{< meta lesson-id >}}.html の内容を学習しています．
 対応する課題は https://t2lab-it.github.io/thermofluid-exercise-2026/assignments/{{< meta lesson-id >}}.html です．
 次のポイントの主要な観点を一通り確認できる数問を，3〜5問を目安に出してください．
@@ -33,7 +33,7 @@ AI提案を利用した課題では，採用・修正・不採用の理由を，
 
 ::: {.callout-tip title="AIへ：回答を評価してもらう"}
 
-```text
+```{.default code-copy=true}
 上記の回答を以下の観点から評価してください：
 1. 正しく説明できている点
 2. 不足している点または誤解している点
