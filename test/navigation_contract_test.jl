@@ -758,7 +758,6 @@ end
             "../advanced/refactoring-design.qmd#questions",
         ],
         "advanced/refactoring-design.qmd" => [
-            "../lessons/N05.qmd#common-api",
             "../lessons/N05.qmd#package-layout",
             "../lessons/N05.qmd#boundary-example",
             "../assignments/N05.qmd#discretization",

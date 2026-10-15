@@ -13,9 +13,6 @@ sidebar: advanced
 前者では呼出し方の違い，後者では受け入れる入力の契約の違いを調べます．
 [学生用リポジトリのコード一式](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/examples/refactoring-design)は，独立して実行できる7ファイルの補助教材です．
 
-前提は，関数の呼出し，配列の添字と代入，条件分岐と，授業の[APIと責務](../lessons/N05.qmd#common-api)です．
-実課題の公開API・実装範囲・提出条件は[課題N05](../assignments/N05.qmd#discretization)が正本です．
-
 ## コード例の実行準備とファイル構成 {#prepare}
 
 学生リポジトリのルートから，コード例のディレクトリへ移動します．
