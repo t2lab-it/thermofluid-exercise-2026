@@ -726,6 +726,41 @@ end
 end
 
 
+@testset "N05 required and optional reading routes" begin
+    routes = Dict(
+        "lessons/N05.qmd" => [
+            "../assignments/N05.qmd#discretization",
+            "../guides/workflow.qmd#n05-n06-stages",
+            "../advanced/refactoring-design.qmd#unit",
+        ],
+        "assignments/N05.qmd" => [
+            "../lessons/N05.qmd#helper-roles",
+            "../guides/workflow.qmd#n05-n06-stages",
+            "../advanced/refactoring-design.qmd#questions",
+        ],
+        "advanced/refactoring-design.qmd" => [
+            "../lessons/N05.qmd#common-api",
+            "../lessons/N05.qmd#package-layout",
+            "../lessons/N05.qmd#boundary-example",
+            "../assignments/N05.qmd#discretization",
+        ],
+    )
+    for (relative, required) in routes
+        page = joinpath(NAVIGATION_SITE_ROOT, relative)
+        source = read(page, String)
+        links = [m[1] for m in eachmatch(r"\]\(([^)\s]+)\)", source)]
+        for route in required
+            @test route in links
+            file, anchor = split(route, '#'; limit=2)
+            target = resolve_qmd_target(page, file)
+            @test isfile(target)
+            if isfile(target)
+                @test occursin("{#" * anchor * "}", read(target, String))
+            end
+        end
+    end
+end
+
 @testset "refactoring design page preserves local reference routes" begin
     # Explicitly inspect this file even before it is tracked by Git.
     page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "refactoring-design.qmd")
