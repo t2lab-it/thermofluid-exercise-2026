@@ -15,8 +15,8 @@ sidebar: advanced
 
 | 対象 | 抽出前 | 共通側の関数 |
 |---|---|---|
-| 左端へ指定値，右端へ左隣の値を書く処理 | `apply_boundary!` | `inlet_outlet!` |
-| 左右の端へ指定値を書く処理 | `fixed_boundary!` | `fixed_ends!` |
+| 流入・流出境界条件 | `apply_boundary!` | `inlet_outlet!` |
+| 両端固定境界条件 | `fixed_boundary!` | `fixed_ends!` |
 | 配列長と境界値を確かめる入力検証 | `validate_boundary_inputs` | 両方の処理が使う`validate_boundary_inputs` |
 
 抽出後の`after.jl`には元の関数名の入口を置き，引数を共通側へ渡して，その戻り値を返します．
@@ -29,7 +29,7 @@ N05の作業手順は[課題N05](../assignments/N05.qmd)を参照してくださ
 ## コード例の実行準備 {#prepare}
 
 [N05の教師作成例](../lessons/N05.qmd#boundary-example)から，境界処理だけを取り出します．
-左端へ指定値を書き，その後で右端へ左隣の値を写す例と，左右へ指定値を書く比較例を使います．
+流入・流出境界条件と，両端固定境界条件を比較します．
 対象は通常の1始まりの`Vector{Float64}`と有限の`Float64`境界値です．
 境界処理に絞ったコード例で，共通化の判断を練習します．
 
