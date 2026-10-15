@@ -4,8 +4,10 @@ lesson-id: F03
 understanding-check-points:
   - "gradient，divergence，curl，Laplacianの直交座標成分と，それぞれの入力・出力"
   - "混合偏微分の順序を交換するために必要な滑らかさの条件"
-  - "`curl(grad φ) = 0`を成分展開し，混合偏微分の相殺を説明すること"
-  - "`div(curl A) = 0`，積の発散，curl curlを成分表示で証明すること"
+  - "`curl(grad φ) = 0`と`div(curl A) = 0`を成分展開し，混合偏微分の相殺を説明すること"
+  - "積の発散とcurl curlの公式を成分表示で証明すること"
+  - "積の発散を使い，非圧縮条件のもとで移流項の保存形と移流形が一致する理由を説明すること"
+  - "一定密度での圧力勾配のcurl，流れ関数による非圧縮条件，curl curlとPoisson方程式・粘性項のつながり"
   - "解析的な成分証明と，次回行う数値微分による確認の役割の違い"
 ---
 ::: {.course-position}
