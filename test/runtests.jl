@@ -6,6 +6,7 @@ const VERIFY = joinpath(SITE_ROOT, "scripts", "verify_contracts.jl")
 
 include(VERIFY)
 
+include(joinpath(@__DIR__, "pseudocode_examples_test.jl"))
 include(joinpath(@__DIR__, "f02_tutorial_examples_test.jl"))
 include(joinpath(@__DIR__, "n05_tutorial_examples_test.jl"))
 include(joinpath(@__DIR__, "troubleshooting_examples_test.jl"))

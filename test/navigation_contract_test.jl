@@ -35,6 +35,7 @@ const EXPECTED_ADVANCED_HREFS = Set([
     "advanced/terminal-prompt.qmd",
     "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
     "advanced/git-tips.qmd", "advanced/git-stash.qmd", "advanced/git-worktree.qmd",
+    "advanced/pseudocode.qmd",
     "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
     "advanced/public-solver-methods.qmd",
 ])
@@ -686,5 +687,39 @@ end
     for id in ("N08","N09")
         page=read(joinpath(NAVIGATION_SITE_ROOT,"assignments",id*".qmd"),String)
         @test all(occursin(word,page) for word in ("N08-check","自作2群","公式12出力","LETUS","src/N08N09Elliptic.jl"))
+    end
+end
+
+@testset "pseudocode material is reachable between worktree and plotting" begin
+    yaml = yaml_source_lines(read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String))
+    menu = navbar_item_by_rel(yaml, "split-navigation-advanced")
+    navbar = entry_hrefs(navbar_menu_entries(yaml, menu))
+    sidebars = yaml_sequence_items(yaml, yaml_node(yaml, ("website", "sidebar")))
+    advanced = only(filter(sidebars) do item
+        something(yaml_item_field(yaml, item, "id"), (value="",)).value == "advanced"
+    end)
+    contents = yaml_item_field(yaml, advanced, "contents")
+    sidebar = entry_hrefs(navigation_entries(yaml, contents.node))
+    index_path = joinpath(NAVIGATION_SITE_ROOT, "advanced", "index.qmd")
+    index = [relpath(resolve_qmd_target(index_path, target), NAVIGATION_SITE_ROOT)
+             for target in qmd_link_targets(read(index_path, String))]
+    @test Set(index) == EXPECTED_ADVANCED_HREFS
+    neighbors = ["advanced/git-worktree.qmd", "advanced/pseudocode.qmd", "advanced/cairomakie.qmd"]
+    for route in (navbar, sidebar, index)
+        positions = [findfirst(==(path), route) for path in neighbors]
+        @test all(!isnothing, positions)
+        if all(!isnothing, positions)
+            @test positions == collect(positions[1]:positions[1]+2)
+        end
+    end
+    page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "pseudocode.qmd")
+    @test isfile(page)
+    if isfile(page)
+        source = read(page, String)
+        @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+        targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
+        for relative in ("lessons/N01.qmd", "assignments/N01.qmd", "guides/testing.qmd", "guides/ai-usage.qmd")
+            @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
+        end
     end
 end
