@@ -36,18 +36,6 @@ body-classes: pseudocode-material
 | 補足 | `# 説明` | 前提や抽象化した処理を示す |
 : {tbl-colwidths="[18, 36, 46]"}
 
-例えば，負の値の個数を数える手順は次のように書けます．
-ここで`N`は配列の長さです．
-
-```text
-negative_count ← 0
-for i = 1, ..., N
-    if u_old[i] < 0
-        negative_count ← negative_count + 1
-    end
-end
-```
-
 ## N01の数値条件 {#numerical-contract}
 
 数値手法は[N01授業の問題設定](../lessons/N01.qmd#problem-setup)，API・実装条件は[課題N01の離散化](../assignments/N01.qmd#discretization)を参照してください．
