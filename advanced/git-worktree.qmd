@@ -1,5 +1,5 @@
 ---
-title: "worktreeで並行して作業する"
+title: "worktreeによる並行作業"
 sidebar: advanced
 ---
 

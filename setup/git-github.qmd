@@ -52,7 +52,7 @@ GitHubユーザー名やcommit・issue・pull requestなどの活動，その日
 ## 個人課題用リポジトリの複製 {#個人課題用リポジトリを複製する}
 
 SSH接続は標準の複製経路です．
-先に[SSHでGitHubへ接続する](../advanced/github-ssh.qmd)を完了してください．
+先に[SSHによるGitHub接続](../advanced/github-ssh.qmd)を完了してください．
 
 1. GitHubの[新規リポジトリ作成](https://github.com/new)を開き，自分のアカウントをOwnerにして**空の公開リポジトリ**を作る．
    名前は`thermofluid-exercise-2026-<自分のusername>`，公開範囲はPublicとし，README・`.gitignore`・ライセンスの初期生成のチェックを外す．

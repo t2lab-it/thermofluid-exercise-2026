@@ -1,5 +1,5 @@
 ---
-title: "疑似プログラムで課題と実装をつなぐ"
+title: "課題と実装をつなぐ疑似プログラム"
 sidebar: advanced
 body-classes: pseudocode-material
 ---

@@ -1,12 +1,12 @@
 ---
-title: "GitHub CLIでpull requestを操作する"
+title: "GitHub CLIによるpull requestの操作"
 ---
 
 ::: {.course-position}
 任意・発展資料
 :::
 
-このページは，[SSHでGitHubへ接続する](github-ssh.qmd)を完了した学生向けの発展的な資料です．
+このページは，[SSHによるGitHub接続](github-ssh.qmd)を完了した学生向けの発展的な資料です．
 
 ## このページの到達点
 
