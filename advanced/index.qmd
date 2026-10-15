@@ -2,16 +2,16 @@
 title: "発展資料"
 ---
 
-準備に必須のSSH手順と，任意の発展資料を紹介します．
+任意の発展資料を紹介します．
 
-- [プロンプト装飾](terminal-prompt.qmd) — Starshipでブランチ名・変更・追跡先との差を表示します（任意）．
-- [SSHでGitHubへ接続する](github-ssh.qmd) — 個人課題用リポジトリを複製する前にSSH接続を準備します．
+- [プロンプト装飾](terminal-prompt.qmd) — Starshipでブランチ名・変更・追跡先との差を表示します．
+- [SSHによるGitHub接続](github-ssh.qmd) — 個人課題用リポジトリを複製する前にSSH接続を準備します．
   既存のHTTPS originを切り替える手順も含みます．
-- [GitHub CLIでpull requestを操作する](github-cli.qmd) — SSH接続後に，既存PRの確認と次の実課題でのPR作成・確認をCLIで行います．
-- [Gitの便利なコマンドとオプション](git-tips.qmd) — 履歴・diff・管理対象を調べ，変更を選び，Bashのaliasで表示コマンドを短縮します（任意）．
-- [stashで作業途中の変更を一時退避する](git-stash.qmd) — 短時間の切り替えに向けて変更を保存し，確認しながら復元します（任意）．
-- [worktreeで並行して作業する](git-worktree.qmd) — 任意で比較用の作業ディレクトリを作り，コードと結果を比較して元の課題branchへ採用します．
-- [疑似プログラムで課題と実装をつなぐ](pseudocode.qmd) — N01の時間ループを読み解き，課題の条件から手順を作り，レビューを経て実装へつなげます（任意）．
+- [GitHub CLIによるpull requestの操作](github-cli.qmd) — SSH接続後に，既存PRの確認と次の実課題でのPR作成・確認をCLIで行います．
+- [Gitの便利なコマンドとオプション](git-tips.qmd) — 履歴・diff・管理対象を調べ，変更を選び，Bashのaliasで表示コマンドを短縮します．
+- [stashによる変更の一時退避](git-stash.qmd) — 短時間の切り替えに向けて変更を保存し，確認しながら復元します．
+- [worktreeによる並行作業](git-worktree.qmd) — 比較用の作業ディレクトリを作り，コードと結果を比較して元の課題branchへ採用します．
+- [課題と実装をつなぐ疑似プログラム](pseudocode.qmd) — N01の時間ループを読み解き，課題の条件から手順を作り，レビューを経て実装へつなげます．
 - [CairoMakieによる可視化](cairomakie.qmd) — 1次元線形移流課題（課題ID: N01）の結果を隔離した一時環境で可視化します．
-- [PDEソルバ in Julia](package-built-solvers.qmd) — 有限差分・有限体積・有限要素のパッケージが提供する部品を比較し，最終プロジェクトで使う方法を選びます．
-- [CFDソルバ in Julia](public-solver-methods.qmd) — 埋め込み境界法，高次DG法，スタッガード有限体積法，Fourier擬スペクトル法，SBP法を比較し，公開ソルバ型課題の検証を設計します．
+- [JuliaのPDEソルバ](package-built-solvers.qmd) — 有限差分・有限体積・有限要素のパッケージが提供する部品を比較し，最終プロジェクトで使う方法を選びます．
+- [JuliaのCFDソルバ](public-solver-methods.qmd) — 埋め込み境界法，高次DG法，スタッガード有限体積法，Fourier擬スペクトル法，SBP法を比較し，公開ソルバ型課題の検証を設計します．

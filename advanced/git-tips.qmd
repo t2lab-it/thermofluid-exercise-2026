@@ -255,8 +255,8 @@ commitする内容は[学習ログ，diff，commit](../guides/workflow.qmd#commi
 
 ### 作業の切り替え
 
-短時間だけ別の作業へ移る場合は，[stashで作業途中の変更を一時退避する](git-stash.qmd)を使えます．
-別案のコードと結果を並べて比較する場合は，[worktreeで並行して作業する](git-worktree.qmd)を参照してください．
+短時間だけ別の作業へ移る場合は，[stashによる変更の一時退避](git-stash.qmd)を使えます．
+別案のコードと結果を並べて比較する場合は，[worktreeによる並行作業](git-worktree.qmd)を参照してください．
 課題の開始・提出は[共通ワークフロー](../guides/workflow.qmd)に従います．
 
 ## aliasによるコマンドの短縮（Bash） {#bash-alias}

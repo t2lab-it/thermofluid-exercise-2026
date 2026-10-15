@@ -202,4 +202,4 @@ main
 
 ## 任意のCLI発展資料
 
-[GitHub CLIでpull requestを操作する](../advanced/github-cli.qmd)では，ターミナルからPRを作成・確認する方法を紹介します．
+[GitHub CLIによるpull requestの操作](../advanced/github-cli.qmd)では，ターミナルからPRを作成・確認する方法を紹介します．

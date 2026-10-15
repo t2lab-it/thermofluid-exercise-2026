@@ -1,5 +1,5 @@
 ---
-title: "stashで作業途中の変更を一時退避する"
+title: "stashによる変更の一時退避"
 sidebar: advanced
 ---
 

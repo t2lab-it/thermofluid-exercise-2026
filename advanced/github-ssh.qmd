@@ -1,5 +1,5 @@
 ---
-title: "SSHでGitHubへ接続する"
+title: "SSHによるGitHub接続"
 ---
 
 ::: {.course-position}
@@ -191,4 +191,4 @@ $ git fetch origin
 - 秘密鍵，パスフレーズ，確認コードを記録・共有していない．
 
 ここまで完了したら，[Git・GitHubの準備](../setup/git-github.qmd)へ戻ってください．
-[GitHub CLIでpull requestを操作する](github-cli.qmd)は，準備後に必要な人だけ取り組む任意資料です．
+[GitHub CLIによるpull requestの操作](github-cli.qmd)は，準備後に必要な人だけ取り組む任意資料です．
