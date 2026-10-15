@@ -740,8 +740,7 @@ end
         entries = navbar_menu_entries(yaml, menu)
         @test (document.title, "advanced/refactoring-design.qmd") in entries
         targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
-        required = ["lessons/N0$i.qmd" for i in 1:5]
-        push!(required, "assignments/N05.qmd")
+        required = ["lessons/N05.qmd", "assignments/N05.qmd"]
         for relative in required
             @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
         end

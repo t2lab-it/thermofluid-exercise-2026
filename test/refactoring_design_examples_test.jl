@@ -24,6 +24,11 @@ end
     if isfile(path)
         source = read(path, String)
         blocks = refactoring_design_blocks(source)
+        # The walkthrough links to every distributed file on the default branch.
+        base = "https://github.com/t2lab-it/thermofluid-exercise-student-2026"
+        file_links = Set(m[1] for m in eachmatch(
+            r"\]\((https://github\.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/[^)]+)\)", source))
+        @test file_links == Set("$base/blob/main/examples/refactoring-design/$(replace(id, "rd-" => "")).jl" for id in keys(blocks))
         @test_throws ErrorException refactoring_design_blocks("")
         @test_throws ErrorException refactoring_design_blocks(source * "\n```julia\n1\n```\n")
         @test_throws ErrorException refactoring_design_blocks(source * "\n```{.julia #extra}\n1\n```\n")
