@@ -231,8 +231,7 @@ N04では課題側が`SELECTED_MODEL`を選び，共通側へ`model`として渡
 初期条件・実験設定・保存・描画は，何を調べるかに依存するので呼出し側へ残します．
 検証も，共通処理に必要なものを共通側へ移し，実験固有のものを呼出し側へ残します．
 
-参照した学生ソースはcommit `a97f7c3971c7c0d595ef3642577b9cd45414bffb`です．
-[`N01の境界`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N01_linear_advection/run.jl#L137-L142)，[`その検証`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N01_linear_advection/provided_support.jl#L35-L39)，[`共通APIの契約`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/src/ThermofluidExercise.jl)，[`N04のモデル選択と引数`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N04_advection_diffusion/run.jl)で対応を確認できます．
+[`N01の境界`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)，[`その検証`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/provided_support.jl)，[`共通APIの契約`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl)，[`N04のモデル選択と引数`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl)で対応を確認できます．
 
 ## 契約の維持 {#contract}
 
