@@ -173,7 +173,7 @@ bad_result = mutating_anomaly!(bad_values)
 ### 確かめたことと検証範囲
 
 ここで確かめたのは入力保持です．
-返り値の独立性の確認は[F02の配列のコピーと入力の保持](../lessons/F02.qmd#配列のコピーと入力の保持)を参照してください．
+返り値の独立性の確認は[F02の配列のコピーと入力の保持](../lessons/F02.qmd#array-copy)を参照してください．
 
 ## 入力変換と出力の関係 {#input-transformation}
 

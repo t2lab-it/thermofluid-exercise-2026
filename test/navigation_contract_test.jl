@@ -36,6 +36,7 @@ const EXPECTED_ADVANCED_HREFS = Set([
     "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
     "advanced/git-tips.qmd", "advanced/git-stash.qmd", "advanced/git-worktree.qmd",
     "advanced/pseudocode.qmd", "advanced/test-design.qmd",
+    "advanced/refactoring-design.qmd",
     "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
     "advanced/public-solver-methods.qmd",
 ])
@@ -690,7 +691,7 @@ end
     end
 end
 
-@testset "pseudocode and test design are reachable between worktree and plotting" begin
+@testset "design materials are reachable between worktree and plotting" begin
     yaml = yaml_source_lines(read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String))
     menu = navbar_item_by_rel(yaml, "split-navigation-advanced")
     navbar = entry_hrefs(navbar_menu_entries(yaml, menu))
@@ -705,13 +706,14 @@ end
              for target in qmd_link_targets(read(index_path, String))]
     @test Set(index) == EXPECTED_ADVANCED_HREFS
     neighbors = ["advanced/git-worktree.qmd", "advanced/pseudocode.qmd",
-                 "advanced/test-design.qmd", "advanced/cairomakie.qmd"]
+                 "advanced/test-design.qmd", "advanced/refactoring-design.qmd",
+                 "advanced/cairomakie.qmd"]
     for route in (navbar, sidebar, index)
         @test all(path -> count(==(path), route) == 1, EXPECTED_ADVANCED_HREFS)
         positions = [findfirst(==(path), route) for path in neighbors]
         @test all(!isnothing, positions)
         if all(!isnothing, positions)
-            @test positions == collect(positions[1]:positions[1]+3)
+            @test positions == collect(positions[1]:positions[1]+length(neighbors)-1)
         end
     end
     page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "pseudocode.qmd")
@@ -729,6 +731,8 @@ end
     if isfile(page)
         source = read(page, String)
         @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+        @test occursin("](../lessons/F02.qmd#array-copy)", source)
+        @test occursin("{#array-copy}", read(joinpath(NAVIGATION_SITE_ROOT, "lessons", "F02.qmd"), String))
         targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
         for relative in ("lessons/F02.qmd", "lessons/N03.qmd", "lessons/F04.qmd",
                          "assignments/F02.qmd", "assignments/N03.qmd",
@@ -737,5 +741,75 @@ end
         end
         guide = joinpath(NAVIGATION_SITE_ROOT, "guides", "testing.qmd")
         @test page in resolve_qmd_target.(Ref(guide), qmd_link_targets(read(guide, String)))
+    end
+end
+
+
+@testset "N05 required and optional reading routes" begin
+    routes = Dict(
+        "lessons/N05.qmd" => [
+            "../assignments/N05.qmd#discretization",
+            "../guides/workflow.qmd#n05-n06-stages",
+            "../advanced/refactoring-design.qmd#unit",
+        ],
+        "assignments/N05.qmd" => [
+            "../lessons/N05.qmd#helper-roles",
+            "../guides/workflow.qmd#n05-n06-stages",
+            "../advanced/refactoring-design.qmd#questions",
+        ],
+        "advanced/refactoring-design.qmd" => [
+            "../lessons/N05.qmd#package-layout",
+            "../lessons/N05.qmd#boundary-example",
+            "../assignments/N05.qmd#discretization",
+        ],
+    )
+    for (relative, required) in routes
+        page = joinpath(NAVIGATION_SITE_ROOT, relative)
+        source = read(page, String)
+        links = [m[1] for m in eachmatch(r"\]\(([^)\s]+)\)", source)]
+        for route in required
+            @test route in links
+            file, anchor = split(route, '#'; limit=2)
+            target = resolve_qmd_target(page, file)
+            @test isfile(target)
+            if isfile(target)
+                @test occursin("{#" * anchor * "}", read(target, String))
+            end
+        end
+    end
+end
+
+@testset "refactoring design page preserves local reference routes" begin
+    # Explicitly inspect this file even before it is tracked by Git.
+    page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "refactoring-design.qmd")
+    @test isfile(page)
+    if isfile(page)
+        source = read(page, String)
+        document = parse_qmd_document(source)
+        @test !isnothing(document)
+        @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+        yaml = yaml_source_lines(read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String))
+        menu = navbar_item_by_rel(yaml, "split-navigation-advanced")
+        entries = navbar_menu_entries(yaml, menu)
+        @test (document.title, "advanced/refactoring-design.qmd") in entries
+        targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
+        required = ["lessons/N05.qmd", "assignments/N05.qmd"]
+        for relative in required
+            @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
+        end
+        for target in targets
+            @test isfile(target)
+        end
+        # The article uses explicit anchors, so broken fragments are detectable
+        # without coupling this check to Japanese headings or explanation text.
+        for m in eachmatch(r"\]\(([^)\s]*)#([^)\s]+)\)", source)
+            file, anchor = m.captures
+            occursin("://", file) && continue
+            target = isempty(file) ? page : resolve_qmd_target(page, file)
+            @test isfile(target)
+            if isfile(target)
+                @test occursin("{#" * anchor * "}", read(target, String))
+            end
+        end
     end
 end

@@ -1,0 +1,175 @@
+---
+title: "共通化の設計判断"
+sidebar: advanced
+mermaid:
+  theme: neutral
+---
+
+::: {.course-position}
+任意・発展資料
+:::
+
+[N05授業の抽出例](../lessons/N05.qmd#boundary-example)を踏まえ，二つの境界処理を共通モジュールへまとめる設計案を比較します．
+基本案では，入力検証を共有して境界ごとに関数を分け，従来の契約を保って共通側へ移します．
+この基本案を基準に，入口を`mode`で切り替える案と，配列長の受理条件を狭める案をそれぞれ比較します．
+前者では呼出し方の違い，後者では受け入れる入力の契約の違いを調べます．
+[学生用リポジトリのコード一式](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/examples/refactoring-design)は，独立して実行できる7ファイルの補助教材です．
+
+## コード例の実行準備とファイル構成 {#prepare}
+
+学生リポジトリのルートから，コード例のディレクトリへ移動します．
+
+```sh
+cd examples/refactoring-design
+```
+
+| ファイル | 役割 |
+|---|---|
+| [before.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/before.jl) | 共通化前の二つの境界処理と入力検証 |
+| [common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl) | 境界処理と入力検証をまとめた共通モジュール |
+| [after.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/after.jl) | 元の関数名で共通側を呼ぶ関数 |
+| [wide.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/wide.jl) | 境界条件を一つの関数で切り替える比較案 |
+| [strict.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/strict.jl) | 配列長の条件を変えた比較案 |
+| [checks.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/checks.jl) | 共通化前・共通化後・共通側を同じ条件で調べる検査 |
+| [compare.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/compare.jl) | 二つの比較案を調べる検査 |
+
+`before.jl`から`common.jl`へ処理を移し，`after.jl`から呼び出す構成です．
+以降のコマンドは，このディレクトリで実行します．
+
+## 共通化の対象と移し方 {#overview}
+
+授業は1種類の境界処理を既存パッケージへ移す例，ここでは2種類の境界処理と共通の検証を`BoundaryCore`へまとめる例を扱います．
+流入・流出境界条件では左端に流入値，右端に流出条件を適用し，両端固定境界条件では左右に指定値を適用します．
+
+[before.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/before.jl)と[common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl)を開き，次の対応を確認してください．
+
+| 共通化の対象 | 共通化前の関数 | `BoundaryCore`内の関数 |
+|---|---|---|
+| 流入・流出境界条件 | `apply_boundary!` | `inlet_outlet!` |
+| 両端固定境界条件 | `fixed_boundary!` | `fixed_ends!` |
+| 配列長と境界値の検証 | `validate_boundary_inputs` | `validate_boundary_inputs` |
+
+`BoundaryCore`内では，二つの境界関数が同じ検証関数を使います．
+[after.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/after.jl)には元の名前の関数を置き，引数を共通側へ渡して，その戻り値を返します．
+モジュールとパッケージ，`include`と`import`の役割は授業の[配置と呼び出し](../lessons/N05.qmd#package-layout)を参照します．
+
+## 共通化の単位 {#unit}
+
+二つの境界処理は，どちらも「配列が2点以上で，境界値が有限である」という条件を必要とします．
+基本案では，この条件を確かめる`validate_boundary_inputs`を共有し，流入・流出境界条件は`inlet_outlet!`，両端固定境界条件は`fixed_ends!`で表します．
+各関数の引数から，必要な境界値を読み取れる構成です．
+
+[wide.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/wide.jl)では，基本案の二つの関数を一つの入口から呼び，`mode`によって境界条件を選びます．
+`mode=:outlet`では左の値を指定し，`mode=:fixed`では左右の値を指定します．
+関数を一つにまとめると，`mode`と指定値の組合せを判定する分岐が加わります．
+
+[compare.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/compare.jl)の`WideBoundary.apply!`を呼ぶ箇所で，次の結果を確認してください．
+
+| 配列と指定値 | 境界条件 | 更新後の配列 |
+|---|---|---|
+| `[2.,3.,4.]`，左`5.` | 流入・流出 | `[5.,3.,3.]` |
+| `[2.,3.,4.]`，左`5.`・右`7.` | 両端固定 | `[5.,3.,7.]` |
+
+境界条件ごとに関数を分けた案でも，`mode`で切り替える案でも，この結果は同じです．
+関数を分ける案では関数名と引数から境界の種類が分かり，`wide`案では入口を一つにして`mode`と値の組合せを検証します．
+呼出し側が指定する引数と，その組合せの条件を比較してください．
+
+## 依存関係の整理 {#dependencies}
+
+[common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl)の`BoundaryCore`では，共有する検証を二つの境界処理と同じモジュールへ置きます．
+依存をたどって必要な処理を共通側で完結させる理由は，授業の[依存方向](../lessons/N05.qmd#package-layout)で確認できます．
+
+矢印は，関数からその呼出し先へ向けています．
+
+**共通化前**
+
+```{mermaid}
+%%{init: {"flowchart": {"nodeSpacing": 12, "rankSpacing": 50, "padding": 8}}}%%
+flowchart TB
+    subgraph before["before.jl"]
+        direction TB
+        old_outlet["apply_boundary!"] --> old_check["validate_boundary_inputs"]
+        old_fixed["fixed_boundary!"] --> old_check
+    end
+```
+
+**共通化後**
+
+```{mermaid}
+%%{init: {"flowchart": {"nodeSpacing": 12, "rankSpacing": 50, "padding": 8}}}%%
+flowchart TB
+    subgraph after["after.jl"]
+        outlet["apply_boundary!"]
+        fixed["fixed_boundary!"]
+    end
+    subgraph common["common.jl"]
+        core_outlet["inlet_outlet!"] --> check["validate_boundary_inputs"]
+        core_fixed["fixed_ends!"] --> check
+    end
+    outlet --> core_outlet
+    fixed --> core_fixed
+```
+
+[after.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/after.jl)は，`include("common.jl")`で共通モジュールを読み込みます．
+呼出し側が用意する配列と境界値は，引数で共通側へ渡します．
+この配置により，共通側を単独で読み込み，検証から境界条件の適用まで実行できます．
+`wide.jl`と`strict.jl`もこの共通側を利用し，それぞれ入口の分岐と受理条件の変更を加えています．
+
+## 契約の維持 {#contract}
+
+[before.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/before.jl)と[after.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/after.jl)を比べ，次の対応を確認してください．
+
+| 観点 | 保つ契約 |
+|---|---|
+| 呼び方 | 元の関数名とキーワード引数 |
+| 既定値 | `apply_boundary!`の`left_value`は`1.0` |
+| 変更範囲 | 左右の端を更新し，内部点を保持 |
+| 更新順序 | 左端から右端へ更新 |
+| 戻り値 | 渡された配列そのもの |
+| 入力検証 | 2点以上と境界値の有限性を，配列の更新前に確認 |
+| 入力条件に違反した場合 | `ArgumentError`を出し，元の配列を保持 |
+
+契約と委譲の仕組みは，授業の[境界処理の抽出](../lessons/N05.qmd#boundary-example)へ戻って確認できます．
+
+### 共通化前後と共通側の検査 {#run-checks}
+
+[checks.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/checks.jl)は，引数で検査対象を選び，同じ条件で調べます．
+次の三つのコマンドで，共通化前・共通化後・共通側をそれぞれ新しいJuliaプロセスで実行します．
+
+```sh
+julia --startup-file=no --compiled-modules=no --project=. checks.jl before
+julia --startup-file=no --compiled-modules=no --project=. checks.jl after
+julia --startup-file=no --compiled-modules=no --project=. checks.jl common
+```
+
+各実行で64件の検査が成功します．
+`common`の成功は，共通モジュールだけで入力検証と境界処理が動くことを示します．
+戻り値の同一性，更新結果，拒否時の配列保持を，同じ入力と期待値で三つの入口に照合します．
+
+2点配列`[8.,9.]`に左`2.`を指定する検査にも注目してください．
+流入・流出境界条件では，左端を更新した後，右端がその値を読み取るため，結果は`[2.,2.]`です．
+
+### 比較案による契約の変更 {#comparisons}
+
+[strict.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/strict.jl)では，基本案の配列長の受理条件を2点以上から3点以上へ変え，契約の違いを比較します．
+3点配列では従来と同じ結果を返しますが，従来受け入れていた2点配列で`ArgumentError`を出します．
+配置の変更とともに，受け入れる入力の契約も変わっています．
+
+[compare.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/compare.jl)を実行し，`wide.jl`の境界条件の切替えと，`strict.jl`の配列長の条件を確認します．
+
+```sh
+julia --startup-file=no --compiled-modules=no --project=. compare.jl
+```
+
+14件の検査が成功します．
+比較案がそれぞれどの契約を保ち，どの契約を変えたかを，検査の入力と期待値から説明してください．
+
+## 自分のコードへの適用 {#questions}
+
+自分のコードについて，次の三点を説明してみてください．
+
+- どの操作や入力条件を共有し，どの処理を個別の関数で表すか．
+- 移す処理はどの関数と値を必要とし，それぞれをどこへ置くか．
+- 共通化の前後で保つ契約を，どの入力と期待値で確かめるか．
+
+実課題へ戻る場合は，[N05課題の正式な契約](../assignments/N05.qmd#discretization)と編集対象・完了条件を確認します．
