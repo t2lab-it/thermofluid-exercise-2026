@@ -3,7 +3,7 @@ using Test
 # Every Julia block in the article is a complete file, executed below.
 function refactoring_design_blocks(source)
     matches = collect(eachmatch(r"```\{\.julia \.refactoring-example #([^}]+)\}\n(.*?)\n```"s, source))
-    expected = Set(["rd-before", "rd-common", "rd-after", "rd-wide", "rd-missing",
+    expected = Set(["rd-before", "rd-common", "rd-after", "rd-wide",
                     "rd-strict", "rd-retained", "rd-checks", "rd-compare"])
     ids = [m[1] for m in matches]
     Set(ids) == expected && length(ids) == length(expected) ||
@@ -34,29 +34,11 @@ end
             for (id, code) in blocks
                 write(joinpath(root, replace(id, "rd-" => "") * ".jl"), code)
             end
-            # Before, delegated entry and direct common call cannot supply each
-            # other's missing dependencies: each is a fresh Julia process.
+            # Execute each entry in a fresh Julia process, including the standalone common module.
             for stage in ("before", "after", "common", "retained")
                 @test run_refactoring_file(root, "checks.jl", stage)
             end
             @test run_refactoring_file(root, "compare.jl")
-
-            # Isolate the missing dependency even from the old script's definitions.
-            write(joinpath(root, "failure.jl"), raw"""
-            using Test
-            include("missing.jl")
-            u = [8.,9.]
-            exception = try
-                MissingDependency.apply_boundary!(u)
-            catch e
-                e isa UndefVarError || rethrow()
-                e
-            end
-            @test exception isa UndefVarError
-            @test exception.var == :validate_boundary_inputs
-            @test u == [8.,9.]
-            """)
-            @test run_refactoring_file(root, "failure.jl")
 
             # Independent expectations from the plan, in addition to the published checks.
             write(joinpath(root, "contract.jl"), raw"""

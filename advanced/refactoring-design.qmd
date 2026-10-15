@@ -36,7 +36,6 @@ cd /tmp/n05-refactoring-example
 ├─ common.jl       共通側とその依存
 ├─ after.jl        共通側へ委譲する入口
 ├─ wide.jl         広い入口を持つ比較案
-├─ missing.jl      依存が欠けた比較案（意図した失敗）
 ├─ strict.jl       入力条件を変えた比較案（意図した失敗）
 ├─ retained.jl     本体を残した比較案
 ├─ checks.jl       同じ契約を調べる検査
@@ -215,46 +214,9 @@ end
 
 ## 依存関係の整理 {#dependencies}
 
-### 比較する案と保つ約束
-
 境界処理は検証関数を呼ぶので，その関数も依存です．
-「本体だけを移し，検証を旧スクリプトへ残す案」と「必要な検証も共通側から呼べる位置へ置く案」を比べます．
-保つ約束は，共通側の読込みと直接呼出しだけで検証と更新を完了できることです．
-
-**`missing.jl`：意図的に依存を移し忘れた案**
-
-```{.julia .refactoring-example #rd-missing}
-module MissingDependency
-"""
-依存欠落の比較例。
-呼出し時に検証関数の名前解決を観察する。
-"""
-function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
-    # このモジュールから検証関数を参照すると，UndefVarErrorになる。
-    validate_boundary_inputs(u, left_value)
-    u[1] = left_value
-    u[end] = u[end - 1]
-    return u
-end
-end
-```
-
-### 予想・実行・観察
-
-ファイルを読み込めるだけで，関数も実行できるでしょうか．
-次は意図的に失敗する端末操作です．
-新しいプロセスで`missing.jl`だけを読み，境界を呼びます．
-
-```sh
-julia --startup-file=no --compiled-modules=no --project=. -e 'include("missing.jl"); MissingDependency.apply_boundary!([8.0,9.0])'
-```
-
-呼出し時に`validate_boundary_inputs`が見つからず，`UndefVarError`になります．
-`common.jl`では同じ名前空間に検証があり，[直接検査](#run-checks)が成功します．
-`compare.jl`でも，この依存欠落と例外発生時の配列の状態を確認します．
-どの名前空間の関数が誰を呼ぶかを追ってください．
-
-### 採用条件と限界
+`common.jl`では，境界処理と検証関数を同じモジュールに置きます．
+共通側を単独で読み込む[直接検査](#run-checks)で，必要な依存がそろい，検証と更新を完了できることを確かめます．
 
 ```text
 呼出し側が配列と境界値を用意
@@ -413,9 +375,7 @@ julia --startup-file=no --compiled-modules=no --project=. checks.jl retained
 
 ```{.julia .refactoring-example #rd-compare}
 using Test
-include("before.jl")
 include("wide.jl")
-include("missing.jl")
 include("strict.jl")
 
 @testset "design comparisons" begin
@@ -433,10 +393,6 @@ include("strict.jl")
         @test u == [2.,3.,4.]
     end
     u = [8.,9.]
-    # Main側の検証とMissingDependency側の呼出しは名前空間が異なる。
-    @test_throws UndefVarError MissingDependency.apply_boundary!(u)
-    @test u == [8.,9.]
-    u = [8.,9.]
     # strictの2点拒否と3点受理を確かめる。
     @test_throws ArgumentError StrictBoundary.apply_boundary!(u; left_value=2.)
     @test u == [8.,9.]
@@ -450,7 +406,7 @@ end
 julia --startup-file=no --compiled-modules=no --project=. compare.jl
 ```
 
-依存欠落の`UndefVarError`と条件変更の`ArgumentError`を含め，期待した結果を確認できると検査が成功し，終了コードは0になります．
+条件変更の`ArgumentError`を含め，期待した結果を確認できると検査が成功し，終了コードは0になります．
 
 ### 採用条件と限界
 
