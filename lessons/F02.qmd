@@ -131,6 +131,62 @@ end
 `println(total)`を取り除いても戻り値は変わりません．
 入力を`[10, 20, 33]`へ変えると，各周の`total`はどうなるでしょうか．
 
+::: {.callout-tip collapse="true" title="Julia補足：REPL・スクリプト・ノートブックの実行状態" #execution-state style="scroll-margin-top: 11rem;"}
+
+**名前を使える範囲と，実行済みの状態を分けて確認します．**
+スコープは，ある名前がどの変数や定義を指すかを決める範囲です．
+関数の引数や関数内で作った変数は，関数内で使うローカル変数です．
+モジュールのトップレベルで定義した変数は，そのモジュールのグローバル変数です．
+
+REPLでは，実行済みの変数やメソッドがセッションに残り，`include`はその状態へファイルのコードを読み込みます．
+再現を確かめるときは，新しいJuliaプロセスで実行します．
+
+関数の外の`for`ループでは，REPLとスクリプトで変数の扱いが異なります．
+次の二つをREPLで順に実行すると，`outside_total`は6になります．
+同じコードをファイルに保存して実行すると，ループ内の`outside_total`がローカルと解釈され，警告と`UndefVarError`が出ます．
+
+```{.julia .f02-example}
+outside_total = 0
+```
+
+```{.julia .f02-example expected-error="UndefVarError"}
+for value in [1, 2, 3]
+    outside_total = outside_total + value
+end
+```
+
+計算本体を関数にまとめ，入力を引数，結果を戻り値で受け渡すと，REPLとスクリプトで同じコードを使えます．
+次を`sum_example.jl`として保存してください．
+
+```{.julia .f02-example}
+function sum_example(values)
+    total = 0
+    for value in values
+        total = total + value
+    end
+    return total
+end
+
+println(sum_example([1, 2, 3]))
+```
+
+学生リポジトリのルートに保存した場合，次は新しいJuliaプロセスで6を表示します．
+`--startup-file=no`は個人の起動設定を省く指定，`--project=.`は現在のディレクトリのプロジェクトを選ぶ指定です．
+
+```console
+$ julia --startup-file=no --project=. sum_example.jl
+6
+```
+
+ノートブックは実行系も確認します．
+[IJulia](https://ijulia.org/stable/manual/usage/#Soft-scope)では，トップレベルのループは標準設定でREPLと同じ代入規則を使い，手動のセル実行順も結果に影響します．
+再現を確認するときは，カーネルを再起動して先頭から全セルを実行します．
+[Pluto](https://plutojl.org/en/docs/reactivity/)では，セル間の依存関係に従って再評価します．
+
+環境の選択・復元は[Julia環境のしくみ](../guides/julia-environment.qmd)，名前の所属は[N05のモジュールの補足](N05.qmd#module-scope)を参照してください．
+スコープ規則の詳細は[Julia公式資料](https://docs.julialang.org/en/v1/manual/variables-and-scoping/)で確認できます．
+:::
+
 ## 5．出力配列の作成と要素型
 
 今度は温度列を一つずつ換算し，新しい配列を返します．
@@ -251,7 +307,47 @@ REPLへ戻ったら，次の`@test_throws`で「指定した例外が出るこ�
 `&&`は左が真のとき，`||`は左が偽のときだけ右を評価し，`all`は全要素が条件を満たすか調べます．
 `NaN`を20.0に置き換えると，どの条件を通過するか説明してください．
 
-## 7．配列のコピーと入力の保持
+::: {.callout-tip collapse="true" title="Julia補足：多重ディスパッチと呼び出し先の調査" #multiple-dispatch style="scroll-margin-top: 11rem;"}
+
+**関数は呼び出す操作，メソッドは引数の型の組合せに対応する個々の定義です．**
+一つの関数に複数のメソッドを定義でき，呼び出すと位置引数の個数と型に合うメソッドのうち，最も具体的なものが選ばれます．
+この選択を多重ディスパッチと呼びます．
+
+```{.julia .f02-example}
+function describe_pair(x::Integer, y::Integer)
+    return "整数どうし"
+end
+
+function describe_pair(x::Real, y::Real)
+    return "実数どうし"
+end
+
+@test describe_pair(1, 2) == "整数どうし"
+@test describe_pair(1, 2.0) == "実数どうし"
+@test describe_pair(1.0, 2) == "実数どうし"
+```
+
+`Integer`は`Real`の下位型なので，整数二つでは両方の定義に適合します．
+そのうち`Integer, Integer`の方が具体的なため，最初の定義が選ばれます．
+
+`methods`で定義の一覧，`@which`でその呼び出しに選ばれる定義とファイル・行番号を調べられます．
+スクリプトでも`@which`を使えるよう，標準ライブラリの`InteractiveUtils`を明示的に読み込みます．
+
+```{.julia .f02-example}
+using InteractiveUtils
+
+methods(describe_pair)
+@which describe_pair(1, 2)
+@which describe_pair(1, 2.0)
+```
+
+実際の引数を`typeof`で確認し，`@which`が示す定義を開いて処理を読みます．
+別の関数へ処理を渡している箇所では，その引数と呼び出し先も順にたどります．
+
+詳細は[Julia公式資料のメソッドの説明](https://docs.julialang.org/en/v1/manual/methods/)を参照してください．
+:::
+
+## 7．配列のコピーと入力の保持 {#array-copy}
 
 `b = a`は同じ配列を二つの名前で参照します．
 そのため，`b`の要素を書き換えると，`a`にも変更が反映されます．
@@ -287,6 +383,7 @@ result[1] = 0.0
 ```
 
 `original = a`で保存してしまった場合，入力の書き換えを見逃す理由を説明してください．
+時間更新への応用は[N01の配列の参照・コピー・変更](N01.qmd#array-reference-copy)で，バッファ交換とスナップショットまでつなげて説明します．
 
 ## 8．テストと近似比較 {#テストを層に分ける}
 

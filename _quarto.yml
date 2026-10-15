@@ -57,6 +57,8 @@ website:
             text: worktreeによる並行作業
           - href: advanced/pseudocode.qmd
             text: 課題と実装をつなぐ疑似プログラム
+          - href: advanced/test-design.qmd
+            text: 意味のあるテストの設計
           - href: advanced/refactoring-design.qmd
             text: 共通化の設計判断
           - href: advanced/cairomakie.qmd
@@ -194,6 +196,8 @@ website:
           text: "worktreeによる並行作業"
         - href: advanced/pseudocode.qmd
           text: 課題と実装をつなぐ疑似プログラム
+        - href: advanced/test-design.qmd
+          text: 意味のあるテストの設計
         - href: advanced/refactoring-design.qmd
           text: 共通化の設計判断
         - href: advanced/cairomakie.qmd

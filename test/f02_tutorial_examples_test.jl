@@ -8,7 +8,7 @@ using Test
     @test length(blocks) == length(collect(eachmatch(r"(?m)^```(?:julia|\{\.julia\b)", source)))
     scope = Module(gensym(:F02Tutorial))
     errors = Dict("BoundsError" => BoundsError, "InexactError" => InexactError,
-                  "ArgumentError" => ArgumentError)
+                  "ArgumentError" => ArgumentError, "UndefVarError" => UndefVarError)
     for (index, block) in enumerate(blocks)
         @testset "example $index" begin
             expected = match(r"expected-error=\"([^\"]+)\"", block[1])

@@ -210,8 +210,82 @@ end
 
 ## バッファ交換
 
-`u_old, u_new = u_new, u_old`は，二つの配列が指す役割を交換します．
+`u_old, u_new = u_new, u_old`は，二つの変数名の参照先を交換します．
 計算済みの`u_new`を次の段階の`u_old`として使っていることに注意します．
+
+::: {.callout-tip collapse="true" title="Julia補足：配列の参照・コピー・変更" #array-reference-copy style="scroll-margin-top: 11rem;"}
+
+**配列の要素を保存するメモリと，それを参照する変数名を分けて追います．**
+[F02のコピーの例](F02.qmd#array-copy)で扱った`b = a`では，`a`と`b`が同じメモリ領域を参照します．
+`b[1] = ...`は共有するメモリ上の値を書き換えるため，`a[1]`で読み出す値も変わります．
+`copy(a)`は別のメモリ領域を用意し，要素の値をコピーします．
+
+```{.julia .n01-array-example}
+using Test
+
+a = [1.0, 2.0, 3.0]
+b = a
+saved = copy(a)
+b[1] = 9.0
+@test b === a
+@test a == [9.0, 2.0, 3.0]
+@test saved == [1.0, 2.0, 3.0]
+
+part = view(a, 1:2)
+part[2] = 8.0
+@test a[2] == 8.0
+```
+
+`view`で作った`part`は，`a`の一部のメモリ領域を共有するため，`part[2]`への代入で`a[2]`も変わります．
+
+| 書き方 | メモリとの関係 |
+|---|---|
+| `u_new = u_old` | `u_new`の参照先を`u_old`と同じメモリ領域にする |
+| `u_new .= u_old`，`copyto!(u_new, u_old)` | `u_new`が使っているメモリ領域へ，`u_old`の要素の値をコピーする |
+| `u_new = copy(u_old)` | 別のメモリ領域へ値をコピーし，`u_new`の参照先にする |
+| `u_old, u_new = u_new, u_old` | 値を各メモリ領域に置いたまま，二つの名前の参照先を交換する |
+
+`step!(u_new, u_old, ...)`は旧値を読んで新値へ書くため，両者に独立したメモリ領域を用意します．
+メモリを共有すると，先に書き換えた値を後の格子点の計算で読むことになります．
+関数内の`u[1] = ...`は，呼び出し元と共有するメモリ上の値を変更します．
+`u = copy(u)`は，関数内の変数`u`の参照先を，コピー用に確保したメモリ領域へ付け替えます．
+末尾の`!`は，引数を変更する関数に付ける慣習です．
+
+バッファ交換前後の対応は次のようになります．
+
+```text
+交換前：u_old → メモリ領域A（旧値）
+        u_new → メモリ領域B（計算した新値）
+交換後：u_old → メモリ領域B（新値）
+        u_new → メモリ領域A（次の書込み先）
+```
+
+同時交換では，右辺の二つの参照を先に取り出してから，左辺へ割り当てます．
+
+次は，バッファとメモリを共有する参照と，別のメモリ領域に値を保存するスナップショットを比較します．
+
+```{.julia .n01-array-example}
+u_old = [1.0, 2.0]
+u_new = [2.0, 3.0]
+old_reference = u_old
+snapshot = copy(u_old)
+history = [copy(u_old)]
+
+u_old, u_new = u_new, u_old
+push!(history, copy(u_old))
+fill!(u_new, 9.0)
+
+@test old_reference == [9.0, 9.0]
+@test snapshot == [1.0, 2.0]
+@test history == [[1.0, 2.0], [2.0, 3.0]]
+```
+
+`push!`は保存先へ要素を追加し，`fill!`は配列の全要素を書き換えます．
+`old_reference`と交換後の`u_new`はメモリを共有するため，`fill!`による書き換えが両方から見えます．
+`snapshot`や`history`には，`copy`で別のメモリ領域へ保存した各時刻の値が残ります．
+この区別は[N06の時間更新と保存場](N06.qmd#saved-fields)でも使います．
+代入と変更の詳細は[Julia公式資料](https://docs.julialang.org/en/v1/manual/variables/#man-assignment-expressions)を参照してください．
+:::
 
 ## CFLと最終時刻
 

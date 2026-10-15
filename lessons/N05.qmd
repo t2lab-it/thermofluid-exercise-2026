@@ -104,6 +104,67 @@ ThermofluidExercise.N01〜N04の処理
 N04では課題側の[`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L4)を`model`として渡し，共通側は受け取った選択に従います．
 抽出する処理が別の関数を呼ぶ場合は，その先もたどり，実行に必要な検証やヘルパーを共通側で完結させます．
 
+::: {.callout-tip collapse="true" title="Julia補足：パッケージ・モジュール・名前のスコープ" #module-scope style="scroll-margin-top: 11rem;"}
+
+**スコープは，名前を使って変数や関数を参照できるコードの範囲です．**
+関数はローカルスコープを作り，引数や関数内で新しく作る変数をその中で扱います．
+モジュールは独立したグローバルスコープを作り，直下で定義した名前を管理します．
+
+プロジェクトは`Project.toml`などで依存関係と実行環境を管理します．
+パッケージは名前とUUIDを持ち，`using`や`import`でロードできるコードの単位です．
+環境の選択・復元は[Julia環境のしくみ](../guides/julia-environment.qmd)を参照してください．
+
+ファイルはコードの保存場所，`module ... end`は名前をまとめる名前空間を作る構文です．
+一つのモジュールのコードを複数ファイルへ分け，`include`で読み込めます．
+
+| 書き方 | コードの評価と名前の扱い |
+|---|---|
+| `include("part.jl")` | 呼び出し元のモジュールで，ファイルのコードを呼ぶたびに評価する |
+| `import ThermofluidExercise` | パッケージをロードし，モジュール名で参照できるようにする |
+| `using ThermofluidExercise` | パッケージをロードし，モジュール名とexportされた名前を使えるようにする |
+| `using .N01` | 現在のモジュールから見た子モジュール`N01`を参照する |
+| `using ..FluxDemo: linear_flux` | 一つ上の階層の`FluxDemo`から，指定した名前を参照する |
+
+`include`内の相対パスは，その`include`を書いたファイルの場所を基準に解決します．
+REPLから直接呼ぶ場合は現在の作業ディレクトリが基準です．
+
+次の例では，子モジュール`Advection`から，`using ..FluxDemo: linear_flux`で親の関数を読み込みます．
+
+```{.julia .n05-example #n05-module-scope}
+module FluxDemo
+export linear_flux
+
+linear_flux(u, speed) = speed * u
+
+module Advection
+using ..FluxDemo: linear_flux
+
+step_flux(u, speed) = linear_flux(u, speed)
+end
+end
+
+using .FluxDemo
+using InteractiveUtils
+using Test
+
+@test linear_flux(2.0, 3.0) == 6.0
+@test FluxDemo.Advection.step_flux(2.0, 3.0) == 6.0
+@test parentmodule(linear_flux) === FluxDemo
+@test parentmodule(FluxDemo.Advection.step_flux) === FluxDemo.Advection
+
+@which FluxDemo.Advection.step_flux(2.0, 3.0)
+@which FluxDemo.linear_flux(2.0, 3.0)
+```
+
+`linear_flux`と`step_flux`の引数`u`・`speed`は，それぞれの関数のローカル変数です．
+`step_flux`内の`linear_flux`は，関数を定義した場所の`using`で取り込んだ名前を参照します．
+関数の所属は`parentmodule`，各メソッドの定義場所は`@which`で確認します．
+実課題でも，`run.jl`の委譲先から`ThermofluidExercise.N01`の定義を開き，そこで使う共通ヘルパーと`using`・`import`をたどれば，所属と依存先を確認できます．
+`@which`による選択の読み方は[F02の多重ディスパッチの補足](F02.qmd#multiple-dispatch)，ローカル変数と実行状態は[F02の実行状態の補足](F02.qmd#execution-state)を参照してください．
+
+詳しい規則はJulia公式資料の[変数のスコープ](https://docs.julialang.org/en/v1/manual/variables-and-scoping/)，[モジュール](https://docs.julialang.org/en/v1/manual/modules/)，[コードの読み込み](https://docs.julialang.org/en/v1/manual/code-loading/)を参照してください．
+:::
+
 ## 境界処理の抽出 {#boundary-example}
 
 以下はN01の[`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L164-L170)と[`validate_boundary_inputs`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/provided_support.jl#L88-L92)を教材用に再構成した教師作成例です．
