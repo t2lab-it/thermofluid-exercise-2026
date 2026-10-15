@@ -37,7 +37,6 @@ cd examples/refactoring-design
 ## 共通化の対象と移し方 {#overview}
 
 授業は1種類の境界処理を既存パッケージへ移す例，ここでは2種類の境界処理と共通の検証を`BoundaryCore`へまとめる例を扱います．
-対象の配列は`Vector{Float64}`，境界値は有限の`Float64`です．
 流入・流出境界条件では左端に流入値，右端に流出条件を適用し，両端固定境界条件では左右に指定値を適用します．
 
 [before.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/before.jl)と[common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl)を開き，次の対応を確認してください．
