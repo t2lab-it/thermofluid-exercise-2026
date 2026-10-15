@@ -8,7 +8,9 @@ sidebar: advanced
 :::
 
 [N05授業の抽出例](../lessons/N05.qmd#boundary-example)を踏まえ，二つの境界処理を共通モジュールへまとめる設計案を比較します．
-入力検証を共有して境界ごとに関数を分ける案，`mode`で切り替える案，受理条件を狭める案について，呼出し方と契約の違いを調べます．
+基本案では，入力検証を共有して境界ごとに関数を分け，従来の契約を保って共通側へ移します．
+この基本案を基準に，入口を`mode`で切り替える案と，配列長の受理条件を狭める案をそれぞれ比較します．
+前者では呼出し方の違い，後者では受け入れる入力の契約の違いを調べます．
 [学生用リポジトリのコード一式](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/examples/refactoring-design)は，独立して実行できる7ファイルの補助教材です．
 
 前提は，関数の呼出し，配列の添字と代入，条件分岐と，授業の[APIと責務](../lessons/N05.qmd#common-api)です．
@@ -56,10 +58,10 @@ cd examples/refactoring-design
 ## 共通化の単位 {#unit}
 
 二つの境界処理は，どちらも「配列が2点以上で，境界値が有限である」という条件を必要とします．
-この条件を確かめる`validate_boundary_inputs`を共有し，流入・流出境界条件と両端固定境界条件はそれぞれの関数で表します．
+基本案では，この条件を確かめる`validate_boundary_inputs`を共有し，流入・流出境界条件と両端固定境界条件はそれぞれの関数で表します．
 各関数の引数から，必要な境界値を読み取れる構成です．
 
-[wide.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/wide.jl)は，`mode`によって境界条件を選ぶ比較案です．
+[wide.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/wide.jl)では，基本案の二つの関数を一つの入口から呼び，`mode`によって境界条件を選びます．
 `mode=:outlet`では左の値を指定し，`mode=:fixed`では左右の値を指定します．
 関数を一つにまとめると，`mode`と指定値の組合せを判定する分岐が加わります．
 
@@ -131,7 +133,7 @@ julia --startup-file=no --compiled-modules=no --project=. checks.jl common
 
 ### 比較案による契約の変更 {#comparisons}
 
-[strict.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/strict.jl)は，配列長を3点以上へ変えた比較案です．
+[strict.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/strict.jl)では，基本案の配列長の受理条件を2点以上から3点以上へ変え，契約の違いを比較します．
 3点配列では従来と同じ結果を返しますが，従来受け入れていた2点配列で`ArgumentError`を出します．
 配置の変更とともに，受け入れる入力の契約も変わっています．
 
