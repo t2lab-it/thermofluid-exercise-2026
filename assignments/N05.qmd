@@ -3,8 +3,9 @@ title: "共通パッケージへの抽出と回帰確認"
 lesson-id: N05
 understanding-check-points:
   - "実際の重複から共通化する責務を選び，共通APIと課題側に残す責務を区別すること"
-  - "module，include，importの役割と依存方向，共通パッケージから課題のrun.jlや大域状態へ依存させない理由"
-  - "既存入口から共通実装へ委譲することと，実装を複製して残すことの違い"
+  - "N01〜N04の既存入口を一つ選び，「課題側の呼び出し→共通パッケージの更新・境界処理→共通ヘルパー」の呼び出し関係と，引数・更新される配列・戻り値を具体的にたどり，共通実装への委譲と実装を複製して残すことの違いを説明すること"
+  - "module，include，importの役割と依存方向を説明すること"
+  - "N04の選択モデル，初期条件，実験条件，診断・描画をどこに置くか説明し，課題側から設定を引数で渡す構成と，共通側が`run.jl`の大域設定を読む構成を比較して，後者の依存を避ける理由を説明すること"
   - "引数・既定値・戻り値・例外，境界規約とN04の選択モデルを，共通化の前後で保持すること"
   - "baselineの来歴と，新しいJuliaプロセスで抽出前後を比較する理由，回帰がないことと物理的に正しいことの違い"
   - "AI提案のdiff・テスト・代表結果を対応づけて採否を判断し，baselineの再生成が退行を隠す場合や，重複実装を残してもテストが通る場合を説明すること"
@@ -79,7 +80,7 @@ N05の提出物は`results/N05/baseline.toml`と`results/N05/regression.toml`で
 N05の共通化で進めなくなった場合は，diffと失敗を説明して教員・TAの復帰支援を受けられます．
 復帰後も自分の過去課題・N04選択・学習ログを保ち，採用した差分と回帰結果を説明します．
 
-理解度チェックの4観点は，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)，[基準と回帰の証拠](../lessons/N05.qmd#regression)，[AI差分の採否](../lessons/N05.qmd#diff-review)を参照して整理します．
+理解度チェックのポイントは，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)，[基準と回帰の証拠](../lessons/N05.qmd#regression)，[AI差分の採否](../lessons/N05.qmd#diff-review)を参照して整理します．
 
 {{< include /assignments/_understanding-check.qmd >}}
 
