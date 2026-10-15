@@ -56,6 +56,50 @@ function run_pseudocode_excerpt(code; steps=2, scheme=:upwind, failure=:none)
     Base.invokelatest(() -> getfield(scope, :run_case)(steps, scheme, failure))
 end
 
+@testset "published N01 Julia translations" begin
+    source = read(joinpath(@__DIR__, "..", "advanced", "pseudocode.qmd"), String)
+    blocks = Dict(m.captures[1] => m.captures[2] for m in eachmatch(
+        r"(?ms)^```\{\.julia #n01-(initial|upwind|centered|boundary)-implementation\}\n(.*?)^```", source))
+    required = ["initial", "upwind", "centered", "boundary"]
+    @test all(haskey(blocks, name) for name in required)
+    if all(haskey(blocks, name) for name in required)
+        scope = Module(gensym(:N01Translations))
+        # Input validation is supplied by the separate student repository.
+        # Exercise the published numerical operations here with valid inputs.
+        include_string(scope, """
+            validate_initial_condition_inputs(args...) = nothing
+            validate_step_inputs(args...) = nothing
+            validate_boundary_inputs(args...) = nothing
+            """)
+        for name in required
+            include_string(scope, blocks[name], "published N01 $name implementation")
+        end
+        run(name, args...; kwargs...) = Base.invokelatest(getfield(scope, name), args...; kwargs...)
+        x = [0., 0.5, 1., 1.5, 2.]
+        u0 = run(:rectangular_initial_condition, x)
+        @test u0 == [1., 2., 2., 1., 1.]
+        @test x == [0., 0.5, 1., 1.5, 2.]
+        @test !Base.mightalias(u0, x)
+        @test run(:rectangular_initial_condition, x; base=0., plateau=3.,
+                  plateau_start=0.5, plateau_end=1.5) == [0., 3., 3., 3., 0.]
+        for (name, before_boundary, after_boundary) in (
+            (:upwind_step!, [1., 1.5, 2., 1.5, 1.], [1., 1.5, 2., 1.5, 1.5]),
+            (:centered_step!, [1., 1.75, 2.25, 1.25, 1.], [1., 1.75, 2.25, 1.25, 1.25]),
+        )
+            old = copy(u0)
+            new = fill(-99., length(old))
+            @test run(name, new, old, 1., 0.25, 0.5) === new
+            @test new == before_boundary
+            @test old == u0
+            @test run(:apply_boundary!, new) === new
+            @test new == after_boundary
+        end
+        new = [7., 3., 4., 9.]
+        @test run(:apply_boundary!, new; left_value=2.) === new
+        @test new == [2., 3., 4., 4.]
+    end
+end
+
 function excerpt_flow_matches(result, steps, scheme)
     result.completed || return false
     result.u0 == result.initial || return false

@@ -159,6 +159,8 @@ return 最終分布u_old，その最小・最大値，刻み・回数・実効CF
 抜粋の`_`は反復番号を本体で使わない場合の表記です．
 手法の選択は`step! = scheme === :upwind ? upwind_step! : centered_step!`に対応します．
 各手順を，同じ入出力と責務を持つ関数呼出しに対応づけます．
+以下では，疑似プログラムと対応するJulia実装を順に並べます．
+入力検査には配布済みの関数を使います．
 
 ### 初期分布の作成
 
@@ -177,11 +179,36 @@ end
 return u0
 ```
 
+Juliaでは，矩形区間と内外の値を引数にして，次のように実装できます．
+
+```{.julia #n01-initial-implementation}
+function rectangular_initial_condition(
+    x::AbstractVector{<:Real};
+    base::Real = 1.0,
+    plateau::Real = 2.0,
+    plateau_start::Real = 0.5,
+    plateau_end::Real = 1.0,
+)
+    validate_initial_condition_inputs(x, base, plateau, plateau_start, plateau_end)
+    u0 = Vector{Float64}(undef, length(x))
+    for i in eachindex(x)
+        if plateau_start <= x[i] <= plateau_end
+            u0[i] = plateau
+        else
+            u0[i] = base
+        end
+    end
+    return u0
+end
+```
+
 ### 1ステップの詳細 {#step-detail}
 
 二つの更新関数は，入力検査，旧値の複製，内部点の更新，結果の返却という共通の骨格を持ちます．
 検査では，新旧配列を別の同長・3点以上の配列とし，旧値と`c`・`dt`・`dx`の有限性，`c`・`dt`・`dx`の正値を確認します．
 呼出し側では，記憶領域が独立した新旧配列を用意します．
+
+#### 上流差分の更新
 
 ```text
 function upwind_step!(u_new, u_old, c, dt, dx)
@@ -193,7 +220,26 @@ function upwind_step!(u_new, u_old, c, dt, dx)
     end
     return u_new
 end
+```
 
+```{.julia #n01-upwind-implementation}
+function upwind_step!(u_new, u_old, c::Real, dt::Real, dx::Real)
+    validate_step_inputs(u_new, u_old, c, dt, dx)
+    courant = c * dt / dx
+    copyto!(u_new, u_old)
+    for i in 2:(length(u_old) - 1)
+        u_new[i] = u_old[i] - courant * (u_old[i] - u_old[i-1])
+    end
+    return u_new
+end
+```
+
+旧値の複製はJuliaの`copyto!(u_new, u_old)`に対応し，内部点の更新中は両端に旧値を保持します．
+更新式の右辺はすべて旧配列から読みます．
+
+#### 中心差分の更新
+
+```text
 function centered_step!(u_new, u_old, c, dt, dx)
     validate_step_inputs(u_new, u_old, c, dt, dx)
     courant ← c * dt / dx
@@ -205,8 +251,22 @@ function centered_step!(u_new, u_old, c, dt, dx)
 end
 ```
 
-旧値の複製はJuliaの`copyto!(u_new, u_old)`に対応し，内部点の更新中は両端に旧値を保持します．
-更新式の右辺はすべて旧配列から読みます．
+```{.julia #n01-centered-implementation}
+function centered_step!(u_new, u_old, c::Real, dt::Real, dx::Real)
+    validate_step_inputs(u_new, u_old, c, dt, dx)
+    courant = c * dt / dx
+    copyto!(u_new, u_old)
+    for i in 2:(length(u_old) - 1)
+        u_new[i] = u_old[i] - courant/2 * (u_old[i+1] - u_old[i-1])
+    end
+    return u_new
+end
+```
+
+### 境界条件の適用
+
+`apply_boundary!`は提供済みで，内部点を保持して両端を設定します．
+右端が読むのは，直前に更新した新配列の左隣です．
 
 ```text
 function apply_boundary!(u; left_value = 1.0)
@@ -217,8 +277,15 @@ function apply_boundary!(u; left_value = 1.0)
 end
 ```
 
-`apply_boundary!`は提供済みで，内部点を保持して両端を設定します．
-右端が読むのは，直前に更新した新配列の左隣です．
+```{.julia #n01-boundary-implementation}
+function apply_boundary!(u::AbstractVector{<:Real}; left_value::Real = 1.0)
+    validate_boundary_inputs(u, left_value)
+    u[1] = left_value
+    u[end] = u[end-1]
+    return u
+end
+```
+
 課題でJuliaへ翻訳するときは，[既存API](../assignments/N01.qmd#formulation)と提供済みの時間ループに各手順を対応づけます．
 
 ## 課題からの手順作成とレビュー {#review}
