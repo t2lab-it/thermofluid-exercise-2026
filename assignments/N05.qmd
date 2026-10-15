@@ -48,6 +48,8 @@ N05では，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](
 
 比較はキー・形状・整数・モデルの一致と，浮動小数の`rtol=1e-12, atol=1e-13`を要求します．
 
+{{< include /assignments/_pseudocode.qmd >}}
+
 ## 編集対象と契約
 
 コードへのリンクは，対応する学生スターターのcommit `92a01c5`の該当箇所を指します．

@@ -35,6 +35,8 @@ Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N
 
 {{< include /assignments/_elliptic-formulation.qmd >}}
 
+{{< include /assignments/_pseudocode.qmd >}}
+
 ## 編集先とAPI {#api}
 
 [`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L4)へ次を実装します．

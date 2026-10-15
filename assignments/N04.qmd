@@ -101,6 +101,8 @@ $$
 
 `advection=false`で拡散のみ，`diffusivity=0`で移流のみを計算できるようにします．
 
+{{< include /assignments/_pseudocode.qmd >}}
+
 ## 編集対象と選択
 
 | 役割 | 学生リポジトリ内の場所 |

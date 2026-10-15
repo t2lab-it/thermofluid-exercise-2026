@@ -75,6 +75,8 @@ $$
 F03-F04をmergeし，更新済みで変更のない`main`から始めます．
 [課題の開始手順](../guides/workflow.qmd#start-exercise)の`TASK_ID`を`N01`へ置き換えてください．
 
+{{< include /assignments/_pseudocode.qmd >}}
+
 ## 実装範囲
 
 [`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)は冒頭にある[`rectangular_initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L45-L60) → [`upwind_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L87-L103) / [`centered_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L130-L146) → [`apply_boundary!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L164-L170) → [`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L197-L246) → [`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl#L308-L323)の順に読みます．

@@ -109,6 +109,8 @@ SORは$u\leftarrow(1-\omega)u+\omega u_{GS}$と順次更新し，境界値を保
 $\omega=1$がGauss–Seidel，SORの比較値は1.5，入力範囲は$0<\omega<2$です．
 反復数，既知解誤差，初回コンパイルを除いた実行時間で比較します．
 
+{{< include /assignments/_pseudocode.qmd >}}
+
 ## 編集先とAPI {#api}
 
 [`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L4)へ次を実装します．
