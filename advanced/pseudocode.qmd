@@ -1,6 +1,7 @@
 ---
 title: "疑似プログラムで課題と実装をつなぐ"
 sidebar: advanced
+body-classes: pseudocode-material
 ---
 
 ::: {.course-position}
