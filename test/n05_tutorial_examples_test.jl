@@ -3,7 +3,7 @@ using Test
 # Execute the published files, not a second implementation of the example.
 function n05_example_blocks(source)
     blocks = collect(eachmatch(r"```\{\.(?:julia|toml) \.n05-example #([^}]+)\}\n(.*?)\n```"s, source))
-    expected = Set(["n05-project", "n05-before", "n05-package", "n05-boundary", "n05-after", "n05-checks"])
+    expected = Set(["n05-project", "n05-before", "n05-package", "n05-boundary", "n05-after", "n05-checks", "n05-module-scope"])
     ids = [m[1] for m in blocks]
     Set(ids) == expected && length(ids) == length(expected) || error("N05 example inventory mismatch")
     length(collect(eachmatch(r"```\{?\.?julia\b", source))) == count(m -> m[1] != "n05-project", blocks) || error("unregistered N05 Julia example")
@@ -13,6 +13,7 @@ end
 @testset "N05 published extraction example" begin
     source = read(joinpath(@__DIR__, "..", "lessons", "N05.qmd"), String)
     examples = n05_example_blocks(source)
+    include_string(Module(gensym(:N05Modules)), examples["n05-module-scope"], "N05 module scope example")
     @test_throws ErrorException n05_example_blocks("")
     @test_throws ErrorException n05_example_blocks(source * "\n```julia\n1 + 1\n```\n")
     @test_throws ErrorException n05_example_blocks(replace(source, "#n05-before" => "#unknown"))
