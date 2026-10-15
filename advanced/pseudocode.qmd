@@ -38,48 +38,15 @@ body-classes: pseudocode-material
 
 ## N01の数値条件 {#numerical-contract}
 
-数値手法は[N01授業の問題設定](../lessons/N01.qmd#problem-setup)，API・実装条件は[課題N01の離散化](../assignments/N01.qmd#discretization)を参照してください．
-領域$0\le x\le2$で，分布$u$が正の一定速度$c$で右へ運ばれる1次元線形移流方程式
-$$
-\frac{\partial u}{\partial t}+c\frac{\partial u}{\partial x}=0
-$$
-を扱います．
+題材は[N01の1次元線形移流](../lessons/N01.qmd#problem-setup)です．
+API・実装条件は[課題N01](../assignments/N01.qmd#discretization)を参照してください．
+
 初期分布は$0.5\le x\le1$で2，それ以外で1です．
-左端は1に固定し，右端は左隣の値からゼロ勾配を表します．
-格子点数を$N$とし，内部点$i=2,\ldots,N-1$の更新式を比較します．
+格子点数を$N$とし，内部点$i=2,\ldots,N-1$を更新します．
+左端は1に固定し，右端は更新後の左隣の値にそろえます．
 
-| 手法 | 陽Euler法による更新式 |
-|---|---|
-| 上流差分 | $u_i^{n+1}=u_i^n-C(u_i^n-u_{i-1}^n)$ |
-| 中心差分 | $u_i^{n+1}=u_i^n-\frac C2(u_{i+1}^n-u_{i-1}^n)$ |
-: {tbl-colwidths="[22, 78]"}
-
-$C=c\Delta t/\Delta x$は実効CFL数で，疑似プログラムでは`courant`と書きます．
-`step`回目の更新では$n=\mathtt{step}-1$の値を`u_old`から読み，$n+1=\mathtt{step}$の値を`u_new`へ書きます．
-境界は内部点の更新後に，$u_1^{n+1}=1$，$u_N^{n+1}=u_{N-1}^{n+1}$とします．
-右端は，同じステップで更新を終えた新配列の左隣を読みます．
-
-### 入力・状態・出力
-
-| 処理 | 入力・参照する状態 | 出力・責務 |
-|---|---|---|
-| 条件確認・初期化 | 差分法，格子点数，速度，指定CFL，終了時刻，初期条件 | 格子，初期配列`u0`，実際の刻み・回数・CFL |
-| バッファ準備 | `u0` | 初期値を保持し，独立した新旧配列を確保 |
-| `upwind_step!`／`centered_step!` | 同じ旧配列，`c`，`dt`，`dx` | 内部点を新配列へ書き，両端に旧値を保持 |
-| `apply_boundary!` | 内部点が完成した新配列 | 左端を1，右端を新配列の左隣に設定 |
-| 配列交換 | 内部点と境界が完成した新旧配列 | 完成済み配列を次の旧状態として使用 |
-| 終了・診断 | `steps`回の更新後の`u_old` | 最終分布とその最小・最大値，実効CFL |
-: {tbl-colwidths="[23, 32, 45]"}
-
-指定値`cfl`から候補刻みを求め，回数を切り上げて終了時刻に合わせます．
-$$
-\Delta t_{\rm nominal}=\frac{\mathrm{cfl}\,\Delta x}{c},\qquad
-\mathrm{steps}=\left\lceil\frac{t_{\rm final}}{\Delta t_{\rm nominal}}\right\rceil,\qquad
-\Delta t=\frac{t_{\rm final}}{\mathrm{steps}}
-$$
-標準条件は$N=81$，$c=1$，指定CFL 0.5，終了時刻0.5で，40回，$\Delta t=0.0125$です．
-調整後の刻みで実効CFLを求め，`isapprox(steps * dt, t_final; atol=100eps())`で最終時刻への到達を確認します．
-上流差分の安定条件は$0<C\le1$で，中心差分＋陽Euler法は振動や増幅を観察する比較例です．
+時間ループは，刻み`dt`で`steps`回進めます．
+`c`は移流速度，`dx`は格子幅で，更新式の係数$C=c\,\mathtt{dt}/\mathtt{dx}$をコードでは`courant`と書きます．
 
 ## 実装を疑似プログラムで理解 {#from-code}
 
