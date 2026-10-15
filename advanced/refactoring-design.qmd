@@ -15,7 +15,6 @@ N05の作業手順は[課題N05](../assignments/N05.qmd)を参照してくださ
 ## コード例の実行準備とファイル構成 {#prepare}
 
 課題リポジトリの外に作業用ディレクトリを作成し，移動します．
-以下の端末操作はfishでも使えます．
 
 ```sh
 mkdir -p /tmp/n05-refactoring-example
