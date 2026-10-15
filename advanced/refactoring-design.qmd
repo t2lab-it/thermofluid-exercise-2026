@@ -7,7 +7,7 @@ sidebar: advanced
 任意・発展資料
 :::
 
-[N05の共通パッケージ化](../lessons/N05.qmd)を題材に，二つの境界処理の本体と，両方が使う入力検証を共通モジュールへ移します．
+[N05の共通パッケージ化](../lessons/N05.qmd)を題材に，二つの境界処理と，両方が使う入力検証を共通モジュールへ移します．
 
 ## 共通化の対象と移し方 {#overview}
 
@@ -15,8 +15,8 @@ sidebar: advanced
 
 | 対象 | 抽出前 | 共通側の関数 |
 |---|---|---|
-| 左端へ指定値，右端へ左隣の値を書く処理 | `apply_boundary!`の本体 | `inlet_outlet!` |
-| 左右の端へ指定値を書く処理 | `fixed_boundary!`の本体 | `fixed_ends!` |
+| 左端へ指定値，右端へ左隣の値を書く処理 | `apply_boundary!` | `inlet_outlet!` |
+| 左右の端へ指定値を書く処理 | `fixed_boundary!` | `fixed_ends!` |
 | 配列長と境界値を確かめる入力検証 | `validate_boundary_inputs` | 両方の処理が使う`validate_boundary_inputs` |
 
 抽出後の`after.jl`には元の関数名の入口を置き，引数を共通側へ渡して，その戻り値を返します．
