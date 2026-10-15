@@ -1,5 +1,5 @@
 ---
-title: "意味のあるテストを設計する"
+title: "意味のあるテストの設計"
 sidebar: advanced
 ---
 
