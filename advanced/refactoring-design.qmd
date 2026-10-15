@@ -12,15 +12,15 @@ sidebar: advanced
 
 | 問い | 読む節 |
 |---|---|
-| 何を共通にするか | [共通化の単位を選ぶ](#unit) |
-| 依存する処理をどこへ置くか | [依存する処理も追う](#dependencies) |
-| 呼出し側との約束をどう保つか | [外から見た契約を保つ](#contract) |
-| 何を根拠に抽出できたと判断するか | [証拠を組み合わせる](#evidence) |
+| 何を共通にするか | [共通化の単位](#unit) |
+| 依存する処理をどこへ置くか | [依存関係の整理](#dependencies) |
+| 呼出し側との約束をどう保つか | [契約の維持](#contract) |
+| 何を根拠に抽出できたと判断するか | [証拠の組合せ](#evidence) |
 
 必要な前提は，関数の呼出し，配列の添字と代入，条件分岐です．
 N05の作業手順は[課題N05](../assignments/N05.qmd)を参照してください．
 
-## 小例を実行する準備 {#prepare}
+## 小例の実行準備 {#prepare}
 
 [N05の教師作成例](../lessons/N05.qmd#boundary-example)から，境界処理だけを取り出します．
 左端へ指定値を書き，その後で右端へ左隣の値を写す例と，左右へ指定値を書く比較例を使います．
@@ -59,7 +59,7 @@ cd /tmp/n05-refactoring-example
 ここでは配置の判断に集中するため`include`で読み込みます．
 実課題のパッケージの読込み方は[N05の配置と呼出し](../lessons/N05.qmd#package-layout)を参照してください．
 
-## 共通化の単位を選ぶ {#unit}
+## 共通化の単位 {#unit}
 
 ### 比較する案と保つ約束
 
@@ -174,7 +174,7 @@ end
 境界ごとに有効な指定が異なる場合は，個別の入口を残す案と比較します．
 どの変更を一箇所で扱いたいかを基準に，共通化する単位を選びます．
 
-## 依存する処理も追う {#dependencies}
+## 依存関係の整理 {#dependencies}
 
 ### 比較する案と保つ約束
 
@@ -228,7 +228,7 @@ N04では課題側が`SELECTED_MODEL`を選び，共通側へ`model`として渡
 参照した学生ソースはcommit `a97f7c3971c7c0d595ef3642577b9cd45414bffb`です．
 [`N01の境界`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N01_linear_advection/run.jl#L137-L142)，[`その検証`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N01_linear_advection/provided_support.jl#L35-L39)，[`共通APIの契約`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/src/ThermofluidExercise.jl)，[`N04のモデル選択と引数`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N04_advection_diffusion/run.jl)で対応を確認できます．
 
-## 外から見た契約を保つ {#contract}
+## 契約の維持 {#contract}
 
 ### 比較する案と保つ約束
 
@@ -330,7 +330,7 @@ end
 たとえば実課題の`validate_buffers`は各軸3点以上を要求するので，この小例の境界処理とは入力条件が異なります．
 入力条件の変更が必要なら，互換な抽出から分けて契約変更として検討します．
 
-## 証拠を組み合わせる {#evidence}
+## 証拠の組合せ {#evidence}
 
 ### 比較する案と保つ約束
 
@@ -409,7 +409,7 @@ julia --startup-file=no --compiled-modules=no --project=. compare.jl
 結果に不一致があれば，契約と変更差分へ戻って原因を調べます．
 課題全体の操作は[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)，テストの整理は[テストの設計と実行](../guides/testing.qmd)，失敗の切り分けは[不具合を縮小する](../guides/troubleshooting.qmd#reduce-bug)へ進んでください．
 
-## 自分のコードへ当てはめる {#questions}
+## 自分のコードへの適用 {#questions}
 
 研究室の既存コードを整理するときも，変更前に次を説明してみてください．
 
