@@ -75,7 +75,9 @@ $$
 ## 時間更新と保存場 {#saved-fields}
 
 二重バッファは時間更新の作業領域であり，保存時刻の瞬時場は独立したデータです．
-同じ配列への参照だけを保存すると，過去の時刻の場まで最後の値になります．
+同じ配列への参照だけを保存すると，バッファの再利用で過去の時刻の場も書き換わります．
+数値配列のスナップショットは`copy`で独立させます．
+参照だけを残す場合との違いは，[N01の配列の参照・コピー・変更](N01.qmd#array-reference-copy)の実行例で確認できます．
 各保存区間に[`fit_timestep`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L158-L161)を適用し，刻みを区間長へ合わせて補間せずに保存します．
 
 [`simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/simulate.jl)が場をHDF5へ保存し，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)が場から診断値を求め，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)が図を作ります．
