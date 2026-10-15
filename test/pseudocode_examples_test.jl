@@ -1,44 +1,45 @@
 using Test
 
-# Only the published control flow is executed. The updater writes predetermined
-# values and deliberately contains no diffusion formula or student TODO solution.
-function run_pseudocode_excerpt(code; steps=2, failure=:none)
+# Execute only the published control flow. Recorded states contain no advection
+# formula or student TODO solution; the boundary stand-in marks completion.
+function run_pseudocode_excerpt(code; steps=2, scheme=:upwind, failure=:none)
     scope = Module(gensym(:PseudocodeExcerpt))
     harness = raw"""
-    function run_case(steps, failure)
-        u0 = [0., 1., 4., 2., 0.]
-        original = copy(u0)
-        states = ([0., 3., 5., 2., 0.], [-1., 1., 3., 2., 0.])
-        dt, dx, diffusivity, effective_fo = 0.25, 1., 1., 0.25
-        t_final, boundary = steps * dt, :fixed
-        events = []
-        buffers = []
+    function run_case(steps, scheme, failure)
+        initial = [1., 2., 4., 2., 1.]
+        states = scheme == :upwind ?
+            ([1., 3., 5., 2., -99.], [1., 1., 3., 4., -99.]) :
+            ([1., 4., 2., 3., -99.], [1., -1., 4., 2., -99.])
+        completed_states = [vcat(state[1:end-1], state[end-1]) for state in states]
+        x = collect(0.:0.5:2.)
+        c, dt, dx = 1., 0.25, 0.5
+        events, buffers, boundary_inputs = [], [], []
         update_count = 0
-        function diffusion_step!(new, old, dt, dx, diffusivity; boundary)
+        function rectangular_initial_condition(x)
+            push!(events, (:initial, 0))
+            failure == :initial && error("未実装 N01: rectangular_initial_condition")
+            copy(initial)
+        end
+        function update!(new, old, selected)
             update_count += 1
-            # Seed unused history slots so early failure cannot silently record a value.
-            update_count == 1 && (heat_history[2:end] .= -12345.)
             push!(buffers, (; new, old, input=copy(old), independent=!Base.mightalias(new, old)))
-            push!(events, (:update, update_count))
-            failure == :todo && error("未実装 N03: diffusion_step!")
+            push!(events, (selected, update_count))
+            failure == :validation && throw(ArgumentError("step inputs"))
+            failure == :todo && error("未実装 N01: $(selected)_step!")
             new .= states[update_count]
-            failure == :field_nan && (new[3] = NaN)
             new
         end
-        function thermal_content(u, dx)
-            push!(events, (:heat, update_count))
-            # An unrelated diagnostic stand-in; only data flow is under test.
-            failure == :heat_nan && update_count > 0 && return NaN
-            sum(u) * dx
+        upwind_step!(new, old, c, dt, dx) = update!(new, old, :upwind)
+        centered_step!(new, old, c, dt, dx) = update!(new, old, :centered)
+        function apply_boundary!(new)
+            push!(events, (:boundary, update_count))
+            push!(boundary_inputs, copy(new))
+            failure == :boundary && error("boundary failure")
+            new[1] = 1.
+            new[end] = new[end-1]
+            new
         end
-        function ensure_finite(values, step, t, fo)
-            tag = step == 0 ? :initial_check : values isa Tuple ? :heat_check : :field_check
-            push!(events, (tag, step))
-            all(isfinite, values) || error("step=$step time=$t fo=$fo")
-        end
-        u_old = u_new = nothing
-        heat_history = Float64[]
-        low = high = NaN
+        u0 = u_old = u_new = nothing
         caught = nothing
         completed = false
         try
@@ -47,83 +48,79 @@ function run_pseudocode_excerpt(code; steps=2, failure=:none)
         catch err
             caught = err
         end
-        (; u0, original, states, u_old, u_new, heat_history, low, high,
-           buffers, events, caught, completed)
+        (; initial, u0, states, completed_states, u_old, u_new,
+           buffers, boundary_inputs, events, caught, completed)
     end
     """
-    include_string(scope, harness, "published N03 excerpt")
-    Base.invokelatest(() -> getfield(scope, :run_case)(steps, failure))
+    include_string(scope, harness, "published N01 excerpt")
+    Base.invokelatest(() -> getfield(scope, :run_case)(steps, scheme, failure))
 end
 
-function excerpt_flow_matches(result, steps)
+function excerpt_flow_matches(result, steps, scheme)
     result.completed || return false
-    result.u0 == result.original || return false
+    result.u0 == result.initial || return false
     length(result.buffers) == steps || return false
     all(b -> b.independent, result.buffers) || return false
     first_buffer = result.buffers[1]
-    first_buffer.input == result.original || return false
+    first_buffer.input == result.initial || return false
     !Base.mightalias(first_buffer.old, result.u0) || return false
     !Base.mightalias(first_buffer.new, result.u0) || return false
     result.u_old === result.buffers[end].new || return false
     result.u_new === result.buffers[end].old || return false
-    result.u_old == result.states[steps] || return false
+    result.u_old == result.completed_states[steps] || return false
+    result.boundary_inputs == collect(result.states[1:steps]) || return false
     if steps == 2
         second = result.buffers[2]
         second.old === first_buffer.new || return false
         second.new === first_buffer.old || return false
-        second.input == result.states[1] || return false
+        second.input == result.completed_states[1] || return false
     end
-    expected_events = [(:heat, 0), (:initial_check, 0)]
+    expected_events = [(:initial, 0)]
     for step in 1:steps
-        append!(expected_events, [(:update, step), (:field_check, step),
-                                  (:heat, step), (:heat_check, step)])
+        append!(expected_events, [(scheme, step), (:boundary, step)])
     end
-    result.events == expected_events || return false
-    result.heat_history == vcat(sum(result.original), [sum(result.states[s]) for s in 1:steps]) || return false
-    result.low == minimum(vcat(result.original, result.states[1:steps]...)) || return false
-    result.high == maximum(vcat(result.original, result.states[1:steps]...))
+    result.events == expected_events
 end
 
-@testset "published N03 control flow (not a numerical solver test)" begin
+@testset "published N01 control flow (not a numerical solver test)" begin
     path = joinpath(@__DIR__, "..", "advanced", "pseudocode.qmd")
     source = isfile(path) ? read(path, String) : ""
-    blocks = collect(eachmatch(r"(?ms)^```\{\.julia #n03-time-loop\}\n(.*?)^```", source))
+    blocks = collect(eachmatch(r"(?ms)^```\{\.julia #n01-time-loop\}\n(.*?)^```", source))
     @test length(blocks) == 1
     if length(blocks) == 1
         code = only(blocks).captures[1]
-        for steps in (1, 2)
-            @test excerpt_flow_matches(run_pseudocode_excerpt(code; steps), steps)
-        end
-        for failure in (:todo, :field_nan, :heat_nan)
-            result = run_pseudocode_excerpt(code; failure)
-            @test !result.completed
-            @test result.caught isa ErrorException
-            @test result.u0 == result.original
-            @test length(result.buffers) == 1
-            # Failure must occur before swap, next update, or normal completion.
-            @test result.u_old === result.buffers[1].old
-            @test result.u_new === result.buffers[1].new
-            @test result.u_old == result.original
-            @test result.heat_history == [sum(result.original), -12345., -12345.]
-            @test result.low == minimum(result.original)
-            @test result.high == maximum(result.original)
-            expected = [(:heat, 0), (:initial_check, 0), (:update, 1)]
-            failure != :todo && push!(expected, (:field_check, 1))
-            failure == :heat_nan && append!(expected, [(:heat, 1), (:heat_check, 1)])
-            @test result.events == expected
-            message = sprint(showerror, result.caught)
-            if failure == :todo
-                @test occursin("未実装 N03", message)
-            else
-                @test all(part -> occursin(part, message), ("step=1", "time=0.25", "fo=0.25"))
+        for scheme in (:upwind, :centered)
+            for steps in (1, 2)
+                @test excerpt_flow_matches(run_pseudocode_excerpt(code; steps, scheme), steps, scheme)
             end
+            initial_failure = run_pseudocode_excerpt(code; scheme, failure=:initial)
+            @test !initial_failure.completed
+            @test initial_failure.caught isa ErrorException
+            @test initial_failure.events == [(:initial, 0)]
+            @test isempty(initial_failure.buffers)
+            @test initial_failure.u_old === nothing
+            for failure in (:validation, :todo, :boundary)
+                result = run_pseudocode_excerpt(code; scheme, failure)
+                @test !result.completed
+                @test result.caught isa (failure == :validation ? ArgumentError : ErrorException)
+                @test result.u0 == result.initial
+                @test length(result.buffers) == 1
+                @test result.u_old === result.buffers[1].old
+                @test result.u_new === result.buffers[1].new
+                @test result.u_old == result.initial
+                expected = [(:initial, 0), (scheme, 1)]
+                failure == :boundary && push!(expected, (:boundary, 1))
+                @test result.events == expected
+                @test length(result.boundary_inputs) == (failure == :boundary ? 1 : 0)
+            end
+            swap = "u_old, u_new = u_new, u_old"
+            @test occursin(swap, code)
+            removed = replace(code, swap => "nothing")
+            premature = replace(removed, "apply_boundary!(u_new)" => swap * "\n    apply_boundary!(u_new)")
+            no_boundary = replace(code, "apply_boundary!(u_new)" => "nothing")
+            @test !excerpt_flow_matches(run_pseudocode_excerpt(removed; scheme), 2, scheme)
+            @test !excerpt_flow_matches(run_pseudocode_excerpt(premature; scheme), 2, scheme)
+            @test !excerpt_flow_matches(run_pseudocode_excerpt(no_boundary; scheme), 2, scheme)
         end
-        swap = "u_old, u_new = u_new, u_old"
-        @test occursin(swap, code)
-        removed = replace(code, swap => "nothing")
-        premature = replace(removed,
-            "ensure_finite(u_new, step" => swap * "\n        ensure_finite(u_new, step")
-        @test !excerpt_flow_matches(run_pseudocode_excerpt(removed), 2)
-        @test !excerpt_flow_matches(run_pseudocode_excerpt(premature), 2)
     end
 end

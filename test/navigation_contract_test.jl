@@ -718,7 +718,7 @@ end
         source = read(page, String)
         @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
         targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
-        for relative in ("lessons/N03.qmd", "assignments/N03.qmd", "guides/testing.qmd", "guides/ai-usage.qmd")
+        for relative in ("lessons/N01.qmd", "assignments/N01.qmd", "guides/testing.qmd", "guides/ai-usage.qmd")
             @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
         end
     end
