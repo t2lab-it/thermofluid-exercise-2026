@@ -1,6 +1,8 @@
 ---
 title: "共通化の設計判断"
 sidebar: advanced
+mermaid:
+  theme: neutral
 ---
 
 ::: {.course-position}
@@ -74,18 +76,38 @@ cd examples/refactoring-design
 
 ## 依存関係の整理 {#dependencies}
 
-[common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl)では，共有する検証を二つの境界処理と同じモジュールへ置きます．
+[common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl)の`BoundaryCore`では，共有する検証を二つの境界処理と同じモジュールへ置きます．
 依存をたどって必要な処理を共通側で完結させる理由は，授業の[依存方向](../lessons/N05.qmd#package-layout)で確認できます．
 
-```text
-before.jl
-  apply_boundary! ──→ validate_boundary_inputs
-  fixed_boundary! ──→ validate_boundary_inputs
+矢印は，関数からその呼出し先へ向けています．
 
-共通化後
-  after.jl                     common.jl の BoundaryCore
-  apply_boundary! ──────────→ inlet_outlet! ──┐
-  fixed_boundary! ───────────→ fixed_ends! ───┴→ validate_boundary_inputs
+**共通化前**
+
+```{mermaid}
+%%{init: {"flowchart": {"nodeSpacing": 12, "rankSpacing": 50, "padding": 8}}}%%
+flowchart TB
+    subgraph before["before.jl"]
+        direction TB
+        old_outlet["apply_boundary!"] --> old_check["validate_boundary_inputs"]
+        old_fixed["fixed_boundary!"] --> old_check
+    end
+```
+
+**共通化後**
+
+```{mermaid}
+%%{init: {"flowchart": {"nodeSpacing": 12, "rankSpacing": 50, "padding": 8}}}%%
+flowchart TB
+    subgraph after["after.jl"]
+        outlet["apply_boundary!"]
+        fixed["fixed_boundary!"]
+    end
+    subgraph common["common.jl"]
+        core_outlet["inlet_outlet!"] --> check["validate_boundary_inputs"]
+        core_fixed["fixed_ends!"] --> check
+    end
+    outlet --> core_outlet
+    fixed --> core_fixed
 ```
 
 [after.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/after.jl)は，`include("common.jl")`で共通モジュールを読み込みます．
