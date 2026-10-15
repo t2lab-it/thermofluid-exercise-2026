@@ -1,0 +1,443 @@
+---
+title: "共通化の設計判断"
+sidebar: advanced
+---
+
+::: {.course-position}
+任意・発展資料
+:::
+
+[N05の共通パッケージ化](../lessons/N05.qmd)を題材に，処理を移す前後で何を判断し，何を確かめるかを練習します．
+次の四つの問いを，小例の結果を予想し，実行し，比較しながら考えます．
+
+| 問い | 読む節 |
+|---|---|
+| 何を共通にするか | [共通化の単位を選ぶ](#unit) |
+| 依存する処理をどこへ置くか | [依存する処理も追う](#dependencies) |
+| 呼出し側との約束をどう保つか | [外から見た契約を保つ](#contract) |
+| 何を根拠に抽出できたと判断するか | [証拠を組み合わせる](#evidence) |
+
+必要な前提は，関数の呼出し，配列の添字と代入，条件分岐です．
+未完成の課題コードや別の発展資料は実行に必要ありません．
+通常課題の作業・提出・評価・完了条件は[課題N05](../assignments/N05.qmd)を参照してください．
+
+## 小例を実行する準備 {#prepare}
+
+[N05の教師作成例](../lessons/N05.qmd#boundary-example)から，境界処理だけを取り出します．
+左端へ指定値を書き，その後で右端へ左隣の値を写す例と，左右へ指定値を書く比較例を使います．
+対象は通常の1始まりの`Vector{Float64}`と有限の`Float64`境界値です．
+時間発展，格子，安定条件，初期条件，ファイル出力を省いた縮小例であり，課題全体の完成コードではありません．
+比較用の固定両端境界も教師作成例で，[N03](../lessons/N03.qmd)の全API・既定値を再現するものではありません．
+
+Julia標準ライブラリの`Test`だけを使います．
+作業場所は課題リポジトリの外へ作り，下に示す名前でコードブロックをそれぞれ一つのファイルに保存します．
+以下の端末操作はfishでも使えます．
+
+```sh
+mkdir -p /tmp/n05-refactoring-example
+cd /tmp/n05-refactoring-example
+```
+
+同名の作業場所に自分のファイルがあれば，別名の空ディレクトリを使ってください．
+各実行はこのディレクトリから，新しいJuliaプロセスで行います．
+以前のREPLの定義に頼らず，`run.jl`を読み込む必要もありません．
+
+```text
+/tmp/n05-refactoring-example/
+├─ before.jl       抽出前の入口
+├─ common.jl       共通側とその依存
+├─ after.jl        共通側へ委譲する入口
+├─ wide.jl         広い入口を持つ比較案
+├─ missing.jl      依存が欠けた比較案（意図した失敗）
+├─ strict.jl       入力条件を変えた比較案（意図した失敗）
+├─ retained.jl     本体を残した比較案
+├─ checks.jl       同じ契約を調べる検査
+└─ compare.jl      比較案の観察
+```
+
+`!`は引数を変更する関数名に付ける慣習，`; left_value=1.0`は省略時に`1.0`となるキーワード引数です．
+`===`は同じ配列そのものかを調べ，`==`は値を比べます．
+`|| throw(ArgumentError(...))`は左の条件を満たさなければ例外を出します．
+`module`は名前空間を作り，`include`はその呼出し元のモジュールでファイルを評価します．
+`BoundaryCore.inlet_outlet!`のドットは関数の所属を表します．
+ここでは配置の判断に集中するため`include`で読み込みます．
+実課題のパッケージの読込み方は[N05の配置と呼出し](../lessons/N05.qmd#package-layout)を参照してください．
+
+## 共通化の単位を選ぶ {#unit}
+
+### 比較する案と保つ約束
+
+同じ式が現れることと，同じ役割を持つことを分けて考えます．
+[N02](../lessons/N02.qmd)と[N04](../lessons/N04.qmd)の周期添字は，周期格子の隣接点を選ぶという役割を共有します．
+一方，[N01](../lessons/N01.qmd)の流入・流出境界とN03の固定温度・断熱境界は，変化する理由も必要な入力も異なります．
+たとえばN03の断熱端の更新は旧配列と係数を使うので，隣の値を写す操作だけでは置き換えられません．
+
+小例では「共通の操作を切り出して二つの入口を残す案」と「境界の種類・条件・既定値を一つの入口へ集める案」を比較します．
+保つ約束は，指定値を使うこと，内部点を変えないこと，渡された配列そのものを返すことです．
+
+**`before.jl`：抽出前の二つの入口**
+
+```{.julia .refactoring-example #rd-before}
+function validate_boundary_inputs(u, values...)
+    length(u) >= 2 || throw(ArgumentError("2点以上が必要です"))
+    all(isfinite, values) || throw(ArgumentError("境界値は有限にします"))
+    return nothing
+end
+
+function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
+    validate_boundary_inputs(u, left_value)
+    u[1] = left_value
+    u[end] = u[end - 1]
+    return u
+end
+
+function fixed_boundary!(u::Vector{Float64};
+    left_value::Float64, right_value::Float64)
+    validate_boundary_inputs(u, left_value, right_value)
+    u[1] = left_value
+    u[end] = right_value
+    return u
+end
+```
+
+**`common.jl`：共有する検証と，意味を分けた処理**
+
+```{.julia .refactoring-example #rd-common}
+module BoundaryCore
+function validate_boundary_inputs(u, values...)
+    length(u) >= 2 || throw(ArgumentError("2点以上が必要です"))
+    all(isfinite, values) || throw(ArgumentError("境界値は有限にします"))
+    return nothing
+end
+
+function inlet_outlet!(u::Vector{Float64}; left_value::Float64=1.0)
+    validate_boundary_inputs(u, left_value)
+    u[1] = left_value
+    u[end] = u[end - 1]
+    return u
+end
+
+function fixed_ends!(u::Vector{Float64};
+    left_value::Float64, right_value::Float64)
+    validate_boundary_inputs(u, left_value, right_value)
+    u[1] = left_value
+    u[end] = right_value
+    return u
+end
+end
+```
+
+**`after.jl`：既定値と呼び方を保つ旧入口**
+
+```{.julia .refactoring-example #rd-after}
+include("common.jl")
+function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
+    return BoundaryCore.inlet_outlet!(u; left_value=left_value)
+end
+function fixed_boundary!(u::Vector{Float64};
+    left_value::Float64, right_value::Float64)
+    return BoundaryCore.fixed_ends!(u;
+        left_value=left_value, right_value=right_value)
+end
+```
+
+**`wide.jl`：条件を一つの入口へ集めた比較案**
+
+```{.julia .refactoring-example #rd-wide}
+module WideBoundary
+include("common.jl")
+function apply!(u::Vector{Float64}; mode=:outlet,
+    left_value::Float64=1.0, right_value=nothing)
+    if mode == :outlet
+        isnothing(right_value) || throw(ArgumentError("流出では右値を指定しません"))
+        return BoundaryCore.inlet_outlet!(u; left_value=left_value)
+    elseif mode == :fixed
+        right_value isa Float64 || throw(ArgumentError("固定では右値が必要です"))
+        return BoundaryCore.fixed_ends!(u;
+            left_value=left_value, right_value=right_value)
+    else
+        throw(ArgumentError("未知の境界です"))
+    end
+end
+end
+```
+
+### 予想・実行・観察
+
+`[2.0,3.0,4.0]`へ左`5.0`を指定すると，流出と固定両端では右端がどうなるでしょうか．
+固定両端の右値を省略した場合，どちらの案がどの段階で拒否するでしょうか．
+全ファイルの保存後，[契約検査](#contract)と`compare.jl`を実行して予想と比べます．
+流出は`[5.0,3.0,3.0]`，右`7.0`の固定両端は`[5.0,3.0,7.0]`になります．
+広い入口でも同じ値を出せますが，`mode`と`right_value`の組合せに応じた分岐と例外が増えています．
+
+### 採用条件と限界
+
+今回は検証を共有し，境界ごとの入口と処理の意味を分けます．
+固定両端は左右を明示する入口なので，流出用の既定値が紛れ込みません．
+境界の種類を実行時に一つの設定値で切り替える必要があるなら，広い入口を上位の選択窓口として置く理由があります．
+種類が増えるたびに無関係な指定の禁止が増えるなら，個別の入口を残す案を検討します．
+両案の値が一致しても，変更理由や責務の整理までは決まりません．
+行数の削減や共通関数の数を目標にせず，どの変更を一箇所で扱いたいかで選びます．
+
+## 依存する処理も追う {#dependencies}
+
+### 比較する案と保つ約束
+
+境界処理は検証関数を呼ぶので，その関数も依存です．
+「本体だけを移し，検証を旧スクリプトへ残す案」と「必要な検証も共通側から呼べる位置へ置く案」を比べます．
+保つ約束は，共通側の読込みと直接呼出しだけで検証と更新を完了できることです．
+
+**`missing.jl`：意図的に依存を移し忘れた案**
+
+```{.julia .refactoring-example #rd-missing}
+module MissingDependency
+function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
+    validate_boundary_inputs(u, left_value)
+    u[1] = left_value
+    u[end] = u[end - 1]
+    return u
+end
+end
+```
+
+### 予想・実行・観察
+
+ファイルを読み込めるだけで，関数も実行できるでしょうか．
+次は意図的に失敗する端末操作です．
+新しいプロセスで`missing.jl`だけを読み，境界を呼びます．
+
+```sh
+julia --startup-file=no --compiled-modules=no --project=. -e 'include("missing.jl"); MissingDependency.apply_boundary!([8.0,9.0])'
+```
+
+呼出し時に`validate_boundary_inputs`が見つからず，`UndefVarError`になります．
+`common.jl`では同じ名前空間に検証があり，[直接検査](#run-checks)が成功します．
+`compare.jl`は旧側の検証を先に定義しても欠落が補われないことと，拒否時の配列不変を確認します．
+読み込むファイルの場所だけでなく，どの名前空間の関数が誰を呼ぶかを追ってください．
+
+### 採用条件と限界
+
+```text
+呼出し側が配列と境界値を用意
+  → 旧入口が同じ引数を渡す
+    → 共通側が検証する
+      → 配列を変更し，同じ配列を返す
+  → 呼出し側が診断・保存・描画を行う
+```
+
+共通側が必要とする値は引数で受け，実験の選択を逆向きに読みに行かない構成を採用します．
+N04では課題側が`SELECTED_MODEL`を選び，共通側へ`model`として渡す設計に対応します．
+初期条件・実験設定・保存・描画は，何を調べるかに依存するので呼出し側へ残します．
+共通側から課題の`run.jl`を読み込む案は，特定の実験や以前のREPL状態への依存を持ち込みます．
+課題固有の検証を全部移す必要はなく，共通処理に必要な依存だけを追います．
+現行スターターの共通APIは関数枠であり，完成済みの共通実装を呼ぶだけで課題が終わるという意味ではありません．
+
+参照した学生ソースはcommit `a97f7c3971c7c0d595ef3642577b9cd45414bffb`です．
+[`N01の境界`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N01_linear_advection/run.jl#L137-L142)，[`その検証`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N01_linear_advection/provided_support.jl#L35-L39)，[`共通APIの契約`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/src/ThermofluidExercise.jl)，[`N04のモデル選択と引数`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/a97f7c3971c7c0d595ef3642577b9cd45414bffb/exercises/N04_advection_diffusion/run.jl)で対応を確認できます．
+
+## 外から見た契約を保つ {#contract}
+
+### 比較する案と保つ約束
+
+互換な抽出では，名前と数値だけでなく次の約束を保ちます．
+
+| 観点 | 小例で保つ約束 |
+|---|---|
+| 既定値・引数 | `apply_boundary!(u)`の左値は`1.0`，明示した値はそのまま伝達 |
+| 戻り値 | 渡された配列そのものを返す |
+| 変更範囲 | 左右の端だけを変更し，内部点を保つ |
+| 更新順序 | 左端を書いてから右端が左隣を読む |
+| 受理条件 | 2点以上を受け入れる |
+| 拒否する条件 | 空配列・1点配列・非有限境界値は書込み前に`ArgumentError` |
+| 拒否後の状態 | 文書化した入力違反では，元の配列を変更しない |
+
+| 入力 | 期待する結果 |
+|---|---|
+| `[2.0,3.0,4.0]`，左値省略 | `[1.0,3.0,3.0]`，戻り値は入力と同一 |
+| 同じ配列，左`5.0` | `[5.0,3.0,3.0]`，戻り値は入力と同一 |
+| `[8.0,9.0]`，左`2.0` | 左端の後に右端を変更し，`[2.0,2.0]` |
+| 空配列または1点配列 | `ArgumentError`，配列不変 |
+| 2点以上，左`Inf`または`NaN` | `ArgumentError`，配列不変 |
+| 固定両端：`[2.0,3.0,4.0]`，左`5.0`・右`7.0` | `[5.0,3.0,7.0]`，戻り値は入力と同一 |
+| 固定両端：短すぎる配列，または左右どちらかが非有限 | `ArgumentError`，配列不変 |
+
+### 予想・実行・観察 {#run-checks}
+
+2点の場合，右端の左隣は左端そのものです．
+更新順を逆にしたら，結果はどう変わるでしょうか．
+`[2.0,2.0]`が`[2.0,8.0]`へ変わるので，3点の例だけでは見えない違いを検出できます．
+次の同じ検査を抽出前・抽出後・共通側の直接呼出しへ適用します．
+`@test_throws`は指定した種類の例外が出ると成功し，例外なしや別の例外なら失敗します．
+
+**`checks.jl`：契約表を実行する**
+
+```{.julia .refactoring-example #rd-checks}
+using Test
+stage = only(ARGS)
+include(stage * ".jl")
+f = stage == "common" ? BoundaryCore.inlet_outlet! : apply_boundary!
+g = stage == "common" ? BoundaryCore.fixed_ends! : fixed_boundary!
+
+@testset "boundary contract: $stage" begin
+    for (input, options, expected) in (
+        ([2.,3.,4.], (;), [1.,3.,3.]),
+        ([2.,3.,4.], (;left_value=5.), [5.,3.,3.]),
+        ([8.,9.], (;left_value=2.), [2.,2.]),
+    )
+        u = copy(input)
+        @test f(u; options...) === u
+        @test u == expected
+    end
+    for input in (Float64[], [8.], [8.,9.], [2.,3.,4.])
+        for value in (1., Inf, NaN)
+            if length(input) < 2 || !isfinite(value)
+                u = copy(input)
+                @test_throws ArgumentError f(u; left_value=value)
+                @test isequal(u, input)
+            end
+        end
+        for (left, right) in ((5.,7.), (Inf,7.), (NaN,7.), (5.,Inf), (5.,NaN))
+            if length(input) < 2 || !all(isfinite, (left,right))
+                u = copy(input)
+                @test_throws ArgumentError g(u; left_value=left, right_value=right)
+                @test isequal(u, input)
+            end
+        end
+    end
+    u = [2.,3.,4.]
+    @test g(u; left_value=5., right_value=7.) === u
+    @test u == [5.,3.,7.]
+end
+```
+
+`ARGS`は端末から渡した引数，`(;left_value=5.)`は名前付きの値，`options...`はその値をキーワードとして渡す記法です．
+`Float64[]`は空の配列，`copy`は検査ごとに独立した配列を作ります．
+次の三つはそれぞれ新しいプロセスで，全検査が成功します．
+共通側の直接検査は旧入口を読みません．
+
+```sh
+julia --startup-file=no --compiled-modules=no --project=. checks.jl before
+julia --startup-file=no --compiled-modules=no --project=. checks.jl after
+julia --startup-file=no --compiled-modules=no --project=. checks.jl common
+```
+
+**`strict.jl`：3点以上へ条件を変えた比較案**
+
+```{.julia .refactoring-example #rd-strict}
+module StrictBoundary
+include("common.jl")
+function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
+    length(u) >= 3 || throw(ArgumentError("3点以上が必要です"))
+    return BoundaryCore.inlet_outlet!(u; left_value=left_value)
+end
+end
+```
+
+### 採用条件と限界
+
+共通の検証を使えば安全になる，という理由だけで条件を厳しくしてよいでしょうか．
+`strict.jl`は従来有効だった2点入力を拒否します．
+実課題の`validate_buffers`は，浮動小数・同形状・各軸3点以上・非alias・1始まり・有限な旧値という更新バッファの契約を持ちます．
+各入口の元の条件と適合する箇所で使い，小例の境界へ無条件に当てはめません．
+入力条件の変更が必要なら，互換な抽出から分けて契約変更として検討します．
+実課題へ戻る際は型・軸・aliasなども元の条件に照合してください．
+小例は広い配列型・数値型への一般性を保証せず，あらゆる予期しない例外から配列を復元する設計にも広げていません．
+拒否されたら原因を修正し，その入力の診断・保存などの後続操作へ進みません．
+
+## 証拠を組み合わせる {#evidence}
+
+### 比較する案と保つ約束
+
+次の案は共通側を読み込むものの，旧入口に本体を残しています．
+`after.jl`と数値が同じなら，共通側を使ったと言えるでしょうか．
+保つ約束は，値や副作用の互換性に加えて，旧入口が意図した共通部品へ実際に委譲することです．
+
+**`retained.jl`：値は同じでも本体を残した案**
+
+```{.julia .refactoring-example #rd-retained}
+include("common.jl")
+include("before.jl")
+```
+
+### 予想・実行・観察
+
+次の契約検査も成功しますが，`retained.jl`の旧入口から共通側へ向かう呼出しはありません．
+
+```sh
+julia --startup-file=no --compiled-modules=no --project=. checks.jl retained
+```
+
+**`compare.jl`：意味の違いと意図した失敗をまとめて観察する**
+
+```{.julia .refactoring-example #rd-compare}
+using Test
+include("before.jl")
+include("wide.jl")
+include("missing.jl")
+include("strict.jl")
+
+@testset "design comparisons" begin
+    u = [2.,3.,4.]
+    @test WideBoundary.apply!(u; left_value=5.) === u
+    @test u == [5.,3.,3.]
+    u = [2.,3.,4.]
+    @test WideBoundary.apply!(u; mode=:fixed, left_value=5., right_value=7.) === u
+    @test u == [5.,3.,7.]
+    for options in ((;mode=:fixed), (;right_value=7.), (;mode=:unknown))
+        u = [2.,3.,4.]
+        @test_throws ArgumentError WideBoundary.apply!(u; options...)
+        @test u == [2.,3.,4.]
+    end
+    u = [8.,9.]
+    # Main側には検証があっても，MissingDependencyからは見えない。
+    @test_throws UndefVarError MissingDependency.apply_boundary!(u)
+    @test u == [8.,9.]
+    u = [8.,9.]
+    @test_throws ArgumentError StrictBoundary.apply_boundary!(u; left_value=2.)
+    @test u == [8.,9.]
+    u = [2.,3.,4.]
+    @test StrictBoundary.apply_boundary!(u; left_value=5.) === u
+    @test u == [5.,3.,3.]
+end
+```
+
+```sh
+julia --startup-file=no --compiled-modules=no --project=. compare.jl
+```
+
+この検査全体の終了コードは0です．
+依存欠落は`UndefVarError`，条件変更は`ArgumentError`という期待する失敗を観察できたためで，失敗を無視したわけではありません．
+予期しない例外や値の不一致なら検査は失敗します．
+実行ツールや権限の問題でJuliaの呼出しまで到達しない失敗は，これらの教材例の再現とは区別します．
+
+### 採用条件と限界
+
+| 確認するもの | 分かること | それだけでは分からないこと |
+|---|---|---|
+| 共通部品を単独で呼ぶ | 直接呼出しの値・副作用・拒否動作と依存の充足 | 旧入口が共通側を使うか |
+| 旧入口へ抽出前後で同じ検査を適用 | 呼び方・既定値・変更範囲・戻り値・失敗動作の互換性 | 本体の重複が残っていないか |
+| 同じ入力条件で代表結果を比較 | その条件で数値が変わっていないこと | 全入力での一致や元の計算の物理的正しさ |
+| diffと呼出し関係を読む | 委譲・共通側の依存・呼出し側に残した責務 | 数値や未検査入力の正しさ |
+
+掲載コードの保守用テストは，ブロックを抽出し，一時ディレクトリで各案を新しいプロセスに分けて実行します．
+さらに使い捨ての小例の共通関数だけを，呼ばれた引数と戻り値に目印を付ける関数へ一時的に差し替えます．
+`after.jl`では明示値`2.0`と既定値`1.0`が共通側へ届き，目印の戻り値も返りますが，`retained.jl`では共通側が呼ばれません．
+この確認は教材小例内に限定し，学生の実コードや実際のパッケージ定義は変更しません．
+実課題ではdiffと回帰結果を組み合わせ，抽出前の条件・baselineを保持します．
+不一致を消すために基準を取り直さず，契約と変更差分へ戻って原因を調べます．
+課題全体の操作は[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)，テストの整理は[テストの設計と実行](../guides/testing.qmd)，失敗の切り分けは[不具合を縮小する](../guides/troubleshooting.qmd#reduce-bug)へ進んでください．
+数値回帰だけで設計の妥当性や物理的正しさまで証明したとは言えません．
+
+## 自分のコードへ当てはめる {#questions}
+
+研究室の既存コードを整理するときも，変更前に次を説明してみてください．
+提出物や採点項目を追加する問いではありません．
+
+- 似ている二つの処理は，同じ変更理由を持つか．
+  共通にした部分と個別に残した部分を，行数以外の理由で説明できるか．
+- 移す処理は何に依存し，誰がその値を決めるか．
+  新しいプロセスで部品だけを呼んでも動くか．
+- 呼出し側との約束は何か．
+  最小の有効入力・拒否入力・変更順序を，抽出前後で同じ条件で確かめたか．
+- 今回の確認で何が分かり，何が残るか．
+  値の一致と実際の委譲を区別し，未検査の条件や物理的妥当性を言い過ぎていないか．
