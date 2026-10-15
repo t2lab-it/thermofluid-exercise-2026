@@ -54,7 +54,7 @@ cd examples/refactoring-design
 ## 共通化の単位 {#unit}
 
 二つの境界処理は，どちらも「配列が2点以上で，境界値が有限である」という条件を必要とします．
-基本案では，この条件を確かめる`validate_boundary_inputs`を共有し，流入・流出境界条件と両端固定境界条件はそれぞれの関数で表します．
+基本案では，この条件を確かめる`validate_boundary_inputs`を共有し，流入・流出境界条件は`inlet_outlet!`，両端固定境界条件は`fixed_ends!`で表します．
 各関数の引数から，必要な境界値を読み取れる構成です．
 
 [wide.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/wide.jl)では，基本案の二つの関数を一つの入口から呼び，`mode`によって境界条件を選びます．
