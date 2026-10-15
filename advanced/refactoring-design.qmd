@@ -74,19 +74,34 @@ cd /tmp/n05-refactoring-example
 **`before.jl`：抽出前の二つの入口**
 
 ```{.julia .refactoring-example #rd-before}
+"""
+配列長2点以上と境界値の有限性を確認する。
+成功時はnothingを返す。
+"""
 function validate_boundary_inputs(u, values...)
     length(u) >= 2 || throw(ArgumentError("2点以上が必要です"))
     all(isfinite, values) || throw(ArgumentError("境界値は有限にします"))
     return nothing
 end
 
+"""
+    apply_boundary!(u; left_value=1.0)
+
+左端へleft_value，右端へ左隣の値を書き，同じ配列uを返す。
+"""
 function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
+    # 配列長と境界値を，書込み前に確認する。
     validate_boundary_inputs(u, left_value)
     u[1] = left_value
+    # 2点配列では，直前に更新した左端を読む。
     u[end] = u[end - 1]
     return u
 end
 
+"""
+左右の端へ指定値を書き，内部点を保つ。
+戻り値は更新した同じ配列u。
+"""
 function fixed_boundary!(u::Vector{Float64};
     left_value::Float64, right_value::Float64)
     validate_boundary_inputs(u, left_value, right_value)
@@ -100,19 +115,35 @@ end
 
 ```{.julia .refactoring-example #rd-common}
 module BoundaryCore
+# 検証も同じモジュールへ移し，共通側から呼べるようにする。
+"""
+配列長2点以上と境界値の有限性を確認する。
+成功時はnothingを返す。
+"""
 function validate_boundary_inputs(u, values...)
     length(u) >= 2 || throw(ArgumentError("2点以上が必要です"))
     all(isfinite, values) || throw(ArgumentError("境界値は有限にします"))
     return nothing
 end
 
+"""
+    inlet_outlet!(u; left_value=1.0)
+
+左端へleft_value，右端へ左隣の値を書き，同じ配列uを返す。
+"""
 function inlet_outlet!(u::Vector{Float64}; left_value::Float64=1.0)
     validate_boundary_inputs(u, left_value)
+    # 抽出前と同じ順序で，左端から右端へ更新する。
     u[1] = left_value
     u[end] = u[end - 1]
     return u
 end
 
+"""
+    fixed_ends!(u; left_value, right_value)
+
+左右の端へ指定値を書き，内部点を保った同じ配列uを返す。
+"""
 function fixed_ends!(u::Vector{Float64};
     left_value::Float64, right_value::Float64)
     validate_boundary_inputs(u, left_value, right_value)
@@ -127,9 +158,18 @@ end
 
 ```{.julia .refactoring-example #rd-after}
 include("common.jl")
+"""
+流入・流出の旧入口。
+left_valueを共通側へ渡し，その戻り値を返す。
+"""
 function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
+    # 省略時も明示時も，同じキーワードで値を渡す。
     return BoundaryCore.inlet_outlet!(u; left_value=left_value)
 end
+"""
+固定両端の旧入口。
+左右の指定値を共通側へ渡し，その戻り値を返す。
+"""
 function fixed_boundary!(u::Vector{Float64};
     left_value::Float64, right_value::Float64)
     return BoundaryCore.fixed_ends!(u;
@@ -142,8 +182,15 @@ end
 ```{.julia .refactoring-example #rd-wide}
 module WideBoundary
 include("common.jl")
+"""
+    apply!(u; mode=:outlet, left_value=1.0, right_value=nothing)
+
+modeで境界処理を選び，更新した同じ配列uを返す。
+:outletでは左値を使い，:fixedでは左右の値を使う。
+"""
 function apply!(u::Vector{Float64}; mode=:outlet,
     left_value::Float64=1.0, right_value=nothing)
+    # 境界の選択と，有効な指定の組合せをここで検証する。
     if mode == :outlet
         isnothing(right_value) || throw(ArgumentError("流出で指定する境界値は左値だけです"))
         return BoundaryCore.inlet_outlet!(u; left_value=left_value)
@@ -186,7 +233,12 @@ end
 
 ```{.julia .refactoring-example #rd-missing}
 module MissingDependency
+"""
+依存欠落の比較例。
+呼出し時に検証関数の名前解決を観察する。
+"""
 function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
+    # このモジュールから検証関数を参照すると，UndefVarErrorになる。
     validate_boundary_inputs(u, left_value)
     u[1] = left_value
     u[end] = u[end - 1]
@@ -263,21 +315,26 @@ N04では課題側が`SELECTED_MODEL`を選び，共通側へ`model`として渡
 
 ```{.julia .refactoring-example #rd-checks}
 using Test
+# 実行引数で比較対象を選び，全対象に同じ検査を適用する。
 stage = only(ARGS)
 include(stage * ".jl")
+# 共通側の直接呼出しと旧入口を，同じf・gとして扱う。
 f = stage == "common" ? BoundaryCore.inlet_outlet! : apply_boundary!
 g = stage == "common" ? BoundaryCore.fixed_ends! : fixed_boundary!
 
 @testset "boundary contract: $stage" begin
+    # 既定値・明示値・2点での更新順序を確かめる。
     for (input, options, expected) in (
         ([2.,3.,4.], (;), [1.,3.,3.]),
         ([2.,3.,4.], (;left_value=5.), [5.,3.,3.]),
         ([8.,9.], (;left_value=2.), [2.,2.]),
     )
         u = copy(input)
+        # 配列の同一性と，更新後の値をそれぞれ確かめる。
         @test f(u; options...) === u
         @test u == expected
     end
+    # 拒否する入力では，例外と元の配列の保持を確かめる。
     for input in (Float64[], [8.], [8.,9.], [2.,3.,4.])
         for value in (1., Inf, NaN)
             if length(input) < 2 || !isfinite(value)
@@ -294,6 +351,7 @@ g = stage == "common" ? BoundaryCore.fixed_ends! : fixed_boundary!
             end
         end
     end
+    # 固定両端では，左右それぞれの指定値を確かめる。
     u = [2.,3.,4.]
     @test g(u; left_value=5., right_value=7.) === u
     @test u == [5.,3.,7.]
@@ -316,7 +374,12 @@ julia --startup-file=no --compiled-modules=no --project=. checks.jl common
 ```{.julia .refactoring-example #rd-strict}
 module StrictBoundary
 include("common.jl")
+"""
+3点以上へ受理条件を変えた比較例。
+共通側の更新結果を返す。
+"""
 function apply_boundary!(u::Vector{Float64}; left_value::Float64=1.0)
+    # 従来有効だった2点入力が，共通側を呼ぶ前に拒否される。
     length(u) >= 3 || throw(ArgumentError("3点以上が必要です"))
     return BoundaryCore.inlet_outlet!(u; left_value=left_value)
 end
@@ -342,6 +405,7 @@ end
 
 ```{.julia .refactoring-example #rd-retained}
 include("common.jl")
+# 旧入口の本体はbefore.jlで定義され，更新もその本体が担当する。
 include("before.jl")
 ```
 
@@ -363,22 +427,25 @@ include("missing.jl")
 include("strict.jl")
 
 @testset "design comparisons" begin
+    # 広い入口でも，流出と固定両端の結果は旧入口と一致する。
     u = [2.,3.,4.]
     @test WideBoundary.apply!(u; left_value=5.) === u
     @test u == [5.,3.,3.]
     u = [2.,3.,4.]
     @test WideBoundary.apply!(u; mode=:fixed, left_value=5., right_value=7.) === u
     @test u == [5.,3.,7.]
+    # 境界の種類と指定値の組合せに応じた拒否を確かめる。
     for options in ((;mode=:fixed), (;right_value=7.), (;mode=:unknown))
         u = [2.,3.,4.]
         @test_throws ArgumentError WideBoundary.apply!(u; options...)
         @test u == [2.,3.,4.]
     end
     u = [8.,9.]
-    # 検証はMain側にあり，呼出し元はMissingDependencyに属する。
+    # Main側の検証とMissingDependency側の呼出しは名前空間が異なる。
     @test_throws UndefVarError MissingDependency.apply_boundary!(u)
     @test u == [8.,9.]
     u = [8.,9.]
+    # strictの2点拒否と3点受理を確かめる。
     @test_throws ArgumentError StrictBoundary.apply_boundary!(u; left_value=2.)
     @test u == [8.,9.]
     u = [2.,3.,4.]
