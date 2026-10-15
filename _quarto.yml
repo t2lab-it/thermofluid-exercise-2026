@@ -57,6 +57,8 @@ website:
             text: worktreeによる並行作業
           - href: advanced/pseudocode.qmd
             text: 課題と実装をつなぐ疑似プログラム
+          - href: advanced/test-design.qmd
+            text: 意味のあるテストの設計
           - href: advanced/cairomakie.qmd
             text: CairoMakieによる可視化
           - href: advanced/package-built-solvers.qmd
@@ -192,6 +194,8 @@ website:
           text: "worktreeによる並行作業"
         - href: advanced/pseudocode.qmd
           text: 課題と実装をつなぐ疑似プログラム
+        - href: advanced/test-design.qmd
+          text: 意味のあるテストの設計
         - href: advanced/cairomakie.qmd
           text: "CairoMakieによる可視化"
         - href: advanced/package-built-solvers.qmd

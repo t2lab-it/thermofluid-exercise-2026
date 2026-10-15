@@ -35,7 +35,7 @@ const EXPECTED_ADVANCED_HREFS = Set([
     "advanced/terminal-prompt.qmd",
     "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
     "advanced/git-tips.qmd", "advanced/git-stash.qmd", "advanced/git-worktree.qmd",
-    "advanced/pseudocode.qmd",
+    "advanced/pseudocode.qmd", "advanced/test-design.qmd",
     "advanced/cairomakie.qmd", "advanced/package-built-solvers.qmd",
     "advanced/public-solver-methods.qmd",
 ])
@@ -690,7 +690,7 @@ end
     end
 end
 
-@testset "pseudocode material is reachable between worktree and plotting" begin
+@testset "pseudocode and test design are reachable between worktree and plotting" begin
     yaml = yaml_source_lines(read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String))
     menu = navbar_item_by_rel(yaml, "split-navigation-advanced")
     navbar = entry_hrefs(navbar_menu_entries(yaml, menu))
@@ -704,12 +704,14 @@ end
     index = [relpath(resolve_qmd_target(index_path, target), NAVIGATION_SITE_ROOT)
              for target in qmd_link_targets(read(index_path, String))]
     @test Set(index) == EXPECTED_ADVANCED_HREFS
-    neighbors = ["advanced/git-worktree.qmd", "advanced/pseudocode.qmd", "advanced/cairomakie.qmd"]
+    neighbors = ["advanced/git-worktree.qmd", "advanced/pseudocode.qmd",
+                 "advanced/test-design.qmd", "advanced/cairomakie.qmd"]
     for route in (navbar, sidebar, index)
+        @test all(path -> count(==(path), route) == 1, EXPECTED_ADVANCED_HREFS)
         positions = [findfirst(==(path), route) for path in neighbors]
         @test all(!isnothing, positions)
         if all(!isnothing, positions)
-            @test positions == collect(positions[1]:positions[1]+2)
+            @test positions == collect(positions[1]:positions[1]+3)
         end
     end
     page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "pseudocode.qmd")
@@ -721,5 +723,19 @@ end
         for relative in ("lessons/N01.qmd", "assignments/N01.qmd", "guides/testing.qmd", "guides/ai-usage.qmd")
             @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
         end
+    end
+    page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "test-design.qmd")
+    @test isfile(page)
+    if isfile(page)
+        source = read(page, String)
+        @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+        targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
+        for relative in ("lessons/F02.qmd", "lessons/N03.qmd", "lessons/F04.qmd",
+                         "assignments/F02.qmd", "assignments/N03.qmd",
+                         "guides/testing.qmd", "guides/ai-usage.qmd", "guides/workflow.qmd")
+            @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
+        end
+        guide = joinpath(NAVIGATION_SITE_ROOT, "guides", "testing.qmd")
+        @test page in resolve_qmd_target.(Ref(guide), qmd_link_targets(read(guide, String)))
     end
 end
