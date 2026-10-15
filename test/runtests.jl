@@ -8,6 +8,7 @@ include(VERIFY)
 
 include(joinpath(@__DIR__, "pseudocode_examples_test.jl"))
 include(joinpath(@__DIR__, "f02_tutorial_examples_test.jl"))
+include(joinpath(@__DIR__, "test_design_examples_test.jl"))
 include(joinpath(@__DIR__, "n05_tutorial_examples_test.jl"))
 include(joinpath(@__DIR__, "troubleshooting_examples_test.jl"))
 
