@@ -13,7 +13,6 @@ sidebar: advanced
 
 前提は，関数の呼出し，配列の添字と代入，条件分岐と，授業の[APIと責務](../lessons/N05.qmd#common-api)です．
 実課題の公開API・実装範囲・提出条件は[課題N05](../assignments/N05.qmd#discretization)が正本です．
-この資料の読了・実行は任意で，掲載例は実課題の完成版や必須の内部構成を定めるものではありません．
 
 ## コード例の実行準備とファイル構成 {#prepare}
 
@@ -40,7 +39,6 @@ cd examples/refactoring-design
 
 授業は1種類の境界処理を既存パッケージへ移す例，ここでは2種類の境界処理と共通の検証を`BoundaryCore`へまとめる例を扱います．
 対象の配列は`Vector{Float64}`，境界値は有限の`Float64`です．
-授業の`AbstractVector{<:Real}`・`Real`という対象範囲とは区別して比較します．
 流入・流出境界条件では左端に流入値，右端に流出条件を適用し，両端固定境界条件では左右に指定値を適用します．
 
 [before.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/before.jl)と[common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl)を開き，次の対応を確認してください．
@@ -73,14 +71,12 @@ cd examples/refactoring-design
 | `[2.,3.,4.]`，左`5.`・右`7.` | 両端固定 | `[5.,3.,7.]` |
 
 境界条件ごとに関数を分けた案でも，`mode`で切り替える案でも，この結果は同じです．
-今回の共通化では，二つの関数で境界条件を表し，両方が必要とする入力検証を共有します．
-この案では関数名と引数から境界の種類が分かり，`wide`案では入口を一つにして`mode`と値の組合せを検証します．
-同じ更新結果に加え，呼出し側が何を指定し，どの誤った組合せを拒否する必要があるかを比較します．
+関数を分ける案では関数名と引数から境界の種類が分かり，`wide`案では入口を一つにして`mode`と値の組合せを検証します．
+呼出し側が指定する引数と，その組合せの条件を比較してください．
 
 ## 依存関係の整理 {#dependencies}
 
-[common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl)では，二つの境界処理が`validate_boundary_inputs`を呼びます．
-この例では，共有する検証を二つの境界処理と同じモジュールへ置きます．
+[common.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/common.jl)では，共有する検証を二つの境界処理と同じモジュールへ置きます．
 依存をたどって必要な処理を共通側で完結させる理由は，授業の[依存方向](../lessons/N05.qmd#package-layout)で確認できます．
 
 ```text
@@ -98,11 +94,9 @@ before.jl
 呼出し側が用意する配列と境界値は，引数で共通側へ渡します．
 この配置により，共通側を単独で読み込み，検証から境界条件の適用まで実行できます．
 `wide.jl`と`strict.jl`もこの共通側を利用し，それぞれ入口の分岐と受理条件の変更を加えています．
-処理をまとめる単位と，呼出し側へ要求する条件を分けて比較してください．
 
 ## 契約の維持 {#contract}
 
-比較で照合する契約は次のとおりです．
 [before.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/before.jl)と[after.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/after.jl)を比べ，次の対応を確認してください．
 
 | 観点 | 保つ契約 |
@@ -134,7 +128,6 @@ julia --startup-file=no --compiled-modules=no --project=. checks.jl common
 
 2点配列`[8.,9.]`に左`2.`を指定する検査にも注目してください．
 流入・流出境界条件では，左端を更新した後，右端がその値を読み取るため，結果は`[2.,2.]`です．
-右端を先に更新すると`[2.,8.]`となり，この検査で更新順序の違いを検出できます．
 
 ### 比較案による契約の変更 {#comparisons}
 
@@ -149,12 +142,9 @@ julia --startup-file=no --compiled-modules=no --project=. compare.jl
 ```
 
 14件の検査が成功します．
-この成功には，`strict.jl`が2点配列で例外を出すことの確認も含まれます．
 比較案がそれぞれどの契約を保ち，どの契約を変えたかを，検査の入力と期待値から説明してください．
 
 ## 自分のコードへの適用 {#questions}
-
-次の問いは，設計案を比較するための任意の振り返りです．
 
 自分のコードについて，次の三点を説明してみてください．
 
@@ -163,7 +153,6 @@ julia --startup-file=no --compiled-modules=no --project=. compare.jl
 - 共通化の前後で保つ契約を，どの入力と期待値で確かめるか．
 
 実課題へ戻る場合は，[N05課題の正式な契約](../assignments/N05.qmd#discretization)と編集対象・完了条件を確認します．
-この例の関数名やファイル構成を，実課題の内部設計へそのまま採用する必要はありません．
 
 <details>
 <summary>コード一覧</summary>

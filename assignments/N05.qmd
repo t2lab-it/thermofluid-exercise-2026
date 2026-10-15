@@ -39,7 +39,7 @@ PRの確認・mergeはN05とN06の完了条件を満たしてから行います�
 | [`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L27-L30)・[`periodic_right_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L53-L56) | `Bool`を除く整数，`n >= 1`，`1 <= i <= n` | 左隣は`i == 1`で`n`，それ以外は`i-1`；右隣は`i == n`で`1`，それ以外は`i+1`；1点の場合はともに`1` |
 | [`linear_flux(u,speed)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L79-L82) | 有限な実数の値`u`と速度`speed` | スカラー流束$f(u)=cu$（$c$は`speed`） |
 | [`burgers_flux(u)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L104-L107) | 負値を含む有限な実数`u` | スカラー流束$f(u)=u^2/2$ |
-| [`validate_buffers(u_new,u_old)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L132-L135) | 同形状・1始まり・各軸3点以上の浮動小数配列で，記憶領域を共有しないこと；旧配列の値は有限 | 成功時は`nothing`；新配列の初期値は上書き対象 |
+| [`validate_buffers(u_new,u_old)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L132-L135) | 同形状・1始まり・各軸3点以上で，記憶領域が独立した浮動小数配列；旧配列の値は有限 | 成功時は`nothing`；新配列の初期値は上書き対象 |
 | [`fit_timestep(dt_max,t_final)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L158-L161) | 有限で正の入力，ステップ数と刻みが表現可能であること | 次式の`(;steps=N_t,dt=Δt)`；`steps`は正整数，`dt`は有限で正の`Float64`かつ`dt <= dt_max` |
 
 `fit_timestep`の計算条件は，$t_f$を`t_final`として次のとおりです．
@@ -58,8 +58,6 @@ N05では，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](
 
 ## 編集対象と契約 {#編集対象と契約}
 
-コードへのリンクは，対応する学生スターターのcommit `92a01c5`の該当箇所を指します．
-
 | 役割 | 学生リポジトリ内の場所 |
 |---|---|
 | 共通APIと抽出した実装 | [`src/ThermofluidExercise.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl)と必要な[`src/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/src)内のファイル |
@@ -77,11 +75,10 @@ N05では，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](
 
 ## 抽出前の記録と抽出後の検証 {#抽出前の記録と抽出後の検証}
 
-[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)に従って，**コードを変更する前にbaselineを取得**します．
-baselineは抽出前の完成コードから取得し，既存の基準を保持します．
-欠落・破損や比較失敗への対応も同ガイドで確認し，今回の終了状態・メッセージと来歴を照合してください．
+[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)に従って，**抽出前の完成コードからbaselineを取得**し，比較の基準として保持します．
 抽出対象と抽出前後で維持する挙動を予想し，N04選択と基準取得時のcommitをログへ記録します．
 抽出後はF01〜N04の既存テストとN05の比較を実行し，diffと結果を照合します．
+今回の終了状態・メッセージとレポートの来歴を確認してください．
 
 N05の提出物は`results/N05/baseline.toml`と`results/N05/regression.toml`です．
 レポートにはbaselineのSHA-256と現在コードのSHA-256，項目別の差を残します．
@@ -93,7 +90,6 @@ N05の共通化で進めなくなった場合は，diffと失敗を説明して�
 理解度チェックのポイントは，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)，[基準と回帰の証拠](../lessons/N05.qmd#regression)，[AI差分の採否](../lessons/N05.qmd#diff-review)を参照して整理します．
 
 任意の発展資料[共通化の設計判断](../advanced/refactoring-design.qmd#questions)では，複数案を比較できます．
-N05の提出と完了条件は，この課題と共通ガイドで確認できます．
 
 {{< include /assignments/_understanding-check.qmd >}}
 
