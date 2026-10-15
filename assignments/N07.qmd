@@ -248,6 +248,8 @@ Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`�
 戻り値は`(;net_input,cumulative_input,residual)`で，長さは順に`nt-1,nt,nt`です．
 後二つの先頭は0で，`residual`は[上の熱収支残差](#heat-budget)です．
 
+{{< include /assignments/_pseudocode.qmd >}}
+
 ## 編集対象と提供コード
 
 ::: {.table-responsive}

@@ -72,6 +72,8 @@ N01との波形比較は，固定境界・同じ矩形初期値・81点・指定
 保存・表示時刻は$t=0,0.25,0.50,0.75,1$です．
 `max_cfl`は全状態の最大実測値，`overshoot`と`undershoot`は初期極値を超えた量（超過なしなら0），`sum_change`は最終総和から初期総和を引いた符号付きの値です．
 
+{{< include /assignments/_pseudocode.qmd >}}
+
 ## 編集する3ファイルと実装3箇所
 
 ::: {.table-responsive}
