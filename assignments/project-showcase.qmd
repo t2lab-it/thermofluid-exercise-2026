@@ -1,0 +1,158 @@
+---
+title: "成果紹介レポートの執筆とPR提出"
+---
+
+最終プロジェクトの成果を，図を含む短い技術レポートとして[成果紹介の一覧](../projects/showcase/index.qmd)へ投稿できます．
+参加は任意です．
+既存の結果や発表内容を整理でき，新しい数値実験や長い論文は必須ではありません．
+[最終プロジェクト案内](final-project.qmd)の成果物を使い，同じ講義の受講者が発表スライドなしで理解できる構成にしてください．
+
+成績評価については別途周知します。
+
+## レポートに含める内容
+
+- 題名，公開時の著者表示，問いと背景．
+- 解釈に必要なモデル，仮定，式，初期・境界条件，計算法，パラメータ，比較条件．
+- 根拠となる図を最低1点と，本文での説明．
+  キャプション，軸，単位，計算条件を示し，問いへの回答と結びつけます．
+- 結果の確認・検証，結論，考察，限界・未確認事項．
+- プロジェクトリポジトリURL，対象ソースの40桁commit SHA，その版の図の生成・再現手順へのリンク，参考文献・出典．
+
+[原稿テンプレート](https://github.com/t2lab-it/thermofluid-exercise-2026/blob/main/examples/project-showcase-template.qmd)をコピーして執筆します．
+front matterの`title`，`author`，`description`，`source-repository`，`source-sha`，`reproduction-url`，`license`を埋めてください．
+複数の著者表示を記す場合は，`author: ["表示名 A", "表示名 B"]`のように書けます．
+`source-sha`にはプロジェクトリポジトリで`git rev-parse HEAD`を実行した40桁の値を使い，`reproduction-url`はそのSHAを含む固定リンクにします．
+講義サイト側のレポート原稿SHAとは別の値です．
+
+## 配置と公開範囲
+
+原稿は`projects/showcase/<slug>/index.qmd`，図はその配下の`assets/`へ置きます．
+`<slug>`は`heat-grid-study`のような英小文字・数字・ハイフンで，学籍番号を含めない名前にします．
+画像形式はPNG・JPEG・WebP・GIF，1ファイル5 MiB以下，1レポートの画像合計10 MiB以下です．
+講義サイトに置くのは本文と小さな表示用画像です．
+コード・データ・再現手順の本体，大きな生データ，実行環境一式，発表資料一式はプロジェクトリポジトリへ置き，必要な版へリンクしてください．
+原稿には実行セル，独自JavaScript，iframe，HTML埋め込み，shortcodeや独自の設定を持ち込まず，コード例は表示用の通常のコードブロックにします．
+例えばコードフェンスの言語を`julia`とし，実行用の`{julia}`にはしません．
+
+実名は必須ではなく，希望する著者表示を使えます．
+GitHubアカウント，commit，PRとそのやり取りは公開されるので，表示名だけで匿名になるわけではありません．
+学籍番号，成績，本人との対応表，個別の同意記録を，原稿，commitメッセージ，PRに入れないでください．
+本文と自作図は[CC BY 4.0](../LICENSE.md)として公開します．
+各ページに著者とライセンスを示し，引用・第三者素材は公開可能なことを確認して，出典・利用条件を個別に記してください．
+執筆者全員の掲載意向と表示名，素材の権利を確認してから公開PRを作成します．
+個別の確認記録はLETUS等の非公開経路で扱います．
+
+## 専用のcloneで執筆する
+
+通常演習の学生リポジトリ，最終プロジェクトリポジトリ，講義サイトのforkは別のものです．
+講義サイトは別ディレクトリへcloneし，既存の課題リポジトリのremoteを付け替えないでください．
+以下はVS Codeのターミナルで実行する例です．
+`YOUR-ACCOUNT`と`heat-grid-study`は自分のものに置き換えます．
+
+1. ブラウザで[講義サイトのリポジトリ](https://github.com/t2lab-it/thermofluid-exercise-2026)を開き，Forkで自分のアカウントへforkします．
+2. 既存の課題ディレクトリの外で，自分のforkを専用ディレクトリへcloneし，VS Codeで開きます．
+
+```console
+$ git clone https://github.com/YOUR-ACCOUNT/thermofluid-exercise-2026.git lecture-showcase
+$ cd lecture-showcase
+$ code .
+$ git remote -v
+$ git status
+```
+
+`origin`が自分のforkであることを確認します．
+同期元として講義サイトを`upstream`へ登録し，現在の講義サイト`main`から作業ブランチを作ります．
+既に`upstream`がある場合は，URLを確認して`remote add`を省略します．
+
+```console
+$ git remote add upstream https://github.com/t2lab-it/thermofluid-exercise-2026.git
+$ git fetch upstream
+$ git switch -c showcase/heat-grid-study upstream/main
+$ git branch --show-current
+```
+
+VS Codeのエクスプローラーで`projects/showcase/heat-grid-study/`と`assets/`を作成し，`examples/project-showcase-template.qmd`を`index.qmd`としてコピーします．
+テンプレートの説明や仮のURL・SHAを自分の本文・出所へ置き換え，`assets/result.png`等へ自分の図を置きます．
+`projects/showcase/index.qmd`に次の形式で自分の項目を1件追加します．
+掲載0件の案内が残っていれば外し，他の項目は保持します．
+題名，著者表示，短い説明を含む通常のリンクにし，順位付けはしません．
+
+```markdown
+- [熱拡散で格子幅は誤差にどう影響するか](heat-grid-study/index.qmd) — 表示名：解析解と格子幅の影響を比較する．
+```
+
+原稿の末尾には`[成果紹介の一覧へ](../index.qmd)`を残してください．
+
+## 差分を確認し，自分のforkへ送る
+
+変更範囲は自分のレポートディレクトリと一覧の自分の項目だけです．
+サイト設定やworkflowを変更する必要がある場合は教員・TAへ相談します．
+
+```console
+$ git status --short
+$ git diff
+$ git add projects/showcase/heat-grid-study projects/showcase/index.qmd
+$ git diff --cached
+$ git commit -m "Add heat diffusion showcase report"
+$ git push -u origin showcase/heat-grid-study
+```
+
+ステージした図も確認し，自分のforkの作業ブランチへpushします．
+ブラウザでforkを開き，Compare & pull request，またはPull requests → New pull requestからPRを作ります．
+送信前に，次を画面で確認してください．
+
+| 項目 | 設定 |
+|---|---|
+| base repository | `t2lab-it/thermofluid-exercise-2026` |
+| base branch | `main` |
+| head repository | 自分のfork |
+| compare branch | `showcase/heat-grid-study`等の作業ブランチ |
+
+タイトルにプロジェクトを識別できる名前を付け，本文にはレポートの要約，結果の出所，図・引用・表示の確認状況を記します．
+Files changedで，自分の原稿・図・一覧だけが差分になっていることを確認してください．
+GitHub CLIは必要ありません．
+
+## PR検査のHTMLで表示を確認する
+
+学生PCへのQuarto導入は任意です．
+PRのChecksから`Check Quarto pages`の実行詳細を開き，SummaryのArtifactsにある`showcase-preview-pr-…`をダウンロードします．
+GitHubへログインし，対象リポジトリを閲覧できるアカウントで取得してください．
+zip全体を展開し，`README.txt`と`build-info.json`を読みます．
+`projects/showcase/index.html`から一覧を，`projects/showcase/<slug>/index.html`から自分の本文をブラウザで開きます．
+`site_libs/`や画像，CSSを含むディレクトリ全体を保持し，HTMLだけを取り出さないでください．
+Quartoを起動せずに確認でき，数式はこの確認用HTMLではブラウザ標準のMathMLで表示します．
+
+Summaryと`build-info.json`にはPR番号，PR HEAD SHA，renderしたcommit SHAがあります．
+PR HEAD SHAが現在のPRの最新commitと一致することを確認します．
+render対象はGitHubが作るsynthetic merge commitの場合があり，PR HEADと同一とは限りません．
+render commit SHAはその検査が使った版と照合してください．
+本文・数式，図・キャプション・軸・単位・条件，出典，一覧との往復を，広い画面と狭い画面で確認します．
+PRごとの公開プレビューURLやdeployは行いません．
+
+| 状況 | 次の操作 |
+|---|---|
+| 検査待ち・fork実行の承認待ち | 未実行です．教員・TAへ相談し，実行後に成果物を確認します． |
+| 検査・render・梱包の失敗 | 表示確認は未完了です．エラーのパスと理由を確認し，原稿か検査側かを切り分けます． |
+| 更新前のHEAD SHAの成果物 | 更新後の原稿は未確認です．最新SHAの検査完了を待って取り直します． |
+| artifactの欠落・失効・取得不能 | 保持期間は30日です．教員・TAへ対象PRとSHAを伝え，必要ならその対象SHAの検査を再実行してもらいます． |
+
+Quartoが導入済みの場合は，clone先で`quarto preview`を実行してローカル確認もできます．
+PR検査で生成したHTMLの確認も共通して行ってください．
+
+## 締切・修正・掲載
+
+PR最終稿の締切は**2027年1月8日23:59 JST（日本時間）**です．
+締切までにPRを作り，LETUS等の別途案内する提出先へPR URLと期限内最終稿の40桁SHAを記録します．
+レポートをcommitした講義サイトcloneで`git rev-parse HEAD`を実行して原稿SHAを確認します．
+プロジェクト側のソースSHAと取り違えないでください．
+提出先の実設定と告知は教員が行います．
+
+修正は同じ作業ブランチへcommit・pushし，同じPRへ追加します．
+修正後は最新のHEAD SHAに対応する検査とHTMLで再確認してください．
+一覧で競合した場合は`git fetch upstream`後に`git merge upstream/main`で最新変更を取り込み，他人の項目を保持して解消します．
+迷った場合は教員・TAへ相談してください．
+教員が内容・出典・公開条件と表示をレビューし，必要な修正後にmergeと公開確認を行います．
+通常演習の学生自身によるmergeとは担当が異なります．
+レビュー・掲載は締切後になる場合があり，掲載に必要な訂正は締切後も同じPRで行えます．
+
+[成果紹介の一覧](../projects/showcase/index.qmd)へ戻ります．

@@ -10,6 +10,8 @@ project:
     - guides/*.qmd
     - advanced/*.qmd
     - projects/final-project-topics/*.qmd
+    - projects/showcase/index.qmd
+    - projects/showcase/*/index.qmd
 
 filters:
   - filters/console-examples.lua
@@ -23,6 +25,8 @@ website:
   page-navigation: true
   navbar:
     left:
+      - text: 成果紹介
+        href: projects/showcase/index.qmd
       - text: ガイド
         rel: split-navigation split-navigation-guides
         menu:

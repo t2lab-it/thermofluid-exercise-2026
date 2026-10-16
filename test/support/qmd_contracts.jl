@@ -22,10 +22,12 @@ end
 has_level2_heading(body::AbstractString) = occursin(r"(?m)^##\s+\S", body)
 
 function qmd_link_targets(source::AbstractString)
+    source = replace(source, r"(?s)<!--.*?-->" => "")
+    source = replace(source, r"(?ms)^(`{3,}|~{3,})[^\n]*\n.*?^\1\s*$" => "")
     return [
         matched.captures[1]
         for matched in eachmatch(
-            r"(?<!!)\[[^\]]+\]\(([^)\s#]+\.qmd)(?:#[^)]+)?\)",
+            r"(?<!!)\[[^\]]+\]\(((?![a-zA-Z][a-zA-Z0-9+.-]*:|//)[^)\s#]+\.qmd)(?:#[^)]+)?\)",
             source,
         )
     ]

@@ -18,8 +18,17 @@ is_public_qmd_path(path::AbstractString) =
     endswith(path, ".qmd") && !startswith(basename(path), "_")
 
 function tracked_public_qmd_paths()
-    paths = readlines(`git -C $(PUBLIC_STRUCTURE_ROOT) ls-files -- index.qmd setup lessons assignments guides advanced projects/final-project-topics`)
-    return sort(filter(is_public_qmd_path, paths))
+    paths = readlines(`git -C $(PUBLIC_STRUCTURE_ROOT) ls-files -- index.qmd setup lessons assignments guides advanced projects`)
+    # Include new pages before they have been committed as well.
+    for directory in ("assignments", "projects/showcase")
+        base = joinpath(PUBLIC_STRUCTURE_ROOT, directory)
+        isdir(base) || continue
+        for (folder, _, files) in walkdir(base), file in files
+            endswith(file, ".qmd") || continue
+            push!(paths, relpath(joinpath(folder, file), PUBLIC_STRUCTURE_ROOT))
+        end
+    end
+    return sort(unique(filter(is_public_qmd_path, paths)))
 end
 
 

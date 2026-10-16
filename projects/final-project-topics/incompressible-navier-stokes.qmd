@@ -180,7 +180,7 @@ $\psi,\omega,u,v$ の $L^2$・最大誤差，正規化した $E,Z$ の減衰，P
 
 Taylor–Greenの解析解とGhiaの中心線速度との比較図で検証結果を示します．
 格子・時間刻みへの依存を確認した条件間で流れ場と診断量を比較し，選んだ問いに答えます．
-二次元・一定粘性モデル，角の不連続，格子と時間刻み，定常判定の限界を整理し，[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)も確認します．
+二次元・一定粘性モデル，角の不連続，格子と時間刻み，定常判定の限界を整理し，[共通の発表前確認](../../assignments/final-project.qmd#presentation-check)も確認します．
 
 [共通の記録項目](../../assignments/final-project.qmd#project-records)を揃え，[発表前の確認](../../assignments/final-project.qmd#presentation-check)を行ってください．
 

@@ -813,3 +813,24 @@ end
         end
     end
 end
+
+@testset "showcase is a direct navigation destination" begin
+    yaml = yaml_source_lines(read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String))
+    left = yaml_node(yaml, ("website", "navbar", "left"))
+    items = yaml_sequence_items(yaml, left)
+    matching = filter(items) do item
+        href = yaml_item_field(yaml, item, "href")
+        !isnothing(href) && href.value == "projects/showcase/index.qmd"
+    end
+    @test length(matching) == 1
+    @test isnothing(yaml_item_field(yaml, only(matching), "menu"))
+    for (page, target) in (
+        ("assignments/final-project.qmd", "projects/showcase/index.qmd"),
+        ("assignments/final-project.qmd", "assignments/project-showcase.qmd"),
+        ("projects/showcase/index.qmd", "assignments/project-showcase.qmd"),
+    )
+        source = joinpath(NAVIGATION_SITE_ROOT, page)
+        targets = normpath.(resolve_qmd_target.(Ref(source), qmd_link_targets(read(source, String))))
+        @test joinpath(NAVIGATION_SITE_ROOT, target) in targets
+    end
+end

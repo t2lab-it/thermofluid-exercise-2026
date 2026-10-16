@@ -213,7 +213,7 @@ CSVの `u_max` は $x=0.5$ 上の水平速度最大値，その位置は `y_at_u
 ### Step 6：Nusselt数・中心線速度と熱収支に基づく結論の整理 {#step-6発表できる根拠と再現手順にまとめる}
 
 de Vahl Davis値との比較図，問いに対応する条件比較図，主要条件・指標表，自己検証の結果を配置し，問いへの回答，差が生じる物理的または数値的な理由，Boussinesq近似と二次元・定常条件の限界を整理します．
-[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)も確認します．
+[共通の発表前確認](../../assignments/final-project.qmd#presentation-check)も確認します．
 
 [共通の記録項目](../../assignments/final-project.qmd#project-records)を揃え，[発表前の確認](../../assignments/final-project.qmd#presentation-check)を行ってください．
 
