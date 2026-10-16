@@ -44,7 +44,7 @@ $$
 基準は $b_\star=H=1$，$L_x=2$，$Ra=10^8$，$Pr=1$ です．
 Rayleigh数だけを変えるときは $Pr$，領域，境界，格子，移流，時間積分，診断と平均規則を固定し，上式から $\nu$ と $\kappa$ を一緒に変えます．
 
-時間と速度のscaleを
+時間と速度の尺度を
 $$
 t^*=t\sqrt{\frac{b_\star}{L_x}},
 \qquad
@@ -68,7 +68,7 @@ Nu(t)&=\frac{\langle\chi\rangle_A}{\chi_{\mathrm{diff}}},\\
 $$
 と定義します．
 $\langle\cdot\rangle_A$は領域平均です．
-表面境界層は平均浮力・$\chi$の鉛直profileを必ず示し，補助的な厚さ指標には閾値を置かない散逸重心
+表面境界層は平均浮力・$\chi$の鉛直プロファイルを必ず示し，補助的な厚さ指標には閾値を置かない散逸重心
 $$
 \frac{\delta_\chi}{H}
 =\frac{\int_\Omega(-z)\chi\,\mathrm{d}A}
@@ -80,9 +80,9 @@ $Nu$，$K$，$\Psi$，$\delta_\chi/H$ は瞬時値と平均値を分け，採用
 ::: {.table-responsive tbl-colwidths="[30, 35, 35]"}
 | 問い | 比較するもの | 主な指標 |
 |---|---|---|
-| **標準：Rayleigh数だけを下げると，循環と浮力輸送はどう変わるか** | 公式の $Ra=10^8$ と，追加候補 $Ra=10^7$．$Pr=1$，幾何，境界，格子，数値手法，診断を固定 | $Nu$，$\Psi$，$K$，$\delta_\chi/H$，$b,\zeta,\chi$，定常性，時間・memory・出力容量 |
-| 格子を細かくすると，表面境界層と収支はどこまで変わるか | 公式の $128\times64$ と，縦横の格子幅比を保つ隣接する粗い格子または細かい格子 | $Nu$，$\Psi$，$\delta_\chi/H$，離散発散，浮力分散収支，格子点数・step数・費用 |
-| Prandtl数を変えると，運動量と浮力の拡散差は循環へどう現れるか | $Ra$を固定し，公式の $Pr=1$ と事前計算で決める追加の一条件 | $Nu$，$\Psi$，$K$，平均profile，境界層指標，定常到達，費用 |
+| **標準：Rayleigh数だけを下げると，循環と浮力輸送はどう変わるか** | 公式の $Ra=10^8$ と，追加候補 $Ra=10^7$．$Pr=1$，幾何，境界，格子，数値手法，診断を固定 | $Nu$，$\Psi$，$K$，$\delta_\chi/H$，$b,\zeta,\chi$，定常性，時間・メモリ・出力容量 |
+| 格子を細かくすると，表面境界層と収支はどこまで変わるか | 公式の $128\times64$ と，縦横の格子幅比を保つ隣接する粗い格子または細かい格子 | $Nu$，$\Psi$，$\delta_\chi/H$，離散発散，浮力分散収支，格子点数・ステップ数・費用 |
+| Prandtl数を変えると，運動量と浮力の拡散差は循環へどう現れるか | $Ra$を固定し，公式の $Pr=1$ と事前計算で決める追加の一条件 | $Nu$，$\Psi$，$K$，平均プロファイル，境界層指標，定常到達，費用 |
 :::
 
 ### 問い1：Rayleigh数のみの低下による循環と浮力輸送の変化 {#問い1rayleigh数だけを下げると循環と浮力輸送はどう変わるか}
@@ -92,16 +92,16 @@ $Nu$，$K$，$\Psi$，$\delta_\chi/H$ は瞬時値と平均値を分け，採用
 その後，最初の追加候補を $Ra=10^7$ とし，$Pr=1$，$L_x/H=2$，$b_\star$，境界，$128\times64$格子，WENO，Runge--Kutta 3，CFL制御，出力と診断定義を固定します．
 両条件が平均可能な状態まで進まない場合は，短い結果から大小関係を断定せず，必要な積分時間と代替条件を教員またはTAと相談します．
 
-$t^*$に対する $Nu,K,\Psi$ の時系列，同じ色scaleでの $b/b_\star$，渦度 $\zeta=\frac{\partial u}{\partial z}-\frac{\partial w}{\partial x}$，$\chi$ の図，鉛直profile，$Nu$・$\Psi$・$\delta_\chi/H$・費用の表を作ります．
+$t^*$に対する $Nu,K,\Psi$ の時系列，同じ色尺度での $b/b_\star$，渦度 $\zeta=\frac{\partial u}{\partial z}-\frac{\partial w}{\partial x}$，$\chi$ の図，鉛直プロファイル，$Nu$・$\Psi$・$\delta_\chi/H$・費用の表を作ります．
 大きい $Ra$ ほど循環が強く表面側へ散逸が集中するという仮説を置けますが，二条件だけからscaling exponentを決めず，時間窓・格子・収支の差より条件差が大きいかを議論します．
 
 ### 問い2：格子細分化による表面境界層と収支の変化の程度 {#問い2格子を細かくすると表面境界層と収支はどこまで変わるか}
 
 $Ra=10^8$，$Pr=1$，領域，境界，移流，時間積分，平均規則を固定し，$N_x:N_z=2:1$ を保って一段だけ格子を変えます．
-$64\times32$ は処理系を確かめるCPU縮小caseには使えますが，最終結果の基準とはみなしません．
+$64\times32$ は処理系を確かめるCPU縮小ケースには使えますが，最終結果の基準とはみなしません．
 公式 $128\times64$ と細かい格子を比較できない場合は，粗い格子との差を「収束」ではなく解像度感度として報告します．
 
-格子ごとに同じ時刻・色scaleの $b,\zeta,\chi$，平均profile，$Nu$・$\Psi$・$\delta_\chi/H$，発散と浮力分散収支，step数・wall time・peak memoryを並べます．
+格子ごとに同じ時刻・色尺度の $b,\zeta,\chi$，平均プロファイル，$Nu$・$\Psi$・$\delta_\chi/H$，発散と浮力分散収支，ステップ数・実経過時間・最大メモリ使用量を並べます．
 表面境界層の変化が小さくなるか，収支残差と時間刻み感度が同時に改善するかを見て，滑らかな図だけで解像したと判断しません．
 
 ### 問い3：Prandtl数の変更に伴う運動量と浮力の拡散差の循環への影響 {#問い3prandtl数を変えると運動量と浮力の拡散差は循環へどう現れるか}
@@ -110,7 +110,7 @@ $64\times32$ は処理系を確かめるCPU縮小caseには使えますが，最
 $Ra$を固定するため，$Pr$を変えるときは上の定義から $\nu$ と $\kappa$ を再計算し，どちらか一方だけを任意に変えません．
 追加値は，両条件で境界層と平均窓を検証できることを短いCPU事前計算で確認してから決めます．
 
-$b,\zeta,\chi$ の場，平均profile，$Nu$，$\Psi$，$K$，$\delta_\chi/H$を同じ定義で比較します．
+$b,\zeta,\chi$ の場，平均プロファイル，$Nu$，$\Psi$，$K$，$\delta_\chi/H$を同じ定義で比較します．
 運動量拡散と浮力拡散の比が，循環強度，境界層，定常到達へどう現れたかを説明し，Rayleigh数や格子も同時に変えた結果とは混ぜません．
 
 ## 手法と検証
@@ -119,25 +119,25 @@ $b,\zeta,\chi$ の場，平均profile，$Nu$，$\Psi$，$K$，$\delta_\chi/H$を
 以下のパスは教材リポジトリ内の位置です．
 コピー元のURLとcommit，利用条件を記録してください．
 
-`launch-kits/guided-package/README.md` を読み，下表の上流資料から基準scriptと診断を自分のprojectへ作ってください．
+`launch-kits/guided-package/README.md` を読み，下表の上流資料から基準スクリプトと診断を自分のプロジェクトへ作ってください．
 
 ::: {.table-responsive tbl-colwidths="[18, 38, 44]"}
 | 役割 | 現行の参照先 | projectへ記録すること |
 |---|---|---|
-| 公式開始例 | [`v0.110.15`の `examples/horizontal_convection.jl`](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/examples/horizontal_convection.jl)，[公式example解説](https://clima.github.io/OceananigansDocumentation/stable/literated/horizontal_convection)，[本体repository](https://github.com/CliMA/Oceananigans.jl) | 上流URL・path・tag・commit，領域，境界，格子，model，出力，授業側の変更 |
-| 固定するpackage版 | [2026-08-12公開の `v0.110.15`](https://github.com/CliMA/Oceananigans.jl/releases/tag/v0.110.15) と[tagの `Project.toml`](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/Project.toml) | 2026-08-15確認時の開始候補は `Oceananigans 0.110.15`，commit `5e62a72`，Julia compat 1.10．実際に解決したJulia・依存package・`Manifest.toml` |
+| 公式開始例 | [`v0.110.15`の `examples/horizontal_convection.jl`](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/examples/horizontal_convection.jl)，[公式例解説](https://clima.github.io/OceananigansDocumentation/stable/literated/horizontal_convection)，[本体リポジトリ](https://github.com/CliMA/Oceananigans.jl) | 上流URL・path・tag・commit，領域，境界，格子，model，出力，授業側の変更 |
+| 固定するパッケージ版 | [2026-08-12公開の `v0.110.15`](https://github.com/CliMA/Oceananigans.jl/releases/tag/v0.110.15) と[tagの `Project.toml`](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/Project.toml) | 2026-08-15確認時の開始候補は `Oceananigans 0.110.15`，commit `5e62a72`，Julia compat 1.10．実際に解決したJulia・依存パッケージ・`Manifest.toml` |
 | 数値手法 | [公式のstaggered有限体積法](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/finite_volume)，[fractional-step解説](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/time_stepping#The-fractional-step-method)，[OceananigansのJOSS論文](https://doi.org/10.21105/joss.02018) | tracer・圧力と速度の配置，移流・拡散，圧力射影，Runge--Kutta 3，CFL，診断を選ぶ理由 |
-| 本体の利用条件 | [`v0.110.15`のMIT License](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/LICENSE) | copyまたは派生した範囲，著作権表示，license，変更点 |
+| 本体の利用条件 | [`v0.110.15`のMIT License](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/LICENSE) | copyまたは派生した範囲，著作権表示，ライセンス，変更点 |
 | 外部基準 | [Rochaらの水平対流Nusselt数論文](https://doi.org/10.1017/jfm.2020.269) | 散逸に基づく $Nu$，同じ余弦上面強制の拡散解，volumeとsurfaceの収支，平均窓．幾何・境界・$Ra,Pr$が異なる文献値は直接比較しない |
 :::
 
-`v0.110.15`の公式exampleは，CPU上の `RectilinearGrid`，$128\times64$格子，`NonhydrostaticModel`，5次WENO移流，`BuoyancyTracer`，Laplacian viscosity・diffusivity，3段Runge--Kuttaを使います．
+`v0.110.15`の公式例は，CPU上の `RectilinearGrid`，$128\times64$格子，`NonhydrostaticModel`，5次WENO移流，`BuoyancyTracer`，Laplacian viscosity・diffusivity，3段Runge--Kuttaを使います．
 初期時間刻みは $0.01$，`conjure_time_step_wizard!` は目標CFL $0.7$，`max_Δt=0.1`，公式停止時刻は $t=40$ です．
 出力は $b$，speed，$\zeta$を0.5時間ごとにJLD2へ保存し，haloを含む $b$ から $\chi$，$Nu(t)$，$K(t)$ を計算します．
 これはAPIと設定の再現基準であり，$t=40$で定常へ達することや，$128\times64$で全指標が格子収束していることの保証ではありません．
 
-学生はsolver本体を改造せず，基準scriptを出所とlicenseが追跡できる形でprojectへ置き，$\psi$，離散発散，境界flux，浮力分散収支，平均窓，費用の診断を追加します．
-自分が固定したenvironmentで，raw fieldと診断値を再生成します．
+学生はソルバ本体を改造せず，基準スクリプトを出所とライセンスが追跡できる形でprojectへ置き，$\psi$，離散発散，境界flux，浮力分散収支，平均窓，費用の診断を追加します．
+自分が固定した環境で，raw fieldと診断値を再生成します．
 
 同じ境界条件の純拡散解は
 $$
@@ -188,11 +188,11 @@ $\|\nabla_h\cdot\boldsymbol{u}_h\|$はabsolute値と $U_\star/L_x$ で規格化�
 ::: {.table-responsive tbl-colwidths="[16, 40, 44]"}
 | 段階 | 確認対象 | 次へ進む判断 |
 |---|---|---|
-| 公式例再現 | tag固定の水平対流script，領域，境界，$Ra,Pr$，model，JLD2出力 | 新しいJulia processで実行でき，上流と授業側の変更，version，licenseを追跡できる |
+| 公式例再現 | tag固定の水平対流スクリプト，領域，境界，$Ra,Pr$，model，JLD2出力 | 新しいJuliaプロセスで実行でき，上流と授業側の変更，バージョン，ライセンスを追跡できる |
 | 自己整合性 | 有限値，離散発散，$R_{b^2}$，CFL，格子，$Nu,K,\Psi$の時系列と平均窓 | 時間刻み・格子を一段厳しくしても主要指標と場の解釈が条件差に対して安定する |
 | 外部基準 | $b_{\mathrm{diff}}$，$\chi_{\mathrm{diff}}$，$Nu=1$，volumeと上面fluxの同一収支 | 同じ幾何・境界・離散評価で再生成でき，格子を細かくすると解析値へ近づく |
-| 一軸比較 | $Ra$，格子，$Pr$のうち選んだ一つだけを変えた二条件以上 | 全条件が自己整合性を通り，同じ指標，図のscale，平均契約で比較できる |
-| 規模・費用 | 格子点数，step数，初回compile，事前実行後のwall time，peak memory，JLD2容量 | 実測から完了可能な条件と平均窓を選び，local CPUで再生成できる縮小caseを残せる |
+| 一つの条件だけを変える比較 | $Ra$，格子，$Pr$のうち選んだ一つだけを変えた二条件以上 | 全条件が自己整合性を通り，同じ指標，図の尺度，平均する時間区間と計算方法で比較できる |
+| 規模・費用 | 格子点数，ステップ数，初回コンパイル，事前実行後の実経過時間，最大メモリ使用量，JLD2容量 | 実測から完了可能な条件と平均窓を選び，ローカルCPUで再生成できる縮小ケースを残せる |
 :::
 
 公式 $128\times64$ のCPU実行の時間とメモリを測り，計算規模を決めます．
@@ -200,19 +200,19 @@ $\|\nabla_h\cdot\boldsymbol{u}_h\|$はabsolute値と $U_\star/L_x$ で規格化�
 ::: {.table-responsive tbl-colwidths="[18, 40, 42]"}
 | 環境 | 最初に行うこと | 次の規模を決める方法 |
 |---|---|---|
-| 学生のlaptop | 1 threadのCPUで $64\times32$ の短いsmoke test後，公式 $128\times64$ を実行し，初回compileと二回目のwall time，step数，memory，JLD2容量を分けて測る | 発散，収支，解析的拡散基準，時系列を処理できることを確認し，残り時間から追加 $Ra$ と必要な積分延長を決める |
-| 利用可能なdesktop | 同じcommit・Julia・Manifest・Float型・thread数でlaptopの $128\times64$ を再現する | 指標が一致することを確認し，実測したcell-step費用と出力増加から細かい格子または長い積分のどちらか一つを選ぶ |
-| 利用を承認された研究室server | local CPUの入力をそのまま再実行し，job，thread，memory上限，checkpointと結果回収を確認する | localで検証済みの一軸比較だけを延長し，GPU性能比較や三次元化は標準結果と分ける |
+| 学生のラップトップ | 1スレッドのCPUで $64\times32$ の短い簡易テスト後，公式 $128\times64$ を実行し，初回コンパイルと二回目の実経過時間，ステップ数，メモリ，JLD2容量を分けて測る | 発散，収支，解析的拡散基準，時系列を処理できることを確認し，残り時間から追加 $Ra$ と必要な積分延長を決める |
+| 利用可能なデスクトップ | 同じcommit・Julia・Manifest・Float型・スレッド数でラップトップの $128\times64$ を再現する | 指標が一致することを確認し，実測したcell-step費用と出力増加から細かい格子または長い積分のどちらか一つを選ぶ |
+| 利用を承認された研究室サーバ | ローカルCPUの入力をそのまま再実行し，ジョブ，スレッド，メモリ上限，checkpointと結果回収を確認する | ローカルで検証済みの比較について，一つの条件だけを変えたまま計算時間を延長し，GPU性能比較や三次元化は標準結果と分ける |
 :::
 
-CPUで $128\times64$ の必要な積分を完了できない場合は，$64\times32$，短い $t^*$，少ない保存時刻へ縮小して，environment，境界，発散，収支，拡散解，診断scriptまでを再生成できる代替案を残します．
-この縮小caseの $Nu$ や境界層を最終の物理結論には使わず，本条件の最終時刻，資源上限，未到達の平均条件を明記します．
+CPUで $128\times64$ の必要な積分を完了できない場合は，$64\times32$，短い $t^*$，少ない保存時刻へ縮小して，環境，境界，発散，収支，拡散解，診断スクリプトまでを再生成できる代替案を残します．
+この縮小ケースの $Nu$ や境界層を最終の物理結論には使わず，本条件の最終時刻，資源上限，未到達の平均条件を明記します．
 
 ## 進め方
 
 [共通手順](../../assignments/final-project.qmd#project-workflow)でプロジェクトリポジトリを準備してから，以下に取り組んでください．
 
-### Step 1：上流資料と再現environmentの固定 {#step-1上流資料と再現environmentを固定する}
+### Step 1：上流資料と再現環境の固定 {#step-1上流資料と再現environmentを固定する}
 
 公開教材リポジトリの `launch-kits/catalog.toml` と `guided-package/README.md` を読み，公式例を使った開始手順を確認します．
 `Oceananigans v0.110.15`，公式例のパス，tag commit，MIT Licenseを開始候補にし，プロジェクトの `Project.toml` と `Manifest.toml` を解決します．
@@ -250,11 +250,11 @@ $b_{\mathrm{diff}}$が上面値と他面zero-fluxを満たし，格子を細か�
 
 解析式と出典，評価スクリプト，$b_{\mathrm{diff}}$の図，格子対 $Nu-1$ の表または図，surface・volume収支の照合を残します．
 
-### Step 5：一軸比較の実行と規模・費用の確定 {#step-5一軸比較を実行し規模と費用を確定する}
+### Step 5：一つの条件だけを変える比較の実行と規模・費用の確定 {#step-5一軸比較を実行し規模と費用を確定する}
 
 標準では検証済み $Ra=10^8$ と追加候補 $Ra=10^7$ を実行します．
 両条件をそれぞれ平均可能な状態まで進め，同じ無次元窓長，postprocessing，図の尺度で処理します．
-初回コンパイル，二回目のwall time，ステップ数，最大メモリ使用量，JLD2容量を分けて測ります．
+初回コンパイル，二回目の実経過時間，ステップ数，最大メモリ使用量，JLD2容量を分けて測ります．
 
 両条件が発散，収支，時間刻み，格子，拡散基準を通り，$Nu$，$\Psi$，$K$，$\delta_\chi/H$の差が平均窓のdriftより明確かを確認します．
 完了不能なら過渡結果とCPU縮小ケースの役割を分けます．
@@ -263,18 +263,19 @@ $b_{\mathrm{diff}}$が上面値と他面zero-fluxを満たし，格子を細か�
 
 ### Step 6：循環・境界層・輸送・費用に基づく問いへの回答の整理 {#step-6循環境界層輸送費用を問いへの回答にまとめる}
 
-[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，公式例再現，自己整合性，解析的外部基準，一軸比較を一つの論理へつなぎます．
+[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，公式例の再現と自己整合性を確認したうえで，解析的な拡散基準との比較図を示します．
+条件別の流れ場・鉛直分布・時系列と輸送指標から，選んだ問いに答えます．
 差をRayleigh数の効果と断定できる範囲，二次元・free-slip・有限格子・有限平均窓の限界を整理します．
 
 軸，尺度，色範囲，$Nu$・$\Psi$・$K$・$\delta_\chi$・収支残差の定義を資料内で一意にします．
 
-外部拡散基準図，一軸の場・プロファイル・時系列比較，主要条件・指標・費用表，自己検証，問いへの回答，限界，CPU縮小ケース，再生成手順を発表資料とプロジェクトリポジトリへ残します．
+外部拡散基準図，一つの条件だけを変えた場・プロファイル・時系列比較，主要条件・指標・費用表，自己検証，問いへの回答，限界，CPU縮小ケース，再生成手順を発表資料とプロジェクトリポジトリへ残します．
 
 [共通の記録項目](../../assignments/final-project.qmd#project-records)を揃え，[発表前の確認](../../assignments/final-project.qmd#presentation-check)を行ってください．
 
 ## 発展課題
 
-標準ルートでは，二次元・非回転Boussinesq系，余弦上面浮力，free-slip，Laplacian拡散，固定version，CPU，一軸比較に範囲を限定します．
+標準ルートでは，二次元・非回転Boussinesq系，余弦上面浮力，free-slip，Laplacian拡散，固定バージョン，CPU，一つの条件だけを変える比較に範囲を限定します．
 その検証と再生成手順を残した後，次の効果を一つだけ追加できます．
 
 - **上面強制またはaspect ratioを変える**: forcingの波形・波数や $L_x/H$ が循環cellと輸送へ与える影響を調べます．
@@ -282,6 +283,6 @@ $b_{\mathrm{diff}}$が上面値と他面zero-fluxを満たし，格子を細か�
 - **三次元化する**: span方向の領域・境界・解像度を追加し，二次元解からの不安定化，span依存，三次元発散，統計収束を検証します．
   格子点数と平均時間が増えるため，二次元標準結果を回帰基準として残します．
 - **回転または別のclosureを加える**: Coriolis項かclosureのどちらか一つを追加し，新しい無次元数，energy・buoyancy収支，格子・時間刻み依存性を定めます．
-- **GPU性能を調べる**: 同じ物理条件・precision・出力・診断でCPU結果を再現してから，compile時間，cell-stepあたり時間，memory，転送とI/Oを分けます．
+- **GPU性能を調べる**: 同じ物理条件・precision・出力・診断でCPU結果を再現してから，コンパイル時間，cell-stepあたり時間，メモリ，転送とI/Oを分けます．
 
-新しい境界条件，三次元，回転，closure，上流APIの変更，長時間server・GPU計算へ進む場合は，追加する問い，検証基準，license，計算上限を教員またはTAと相談します．
+新しい境界条件，三次元，回転，closure，上流APIの変更，長時間サーバ・GPU計算へ進む場合は，追加する問い，検証基準，ライセンス，計算上限を教員またはTAと相談します．
