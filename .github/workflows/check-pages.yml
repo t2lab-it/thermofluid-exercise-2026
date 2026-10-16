@@ -1,0 +1,61 @@
+name: Check Quarto pages
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-pages-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out PR merge commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.13.0'
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: '1.9.31'
+
+      # Public tests and render need no private checkout or package installation.
+      - name: Run public tests
+        run: |
+          julia --project=. test/runtests.jl
+          python3 test/console_examples_test.py
+
+      - name: Render portable HTML
+        run: quarto render --metadata html-math-method:mathml
+        env:
+          QUARTO_JULIA_PROJECT: "."
+
+      - name: Package HTML and record identities
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          RENDER_COMMIT_SHA=$(git rev-parse HEAD)
+          python3 scripts/project_showcase.py package --site _site --output preview-artifact --pr "$PR_NUMBER" --head "$PR_HEAD_SHA" --rendered "$RENDER_COMMIT_SHA" > preview-summary.md
+          cat preview-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: showcase-preview-pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
+          path: preview-artifact/
+          if-no-files-found: error
+          retention-days: 30
