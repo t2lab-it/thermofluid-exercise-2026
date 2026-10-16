@@ -264,3 +264,12 @@ button:focus-visible {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* Keep the optional integration comparisons readable on narrow screens. */
+.time-integration-table {
+  overflow-x: auto;
+}
+
+.time-integration-table table {
+  min-width: 38rem;
+}
