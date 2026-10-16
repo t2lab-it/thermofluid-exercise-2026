@@ -25,8 +25,6 @@ website:
   page-navigation: true
   navbar:
     left:
-      - text: 成果紹介
-        href: projects/showcase/index.qmd
       - text: ガイド
         rel: split-navigation split-navigation-guides
         menu:
@@ -71,6 +69,8 @@ website:
             text: JuliaのPDEソルバ
           - href: advanced/public-solver-methods.qmd
             text: JuliaのCFDソルバ
+      - text: 成果紹介
+        href: projects/showcase/index.qmd
   sidebar:
     - id: course
       title: "熱流体力学演習 2026"
