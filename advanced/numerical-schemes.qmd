@@ -178,53 +178,39 @@ Juliaでは`(I-dt*A) \ u_old`に対応し，逆行列を作りません．
 
 ### 新規フォルダだけを取得する {#get-example}
 
-学生リポジトリrootで，既存の`upstream`が授業の学生配布元を指すことを[共通の更新案内](../guides/workflow.qmd#material-updates)から確認します．
-次のブロック全体をfishへ貼り付けます．
-全体merge・課題branch切替・package環境更新は取得条件にしません．
+学生リポジトリの最上位ディレクトリで，`upstream`が授業の学生配布元を指すことを[共通の更新案内](../guides/workflow.qmd#material-updates)から確認します．
+現在の課題用ブランチで，次のブロック全体を実行します．
 
-```{.fish #time-integration-fetch}
-function acquire_time_integration
-    set -l target examples/time-integration
-    set -l root (git rev-parse --show-toplevel)
-    or return 1
-    if test (pwd -P) != "$root"
-        echo '学生リポジトリのrootで実行してください．' >&2
-        return 1
-    end
-    if test -e "$target"; or test -L "$target"
-        echo '同名パスがあります．上書きせず中断します．' >&2
-        return 1
-    end
-    if test -n "$(git ls-files -- "$target")"
-        echo 'indexに同名パスがあります．差分を確認してください．' >&2
-        return 1
-    end
-    if test -L examples
-        echo 'examplesのリンク先へは取得しません．' >&2
-        return 1
-    end
-    if test -e examples; and not test -d examples
-        echo 'examplesの種類を確認してください．' >&2
-        return 1
-    end
-    git fetch --no-tags upstream main
-    or return 1
-    if test "$(git cat-file -t FETCH_HEAD:$target)" != tree
-        echo '配布元に対象フォルダがありません．' >&2
-        return 1
-    end
-    git restore --source=FETCH_HEAD --worktree -- "$target"
-end
-acquire_time_integration
+```{.bash #time-integration-fetch}
+bash -c '
+target=examples/time-integration
+root=$(git rev-parse --show-toplevel) || exit 1
+if [ "$(pwd -P)" != "$root" ]; then
+    echo "学生リポジトリのrootで実行してください．" >&2
+    exit 1
+fi
+if [ -e "$target" ] || [ -L "$target" ] ||
+   [ -n "$(git ls-files -- "$target")" ]; then
+    echo "同名パスの内容と差分を確認してください．" >&2
+    exit 1
+fi
+if [ -L examples ] || { [ -e examples ] && [ ! -d examples ]; }; then
+    echo "examplesの状態を確認してください．" >&2
+    exit 1
+fi
+git fetch --no-tags upstream main || exit 1
+if [ "$(git cat-file -t "FETCH_HEAD:$target")" != tree ]; then
+    echo "配布元のexamples/time-integrationを確認してください．" >&2
+    exit 1
+fi
+git restore --source=FETCH_HEAD --worktree -- "$target"
+'
 ```
 
-既存の課題・学習ログ・進捗ファイルとindexを保ち，新規フォルダだけがworking treeに未追跡で加わります．
-`git status --short`と`git diff --cached`で元の作業を確認します．
-同名のフォルダ・ファイル・リンクがあれば，追跡・未追跡を問わず中断します．
-削除済みでもindexに登録が残る場合は止まります．
-編集済みの例は差分を確認するか，リポジトリ外の別の保存先で比較してください．
-これは初回の選択取得専用であり，将来の全体mergeに伴う競合を解消する手順ではありません．
-通常の課題開始・更新は[既存workflow](../guides/workflow.qmd)を使い，更新前にこのフォルダも含めて差分を確認します．
+これは初回の取得手順です．
+既存の課題とステージ領域を保ち，新規フォルダだけが未追跡で加わります．
+`git status --short`と`git diff --cached`で取得結果と元の作業を確認します．
+通常の配布元更新は[共通の更新手順](../guides/workflow.qmd#material-updates)を参照してください．
 
 ### RK2を実装して検査する
 
@@ -233,7 +219,7 @@ acquire_time_integration
 未実装で次のテスト・実行が失敗するのは正しく，仮の値で通してはいけません．
 完成後は，学生リポジトリrootで次の順に実行します．
 
-```fish
+```bash
 julia --project=. examples/time-integration/tests.jl
 julia --project=. examples/time-integration/run.jl
 ```
@@ -288,7 +274,7 @@ Crank–Nicolsonは時間2次で，この線形拡散問題では無条件安定
 $|R(z)|<1$でも符号は変わるため，減衰しながらの振動を振幅の発散と区別します．
 配布コードと追加図は次のコマンドで比較できます．
 
-```fish
+```bash
 julia --project=. examples/time-integration/run.jl scratch/time-integration-cn --cn
 ```
 
