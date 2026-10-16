@@ -1,0 +1,301 @@
+---
+title: "時間積分の精度・安定性・計算量"
+lightbox: true
+sidebar: advanced
+---
+
+B3向けに，時間積分法ごとの終時刻の誤差，拡散問題の高周波成分の増減，計算に必要な処理回数を比較します．
+**2026年度は任意教材です．**
+[N03授業](../lessons/N03.qmd)の基準実装は前進Euler＋空間2次中心差分です．
+
+## 実験A：時間刻みと終時刻の誤差 {#time-error}
+
+まず時間だけを離散化し，$y'=-y$，$y(0)=1$を最終時刻$T=1$まで解きます．
+厳密解は$y(t)=e^{-t}$です．
+方程式・初期値・最終時刻を固定し，各手法でステップ数を$N=8,16,32,64$，時間刻みを$\Delta t=T/N$とします．
+同じ$N$では時間積分法だけを変えて，誤差と処理回数を比較します．
+$N$回更新後の数値解$y_N$と厳密解$e^{-1}$から，終時刻の絶対誤差と観測次数を
+$$
+\begin{aligned}
+E_N&=|y_N-e^{-1}|,\\
+p_N&=\log_2(E_N/E_{2N}).
+\end{aligned}
+$$
+で求めます．
+観測次数$p_N$は，ステップ数が$N$と$2N$の2計算の誤差から，刻みを半分にしたときの誤差の減り方を表します．
+$p$次精度なら，十分小さな刻みで誤差は概ね$C\Delta t^p$となり，刻みを半分にすると約$2^p$分の1になります．
+
+### 前進Eulerと陽的中点RK2
+
+$y'=f(y,t)$に対し，前進Eulerは旧時刻の傾きを使います．
+$$
+y_{n+1}=y_n+\Delta t f(y_n,t_n)
+$$
+陽的中点法のRK2は，中点の状態を予測し，その時刻の傾きで1ステップ全体を進めます．
+$$
+\begin{aligned}
+k_1&=f(y_n,t_n),\\
+k_2&=f\left(y_n+\tfrac{\Delta t}{2}k_1,t_n+\tfrac{\Delta t}{2}\right),\\
+y_{n+1}&=y_n+\Delta t k_2.
+\end{aligned}
+$$
+右辺関数`f(y,t)`は，現在の状態`y`と時刻`t`を受け取り，時間微分の値を返します．
+この関数を呼んで傾きを求める処理を，右辺評価（RHS評価）と呼びます．
+学生が実装するのは[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/time-integration/run.jl)の`rk2_step(f,y,t,dt)`のTODO 1箇所です．
+スカラーと配列に対応させ，配列入力では元の値を保ち，独立した配列を返します．
+入力検証と`rhs(f,y,t)`は配布済みです．
+
+### 古典的RK4の4段
+
+古典的RK4は，始点，中点2回，終点で傾きを評価します．
+$$
+\begin{aligned}
+k_1&=f(y_n,t_n),\\
+k_2&=f\left(y_n+\tfrac{\Delta t}{2}k_1,t_n+\tfrac{\Delta t}{2}\right),\\
+k_3&=f\left(y_n+\tfrac{\Delta t}{2}k_2,t_n+\tfrac{\Delta t}{2}\right),\\
+k_4&=f(y_n+\Delta t k_3,t_n+\Delta t),\\
+y_{n+1}&=y_n+\tfrac{\Delta t}{6}(k_1+2k_2+2k_3+k_4).
+\end{aligned}
+$$
+各段の状態を変えて傾きを組み合わせることで，滑らかな解に対する大域誤差が4次になります．
+RK4は[`provided_methods.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/time-integration/provided_methods.jl)の配布実装を読み，式と対応づけます．
+
+::: {.time-integration-table tabindex="0" role="region" aria-label="時間積分法の処理回数比較"}
+
+| 手法 | 時間精度の次数 | RHS評価回数 | 行列分解回数 | 線形求解回数 |
+|---|---:|---:|---:|---:|
+| 前進Euler | 1 | $N$ | 0 | 0 |
+| 陽的中点RK2 | 2 | $2N$ | 0 | 0 |
+| 古典的RK4 | 4 | $4N$ | 0 | 0 |
+| 後退Euler（線形・固定刻み） | 1 | 0 | 1 | $N$ |
+
+:::
+
+後退Eulerの仕組みは[後半](#backward-euler)で説明します．
+表は，1回の積分の準備と全$N$ステップで行う処理の回数です．
+線形求解は，係数行列と右辺が与えられた連立一次方程式を解く処理です．
+配布コードは右辺関数・行列分解・線形求解の呼出し時に回数を数え，`summary.toml`の`cost`へ記録します．
+RHS評価と線形求解の負担は，問題の大きさや行列構造に応じて異なります．
+
+## 空間差分から連立ODEへ {#semidiscrete}
+
+拡散方程式$u_t=D u_{xx}$の空間だけを2次中心差分にすると，内部点で
+$$
+\frac{du_j}{dt}=\frac{D}{\Delta x^2}(u_{j-1}-2u_j+u_{j+1})
+$$
+となります．
+両端の値を0に固定すると，内部の値を並べたベクトル$\boldsymbol u$は連立常微分方程式（ODE）
+$$
+\frac{d\boldsymbol u}{dt}=A\boldsymbol u,\qquad
+A=\frac{D}{\Delta x^2}\operatorname{tridiag}(1,-2,1)
+$$
+に従います．
+$\operatorname{tridiag}(a,b,c)$は，下側の対角成分を$a$，対角成分を$b$，上側の対角成分を$c$とする三重対角行列を表します．
+このように空間を離散化して時間を連続のまま残すことを半離散化と呼びます．
+先ほどの時間積分器を同じ$A$へ適用すれば，時間手法だけを比較できます．
+
+### 実験Bの共通条件
+
+::: {.time-integration-table tabindex="0" role="region" aria-label="実験Bの共通条件"}
+
+| 項目 | 条件 |
+|---|---|
+| 領域と係数 | $[0,2]$，$D=0.1$ |
+| 格子と境界 | 両端を含む41点，$\Delta x=0.05$，$u(0,t)=u(2,t)=0$ |
+| 未知数と空間差分 | 内部39点，空間2次中心差分 |
+| 初期値 | $\phi_1+0.01\phi_{39}$，$\phi_k(j)=\sin(k\pi j/40)$，$j=0,\ldots,40$ |
+| 最終時刻 | $T=0.1$ |
+| 細かい刻み | $N=128$，$\Delta t=T/N=0.00078125$，$\mathrm{Fo}=0.03125$ |
+| 粗い刻み | $N=4$，$\Delta t=T/N=0.025$，$\mathrm{Fo}=1$ |
+
+:::
+
+手法間の比較では表の全条件を揃え，時間積分法だけを変えます．
+刻みの影響は，各手法で$N=128$と$N=4$を比べて調べます．
+モード1はなだらかな分布，モード39は隣り合う格子点で符号が交代する分布です．
+
+時間誤差の比較基準は，同じ半離散系の厳密解
+$$
+\begin{aligned}
+\lambda_k&=-\frac{4D}{\Delta x^2}\sin^2\left(\frac{k\pi}{80}\right),\\
+\boldsymbol u_*(t)&=e^{\lambda_1t}\boldsymbol\phi_1+0.01e^{\lambda_{39}t}\boldsymbol\phi_{39}
+\end{aligned}
+$$
+です．
+同じ半離散系を基準にすることで，時間積分だけの誤差を比較できます．
+最終分布と，内部39点での最大絶対誤差$\max_{1\le j\le39}|u_j(T)-u_{*,j}(T)|$を比較します．
+高周波成分の増減は，初期時刻と各ステップ後の時刻$t_n=n\Delta t$（$n=0,\ldots,N$）で，モード39の係数
+$$
+a_{39}(t_n)=\frac{\sum_{j=1}^{39}u_j^n\phi_{39}(j)}{\sum_{j=1}^{39}\phi_{39}(j)^2}
+$$
+を求めて追います．
+初期値の係数は$0.01$，半離散厳密解の係数は$0.01e^{\lambda_{39}t_n}$です．
+
+## 拡散の安定性と高周波 {#stability}
+
+各固有モードの係数は，$y'=\lambda y$，$\lambda<0$の減衰問題に従います．
+$z=\lambda\Delta t$とすると，1ステップの増幅率は次の形になります．
+増幅率$R(z)$は，1ステップ後の係数が更新前の何倍になるかを表します．
+
+::: {.time-integration-table tabindex="0" role="region" aria-label="時間積分法の増幅率比較"}
+
+| 手法 | 増幅率 $R(z)$ |
+|---|---|
+| 前進Euler | $1+z$ |
+| 陽的中点RK2 | $1+z+z^2/2$ |
+| 古典的RK4 | $1+z+z^2/2+z^3/6+z^4/24$ |
+| 後退Euler | $1/(1-z)$ |
+
+:::
+
+$|R(z)|\le1$なら，そのモードの振幅は一定または減衰します．
+前進Eulerの拡散で使う$\mathrm{Fo}=D\Delta t/\Delta x^2\le1/2$は[N03の安定条件](../lessons/N03.qmd#stability)です．
+RK2も負の実軸で$-2\le z\le0$が安定範囲です．
+RK4は負の実軸の安定範囲を広げますが，実験Bの$N=4$では高周波の$z=\lambda_{39}\Delta t$が約$-4$となり，この範囲も超えます．
+初期値の小さな高周波成分が，全体の分布へ大きく現れる様子を確認します．
+
+## 後退Eulerの連立方程式と計算量 {#backward-euler}
+
+後退Eulerは新時刻の傾きを使います．
+$$
+\begin{aligned}
+\boldsymbol u^{n+1}&=\boldsymbol u^n+\Delta t A\boldsymbol u^{n+1},\\
+(I-\Delta t A)\boldsymbol u^{n+1}&=\boldsymbol u^n.
+\end{aligned}
+$$
+ここで$I$は単位行列，$A$は空間差分で得た行列です．
+右辺に旧時刻の状態$\boldsymbol u^n$を置き，左辺の連立一次方程式を解いて新時刻の状態$\boldsymbol u^{n+1}$を求めます．
+Juliaでは`(I-dt*A) \ u_old`に対応します．
+配布実装は，手法と時間刻みを決めるごとに係数行列を1回LU分解し，全$N$ステップでその分解を再利用して解きます．
+
+未知数を$m$個とすると，この一次元問題の三重対角構造を利用する直接法では，分解と1回の求解の計算量はそれぞれ$m$に比例します．
+配布例では式との対応を読みやすくするため，密行列に変換してLU分解します．
+密行列ではLU分解が概ね$m^3$，分解後の1回の求解が$m^2$に比例するため，右辺評価と線形求解は処理回数に加えて行列の大きさと構造も考慮して比べます．
+
+負の実数$z$に対し後退Eulerの$|R(z)|$は1以下なので，この線形拡散問題では刻みによらず安定です．
+実験Bの$N=4$で高周波係数の減衰を確認し，同じ条件での最終分布の最大絶対誤差も読み取ってください．
+後退Eulerの$N=4$と$N=128$の誤差を比べ，刻みを細かくしたときの精度の変化を確かめます．
+
+## 取得・実装・実行 {#try-example}
+
+### 新規フォルダだけを取得する {#get-example}
+
+学生リポジトリの最上位ディレクトリで，`upstream`が授業の学生配布元を指すことを[共通の更新案内](../guides/workflow.qmd#material-updates)から確認します．
+現在の課題用ブランチで，次のブロック全体を実行します．
+
+```{.bash #time-integration-fetch}
+bash -c '
+target=examples/time-integration
+root=$(git rev-parse --show-toplevel) || exit 1
+if [ "$(pwd -P)" != "$root" ]; then
+    echo "学生リポジトリのrootで実行してください．" >&2
+    exit 1
+fi
+if [ -e "$target" ] || [ -L "$target" ] ||
+   [ -n "$(git ls-files -- "$target")" ]; then
+    echo "同名パスの内容と差分を確認してください．" >&2
+    exit 1
+fi
+if [ -L examples ] || { [ -e examples ] && [ ! -d examples ]; }; then
+    echo "examplesの状態を確認してください．" >&2
+    exit 1
+fi
+git fetch --no-tags upstream main || exit 1
+if [ "$(git cat-file -t "FETCH_HEAD:$target")" != tree ]; then
+    echo "配布元のexamples/time-integrationを確認してください．" >&2
+    exit 1
+fi
+git restore --source=FETCH_HEAD --worktree -- "$target"
+'
+```
+
+これは初回の取得手順です．
+既存の課題とステージ領域を保ち，新規フォルダだけが未追跡で加わります．
+`git status --short`と`git diff --cached`で取得結果と元の作業を確認します．
+通常の配布元更新は[共通の更新手順](../guides/workflow.qmd#material-updates)を参照してください．
+
+### RK2を実装して検査する
+
+[`README`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/time-integration/README.md)のAPI条件を読み，`run.jl`の`rk2_step(f,y,t,dt)`だけを実装します．
+実装後は，既存のJulia環境を使い，学生リポジトリの最上位ディレクトリで次の順に実行します．
+
+```bash
+julia --project=. examples/time-integration/tests.jl
+julia --project=. examples/time-integration/run.jl
+```
+
+`scratch/time-integration/`へ`time-convergence.png`，`diffusion-comparison.png`，`summary.toml`の3点を保存します．
+
+### 図と数値を照合する {#read-results}
+
+時間収束図は横軸が時間刻み，縦軸が$T=1$での絶対誤差です．
+両対数軸の傾きが，前進Euler・RK2・RK4・後退Eulerの順に1・2・4・1へ近づくことを確認します．
+拡散比較図は左列が$N=128$，右列が$N=4$で，上から$T=0.1$の分布，モード39の係数の時間変化，陰解法の係数の時間変化です．
+色と線種で手法を見分け，拡大した図の凡例も確認してください．
+陽解法の増幅で縦軸が広がる場合は，下段で陰解法の小さな係数を読みます．
+以下は同じ配布例を完成させた基準結果です．
+図を選ぶと拡大できます．
+自分の図を生成し，[基準のsummary.toml](../assets/time-integration-reference/summary.toml)と数値も照合します．
+
+![常微分方程式の時間収束](../assets/time-integration-reference/time-convergence.png){fig-alt="横軸dt，縦軸T=1での絶対誤差を両対数で示す．前進Eulerと後退Eulerは1次，陽的中点RK2は2次，古典的RK4は4次の傾きで誤差が減る"}
+
+![同じ半離散拡散問題の4手法比較](../assets/time-integration-reference/diffusion-comparison.png){fig-alt="左列はN=128，右列はN=4．上から最終分布，全手法の高周波係数履歴，陰解法の係数履歴．粗い刻みの陽解法では高周波成分が増幅し，後退Eulerでは減衰する"}
+
+次の例は学生リポジトリの最上位ディレクトリでJuliaを起動して実行できます．
+
+```{.julia #time-integration-summary}
+using TOML
+summary = TOML.parsefile("scratch/time-integration/summary.toml")
+@assert summary["schema_version"] == 1
+@assert summary["example_id"] == "time-integration"
+for row in summary["time_convergence"]
+    println(row["method"], ": orders = ", row["orders"])
+    println("  N=64 cost = ", last(row["cost"]))
+end
+```
+
+`orders`の3値は，$N=8\to16$，$16\to32$，$32\to64$の順の観測次数です．
+`cost`の`rhs_evaluations`・`factorizations`・`linear_solves`は，右辺評価・行列分解・線形求解の回数で，上のコードは$N=64$の値を表示します．
+`diffusion`の`max_abs_error`と`high_mode_coefficients`で，最終分布の最大絶対誤差とモード39の係数の時間変化を確認できます．
+RK2の検査が通ったら，刻みを半分にしたときの誤差の減り方，同じ刻みでの高周波係数の増減，誤差と処理回数の関係を図と数値から説明してください．
+
+## 任意：Crank–Nicolson {#crank-nicolson}
+
+旧時刻と新時刻の傾きの平均を使うと，線形問題では
+$$
+(I-\tfrac{\Delta t}{2}A)\boldsymbol u^{n+1}
+=(I+\tfrac{\Delta t}{2}A)\boldsymbol u^n
+$$
+を解きます．
+Crank–Nicolsonは時間2次で，この線形拡散問題では無条件安定です．
+ただし増幅率$R(z)=(1+z/2)/(1-z/2)$は$z<-2$で負になり，大刻みではモード係数の符号が交代します．
+$|R(z)|<1$でも符号は変わるため，減衰しながらの振動を振幅の発散と区別します．
+配布コードと追加図は次のコマンドで比較できます．
+
+```bash
+julia --project=. examples/time-integration/run.jl scratch/time-integration-cn --cn
+```
+
+右下の陰解法専用パネルで符号交代を確認し，後退Eulerの強い高周波減衰と比べてください．
+[CNを含む数値](../assets/time-integration-reference/summary-cn.toml)でも係数の絶対値と符号を確認できます．
+
+![任意CNを含む拡散比較](../assets/time-integration-reference/diffusion-cn.png){fig-alt="4手法にCrank–Nicolsonを加えた比較．右下でCNの高周波係数は符号を交互に変えながら減衰し，後退Eulerの係数は正のまま強く減衰する"}
+
+## さらに学ぶ空間・時間の手法
+
+空間4次中心差分は，内部点で
+$$
+u_{xx}(x_j)\approx\frac{-u_{j+2}+16u_{j+1}-30u_j+16u_{j-1}-u_{j-2}}{12\Delta x^2}
+$$
+と近似します．
+滑らかな関数では空間誤差を減らせますが，端の処理と時間積分の安定性も合わせて設計します．
+Lax–Wendroff法は，移流方程式の時間Taylor展開に方程式を代入して空間微分へ置き換える，時間と空間を組み合わせた2次の方法です．
+非線形移流や急な勾配を扱うときは，精度とともに数値振動を抑える仕組みも考えます．
+SSPRKは空間離散化が持つ安定性を時間側で保つ条件を，MUSCL・TVD・WENOは空間再構成や振動を抑える考え方を学ぶ入口です．
+導出・実装は以下の参考資料で学べます．
+
+- [東京大学：常微分方程式の数値解法](https://www.den.t.u-tokyo.ac.jp/ad_prog/ode/)：Euler・中点法・RK4の導入．
+- [Cambridge：PDE stability](https://www.damtp.cam.ac.uk/user/hf323/M21-II-NA/demos/pde_stability/pde_stability.html)：拡散の陽EulerとCrank–Nicolsonの比較．
+- [Oxford：Numerical solution of PDEs](https://people.maths.ox.ac.uk/suli/lecture_notes.pdf)：theta法と安定性・精度．
+- [Clawpack：1D advection](https://www.clawpack.org/gallery/_static/apps/notebooks/classic/advection_1d/advection_1d.html)：移流手法と振動の比較．
+- [Shu：ENO and WENO schemes](https://ntrs.nasa.gov/api/citations/19980007543/downloads/19980007543.pdf)：TVD・SSPRK・MUSCL・ENO/WENOの先の学習．

@@ -65,6 +65,8 @@ website:
             text: 共通化の設計判断
           - href: advanced/cairomakie.qmd
             text: CairoMakieによる可視化
+          - href: advanced/numerical-schemes.qmd
+            text: 時間積分の精度・安定性・計算量
           - href: advanced/package-built-solvers.qmd
             text: JuliaのPDEソルバ
           - href: advanced/public-solver-methods.qmd
@@ -206,6 +208,8 @@ website:
           text: 共通化の設計判断
         - href: advanced/cairomakie.qmd
           text: "CairoMakieによる可視化"
+        - href: advanced/numerical-schemes.qmd
+          text: 時間積分の精度・安定性・計算量
         - href: advanced/package-built-solvers.qmd
           text: "JuliaのPDEソルバ"
         - href: advanced/public-solver-methods.qmd

@@ -181,6 +181,13 @@ N03Diffusion.stability_experiment(; output_dir=joinpath("scratch", "N03-stabilit
 `scratch/N03-stability/`に`stability-comparison.png`と`summary.toml`を保存します．
 図から振動・振幅増大を比較し，条件と結果を学習ログへ追記します．
 
+## 任意：独立例で時間積分を比較する {#optional-time-integration}
+
+2026年度の任意学習として，[時間積分比較の取得・実装・実行](../advanced/numerical-schemes.qmd#try-example)へ進めます．
+新規の`examples/time-integration/`だけを取り込み，陽的中点法の`rk2_step(f,y,t,dt)`の1箇所を実装します．
+配布済みの前進Euler・古典的RK4・後退Eulerと，終時刻の誤差・高周波係数の増減・右辺評価・行列分解・線形求解の回数を比べます．
+出力先は`scratch/time-integration/`です．
+
 {{< include /assignments/_understanding-check.qmd >}}
 
 ## 完了条件
