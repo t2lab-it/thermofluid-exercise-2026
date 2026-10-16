@@ -207,7 +207,7 @@ $t=0.5\ \mathrm{s}$ の数値解を，CSVの参照点または自分で評価し
 ### Step 6：水深・波位置・保存量の図表と結論の整理 {#step-6発表できる根拠と再現手順にまとめる}
 
 Stoker解との比較図，条件比較図，主要条件・指標表，自己検証の結果を配置し，問いへの回答，波形が変わる物理的または数値的な理由，モデルと計算条件の限界を整理します．
-[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)も確認します．
+[共通の発表前確認](../../assignments/final-project.qmd#presentation-check)も確認します．
 
 [共通の記録項目](../../assignments/final-project.qmd#project-records)を揃え，[発表前の確認](../../assignments/final-project.qmd#presentation-check)を行ってください．
 

@@ -174,7 +174,7 @@ GPUが速くなる規模を観測できたか，観測範囲では判別でき�
 
 ### Step 6：発表に向けた移植判断と再現手順の整理 {#step-6移植判断と再現手順を発表へまとめる}
 
-[共通の評価基準](../../assignments/final-project.qmd#evaluation-criteria)に沿い，CPU基準版の検証結果とCPU/GPU場の差を示します．
+[共通の発表前確認](../../assignments/final-project.qmd#presentation-check)に沿い，CPU基準版の検証結果とCPU/GPU場の差を示します．
 問題規模ごとのCPU時間・GPUカーネル時間・転送込み時間の図から，GPU移植が有効になる条件を説明します．
 高速化しなかった場合やGPUを実行できなかった場合も，確認できた原因，適用範囲，未確認事項，次に必要な実験を区別します．
 

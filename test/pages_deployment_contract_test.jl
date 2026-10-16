@@ -13,3 +13,22 @@ using Test
     end
     @test occursin("path: _site", workflow)
 end
+
+@testset "fork PR checks stay read-only and package only after render" begin
+    workflow = read(joinpath(SITE_ROOT, ".github/workflows/check-pages.yml"), String)
+    yaml = yaml_source_lines(workflow)
+    @test !isnothing(yaml_node(yaml, ("on", "pull_request")))
+    @test isnothing(yaml_node(yaml, ("on", "pull_request_target")))
+    @test yaml_scalar(yaml, yaml_node(yaml, ("permissions", "contents"))) == "read"
+    @test !occursin(r"(?:pages|id-token):\s*write|secrets\.|deploy-pages@|upload-pages-artifact@|instructors-2026", workflow)
+    @test occursin("persist-credentials: false", workflow)
+    phases = [findfirst(value, workflow) for value in (
+        "test/runtests.jl", "quarto render", "project_showcase.py package", "actions/upload-artifact@",
+    )]
+    @test all(!isnothing, phases)
+    @test issorted(first.(phases))
+    @test occursin("github.event.pull_request.head.sha", workflow)
+    @test occursin("git rev-parse HEAD", workflow)
+    @test occursin("html-math-method:mathml", workflow)
+    @test occursin("if-no-files-found: error", workflow)
+end
