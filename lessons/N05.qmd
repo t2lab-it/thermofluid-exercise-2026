@@ -301,13 +301,13 @@ Juliaは読み込んだ関数の定義をプロセス内に保持します．
 変更前後のコードは，それぞれ新しいプロセスで読み込んで確かめます．
 :::
 
-## 抽出前後の証拠 {#regression}
+## 基準データ・比較結果・実行元の記録 {#regression}
 
 回帰確認とは，変更前の挙動を保っていることを調べる作業です．
 小例の期待値は人が独立に求めましたが，N01〜N04全体の代表結果は抽出前の完成コードから記録します．
 提供コードの[`baseline`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L293-L300)が基準を保存し，[`verify`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L321-L353)が抽出後の結果を比較してレポートを保存します．
 新しいプロセスで実行する箇所は[`fresh_capture`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L204-L211)，比較規則は[`compare!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L229-L250)で確認できます．
-以下は証拠ファイルの作成と比較の流れです．
+以下は基準データの取得，共通化後の再計算，結果の比較と記録の流れです．
 
 ```text
 抽出前の完成コード ＋ 選択済みN04モデル
@@ -326,7 +326,7 @@ baselineの`results`には数値配列に加えて，返却フィールド，刻
 キー・形状・整数・モデルは一致を求め，浮動小数は有限値であることと`rtol=1e-12, atol=1e-13`による許容差内の一致を求めます．
 許容差は，小さな丸め誤差を許容して比較するために設けます．
 
-| 証拠 | 読み取る来歴 |
+| 記録する項目 | 読み取る来歴 |
 |---|---|
 | baselineの`schema_version`・`selected_model` | 記録の形式と，抽出前に選んだN04モデル |
 | baselineの`git_head`・`code_sha256` | 基準取得時のcommitと，対象Juliaファイルの内容 |
@@ -346,8 +346,8 @@ baselineのハッシュは，比較に使った基準を識別します．
 | N04選択・キー・形状・値が不一致 | 表示された箇所とdiffを照合し，契約を崩した変更を直す |
 
 失敗後に確認する終了状態・メッセージと操作は[共通ガイド](../guides/workflow.qmd#n05-n06-stages)を参照します．
-今回の終了状態とメッセージを確かめ，コードとbaselineの来歴が対応するレポートを証拠にします．
-回帰は代表実験について「変更前と同じ」を示す証拠です．
+今回の終了状態とメッセージを確かめ，基準取得時と比較時のコードをレポートの来歴から識別します．
+回帰確認が成功した場合，代表実験の結果が既定の比較規則で変更前と一致したと判断できます．
 計算の妥当性は，小例の独立した期待値や，保存量・解析解との比較で確かめます．
 
 ## AI提案の差分と採否 {#diff-review}
@@ -373,9 +373,8 @@ baselineのハッシュは，比較に使った基準を識別します．
 | N04の共通更新内で`model = :linear`と固定する | 課題側で選んだ非線形モデルが無視される | [`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L4)から引数への伝達，選択モデルのテストと回帰 |
 | 差が出たのでbaselineやテスト期待値を現在値へ変更する | 変更前の基準や独立した期待値を失い，契約破壊を隠す | 基準の来歴，期待値の根拠，結果と無関係に行うdiffの確認 |
 
-証拠にはそれぞれ役割があります．
 **diff**は「処理が移り，旧入口が委譲するか」，**既存テスト**は「期待する挙動を保つか」，**回帰**は「代表結果を保つか」を示します．
-三つを対応付けて，各提案の採否と理由を説明します．
+各提案について，diff・既存テスト・回帰結果で確認できたことを示し，採否と理由を説明します．
 
 ## N06での再利用 {#toward-n06}
 

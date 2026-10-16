@@ -87,7 +87,7 @@ N05の提出物は`results/N05/baseline.toml`と`results/N05/regression.toml`で
 N05の共通化で進めなくなった場合は，diffと失敗を説明して教員・TAの復帰支援を受けられます．
 復帰後も自分の過去課題・N04選択・学習ログを保ち，採用した差分と回帰結果を説明します．
 
-理解度チェックのポイントは，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)，[基準と回帰の証拠](../lessons/N05.qmd#regression)，[AI差分の採否](../lessons/N05.qmd#diff-review)を参照して整理します．
+理解度チェックのポイントは，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)，[基準データ・比較結果・実行元の記録](../lessons/N05.qmd#regression)，[AI差分の採否](../lessons/N05.qmd#diff-review)を参照して整理します．
 
 任意の発展資料[共通化の設計判断](../advanced/refactoring-design.qmd#questions)では，複数案を比較できます．
 
