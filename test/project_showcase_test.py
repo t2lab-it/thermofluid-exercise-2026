@@ -17,8 +17,7 @@ title: "熱拡散の格子比較"
 author: ["表示名 A", "表示名 B"]
 description: "解析解と格子幅の影響を比較する。"
 source-repository: "https://github.com/example/heat"
-source-sha: "SOURCE_SHA"
-reproduction-url: "https://github.com/example/heat/blob/SOURCE_SHA/README.md"
+reproduction-url: "https://github.com/example/heat/blob/main/README.md"
 license: "CC BY 4.0"
 ---
 
@@ -31,9 +30,9 @@ $u_t=\\alpha u_{xx}$ とし，$\\alpha=1$，周期境界，$u(x,0)=\\sin x$を�
 
 解析解と照合し，格子を細かくすると誤差が減った。
 時間刻みの影響は未確認である。
-[再現手順](https://github.com/example/heat/blob/SOURCE_SHA/README.md)と
+[再現手順](https://github.com/example/heat/blob/main/README.md)と
 [成果紹介の一覧](../index.qmd)を参照。
-'''.replace('SOURCE_SHA', SHA)
+'''
 
 
 def fixture(root, report=True):
@@ -78,8 +77,8 @@ class ReportContracts(unittest.TestCase):
             (lambda r,b,p: p.write_text(p.read_text()+'\n[欠落](missing.qmd)\n'), 'missing link'),
             (lambda r,b,p: (b/'index.qmd').write_text('---\ntitle: list\n---\n'), 'listing mismatch'),
             (lambda r,b,p: (b/'index.qmd').write_text((b/'index.qmd').read_text()+'\n[ghost](ghost/index.qmd)'), 'listing mismatch'),
-            (lambda r,b,p: p.write_text(p.read_text().replace(SHA, 'abc123')), '40 lowercase hex'),
-            (lambda r,b,p: p.write_text(p.read_text().replace('/blob/'+SHA, '/blob/main')), 'pinned reproduction'),
+            (lambda r,b,p: p.write_text(p.read_text().replace('heat/blob/main', 'another-project/blob/main')), 'reproduction URL'),
+            (lambda r,b,p: p.write_text(p.read_text().replace('heat/blob/main', 'heat-other/blob/main')), 'reproduction URL'),
             (lambda r,b,p: p.write_text(p.read_text().replace('[成果紹介の一覧](../index.qmd)', '一覧')), 'back link'),
         ]
         for damage, reason in cases:
@@ -102,6 +101,33 @@ class ReportContracts(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp); base=fixture(root); p=base/'heat-check/index.qmd'
             p.write_text(p.read_text()+'\n```julia\nx = 1\n```\n')
+            self.assertEqual(showcase.validate(root), [])
+
+    def test_listing_rejects_active_content(self):
+        additions = [
+            '\n<script>alert(1)</script>',
+            '\n<iframe src="https://example.com"></iframe>',
+            '\n```{julia}\nerror("executed")\n```',
+            '\n~~~{python}\nprint(1)\n~~~',
+            '\n> ```{julia}\n> error(1)\n> ```',
+            '\n```{=html}\n<script>alert(1)</script>\n```',
+            '\n`{julia} error("executed")`',
+            '\n{{< include other.qmd >}}',
+            '\n[click](https://example.com){onclick=alert(1)}',
+            '\n[click](javascript:alert%281%29)',
+        ]
+        for addition in additions:
+            with self.subTest(addition=addition):
+                self.check_damage(lambda r,b,p: (b/'index.qmd').write_text((b/'index.qmd').read_text()+addition), 'static')
+        self.check_damage(lambda r,b,p: (b/'index.qmd').write_text((b/'index.qmd').read_text().replace('title:', 'filters: [evil.lua]\ntitle:')), 'metadata')
+        self.check_damage(lambda r,b,p: (b/'index.qmd').write_text((b/'index.qmd').read_text().replace('成果紹介', '<script>alert(1)</script>')), 'static')
+
+    def test_listing_allows_comments_and_display_code(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            base = fixture(root)
+            page = base/'index.qmd'
+            page.write_text(page.read_text()+'\n<!-- 掲載例: [題名](slug/index.qmd) -->\n\n```julia\nx = 1\n```\n')
             self.assertEqual(showcase.validate(root), [])
 
     def test_size_boundaries(self):

@@ -16,7 +16,7 @@ from urllib.parse import unquote, urlsplit
 
 SHA = re.compile(r'[0-9a-f]{40}')
 IMAGES = {'.png', '.jpg', '.jpeg', '.webp', '.gif'}
-FIELDS = {'title', 'author', 'description', 'source-repository', 'source-sha', 'reproduction-url', 'license'}
+FIELDS = {'title', 'author', 'description', 'source-repository', 'reproduction-url', 'license'}
 
 
 def document(path):
@@ -51,6 +51,35 @@ def local_target(page, target, root):
     return (root / decoded.lstrip('/') if decoded.startswith('/') else page.parent / decoded).resolve()
 
 
+def static_document(page, fail, allow_comments=False):
+    # Check both the source (Quarto cells/shortcodes) and Pandoc's parsed content,
+    # including metadata. This must run for the listing as well as each report.
+    source = page.read_text()
+    if re.search(r'(?:`{3,}|~{3,})\s*\{', source) or '{{<' in source:
+        fail(page, 'static pages cannot use executable/raw cells or shortcodes')
+    try: doc = document(page)
+    except ValueError as exc:
+        fail(page, str(exc)); return None
+    for node in nodes(doc):
+        kind = node['t']
+        if kind == 'Code' and re.match(r'\{[^}]+\}', node['c'][1]):
+            fail(page, 'static pages cannot use executable inline code')
+        attr = None
+        if kind in ('CodeBlock', 'Code', 'Link', 'Image', 'Span', 'Div', 'Table'):
+            attr = node['c'][0]
+        elif kind == 'Header': attr = node['c'][1]
+        if attr and any(key not in ('width', 'height', 'fig-align') for key, _ in attr[2]):
+            fail(page, 'static pages cannot use custom HTML attributes')
+        if kind in ('RawInline', 'RawBlock') and node['c'][0] in ('html', 'html5'):
+            # The listing's editing instructions are an HTML comment. Only
+            # complete comments may pass; any surrounding HTML is still rejected.
+            if not allow_comments or re.sub(r'<!--.*?-->', '', node['c'][1], flags=re.S).strip():
+                fail(page, 'static pages cannot contain raw HTML, scripts or iframe')
+        if kind == 'Link' and urlsplit(node['c'][-1][0]).scheme.lower() not in ('', 'http', 'https', 'mailto'):
+            fail(page, 'static link scheme is not allowed: ' + node['c'][-1][0])
+    return doc
+
+
 def validate(root):
     root = Path(root).resolve()
     base = root / 'projects/showcase'
@@ -80,48 +109,29 @@ def validate(root):
             total += size
             if size > 5 * 1024**2: fail(file, 'image exceeds 5 MiB')
         if total > 10 * 1024**2: fail(page, 'images exceed 10 MiB per report')
-        source = page.read_text()
-        # Reject Quarto execution/shortcodes before any rendering. Plain code
-        # fences remain display-only; raw HTML is deliberately unsupported.
-        if re.search(r'(?:`{3,}|~{3,})\s*\{', source) or '{{<' in source:
-            fail(page, 'static reports cannot use executable/raw cells or shortcodes')
-        try: doc = document(page)
-        except ValueError as exc: fail(page, str(exc)); continue
+        doc = static_document(page, fail)
+        if doc is None: continue
         meta = doc['meta']
         if set(meta) != FIELDS or any(not plain(meta.get(key)) for key in FIELDS):
             fail(page, 'metadata must contain only nonempty ' + ', '.join(sorted(FIELDS)))
-        sha = plain(meta.get('source-sha'))
-        if not SHA.fullmatch(sha): fail(page, 'source-sha requires 40 lowercase hex characters')
         repo = plain(meta.get('source-repository'))
         parsed_repo = urlsplit(repo)
         if parsed_repo.scheme != 'https' or not parsed_repo.netloc or parsed_repo.username or parsed_repo.query or parsed_repo.fragment:
             fail(page, 'source-repository must be an HTTPS repository URL')
         reproduction = plain(meta.get('reproduction-url'))
-        if not reproduction.startswith(repo.rstrip('/') + '/') or sha not in urlsplit(reproduction).path.split('/') or not SHA.fullmatch(sha):
-            fail(page, 'pinned reproduction URL must refer to source-repository and source-sha')
+        if not reproduction.startswith(repo.rstrip('/') + '/'):
+            fail(page, 'reproduction URL must refer to source-repository')
         if plain(meta.get('license')) != 'CC BY 4.0': fail(page, 'license must be CC BY 4.0')
         images = 0
         back = False
         for node in nodes(doc):
             kind = node['t']
-            if kind == 'Code' and re.match(r'\{[^}]+\}', node['c'][1]):
-                fail(page, 'static reports cannot use executable inline code')
-            attr = None
-            if kind in ('CodeBlock', 'Code', 'Link', 'Image', 'Span', 'Div', 'Table'):
-                attr = node['c'][0]
-            elif kind == 'Header': attr = node['c'][1]
-            if attr and any(key not in ('width', 'height', 'fig-align') for key, _ in attr[2]):
-                fail(page, 'static reports cannot use custom HTML attributes')
-            if kind in ('RawInline', 'RawBlock') and node['c'][0] in ('html', 'html5'):
-                fail(page, 'static reports cannot contain raw HTML, scripts or iframe')
             if kind not in ('Link', 'Image'): continue
             target = node['c'][-1][0]
             destination = local_target(page, target, root)
             if kind == 'Link':
                 if destination == (base/'index.qmd').resolve(): back = True
                 if destination is not None and not destination.is_file(): fail(page, 'missing link: ' + target)
-                if urlsplit(target).scheme.lower() not in ('', 'http', 'https', 'mailto'):
-                    fail(page, 'static link scheme is not allowed: ' + target)
             else:
                 images += 1
                 if destination is None or not destination.is_relative_to((item/'assets').resolve()) or Path(urlsplit(target).path).suffix.lower() not in IMAGES:
@@ -130,12 +140,13 @@ def validate(root):
                 if not node['c'][-2]: fail(page, 'image caption is required: ' + target)
         if not images: fail(page, 'at least one image is required')
         if not back: fail(page, 'back link to ../index.qmd is required')
-    try:
-        listing = document(base/'index.qmd')
+    listing = static_document(base/'index.qmd', fail, allow_comments=True)
+    if listing is not None:
+        if set(listing['meta']) != {'title'} or not plain(listing['meta'].get('title')):
+            fail(base/'index.qmd', 'listing metadata must contain only a nonempty title')
         links = [local_target(base/'index.qmd', n['c'][-1][0], root) for n in nodes(listing['blocks']) if n['t'] == 'Link']
         listed = [p for p in links if p is not None and p.is_relative_to(base.resolve()) and p != (base/'index.qmd').resolve()]
         if sorted(listed) != sorted(reports): fail(base/'index.qmd', 'listing mismatch: link each report exactly once, with no nonexistent reports')
-    except ValueError as exc: fail(base/'index.qmd', str(exc))
     return errors
 
 
