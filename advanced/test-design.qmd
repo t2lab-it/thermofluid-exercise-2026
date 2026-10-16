@@ -1,5 +1,5 @@
 ---
-title: "意味のあるテストの設計"
+title: "誤実装を検出するテストの設計"
 sidebar: advanced
 ---
 
