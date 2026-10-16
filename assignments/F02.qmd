@@ -35,7 +35,7 @@ branch，テスト，学習ログ，PR，mergeの共通手順は[学生向け課
 
 - `values`は1要素以上の実数の一次元配列とする．
 - すべての値が有限であることを確認する．
-- 整数，`Float32`，その他の実数型を含む`AbstractVector`で意味のある結果を返す．
+- 整数，`Float32`，その他の実数型を含む`AbstractVector`に対し，平均と各要素の偏差を上式どおりに求める．
 - [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L75-L79)は入力と同じ長さの新しい配列を返し，入力の値を保持する．
 - 入力条件を満たさない場合はエラーにする．
 
