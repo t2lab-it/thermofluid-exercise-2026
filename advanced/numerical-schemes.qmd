@@ -230,16 +230,16 @@ julia --project=. examples/time-integration/run.jl
 
 時間収束図は横軸が時間刻み，縦軸が$T=1$での絶対誤差です．
 両対数軸の傾きが，前進Euler・RK2・RK4・後退Eulerの順に1・2・4・1へ近づくことを確認します．
-拡散比較図は上段が$N=128$，下段が$N=4$で，左から$T=0.1$の分布，モード39の係数の時間変化，陰解法の係数の時間変化です．
+拡散比較図は左列が$N=128$，右列が$N=4$で，上から$T=0.1$の分布，モード39の係数の時間変化，陰解法の係数の時間変化です．
 色と線種で手法を見分け，拡大した図の凡例も確認してください．
-陽解法の増幅で縦軸が広がる場合は，右列で陰解法の小さな係数を読みます．
+陽解法の増幅で縦軸が広がる場合は，下段で陰解法の小さな係数を読みます．
 以下は同じ配布例を完成させた基準結果です．
 図を選ぶと拡大できます．
 自分の図を生成し，[基準のsummary.toml](../assets/time-integration-reference/summary.toml)と数値も照合します．
 
 ![常微分方程式の時間収束](../assets/time-integration-reference/time-convergence.png){fig-alt="横軸dt，縦軸T=1での絶対誤差を両対数で示す．前進Eulerと後退Eulerは1次，陽的中点RK2は2次，古典的RK4は4次の傾きで誤差が減る"}
 
-![同じ半離散拡散問題の4手法比較](../assets/time-integration-reference/diffusion-comparison.png){fig-alt="上段はN=128，下段はN=4．各段で左から最終分布，全手法の高周波係数履歴，陰解法の係数履歴．粗い刻みの陽解法では高周波成分が増幅し，後退Eulerでは減衰する"}
+![同じ半離散拡散問題の4手法比較](../assets/time-integration-reference/diffusion-comparison.png){fig-alt="左列はN=128，右列はN=4．上から最終分布，全手法の高周波係数履歴，陰解法の係数履歴．粗い刻みの陽解法では高周波成分が増幅し，後退Eulerでは減衰する"}
 
 次の例は学生リポジトリの最上位ディレクトリでJuliaを起動して実行できます．
 
