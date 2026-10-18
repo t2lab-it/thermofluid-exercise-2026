@@ -33,6 +33,7 @@ const EXPECTED_GUIDE_HREFS = Set([
 ])
 const EXPECTED_ADVANCED_HREFS = Set([
     "advanced/numerical-schemes.qmd",
+    "advanced/advection-stability.qmd",
     "advanced/terminal-prompt.qmd",
     "advanced/github-ssh.qmd", "advanced/github-cli.qmd",
     "advanced/git-tips.qmd", "advanced/git-stash.qmd", "advanced/git-worktree.qmd",

@@ -17,5 +17,6 @@ title: "発展資料"
 - [共通化の設計判断](refactoring-design.qmd) — 二つの境界処理を題材に，検証を共有する単位，関数分割と`mode`分岐，受理条件の違いを比較します．
 - [CairoMakieによる可視化](cairomakie.qmd) — 1次元線形移流課題（課題ID: N01）の結果を隔離した一時環境で可視化します．
 - [時間積分の精度・安定性・計算量](numerical-schemes.qmd) — 2026年度の任意教材として，RK2を実装し，時間刻みと誤差，高周波成分の増減，処理回数を比べます．
+- [移流方程式の安定性を波で調べる](advection-stability.qmd) — Fourier波の増幅率から，風上差分のCFL条件と中心差分の不安定性を導きます．
 - [JuliaのPDEソルバ](package-built-solvers.qmd) — 有限差分・有限体積・有限要素のパッケージが提供する部品を比較し，最終プロジェクトで使う方法を選びます．
 - [JuliaのCFDソルバ](public-solver-methods.qmd) — 埋め込み境界法，高次DG法，スタッガード有限体積法，Fourier擬スペクトル法，SBP法を比較し，公開ソルバ型課題の検証を設計します．

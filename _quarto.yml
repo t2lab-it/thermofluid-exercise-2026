@@ -67,6 +67,8 @@ website:
             text: CairoMakieによる可視化
           - href: advanced/numerical-schemes.qmd
             text: 時間積分の精度・安定性・計算量
+          - href: advanced/advection-stability.qmd
+            text: 移流方程式の安定性解析
           - href: advanced/package-built-solvers.qmd
             text: JuliaのPDEソルバ
           - href: advanced/public-solver-methods.qmd
@@ -210,6 +212,8 @@ website:
           text: "CairoMakieによる可視化"
         - href: advanced/numerical-schemes.qmd
           text: 時間積分の精度・安定性・計算量
+        - href: advanced/advection-stability.qmd
+          text: 移流方程式の安定性解析
         - href: advanced/package-built-solvers.qmd
           text: "JuliaのPDEソルバ"
         - href: advanced/public-solver-methods.qmd
