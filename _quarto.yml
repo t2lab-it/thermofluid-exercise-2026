@@ -30,6 +30,8 @@ website:
         menu:
           - href: guides/julia-environment.qmd
             text: Julia環境のしくみ
+          - href: guides/julia-packages.qmd
+            text: Juliaのパッケージ
           - href: guides/testing.qmd
             text: テスト
           - href: guides/commands.qmd
@@ -172,6 +174,8 @@ website:
           text: "ガイド一覧"
         - href: guides/julia-environment.qmd
           text: "Julia環境のしくみ"
+        - href: guides/julia-packages.qmd
+          text: "Juliaのパッケージ"
         - href: guides/testing.qmd
           text: "テストと数値検証"
         - href: guides/commands.qmd
