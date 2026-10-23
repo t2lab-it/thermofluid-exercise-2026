@@ -26,6 +26,7 @@ const EXPECTED_COURSE_HREFS = [
 ]
 const EXPECTED_GUIDE_HREFS = Set([
     "guides/julia-environment.qmd",
+    "guides/julia-packages.qmd",
     "guides/testing.qmd", "guides/commands.qmd",
     "guides/troubleshooting.qmd", "guides/glossary.qmd",
     "guides/links.qmd",

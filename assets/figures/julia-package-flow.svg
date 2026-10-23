@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" role="img" aria-labelledby="title desc">
+  <title id="title">MiniFluxパッケージの構成と使い方</title>
+  <desc id="desc">上段にMiniFluxの2ファイルを示す．Project.tomlは名前，UUID，版を記録し，src/MiniFlux.jlはmodule MiniFluxとlinear_flux関数を定義する．下段はMiniFluxのルートでjulia --project=.により環境を選び，using MiniFluxで読み込み，MiniFlux.linear_flux(2.0, 3.0)を呼ぶと6.0になる流れ．外部依存がないためPkg.instantiateによる取得は不要．</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L9 4.5 0 9Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="480" rx="18" fill="#ffffff"/>
+  <g font-family="sans-serif" fill="#1e293b">
+    <rect x="16" y="16" width="968" height="202" rx="14" fill="#f0f9ff" stroke="#bae6fd"/>
+    <text x="38" y="52" font-size="22" font-weight="700">MiniFlux/ の中身</text>
+
+    <rect x="38" y="73" width="425" height="124" rx="12" fill="#ffffff" stroke="#38bdf8" stroke-width="2"/>
+    <text x="58" y="105" font-size="20" font-weight="700">Project.toml</text>
+    <text x="58" y="137" font-size="17">name = "MiniFlux"</text>
+    <text x="58" y="164" font-size="17">uuid と version で識別・版を記録</text>
+
+    <rect x="537" y="73" width="425" height="124" rx="12" fill="#ffffff" stroke="#38bdf8" stroke-width="2"/>
+    <text x="557" y="105" font-size="20" font-weight="700">src/MiniFlux.jl</text>
+    <text x="557" y="135" font-size="17" font-family="monospace">module MiniFlux</text>
+    <text x="557" y="162" font-size="17" font-family="monospace">linear_flux(u, speed) = u * speed</text>
+
+    <rect x="16" y="234" width="968" height="230" rx="14" fill="#f0fdf4" stroke="#bbf7d0"/>
+    <text x="38" y="270" font-size="22" font-weight="700">MiniFlux を使う流れ</text>
+
+    <rect x="38" y="294" width="254" height="124" rx="12" fill="#ffffff" stroke="#4ade80" stroke-width="2"/>
+    <text x="58" y="326" font-size="18" font-weight="700">1  環境を選ぶ</text>
+    <text x="58" y="358" font-size="17" font-family="monospace">julia --project=.</text>
+    <text x="58" y="392" font-size="16">MiniFlux/ で起動</text>
+
+    <rect x="372" y="294" width="254" height="124" rx="12" fill="#ffffff" stroke="#4ade80" stroke-width="2"/>
+    <text x="392" y="326" font-size="18" font-weight="700">2  コードを読み込む</text>
+    <text x="392" y="358" font-size="17" font-family="monospace">using MiniFlux</text>
+    <text x="392" y="392" font-size="16">src/ の定義を利用可能に</text>
+
+    <rect x="706" y="294" width="254" height="124" rx="12" fill="#ffffff" stroke="#4ade80" stroke-width="2"/>
+    <text x="726" y="326" font-size="18" font-weight="700">3  関数を呼び出す</text>
+    <text x="726" y="355" font-size="16" font-family="monospace">MiniFlux.linear_flux</text>
+    <text x="726" y="384" font-size="17" font-family="monospace">(2.0, 3.0) → 6.0</text>
+
+    <path d="M307 356H354M641 356H688" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <text x="38" y="449" font-size="16" fill="#166534">外部パッケージを使わない例：Pkg.instantiate() による取得は不要</text>
+  </g>
+</svg>
