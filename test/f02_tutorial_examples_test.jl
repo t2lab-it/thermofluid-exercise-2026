@@ -21,7 +21,6 @@ using Test
                 Test.@with_testset intentional begin
                     Core.eval(scope, Meta.parse(code))
                 end
-                @test length(intentional.results) == 1
                 @test only(intentional.results) isa Test.Fail
             else
                 exception_type = errors[expected[1]]

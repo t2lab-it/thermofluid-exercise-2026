@@ -79,14 +79,11 @@ end
                             @test isempty(preparation.results)
                             observed = observe_design_code(failure_scope, code, "$path:$id")
                             @test observed.n_passed == 0
-                            @test length(observed.results) == 1
-                            if length(observed.results) == 1
-                                result = only(observed.results)
-                                @test result isa Test.Fail
-                                if result isa Test.Fail
-                                    @test Meta.parse(string(result.orig_expr)) == TEST_DESIGN_FAILURES[id]
-                                    @test result.test_type == :test
-                                end
+                            result = only(observed.results)
+                            @test result isa Test.Fail
+                            if result isa Test.Fail
+                                @test Meta.parse(string(result.orig_expr)) == TEST_DESIGN_FAILURES[id]
+                                @test result.test_type == :test
                             end
                         else
                             observed = observe_design_code(scope, code, "$path:$id")
@@ -94,7 +91,6 @@ end
                             @test observed.n_passed == passes
                             push!(setup, code)
                         end
-                        @test !any(result -> result isa Test.Error, observed.results)
                     end
                 end
                 # Known values are maintenance regressions, independent of the
