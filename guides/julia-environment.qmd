@@ -10,6 +10,8 @@ title: "Julia環境のしくみ"
 初回の復元手順は[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)，課題の実行・提出手順は[課題ワークフロー](workflow.qmd)を参照してください．
 最終プロジェクトで新しい環境を構築するときは，[最終プロジェクトへのコード移行](final-project-handoff.qmd)へ進みます．
 
+パッケージの意味，最小構成，準備と読み込みの違いは，[Juliaのパッケージ](julia-packages.qmd)で説明します．
+
 ## 配布ファイルの役割 {#environment-files}
 
 学生リポジトリには，課題に必要なパッケージの構成を記録した次の2ファイルが含まれます．
@@ -25,7 +27,7 @@ cloneで課題コードとこの2ファイルを取得し，環境復元でパ�
 導入したパッケージや関連キャッシュは，通常，ユーザー側のJulia保存領域（`~/.julia/`）に置かれます．
 
 授業ではJulia 1.13系を使い，配布ManifestとCIの再現基準は1.13.0です．
-Juliaupは**Julia本体の実行版**を選び，Pkgは**依存パッケージの環境**を選択・復元します．
+Juliaupは**Julia本体の実行版**を選び，Julia付属のパッケージ管理機能Pkgは**依存パッケージの環境**を選択・復元します．
 Manifestの`julia_version`には，作成時のJuliaの版が記録されています．
 実行版は`julia --version`で確認し，違う場合は[Juliaupの手順](../setup/julia.qmd#juliaupでjuliaを導入する)へ戻ります．
 
