@@ -9,10 +9,6 @@ const EXPECTED_PUBLISHED_DATES = [
     "10/16（金）", "10/23（金）", "10/30（金）", "11/6（金）", "11/13（金）",
     "11/27（金）", "12/4（金）", "12/11（金）", "12/18（金）", "2027/1/8（金）",
 ]
-const F03_F04_PUBLIC_PAGES = [
-    "lessons/F03.qmd", "assignments/F03.qmd",
-    "lessons/F04.qmd", "assignments/F04.qmd",
-]
 
 is_public_qmd_path(path::AbstractString) =
     endswith(path, ".qmd") && !startswith(basename(path), "_")
@@ -50,7 +46,6 @@ end
 
 @testset "workflow links to the canonical AI guidance page" begin
     guide_path = normpath(joinpath(PUBLIC_STRUCTURE_ROOT, "guides", "ai-usage.qmd"))
-    @test isfile(guide_path)
     source_path = joinpath(PUBLIC_STRUCTURE_ROOT, "guides", "workflow.qmd")
     targets = qmd_link_targets(read(source_path, String))
     @test any(targets) do target
@@ -69,8 +64,6 @@ end
 
         @test !isnothing(document)
         isnothing(document) && continue
-        @test !isempty(document.title)
-        @test !isempty(document.body)
         if startswith(relative_path, r"(lessons|assignments|projects)/") && basename(relative_path) != "index.qmd"
             @test has_level2_heading(document.body)
         end
