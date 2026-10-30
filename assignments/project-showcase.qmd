@@ -52,7 +52,8 @@ git remote -v
 ```
 
 `origin`が自分のforkであることを確認します．
-同期元として講義サイトを`upstream`へ登録し，現在の講義サイト`main`から作業ブランチを作ります．
+講義サイトを同期元の`upstream`へ登録します．
+講義サイトの現在の`main`から作業ブランチを作ります．
 
 ```bash
 git remote add upstream https://github.com/t2lab-it/thermofluid-exercise-2026.git
@@ -60,7 +61,8 @@ git fetch upstream
 git switch -c showcase/heat-grid-study upstream/main
 ```
 
-VS Codeのエクスプローラーで`projects/showcase/heat-grid-study/`と`assets/`を作成し，`examples/project-showcase-template.qmd`を`index.qmd`としてコピーします．
+VS Codeのエクスプローラーで`projects/showcase/heat-grid-study/`と`assets/`を作成します．
+`examples/project-showcase-template.qmd`を`index.qmd`としてコピーします．
 テンプレートの説明や仮のURLを自分の本文・出所へ置き換え，`assets/result.png`等へ自分の図を置きます．
 `projects/showcase/index.qmd`に次の形式で自分の項目を1件追加します．
 題名，著者表示，短い説明を含め，他のレポートの項目を保持します．
@@ -90,7 +92,7 @@ git push -u origin showcase/heat-grid-study
 ```
 
 ブラウザでforkを開き，Compare & pull requestからPRを作ります．
-送信前に，次を画面で確認してください．
+PRの送信前に，次の送信先と作業ブランチを画面で確認してください．
 
 | 項目 | 設定 |
 |---|---|
@@ -100,7 +102,7 @@ git push -u origin showcase/heat-grid-study
 | compare branch | `showcase/heat-grid-study`等の作業ブランチ |
 
 タイトルにプロジェクトを識別できる名前を付け，本文にはレポートの要約，コード・データの参照先，図・引用・表示の確認状況を記します．
-Files changedで，自分の原稿・図・一覧だけが差分になっていることを確認してください．
+Files changedで，自分の原稿・図と，一覧の自分の項目だけが差分になっていることを確認してください．
 
 ## PR検査のHTMLで表示を確認する
 
