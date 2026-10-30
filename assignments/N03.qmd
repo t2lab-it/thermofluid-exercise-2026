@@ -63,7 +63,8 @@ u_{n_x}^{n+1}&=u_{n_x}^n+2r(u_{n_x-1}^n-u_{n_x}^n)
 $$
 で端点も更新します．
 
-内部・端点とも同じ旧配列を参照し，新配列への書込みが終わってから交換します．
+内部点・端点とも同じ旧配列を参照します．
+新配列への書込みが終わってから，新旧バッファを交換します．
 指定Fourier数は0.4で，$\Delta t_{\max}=0.4\Delta x^2/D$，$N_t=\lceil t_f/\Delta t_{\max}\rceil$，$\Delta t=t_f/N_t$です．
 実効値$r$を記録し，安定条件$0<r\le1/2$を確認します．
 熱量は端点を半分に重み付けする台形則で定義し，断熱では保存されます．
@@ -86,15 +87,18 @@ $$
 です．
 
 両境界を41・81・161点，指定Fourier数0.4，最終時刻1で比較します．
-全格子点での最大絶対誤差$E=\max_i|u_i-u_*(x_i,1)|$と，両区間の$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を計算し，約2次の収束を確認します．
+全格子点での最大絶対誤差$E=\max_i|u_i-u_*(x_i,1)|$を計算します．
+粗い格子と次に細かい格子の組ごとに$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を計算し，約2次の収束を確認します．
 任意の安定条件超過実験は矩形初期値・固定温度・81点・最終時刻0.1で，指定Fourier数0.4と0.6を比べます．
 
 保存・表示時刻は$t=0,0.25,0.50,0.75,1$です．
 
 #### 診断値の定義 {#diagnostics}
 
-`initial_heat`と`final_heat`は台形則の無次元熱量，`heat_change`は最終から初期を引いた符号付き変化です．
-`minimum`と`maximum`は初期を含む全時刻の極値，`requested_fo`は指定値，`fo`は実効値です．
+`initial_heat`と`final_heat`は台形則の無次元熱量です．
+`heat_change`は最終熱量から初期熱量を引いた符号付き変化です．
+`minimum`と`maximum`は初期を含む全時刻の極値です．
+`requested_fo`は指定Fourier数，`fo`は実効Fourier数です．
 `convergence`には両境界の格子幅・最大絶対誤差・観測次数が入ります．
 図・数値から固定温度の放熱，断熱の保存，解析解への収束を説明し，N01・N02の数値拡散と物理拡散の違いも記録します．
 
@@ -167,7 +171,7 @@ exercises/N03_diffusion/results/summary.toml
 ![両境界の解析モードの格子収束](../assets/n03-reference/convergence.png){fig-alt="黒実線の固定温度と黒破線の断熱，黒点線の2次比較線を示し，格子幅を半分にすると最大絶対誤差が約4分の1になる収束図"}
 
 [`summary.toml`](../assets/n03-reference/summary.toml)と自分の結果を比較してください．
-診断値の定義は[冒頭の条件](#diagnostics)を参照し，図と照合してください．
+[診断値の定義](#diagnostics)を参照し，図と照合してください．
 
 ## 任意の安定条件超過実験
 
