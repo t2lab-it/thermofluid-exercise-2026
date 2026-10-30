@@ -11,8 +11,9 @@ mermaid:
 
 [N05授業の抽出例](../lessons/N05.qmd#boundary-example)を踏まえ，二つの境界処理を共通モジュールへまとめる設計案を比較します．
 基本案では，入力検証を共有して境界ごとに関数を分け，従来の契約を保って共通側へ移します．
-この基本案を基準に，入口を`mode`で切り替える案と，配列長の受理条件を狭める案をそれぞれ比較します．
-前者では呼出し方の違い，後者では受け入れる入力の契約の違いを調べます．
+この基本案を基準に，境界条件を`mode`で切り替える案と，配列長の受理条件を狭める案をそれぞれ比較します．
+切替え案では呼出し方の違いを調べます．
+受理条件を狭める案では，受け入れる入力の契約の違いを調べます．
 [学生用リポジトリのコード一式](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/examples/refactoring-design)は，独立して実行できる7ファイルの補助教材です．
 
 ## コード例の実行準備とファイル構成 {#prepare}
@@ -59,7 +60,7 @@ cd examples/refactoring-design
 基本案では，この条件を確かめる`validate_boundary_inputs`を共有し，流入・流出境界条件は`inlet_outlet!`，両端固定境界条件は`fixed_ends!`で表します．
 各関数の引数から，必要な境界値を読み取れる構成です．
 
-[wide.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/wide.jl)では，基本案の二つの関数を一つの入口から呼び，`mode`によって境界条件を選びます．
+[wide.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/wide.jl)では，基本案の二つの関数を一つの関数から呼び，`mode`によって境界条件を選びます．
 `mode=:outlet`では左の値を指定し，`mode=:fixed`では左右の値を指定します．
 関数を一つにまとめると，`mode`と指定値の組合せを判定する分岐が加わります．
 
@@ -71,7 +72,7 @@ cd examples/refactoring-design
 | `[2.,3.,4.]`，左`5.`・右`7.` | 両端固定 | `[5.,3.,7.]` |
 
 境界条件ごとに関数を分けた案でも，`mode`で切り替える案でも，この結果は同じです．
-関数を分ける案では関数名と引数から境界の種類が分かり，`wide`案では入口を一つにして`mode`と値の組合せを検証します．
+関数を分ける案では関数名と引数から境界の種類が分かり，`wide`案では呼出し用の関数を一つにして`mode`と値の組合せを検証します．
 呼出し側が指定する引数と，その組合せの条件を比較してください．
 
 ## 依存関係の整理 {#dependencies}
@@ -113,7 +114,7 @@ flowchart TB
 [after.jl](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/examples/refactoring-design/after.jl)は，`include("common.jl")`で共通モジュールを読み込みます．
 呼出し側が用意する配列と境界値は，引数で共通側へ渡します．
 この配置により，共通側を単独で読み込み，検証から境界条件の適用まで実行できます．
-`wide.jl`と`strict.jl`もこの共通側を利用し，それぞれ入口の分岐と受理条件の変更を加えています．
+`wide.jl`と`strict.jl`もこの共通側を利用し，それぞれ呼出し用の関数の分岐と，配列長の受理条件の変更を加えています．
 
 ## 契約の維持 {#contract}
 
@@ -144,7 +145,7 @@ julia --startup-file=no --compiled-modules=no --project=. checks.jl common
 
 各実行で64件の検査が成功します．
 `common`の成功は，共通モジュールだけで入力検証と境界処理が動くことを示します．
-戻り値の同一性，更新結果，拒否時の配列保持を，同じ入力と期待値で三つの入口に照合します．
+戻り値の同一性，更新結果，拒否時の配列保持を，共通化前・共通化後・共通側で同じ入力と期待値を使って照合します．
 
 2点配列`[8.,9.]`に左`2.`を指定する検査にも注目してください．
 流入・流出境界条件では，左端を更新した後，右端がその値を読み取るため，結果は`[2.,2.]`です．
