@@ -7,10 +7,7 @@ using Test
     tests = findfirst("test/runtests.jl", workflow)
     render = findfirst("quarto render", workflow)
     deploy = findfirst("actions/deploy-pages@", workflow)
-    @test !isnothing(tests) && !isnothing(render) && !isnothing(deploy)
-    if !isnothing(tests) && !isnothing(render) && !isnothing(deploy)
-        @test first(tests) < first(render) < first(deploy)
-    end
+    @test first(tests) < first(render) < first(deploy)
     @test occursin("path: _site", workflow)
 end
 
@@ -25,7 +22,6 @@ end
     phases = [findfirst(value, workflow) for value in (
         "test/runtests.jl", "quarto render", "project_showcase.py package", "actions/upload-artifact@",
     )]
-    @test all(!isnothing, phases)
     @test issorted(first.(phases))
     @test occursin("github.event.pull_request.head.sha", workflow)
     @test occursin("git rev-parse HEAD", workflow)

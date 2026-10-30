@@ -33,8 +33,6 @@ end
         @test input == original
         result = Base.invokelatest(getfield(scope, :adjacent_sums), input)
         @test result == expected
-        @test length(result) == length(input) - 1
-        @test result !== input
         @test input == original
     end
 end

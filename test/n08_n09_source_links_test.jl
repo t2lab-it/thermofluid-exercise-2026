@@ -28,7 +28,6 @@ end
     source = "module Elliptic\nfunction poisson_jacobi_step!(u)\nu\nend\nend\n"
     text = "[`poisson_jacobi_step!(u)`]($base#L2-L4)"
     links = source_links(text)
-    @test length(links) == 1
     @test only(links).name == "poisson_jacobi_step!"
     @test only(links).line == 2
     @test only(links).ref == "main"

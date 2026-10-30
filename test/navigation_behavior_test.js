@@ -91,7 +91,6 @@ class FakeElement extends FakeEventTarget {
     this.parentNode = null;
     this.hidden = false;
     this.id = "";
-    this.href = "";
     this.textContent = "";
     this.className = "";
     this.focused = false;
@@ -116,31 +115,10 @@ class FakeElement extends FakeEventTarget {
     this.attributes.delete(name);
   }
 
-  set ariaExpanded(value) {
-    this.setAttribute("aria-expanded", value);
-  }
-
-  get ariaExpanded() {
-    return this.getAttribute("aria-expanded");
-  }
-
-  set ariaControls(value) {
-    this.setAttribute("aria-controls", value);
-  }
-
-  get ariaControls() {
-    return this.getAttribute("aria-controls");
-  }
-
   append(...elements) {
     for (const element of elements) {
       this.insertBefore(element, null);
     }
-  }
-
-  appendChild(element) {
-    this.append(element);
-    return element;
   }
 
   replaceChildren(...elements) {
@@ -161,11 +139,6 @@ class FakeElement extends FakeEventTarget {
     element.parentNode = this;
     this.children.splice(index, 0, element);
     return element;
-  }
-
-  before(...elements) {
-    assert(this.parentNode, "element must have a parent before insertion");
-    for (const element of elements) this.parentNode.insertBefore(element, this);
   }
 
   after(...elements) {
@@ -257,7 +230,6 @@ renderedGuideItem.classList.add("nav-item", "dropdown");
 const renderedGuideToggle = new FakeElement("a");
 renderedGuideToggle.classList.add("nav-link", "dropdown-toggle");
 renderedGuideToggle.setAttribute("href", "#");
-renderedGuideToggle.href = "#";
 renderedGuideToggle.setAttribute("rel", "split-navigation split-navigation-guides");
 renderedGuideToggle.setAttribute("data-bs-toggle", "dropdown");
 renderedGuideToggle.setAttribute("aria-expanded", "false");
@@ -301,11 +273,6 @@ let navigation;
   nestedMenu.classList.add("dropdown-menu");
   nestedItem.append(nestedToggle, nestedMenu);
   const nestedDocument = new FakeDocument({ sectionLinks: [nestedToggle], offset: "../" });
-  assertEqual(
-    typeof navigation.enhanceRenderedNavbar,
-    "function",
-    "the actual rendered-navbar path must be directly regression-testable",
-  );
   navigation.enhanceRenderedNavbar(nestedDocument);
   assertEqual(
     nestedToggle.getAttribute("href"),
@@ -315,11 +282,6 @@ let navigation;
 }
 
 {
-  assertEqual(
-    typeof navigation.syncThemeToggleLabel,
-    "function",
-    "assets/navigation.js must export syncThemeToggleLabel(toggle)",
-  );
   const themeToggle = new FakeElement("a");
   themeToggle.append(new FakeElement("i"));
   const themeDocument = new FakeDocument({ themeToggle });
@@ -340,16 +302,10 @@ let navigation;
   assertEqual(themeToggle.getAttribute("title"), "ダークモード ON");
 
 }
-assertEqual(
-  typeof navigation.enhanceSplitNavigation,
-  "function",
-  "assets/navigation.js must export enhanceSplitNavigation({ anchor, menu, document })",
-);
 
 const item = new FakeElement("li");
 const anchor = new FakeElement("a");
 anchor.setAttribute("href", "guides/index.html");
-anchor.href = "guides/index.html";
 anchor.textContent = "ガイド";
 const menu = new FakeElement("ul");
 menu.id = "course-menu";
@@ -365,11 +321,10 @@ assertClosed(trigger, menu);
 assertEqual(trigger.getAttribute("type"), "button");
 assert(trigger.getAttribute("aria-label")?.trim());
 assertEqual(anchor.getAttribute("href"), "guides/index.html");
-assertEqual(anchor.href, "guides/index.html");
 
 const anchorClick = fire(anchor, "click");
 assertEqual(anchorClick.defaultPrevented, false, "the section anchor must remain navigable");
-assertEqual(anchor.href, "guides/index.html");
+assertEqual(anchor.getAttribute("href"), "guides/index.html");
 assertClosed(trigger, menu);
 
 fire(item, "pointerenter", { target: anchor });
@@ -404,7 +359,6 @@ assertClosed(trigger, menu);
 const touchDocument = new FakeDocument({ hover: false });
 const touchItem = new FakeElement("li");
 const touchAnchor = new FakeElement("a");
-touchAnchor.href = "guides/index.html";
 const touchMenu = new FakeElement("ul");
 touchMenu.id = "guides-menu";
 touchItem.append(touchAnchor, touchMenu);

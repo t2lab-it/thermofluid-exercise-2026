@@ -48,7 +48,6 @@ def render(source, commands_only=False):
 class ConsoleExamplesTest(unittest.TestCase):
     def test_environment_diagnostics_copy_without_paths_or_output(self):
         page = ROOT / 'guides' / 'julia-environment.qmd'
-        self.assertTrue(page.is_file(), 'the environment guide must exist')
         commands = render(page.read_text(), commands_only=True)
         self.assertEqual(commands, [
             'pwd',
@@ -175,7 +174,6 @@ julia> twice(3)
             'git worktree remove .worktrees/experiment/N01-comparison',
         ):
             self.assertIn(command, commands)
-        self.assertTrue(commands)
         for command in commands:
             self.assertEqual(len(command.splitlines()), 1)
             self.assertFalse(command.startswith(('$ ', '> ')))

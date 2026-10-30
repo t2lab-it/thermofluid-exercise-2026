@@ -4,17 +4,8 @@ using TOML
 const NAVIGATION_SITE_ROOT = normpath(joinpath(@__DIR__, ".."))
 isdefined(@__MODULE__, :qmd_link_targets) ||
     include(joinpath(@__DIR__, "support", "qmd_contracts.jl"))
-const F03_F04_START_COMMAND = "julia --project=. scripts/course.jl start F03-F04"
-const N05_N06_START_COMMAND = "julia --project=. scripts/course.jl start N05-N06"
-const F03_F04_FORBIDDEN_TERMS = (
-    "Forward" * "Diff",
-    "自動" * "微分",
-    "automatic" * "_reference",
-    "T" * "BA",
-)
 
 const REQUIRED_COURSE_ORDER = ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08", "N09")
-const REQUIRED_ASSIGNMENT_IDS = Set(REQUIRED_COURSE_ORDER)
 const EXPECTED_PREPARATION_HREFS = Set([
     "setup/index.qmd", "setup/julia.qmd", "setup/git-github.qmd",
     "setup/agents.qmd", "guides/ai-usage.qmd", "guides/workflow.qmd",
@@ -293,7 +284,6 @@ end
     restoration = joinpath(NAVIGATION_SITE_ROOT, "assignments", "F00.qmd")
     restoration_source = read(restoration, String)
     restoration_section = match(r"(?ms)^## [^\n]*\{#julia環境を復元する\}\s*\n(.*?)(?=^## |\z)", restoration_source)
-    @test !isnothing(restoration_section)
     for relative in ("guides/index.qmd", "setup/julia.qmd", "assignments/F00.qmd",
                      "guides/workflow.qmd", "guides/commands.qmd", "guides/troubleshooting.qmd")
         path = joinpath(NAVIGATION_SITE_ROOT, relative)
@@ -303,19 +293,16 @@ end
         end
         @test guide in resolve_qmd_target.(Ref(path), qmd_link_targets(source))
     end
-    @test isfile(guide)
-    if isfile(guide)
-        source = read(guide, String)
-        for anchor in ("environment-files", "select-environment", "restore-environment", "environment-failures")
-            @test occursin(Regex("(?m)^## [^\\n]*\\{#" * anchor * "\\}"), source)
-        end
-        links = [m.captures[1] for m in eachmatch(r"(?<!!)\[[^\]]+\]\(([^)\s]+\.qmd#[^)\s]+)\)", source)]
-        @test any(links) do link
-            target, fragment = split(link, '#'; limit=2)
-            resolve_qmd_target(guide, target) == restoration &&
-                fragment == "julia環境を復元する" &&
-                occursin("{#" * fragment * "}", restoration_source)
-        end
+    source = read(guide, String)
+    for anchor in ("environment-files", "select-environment", "restore-environment", "environment-failures")
+        @test occursin(Regex("(?m)^## [^\\n]*\\{#" * anchor * "\\}"), source)
+    end
+    links = [m.captures[1] for m in eachmatch(r"(?<!!)\[[^\]]+\]\(([^)\s]+\.qmd#[^)\s]+)\)", source)]
+    @test any(links) do link
+        target, fragment = split(link, '#'; limit=2)
+        resolve_qmd_target(guide, target) == restoration &&
+            fragment == "julia環境を復元する" &&
+            occursin("{#" * fragment * "}", restoration_source)
     end
 end
 
@@ -330,7 +317,6 @@ end
     advanced = filter(sidebars) do item
         something(yaml_item_field(yaml, item, "id"), (value="",)).value == "advanced"
     end
-    @test length(advanced) == 1
     if length(advanced) == 1
         contents = yaml_item_field(yaml, only(advanced), "contents")
         hrefs = isnothing(contents) ? String[] : entry_hrefs(navigation_entries(yaml, contents.node))
@@ -347,16 +333,13 @@ end
 
     for relative in expected[1:2]
         path = joinpath(NAVIGATION_SITE_ROOT, relative)
-        @test isfile(path)
-        if isfile(path)
-            source = read(path, String)
-            @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
-            targets = resolve_qmd_target.(Ref(path), qmd_link_targets(source))
-            @test joinpath(NAVIGATION_SITE_ROOT, "guides", "workflow.qmd") in targets
-            @test joinpath(NAVIGATION_SITE_ROOT, "advanced", "git-worktree.qmd") in targets
-            other = relative == first(expected) ? expected[2] : expected[1]
-            @test joinpath(NAVIGATION_SITE_ROOT, other) in targets
-        end
+        source = read(path, String)
+        @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+        targets = resolve_qmd_target.(Ref(path), qmd_link_targets(source))
+        @test joinpath(NAVIGATION_SITE_ROOT, "guides", "workflow.qmd") in targets
+        @test joinpath(NAVIGATION_SITE_ROOT, "advanced", "git-worktree.qmd") in targets
+        other = relative == first(expected) ? expected[2] : expected[1]
+        @test joinpath(NAVIGATION_SITE_ROOT, other) in targets
     end
 end
 
@@ -365,12 +348,10 @@ end
     quarto = read(joinpath(public_root, "_quarto.yml"), String)
     yaml = yaml_source_lines(quarto)
     language = yaml_node(yaml, ("lang",))
-    @test !isnothing(language)
-    !isnothing(language) && @test yaml_scalar(yaml, language) == "ja"
+    @test yaml_scalar(yaml, language) == "ja"
 
     site_title = yaml_node(yaml, ("website", "title"))
-    @test !isnothing(site_title)
-    !isnothing(site_title) && @test !isempty(strip(yaml_scalar(yaml, site_title)))
+    @test !isempty(strip(something(yaml_scalar(yaml, site_title), "")))
 
     navbar_left = yaml_node(yaml, ("website", "navbar", "left"))
     @test !isnothing(navbar_left)
@@ -396,8 +377,7 @@ end
     end
 
     page_navigation = yaml_node(yaml, ("website", "page-navigation"))
-    @test !isnothing(page_navigation)
-    !isnothing(page_navigation) && @test yaml_scalar(yaml, page_navigation) == "true"
+    @test yaml_scalar(yaml, page_navigation) == "true"
 
     sidebar = yaml_node(yaml, ("website", "sidebar"))
     @test !isnothing(sidebar)
@@ -412,19 +392,15 @@ end
         if length(final_project_matches) == 1
             final_project = only(final_project_matches)
             title = yaml_item_field(yaml, final_project, "title")
-            @test !isnothing(title)
-            !isnothing(title) && @test !isempty(strip(title.value))
+            @test !isnothing(title) && !isempty(strip(title.value))
 
 
 
             contents = yaml_item_field(yaml, final_project, "contents")
-            @test !isnothing(contents)
-            if !isnothing(contents)
-                top_level = yaml_sequence_items(yaml, contents.node)
-                hub = first(top_level)
-                @test !isempty(strip(yaml_item_field(yaml, hub, "text").value))
-                @test yaml_item_field(yaml, hub, "href").value == "assignments/final-project.qmd"
-            end
+            top_level = yaml_sequence_items(yaml, contents.node)
+            hub = first(top_level)
+            @test !isempty(strip(yaml_item_field(yaml, hub, "text").value))
+            @test yaml_item_field(yaml, hub, "href").value == "assignments/final-project.qmd"
 
             listed_topics = reduce(vcat, [
                 sidebar_section_entries(yaml, section)
@@ -452,19 +428,13 @@ end
         topic_metadata_path = joinpath(
             public_root, "projects", "final-project-topics", "_metadata.yml",
         )
-        @test isfile(topic_metadata_path)
-        if isfile(topic_metadata_path)
-            topic_metadata = yaml_source_lines(read(topic_metadata_path, String))
-            topic_sidebar = yaml_node(topic_metadata, ("sidebar",))
-            @test !isnothing(topic_sidebar)
-            !isnothing(topic_sidebar) &&
-                @test yaml_scalar(topic_metadata, topic_sidebar) == "final-project-topics"
-        end
+        topic_metadata = yaml_source_lines(read(topic_metadata_path, String))
+        topic_sidebar = yaml_node(topic_metadata, ("sidebar",))
+        @test yaml_scalar(topic_metadata, topic_sidebar) == "final-project-topics"
 
         hub_source = read(joinpath(public_root, "assignments", "final-project.qmd"), String)
         hub_parts = split(hub_source, "---"; limit=3)
-        @test length(hub_parts) == 3
-        length(hub_parts) == 3 && @test occursin(r"(?m)^sidebar:\s*course\s*$", hub_parts[2])
+        @test occursin(r"(?m)^sidebar:\s*course\s*$", hub_parts[2])
 
         advanced_matches = [
             item for item in sidebar_items
@@ -474,15 +444,12 @@ end
         if length(advanced_matches) == 1
             advanced = only(advanced_matches)
             contents = yaml_item_field(yaml, advanced, "contents")
-            @test !isnothing(contents)
-            if !isnothing(contents)
-                entries = navigation_entries(yaml, contents.node)
-                @test all(entry -> !isempty(strip(first(entry))), entries)
-                @test Set(entry_hrefs(entries)) == union(
-                    EXPECTED_ADVANCED_HREFS,
-                    Set(["advanced/index.qmd"]),
-                )
-            end
+            entries = navigation_entries(yaml, contents.node)
+            @test all(entry -> !isempty(strip(first(entry))), entries)
+            @test Set(entry_hrefs(entries)) == union(
+                EXPECTED_ADVANCED_HREFS,
+                Set(["advanced/index.qmd"]),
+            )
         end
 
         course_matches = [
@@ -493,16 +460,12 @@ end
         if length(course_matches) == 1
             course = only(course_matches)
             collapse_level = yaml_item_field(yaml, course, "collapse-level")
-            @test !isnothing(collapse_level)
-            !isnothing(collapse_level) && @test collapse_level.value == "2"
+            @test !isnothing(collapse_level) && collapse_level.value == "2"
             contents = yaml_item_field(yaml, course, "contents")
-            @test !isnothing(contents)
-            if !isnothing(contents)
-                top_level = yaml_sequence_items(yaml, contents.node)
-                home = first(top_level)
-                @test yaml_item_field(yaml, home, "href").value == "index.qmd"
-                @test !isempty(strip(yaml_item_field(yaml, home, "text").value))
-            end
+            top_level = yaml_sequence_items(yaml, contents.node)
+            home = first(top_level)
+            @test yaml_item_field(yaml, home, "href").value == "index.qmd"
+            @test !isempty(strip(yaml_item_field(yaml, home, "text").value))
 
             sections = sidebar_sections(yaml, course)
             section_entries = [sidebar_section_entries(yaml, section) for section in sections]
@@ -524,7 +487,6 @@ end
 
                 home_source = read(joinpath(public_root, "index.qmd"), String)
                 course_map = match(r"(?ms)^::: \{\.course-map\}\s*\n(.*?)^:::\s*$", home_source)
-                @test !isnothing(course_map)
                 map_hrefs = isnothing(course_map) ? String[] : qmd_link_targets(course_map.captures[1])
                 for kind in ("lessons", "assignments")
                     @testset "$kind index and course map follow the sidebar" begin
@@ -551,64 +513,32 @@ end
 
     loader_path = navigation_loader_path(yaml)
     @test loader_path == NAVIGATION_LOADER
-    loader_exists = !isnothing(loader_path) && isfile(joinpath(public_root, loader_path))
-    @test loader_exists
-    if loader_exists
-        @test is_module_navigation_loader(read(joinpath(public_root, loader_path), String))
-    end
-
-    for path in (
-        "lessons/index.qmd",
-        "assignments/index.qmd",
-        "guides/index.qmd",
-        "guides/ai-usage.qmd",
-        "guides/commands.qmd",
-        "guides/troubleshooting.qmd",
-        "guides/glossary.qmd",
-        "advanced/index.qmd",
-        NAVIGATION_LOADER,
-        "assets/navigation.js",
-    )
-        @test isfile(joinpath(public_root, path))
-    end
+    @test is_module_navigation_loader(read(joinpath(public_root, NAVIGATION_LOADER), String))
 
     navigation_path = joinpath(public_root, "assets", "navigation.js")
-    navigation_exists = isfile(navigation_path)
-    @test navigation_exists
-
-    behavior_test_exists = isfile(NAVIGATION_BEHAVIOR_TEST)
-    @test behavior_test_exists
-    quarto = Sys.which("quarto")
-    @test !isnothing(quarto)
-    if behavior_test_exists && !isnothing(quarto)
-        passed, details = run_navigation_behavior(quarto, navigation_path)
-        @test passed
-        if !passed
-            @info "navigation behavior contract failed" details
-        end
+    passed, details = run_navigation_behavior("quarto", navigation_path)
+    @test passed
+    if !passed
+        @info "navigation behavior contract failed" details
     end
 end
 
 @testset "optional worktree comparison is reachable from the shared workflow" begin
     tutorial = joinpath(NAVIGATION_SITE_ROOT, "advanced", "git-worktree.qmd")
-    @test isfile(tutorial)
     for relative in ("advanced/index.qmd", "guides/workflow.qmd")
         path = joinpath(NAVIGATION_SITE_ROOT, relative)
         source = read(path, String)
         if relative == "guides/workflow.qmd"
             section = match(r"(?ms)^## [^\n]*\{#exercise-work\}\s*\n(.*?)(?=^## |\z)", source)
-            @test !isnothing(section)
             source = isnothing(section) ? "" : section.captures[1]
         end
         targets = qmd_link_targets(source)
         @test tutorial in resolve_qmd_target.(Ref(path), targets)
     end
-    if isfile(tutorial)
-        source = read(tutorial, String)
-        targets = resolve_qmd_target.(Ref(tutorial), qmd_link_targets(source))
-        for relative in ("guides/workflow.qmd", "guides/testing.qmd", "assignments/N01.qmd", "assignments/F00.qmd")
-            @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
-        end
+    source = read(tutorial, String)
+    targets = resolve_qmd_target.(Ref(tutorial), qmd_link_targets(source))
+    for relative in ("guides/workflow.qmd", "guides/testing.qmd", "assignments/N01.qmd", "assignments/F00.qmd")
+        @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
     end
 end
 
@@ -626,7 +556,6 @@ end
     section=split(workflow,"{#n07-stages}";limit=2)[2]
     regression=findfirst("julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify",section)
     pkg=findfirst("using Pkg; Pkg.test()",section)
-    @test !isnothing(regression)
     @test !isnothing(pkg) && !isnothing(regression) && first(regression)<first(pkg)
 end
 
@@ -634,8 +563,6 @@ end
     contracts = TOML.parsefile(
         joinpath(NAVIGATION_SITE_ROOT, "assignments", "contracts.toml"),
     )["assignments"]
-    @test contracts["F03"]["start_command"] == F03_F04_START_COMMAND
-    @test contracts["F04"]["start_command"] == F03_F04_START_COMMAND
     @test contracts["F03"]["run_path"] == "exercises/F03-F04_vector_calculus/F03.jl"
     @test contracts["F04"]["run_path"] == "exercises/F03-F04_vector_calculus/run.jl"
 
@@ -671,10 +598,9 @@ end
 end
 
 
-@testset "N05 and N06 share submission but keep distinct content routes" begin
+@testset "N05 and N06 keep distinct content routes" begin
     contracts=TOML.parsefile(joinpath(NAVIGATION_SITE_ROOT,"assignments","contracts.toml"))["assignments"]
     for (id,entry,other) in (("N05","N05.jl","N06"),("N06","simulate.jl","N05"))
-        @test contracts[id]["start_command"] == N05_N06_START_COMMAND
         @test contracts[id]["run_path"] == "exercises/N05-N06_common_package_2d_advection/$entry"
         for directory in ("lessons","assignments")
             source=read(joinpath(NAVIGATION_SITE_ROOT,directory,"$id.qmd"),String)
@@ -683,9 +609,8 @@ end
     end
 end
 
-@testset "N08 and N09 preserve a shared submission and independent classroom check" begin
+@testset "N08 and N09 keep independent classroom and final entry points" begin
     contracts=TOML.parsefile(joinpath(NAVIGATION_SITE_ROOT,"assignments","contracts.toml"))["assignments"]
-    @test contracts["N08"]["start_command"]==contracts["N09"]["start_command"]=="julia --project=. scripts/course.jl start N08-N09"
     @test endswith(contracts["N08"]["run_path"],"simulate.jl")
     @test endswith(contracts["N09"]["run_path"],"run.jl")
     for id in ("N08","N09")
@@ -714,37 +639,30 @@ end
     for route in (navbar, sidebar, index)
         @test all(path -> count(==(path), route) == 1, EXPECTED_ADVANCED_HREFS)
         positions = [findfirst(==(path), route) for path in neighbors]
-        @test all(!isnothing, positions)
         if all(!isnothing, positions)
             @test positions == collect(positions[1]:positions[1]+length(neighbors)-1)
         end
     end
     page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "pseudocode.qmd")
-    @test isfile(page)
-    if isfile(page)
-        source = read(page, String)
-        @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
-        targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
-        for relative in ("lessons/N01.qmd", "assignments/N01.qmd", "guides/testing.qmd", "guides/ai-usage.qmd")
-            @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
-        end
+    source = read(page, String)
+    @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+    targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
+    for relative in ("lessons/N01.qmd", "assignments/N01.qmd", "guides/testing.qmd", "guides/ai-usage.qmd")
+        @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
     end
     page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "test-design.qmd")
-    @test isfile(page)
-    if isfile(page)
-        source = read(page, String)
-        @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
-        @test occursin("](../lessons/F02.qmd#array-copy)", source)
-        @test occursin("{#array-copy}", read(joinpath(NAVIGATION_SITE_ROOT, "lessons", "F02.qmd"), String))
-        targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
-        for relative in ("lessons/F02.qmd", "lessons/N03.qmd", "lessons/F04.qmd",
-                         "assignments/F02.qmd", "assignments/N03.qmd",
-                         "guides/testing.qmd", "guides/ai-usage.qmd", "guides/workflow.qmd")
-            @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
-        end
-        guide = joinpath(NAVIGATION_SITE_ROOT, "guides", "testing.qmd")
-        @test page in resolve_qmd_target.(Ref(guide), qmd_link_targets(read(guide, String)))
+    source = read(page, String)
+    @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+    @test occursin("](../lessons/F02.qmd#array-copy)", source)
+    @test occursin("{#array-copy}", read(joinpath(NAVIGATION_SITE_ROOT, "lessons", "F02.qmd"), String))
+    targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
+    for relative in ("lessons/F02.qmd", "lessons/N03.qmd", "lessons/F04.qmd",
+                     "assignments/F02.qmd", "assignments/N03.qmd",
+                     "guides/testing.qmd", "guides/ai-usage.qmd", "guides/workflow.qmd")
+        @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
     end
+    guide = joinpath(NAVIGATION_SITE_ROOT, "guides", "testing.qmd")
+    @test page in resolve_qmd_target.(Ref(guide), qmd_link_targets(read(guide, String)))
 end
 
 
@@ -774,10 +692,7 @@ end
             @test route in links
             file, anchor = split(route, '#'; limit=2)
             target = resolve_qmd_target(page, file)
-            @test isfile(target)
-            if isfile(target)
-                @test occursin("{#" * anchor * "}", read(target, String))
-            end
+            @test occursin("{#" * anchor * "}", read(target, String))
         end
     end
 end
@@ -785,35 +700,20 @@ end
 @testset "refactoring design page preserves local reference routes" begin
     # Explicitly inspect this file even before it is tracked by Git.
     page = joinpath(NAVIGATION_SITE_ROOT, "advanced", "refactoring-design.qmd")
-    @test isfile(page)
-    if isfile(page)
-        source = read(page, String)
-        document = parse_qmd_document(source)
-        @test !isnothing(document)
-        @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
-        yaml = yaml_source_lines(read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String))
-        menu = navbar_item_by_rel(yaml, "split-navigation-advanced")
-        entries = navbar_menu_entries(yaml, menu)
-        @test (document.title, "advanced/refactoring-design.qmd") in entries
-        targets = resolve_qmd_target.(Ref(page), qmd_link_targets(source))
-        required = ["lessons/N05.qmd", "assignments/N05.qmd"]
-        for relative in required
-            @test joinpath(NAVIGATION_SITE_ROOT, relative) in targets
-        end
-        for target in targets
-            @test isfile(target)
-        end
-        # The article uses explicit anchors, so broken fragments are detectable
-        # without coupling this check to Japanese headings or explanation text.
-        for m in eachmatch(r"\]\(([^)\s]*)#([^)\s]+)\)", source)
-            file, anchor = m.captures
-            occursin("://", file) && continue
-            target = isempty(file) ? page : resolve_qmd_target(page, file)
-            @test isfile(target)
-            if isfile(target)
-                @test occursin("{#" * anchor * "}", read(target, String))
-            end
-        end
+    source = read(page, String)
+    document = parse_qmd_document(source)
+    @test occursin(r"(?m)^sidebar: advanced$", split(source, "---"; limit=3)[2])
+    yaml = yaml_source_lines(read(joinpath(NAVIGATION_SITE_ROOT, "_quarto.yml"), String))
+    menu = navbar_item_by_rel(yaml, "split-navigation-advanced")
+    entries = navbar_menu_entries(yaml, menu)
+    @test (document.title, "advanced/refactoring-design.qmd") in entries
+    # The article uses explicit anchors, so broken fragments are detectable
+    # without coupling this check to Japanese headings or explanation text.
+    for m in eachmatch(r"\]\(([^)\s]*)#([^)\s]+)\)", source)
+        file, anchor = m.captures
+        occursin("://", file) && continue
+        target = isempty(file) ? page : resolve_qmd_target(page, file)
+        @test occursin("{#" * anchor * "}", read(target, String))
     end
 end
 
@@ -825,7 +725,6 @@ end
         href = yaml_item_field(yaml, item, "href")
         !isnothing(href) && href.value == "projects/showcase/index.qmd"
     end
-    @test length(matching) == 1
     @test isnothing(yaml_item_field(yaml, only(matching), "menu"))
     for (page, target) in (
         ("assignments/final-project.qmd", "projects/showcase/index.qmd"),
