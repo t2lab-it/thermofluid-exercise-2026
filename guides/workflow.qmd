@@ -54,7 +54,7 @@ $ git rev-parse --show-toplevel
 
 ### F01：branchの手動作成 {#f01branchを手動で作る}
 
-F01は，初めてなので`main` branchから作業ブランチを手動で作成します．
+F01では，初めての作業ブランチを`main` branchから手動で作成します．
 
 ~~~console
 $ git status --short
@@ -265,7 +265,7 @@ $ git commit -m "feat: complete TASK_ID"
 （branch名・commitの短縮ハッシュ・メッセージと，変更ファイル数を表示）
 ~~~
 
-commitする前に，アクセストークンやAPI key，パスワード，秘密鍵など，課題と無関係な生成物や個人情報が含まれていないかを確認してください．
+commitする前に，アクセストークンやAPI key，パスワード，秘密鍵などの秘密情報，課題と無関係な生成物，個人情報が含まれていないかを確認してください．
 
 ## push，PR，GitHub Actions，セルフレビュー {#submit-pr}
 
@@ -332,8 +332,8 @@ main
 ## N05-N06の段階別実行 {#n05-n06-stages}
 
 提出単位`N05-N06`は一つのbranch・PR・学習ログで進めます．
-編集先は[`src/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/src)，N01〜N04の旧入口（[`N01/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)・[`N02/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)・[`N03/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl)・[`N04/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl)）内の委譲する関数，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)，[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/tests.jl)です．
-課題の要件は[N05](../assignments/N05.qmd)と[N06](../assignments/N06.qmd)を参照し，以下のコマンドは学生リポジトリのrootで実行します．
+編集先は[`src/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/src)，N01〜N04の実行用ファイル（[`N01/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)・[`N02/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)・[`N03/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl)・[`N04/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl)）内の委譲する関数，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)，[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/tests.jl)です．
+課題の要件は[N05](../assignments/N05.qmd)と[N06](../assignments/N06.qmd)を参照し，以下のコマンドは学生リポジトリのルートで実行します．
 
 N04までの完成コードを変更する前に，基準を一度だけ取得します．
 
@@ -341,7 +341,8 @@ N04までの完成コードを変更する前に，基準を一度だけ取得�
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl baseline
 ~~~
 
-共通化のdiffを確認し，抽出後の回帰を別プロセスで比較します．
+共通化のdiffを確認します．
+次に，別プロセスで共通化後の結果を変更前の基準と比較します．
 
 ~~~console
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
@@ -378,7 +379,7 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/plot.jl
 $ julia --project=. -e 'using SHA; println(bytes2hex(sha256(read("exercises/N05-N06_common_package_2d_advection/results/N06/fields.h5"))))'
 ~~~
 
-全段階を実行する場合は共通入口を使います．
+全段階をまとめて実行する場合は，次のコマンドを使います．
 baselineはあらかじめ取得しておきます．
 
 ~~~console
@@ -449,7 +450,7 @@ $ julia --project=. exercises/N08-N09_laplace_poisson/plot.jl N08
 $ julia --project=. exercises/N08-N09_laplace_poisson/run.jl N08
 ```
 
-N09の完成後はallで両問題を揃えます．
+N09の完成後はallを指定し，両問題の計算・解析・作図を実行します．
 各実行段階の引数は`N08`／`N09`／`all`，省略時は`all`です．
 
 ```console
@@ -482,5 +483,5 @@ $ julia --project=. exercises/N08-N09_laplace_poisson/extensions/tests_relaxatio
 $ julia --project=. exercises/N08-N09_laplace_poisson/extensions/run_relaxation.jl
 ```
 
-各発展は`results/N09/extensions/`の専用フォルダへ保存します．
+各発展の結果は`results/N09/extensions/`の専用フォルダへ保存します．
 発展の結果も提出容量に含みます．
