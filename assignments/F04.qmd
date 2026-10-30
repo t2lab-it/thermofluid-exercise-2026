@@ -21,7 +21,8 @@ understanding-check-points:
 
 ### 目的 {#目的}
 
-[F04授業](../lessons/F04.qmd)で学んだ三つの一次元差分を実装し，一次元の観測次数とF03の四公式の格子収束を確認して，[F03課題](F03.qmd)から続く一つの提出を完成させます．
+[F04授業](../lessons/F04.qmd)で学んだ三つの一次元差分を実装し，一次元の観測次数とF03の四公式の格子収束を確認します．
+[F03課題](F03.qmd)から続く一つの提出を完成させます．
 
 実装する前進・後退・中心差分は，それぞれ
 $$
@@ -99,7 +100,8 @@ $$
 \end{aligned}
 $$
 
-一次元誤差は$E(h)=|D_hf(0.4)-f'(0.4)|$，三次元誤差は集計領域での残差の絶対値の最大です．
+一次元誤差は$E(h)=|D_hf(0.4)-f'(0.4)|$です．
+三次元では，集計領域で残差の絶対値を求め，その最大値を誤差とします．
 ベクトル残差は全成分の絶対値の最大を取ります．
 どちらも誤差比$R=E(h)/E(h/2)$，観測次数$p=\log_2R$を用います．
 
@@ -140,11 +142,11 @@ $$
 | $\boldsymbol{r}_4$ | [`curl_curl_residual`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L338-L350) | [`curl_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L111-L118)，[`gradient_divergence_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L175-L178)，[`laplacian_vector`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/F03.jl#L195-L200) |
 : {tbl-colwidths="[18, 32, 50]"}
 
-[`centered_partial`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L228-L237)は自分の[`centered_difference`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L152-L156)を三次元座標へ接続し，[`verify_vector_identities`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L367-L388)が内部格子点で最大残差を集計します．
+[`centered_partial`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L228-L237)は自分の[`centered_difference`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L152-L156)を使って三次元座標の偏微分を計算し，[`verify_vector_identities`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L367-L388)が内部格子点で最大残差を集計します．
 
 ## 一次元収束
 
-上の標準条件で一次元収束を計算します．
+上の標準条件で刻み幅を変え，一次元差分の誤差がどう減るかを計算します．
 [`convergence_study`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F03-F04_vector_calculus/run.jl#L176-L207)で[冒頭の判定条件](#standard-conditions)を確認し，観測次数も説明してください．
 
 ## ベクトル解析四公式
@@ -164,7 +166,7 @@ $$
 
 {{< include /assignments/_understanding-check.qmd >}}
 
-F03とF04は別々のチェックです．
+F03とF04の理解度チェックは別々に行います．
 [F03のチェック](F03.qmd#understanding-check)が未提出なら，そちらも完了してください．
 コードは一つのPRで提出しますが，対話ログは`understanding-check-F03.txt`と`understanding-check-F04.txt`に分け，それぞれ対応するLETUS課題へ提出します．
 

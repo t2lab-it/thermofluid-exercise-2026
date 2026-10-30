@@ -66,12 +66,12 @@ F01をmergeし，更新済みで変更のない`main`から始めます．
 [`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/tests.jl)には，次の四つを確かめる必須テストが配布済みです．
 各入力と期待値を読み，手計算でも結果を確かめます．
 
-1. 一つの有限値配列について，平均と偏差配列が一致する．
+1. 一つの有限値配列について，計算した平均と偏差配列が，それぞれの期待値と一致する．
 2. 偏差の総和が丸め誤差の範囲で0になる．
-3. [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L75-L79)の呼び出し前後で入力配列が同じである．
+3. [`temperature_anomaly`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F02_julia_arrays_and_tests/run.jl#L75-L79)の呼び出し前後で入力配列の値が同じである．
 4. 空配列，`NaN`，`Inf`から一つ選び，対象APIが拒否する．
 
-自作TODOでは，戻り値の型，別の数学的性質，または必須とは異なる不正入力から一つ選んでください．
+自作TODOでは，戻り値の型，別の数学的性質，または必須テストとは異なる不正入力から一つ選んでください．
 丸め誤差を含む値には，根拠を説明した許容誤差つき比較を使います．
 
 ## 実行とテスト
