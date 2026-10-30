@@ -38,7 +38,8 @@ $$
 領域は$[0,L_x)\times[0,L_y)$，$L_x=2$，$L_y=1$，速度は$(c_x,c_y)=(1,0.5)$です．
 両方向を周期境界とし，$u(x+L_x,y,t)=u(x,y,t)$，$u(x,y+L_y,t)=u(x,y,t)$を課します．
 格子は$(n_x,n_y)=(40,30),(80,60),(160,120)$です．
-$\Delta x=L_x/n_x$，$\Delta y=L_y/n_y$，$x_i=(i-1)\Delta x$，$y_j=(j-1)\Delta y$とし，`u[i,j]`は$(x_i,y_j)$の値です．
+$\Delta x=L_x/n_x$，$\Delta y=L_y/n_y$，$x_i=(i-1)\Delta x$，$y_j=(j-1)\Delta y$とします．
+`u[i,j]`は$(x_i,y_j)$の値です．
 初期条件は
 $$
 \begin{aligned}
@@ -128,13 +129,13 @@ $$
 計算条件を変えず，初期場・数値解・解析解の色の上下限を共通に保って比較します．
 
 時間積分・解析解・HDF5入出力・基本診断・収束反復・描画は提供コードです．
-[`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/provided_support.jl)と各入口を読み，入力と出力の対応を説明してください．
+[`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/provided_support.jl)と，計算・解析・描画を実行する各ファイルを読み，入力と出力の対応を説明してください．
 
 ## 実行と自作テスト
 
 [段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)で，計算，基本解析，分散追加後の再解析，再作図の順に実行します．
 再解析・再作図の前後で`fields.h5`のSHA-256が同じであることを記録します．
-一括入口[`exercises/N05-N06_common_package_2d_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/run.jl)はN05回帰確認とN06の全段階を実行します．
+一括実行用の[`exercises/N05-N06_common_package_2d_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/run.jl)はN05回帰確認とN06の全段階を実行します．
 
 [課題単独と進捗連動のテスト](../guides/workflow.qmd#tests)を実行します．
 配布済みテストは非対称な1ステップ，周期端・角，旧配列の値の保持・新旧配列の独立性，定数場，片方向速度0，合成CFL，保存時刻と出力の整合を確認します．
@@ -175,7 +176,7 @@ HDF5は自分の計算で生成してください．
 
 - 二方向の式・配列軸・周期端と角・合成CFL・バッファ交換を図とコードで説明した．
 - 必須テスト・自作2件・過去課題のテストが通り，保存と解析解誤差，3格子の約1次収束を示した．
-- 同じ保存場から空間分散を追加し，表示条件を変えて再作図し，入力ハッシュの不変と保存時刻の限界を説明した．
+- 同じ保存場から空間分散を追加し，表示条件を変えて再作図し，入力ハッシュが変わらないことと，保存時刻の間の変化を直接確認できない制約を説明した．
 - N05の回帰証拠とN06の6出力，AI提案の採否理由・検証・考察を一つの学習ログへ記録した．
 - N05・N06それぞれの[理解度チェック](#understanding-check)の対話全文をLETUSへ提出し，ログへ提出状況を記録した．
 - [学習ログ・diff・commit](../guides/workflow.qmd#commit)から[merge後](../guides/workflow.qmd#after-merge)まで，提出単位`N05-N06`の一つのPRで完了した．

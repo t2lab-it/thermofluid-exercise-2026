@@ -61,7 +61,7 @@ u_{i,j}^{n+1}=u_{i,j}^n
 $$
 
 旧値の係数は`1-Cx-Cy`なので，安定条件は二方向の寄与を合わせた`Cx+Cy <= 1`です．
-両方向の個別上限の最小値では，この係数が負になる場合があります．
+両方向の刻み上限を個別に求め，その最小値を使っても，旧値の係数が負になる場合があります．
 合成条件から求める刻み上限は
 $$
 \Delta t_{\max}=\frac{\mathrm{safety}}{c_x/\Delta x+c_y/\Delta y},
@@ -78,9 +78,12 @@ $$
 同じ配列への参照だけを保存すると，バッファの再利用で過去の時刻の場も書き換わります．
 数値配列のスナップショットは`copy`で独立させます．
 参照だけを残す場合との違いは，[N01の配列の参照・コピー・変更](N01.qmd#array-reference-copy)の実行例で確認できます．
-各保存区間に[`fit_timestep`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L158-L161)を適用し，刻みを区間長へ合わせて補間せずに保存します．
+各保存区間に[`fit_timestep`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L158-L161)を適用し，刻みを区間長へ合わせます．
+保存時刻の場を補間せずに保存します．
 
-[`simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/simulate.jl)が場をHDF5へ保存し，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)が場から診断値を求め，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)が図を作ります．
+[`simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/simulate.jl)が場をHDF5へ保存します．
+[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)が場から診断値を求めます．
+[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)が図を作ります．
 保存場があれば，数値計算を再実行せずに解析項目や表示設定を変えられます．
 SHA-256は解析・作図が参照したファイルを識別し，違う計算の結果の混入を検出するために使います．
 
@@ -107,4 +110,4 @@ $$
 
 保存場からは平均・最小値・最大値・空間分散も求められます．
 空間分散は各時刻の`mean((u-mean(u)).^2)`に相当し，時間平均とは異なります．
-保存されなかった時刻での極値は，この5枚の場だけでは判定できません．
+保存されなかった時刻での極値は，保存した5枚の場だけでは判定できません．
