@@ -10,7 +10,7 @@ title: "GitHub CLIによるpull requestの操作"
 
 ## このページの到達点
 
-GitHub CLI（`gh`）を導入・認証し，既存のPRをCLIで読み，新しいPRをCLIで作成する．
+GitHub CLI（`gh`）を導入して認証を済ませ，既存のPRをCLIで読み，新しいPRをCLIで作成します．
 
 ::: {.callout-warning title="認証情報を共有しない"}
 GitHubトークン，ブラウザに表示される確認コード，SSH秘密鍵を，他人，pull request，公開チャット，コーディングエージェントへ貼り付けないでください．
@@ -54,7 +54,7 @@ gh version 2.x.y（実際のバージョンが表示されます）
 
 ## GitHub CLIの認証 {#github-cliを認証する}
 
-すでに作成したSSH鍵を再利用します．
+SSH接続の確認に使った鍵を再利用します．
 学生リポジトリのルートディレクトリで次を実行します．
 
 ```console
@@ -70,7 +70,8 @@ OWNER/REPOSITORY
 （リポジトリの説明・READMEなどを表示）
 ```
 
-`--web`はブラウザ認証を開き，`--skip-ssh-key`はSSH鍵の生成・アップロード確認を飛ばします．
+`--web`はブラウザ認証を開きます．
+`--skip-ssh-key`はSSH鍵の生成・アップロード確認を省略します．
 `gh auth status`でホストが`github.com`，ユーザー名が意図した自分のアカウント，GitプロトコルがSSHであることを確認します．
 `gh repo view`では，現在のディレクトリが学生リポジトリとして認識されることを確認します．
 
@@ -114,7 +115,7 @@ $ git diff main...HEAD
 
 ## 課題branchのpush {#課題branchをpushする}
 
-以下のコマンドを，`BRANCH`を`git branch --show-current`で確認した現在の課題branch名へ置き換えたうえで実行します．
+`BRANCH`を，`git branch --show-current`で確認した現在の課題branch名へ置き換え，以下のコマンドを実行します．
 
 ```console
 $ git push -u origin BRANCH
@@ -122,7 +123,7 @@ $ git push -u origin BRANCH
 branch 'BRANCH' set up to track 'origin/BRANCH'.
 ```
 
-pushの出力と`upstream`設定を確認してから次へ進みます．
+pushの出力で，課題branchの追跡先（`upstream`設定）を確認してから次へ進みます．
 
 ## pull request本文の準備 {#pull-request本文を準備する}
 
@@ -175,7 +176,7 @@ $ gh pr checks
 `gh pr diff`で全変更を，`gh pr checks`でCI状態を確認します．
 `checks`が`pending`なら，時間を置いて再実行します．
 
-検査が失敗した場合は検査名とリンクを開き，可能ならローカルで再現します．
+検査が失敗した場合は検査名を確認してリンクを開き，可能ならローカルで再現します．
 同じ課題branchで修正，テスト，commit，pushを行い，同じPRを更新します．
 
 確認後は[共通課題ワークフロー](../guides/workflow.qmd#submit-pr)に従ってセルフレビューとmergeを行ってください．

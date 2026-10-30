@@ -65,9 +65,11 @@ $ git diff --cached
 ## 比較用worktreeの作成 {#create}
 
 引き続き，**元の学生リポジトリのルート**で実行します．
-比較先はリポジトリルート配下の`.worktrees/experiment/N01-comparison`，比較branchは`experiment/N01-comparison`とします．
+比較先は，リポジトリルート配下の`.worktrees/experiment/N01-comparison`とします．
+比較branchは`experiment/N01-comparison`とします．
 学生用リポジトリの`.gitignore`には`.worktrees/`が設定されています．
-作成先がGitの追跡対象から除外されていることを確認し，親ディレクトリを用意して，作成先とbranch名を確認します．
+作成先がGitの追跡対象から除外されていることを確認し，親ディレクトリを用意します．
+続いて，親ディレクトリの一覧，branch名，登録済みworktreeを確認します．
 
 ~~~console
 $ git check-ignore .worktrees/experiment/N01-comparison
@@ -156,7 +158,8 @@ $ git diff SOURCE_BRANCH...experiment/N01-comparison
 （分岐点から比較branchのcommitまでの変更を表示）
 ~~~
 
-このコマンドでcommitした変更を比較し，生成結果は各ディレクトリの実ファイルで比較します．
+上のコマンドで比較するのは，commitした変更です．
+生成結果は各ディレクトリの実ファイルで比較します．
 
 **比較先のルートから3階層上の元ディレクトリへ戻り**，元課題のbranchとclean状態を確認します．
 
@@ -183,7 +186,7 @@ $ git merge --ff-only experiment/N01-comparison
 （Fast-forwardと変更一覧を表示）
 ~~~
 
-元課題側がcheckpointのままであれば，比較branchのcommitを取り込めます．
+元の課題branchがcheckpointのcommitのままであれば，比較branchのcommitを取り込めます．
 fast-forwardできず拒否されたら，両方のbranchと作業を保持し，差分を確認して教員・TAへ相談します．
 
 採用後は**元ディレクトリのルート**で，上のN01の実行・単独テスト・`Pkg.test()`をもう一度行います．
@@ -210,7 +213,7 @@ $ git status --short --ignored
 
 **ignoredのファイルもremoveで削除されるため，必要な結果を先に保存してください．**
 `results/`や`scratch/`などの中身も確認します．
-変更・未追跡のファイルがある場合は通常のremoveが拒否されるので，作業と結果を保存できるまで保持します．
+変更・未追跡のファイルがある場合は通常のremoveが拒否されるので，作業と結果を保存できるまで比較用worktreeを保持します．
 
 保存を確認したら，**元ディレクトリのルート**で比較先を削除します．
 
