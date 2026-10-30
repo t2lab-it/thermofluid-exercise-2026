@@ -70,7 +70,9 @@ N01との波形比較は，固定境界・同じ矩形初期値・81点・指定
 任意の安定条件超過実験は固定境界・81点・最終時刻0.1で，指定CFL 0.5と2を比べます．
 
 保存・表示時刻は$t=0,0.25,0.50,0.75,1$です．
-`max_cfl`は全状態の最大実測値，`overshoot`と`undershoot`は初期極値を超えた量（超過なしなら0），`sum_change`は最終総和から初期総和を引いた符号付きの値です．
+`max_cfl`は全状態の最大実測値です．
+`overshoot`と`undershoot`は初期極値を超えた量で，超過なしなら0です．
+`sum_change`は最終総和から初期総和を引いた符号付きの値です．
 
 {{< include /assignments/_pseudocode.qmd >}}
 
@@ -95,7 +97,7 @@ N01との波形比較は，固定境界・同じ矩形初期値・81点・指定
 ## 必須4群と指定テーマの自作2つ
 
 [共通のテスト手順](../guides/workflow.qmd#tests)で課題単独と過去課題を含むテストを実行します．
-[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/tests.jl)に実装済なのは以下の4件です．
+[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/tests.jl)には，次の必須4群が実装済みです．
 
 1. **流束と周期添字**：異なる値の流束の手計算値，先頭と先頭以外の周期左隣添字
 2. **保存形1ステップと旧配列不変**：非定数の小配列の更新結果を手計算値と比較し，旧配列の値が保持されることを確認する
