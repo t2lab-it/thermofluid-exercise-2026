@@ -112,7 +112,7 @@ eval "$(starship init bash)"
 
 ターミナルを開き直し，`starship --version`が実行できることを確認します．
 続いて[個人課題用リポジトリ](../setup/git-github.qmd#個人課題用リポジトリを複製する)へ移動し，選んだ絵文字と現在のブランチ名が表示されることを確認してください．
-現在の状態との対応を一度確認します．
+プロンプトの表示と，次のコマンドで表示されるGitの状態を照合します．
 
 ```console
 $ git status --short --branch
@@ -136,7 +136,7 @@ GitHubの最新情報を反映するには，`git fetch origin`を実行しま�
 
 Windows TerminalやWindows版VS Codeの表示フォントは**Windows側**で設定します．
 欠けや幅の問題があれば，Windows TerminalのUbuntuプロファイルの[フォント設定](https://learn.microsoft.com/en-us/windows/terminal/customize-settings/profile-appearance#font-face)，またはVS Codeの[`terminal.integrated.fontFamily`](https://code.visualstudio.com/docs/terminal/appearance#text-style)を確認してください．
-必要に応じてWindows側に表示できるフォントを用意して選択し，ターミナルを開き直して再確認します．
+必要に応じて，絵文字を表示できるフォントをWindows側に用意して選択し，ターミナルを開き直して再確認します．
 
 ## 表示トラブルへの対応と復旧 {#troubleshooting}
 

@@ -57,7 +57,8 @@ WSL2 Ubuntuの端末で，以下の[Linuxの手順](#linux)を実行してくだ
 
 ### macOS
 
-ターミナルで確認し，鍵を作成してApple Keychain対応の`ssh-add`で読み込みます．
+ターミナルで既存の鍵・設定ファイルを確認します．
+鍵を作成し，Apple Keychain対応の`ssh-add`で読み込みます．
 
 ```console
 $ ls -la ~/.ssh
@@ -92,7 +93,8 @@ Host github.com
 
 ### Linux {#linux}
 
-ターミナルで確認し，鍵を作成して現在のシェルで`ssh-agent`を開始します．
+ターミナルで既存の鍵・設定ファイルを確認します．
+鍵を作成し，現在のシェルで`ssh-agent`を開始します．
 
 ```console
 $ ls -la ~/.ssh
@@ -131,9 +133,10 @@ OS別手順の更新や異なる環境については，[GitHub公式の鍵生�
 
 ## GitHubへの公開鍵のみの登録 {#公開鍵だけをgithubへ登録する}
 
-前節の最後に表示した`id_ed25519_github.pub`の内容だけをコピーします．
+OS別手順の最後に表示した`id_ed25519_github.pub`の内容だけをコピーします．
 
-GitHubで自分のプロフィール画像から **Settings** → **SSH and GPG keys** → **New SSH key**へ進み，用途が分かるtitleを付けてAuthentication Keyとして公開鍵を登録します．
+GitHubで自分のプロフィール画像から **Settings** → **SSH and GPG keys** → **New SSH key**へ進みます．
+用途が分かるtitleを付け，Authentication Keyとして公開鍵を登録します．
 画面が異なる場合は[GitHub公式の公開鍵登録手順](https://docs.github.com/ja/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)を確認します．
 
 ## SSH接続の再確認 {#ssh接続を再確認する}
@@ -150,7 +153,8 @@ Hi USERNAME! You've successfully authenticated, but GitHub does not provide shel
 
 すでにHTTPSで複製済みの学生リポジトリだけが対象です．
 初めて複製する場合は，この節を飛ばして，SSH接続の確認後に教材のclone手順へ戻ります．
-学生リポジトリを開き，**Code** → **SSH**から取得したURLを用いて以下のコマンドを実行してください．
+GitHubで学生リポジトリを開き，**Code** → **SSH**からURLを取得します．
+学生リポジトリのルートディレクトリで，取得したURLを用いて以下のコマンドを実行してください．
 
 ```console
 $ git status --short
