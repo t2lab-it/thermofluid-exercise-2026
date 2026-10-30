@@ -53,7 +53,7 @@ F03とF04は`F03-F04`として，同じbranch・PRで提出します．
 
 ## 課題単独のテスト
 
-現在の課題だけを実行するときは，次の形式を使います．
+現在の課題のテストだけを実行するときは，次の形式を使います．
 
 ~~~console
 $ julia --project=. exercises/<課題フォルダ>/tests.jl
@@ -72,13 +72,14 @@ Test Summary: | Pass  Total  Time
 | `git branch --show-current` | 現在のbranch名を確認する |
 | `git diff` | stage前の変更内容を確認する |
 | `git diff --cached` | commit対象の変更内容を確認する |
-| `git diff main...HEAD` | mainからの提出差分を確認する |
+| `git diff main...HEAD` | mainとの分岐点から現在のcommitまでの差分を確認する |
 | `git log --oneline -5` | 直近のcommitを確認する |
 : {tbl-colwidths="[38, 62]"}
 
 履歴の検索，diffの表示，管理対象の確認，部分的なstage選択，Bashのaliasは，任意の発展資料[Gitの便利なコマンドとオプション](../advanced/git-tips.qmd)を参照してください．
 
-commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新の順序は[学習ログ，diff，commit](workflow.qmd#commit)から[merge後](workflow.qmd#after-merge)までを参照してください．
+commitからmain更新までの順序は，[学習ログ，diff，commit](workflow.qmd#commit)から[merge後](workflow.qmd#after-merge)までを参照してください．
+対象となる操作は，commit，push，PR，GitHub Actions，セルフレビュー，merge，main更新です．
 
 ## 配布教材の更新の取り込み {#material-updates}
 

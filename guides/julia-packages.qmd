@@ -40,7 +40,8 @@ MiniFlux/                  ← パッケージのルート
 ```
 
 ルートの`Project.toml`には，パッケージ名を`name`，同名の別パッケージと区別する識別子を`uuid`，版を`version`として書きます．
-次のUUIDは例示用です．自分で新しく作るときは，Juliaで`using UUIDs; uuid4()`を実行するなどして固有の値を生成します．
+次のUUIDは例示用です．
+自分で新しく作るときは，Juliaで`using UUIDs; uuid4()`を実行するなどして固有の値を生成します．
 
 ```toml
 name = "MiniFlux"
@@ -80,7 +81,8 @@ julia> MiniFlux.linear_flux(2.0, 3.0)
 
 `MiniFlux.linear_flux`のドットは，「`MiniFlux`の中の`linear_flux`」という意味です．
 この例は`export`を使っていないので，パッケージ名を付けて呼び出します．
-`import MiniFlux`でも同じ呼び出しができます．`using`は`export`された名前も直接使えるようにしますが，この最小例には`export`がないため，ここでの使い方に違いはありません．
+`import MiniFlux`でも同じ呼び出しができます．
+`using`は`export`された名前も直接使えるようにしますが，この最小例には`export`がないため，ここでの使い方に違いはありません．
 また，外部パッケージへの依存がないため，`MiniFlux`を試すだけならパッケージの取得や`Pkg.instantiate()`は不要です．
 
 ![MiniFluxの2ファイルと，環境選択・読み込み・関数呼び出しの流れ](../assets/figures/julia-package-flow.svg){fig-alt="上段はMiniFluxのProject.tomlに名前・UUID・版を記録し，src/MiniFlux.jlにモジュールとlinear_flux関数を定義する構成．下段はMiniFluxのルートでjulia --project=.を実行し，using MiniFluxで読み込み，MiniFlux.linear_flux(2.0, 3.0)が6.0を返す流れ．外部依存がないためPkg.instantiateによる取得は不要．"}

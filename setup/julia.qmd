@@ -31,7 +31,8 @@ julia version 1.13.0
 
 最後のコマンドでJulia 1.13系が表示されることを確認してください．
 
-学生リポジトリをcloneしたら，[Julia環境のしくみ](../guides/julia-environment.qmd)で配布ファイル・環境選択・実行場所の関係を確認し，[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)へ進んでください．
+学生リポジトリをcloneしたら，[Julia環境のしくみ](../guides/julia-environment.qmd)で配布ファイル・環境選択・実行場所の関係を確認してください．
+その後，[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)へ進んでください．
 
 ## シェルとJulia REPLの区別 {#シェルとjulia-replを区別する}
 

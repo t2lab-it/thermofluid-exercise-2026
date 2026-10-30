@@ -34,7 +34,7 @@ Manifestの`julia_version`には，作成時のJuliaの版が記録されてい�
 ## 環境選択と実行場所 {#select-environment}
 
 `julia --project=.`の`.`は，**Juliaを起動するときの作業ディレクトリ**を指します．
-この指定で，そこで使う依存環境を選択します．
+この指定で，Juliaを起動するときの作業ディレクトリにある依存環境を選択します．
 
 ### 学生リポジトリのルートでの確認
 
@@ -57,28 +57,28 @@ $ julia --project=. -e 'println(pwd()); println(Base.active_project())'
 /home/student/YOUR_COURSE_REPOSITORY/Project.toml
 ```
 
-`pwd`とGitのルートが一致し，`Base.active_project()`が**学生rootの`Project.toml`**を指すことを確認します．
+`pwd`とGitのルートが一致し，`Base.active_project()`が**学生リポジトリのルートの`Project.toml`**を指すことを確認します．
 
 ### 課題サブディレクトリでの環境選択
 
-同じ診断コマンドを`exercises/F01_first_pull_request/`で実行すると，次の関係になります．
+同じ診断コマンドを`exercises/F01_first_pull_request/`で実行した場合と，学生リポジトリのルートで実行した場合を比べます．
 
-| 確認 | 学生rootで実行 | 課題サブディレクトリで実行 |
+| 確認 | 学生リポジトリのルートで実行 | 課題サブディレクトリで実行 |
 |---|---|---|
-| `pwd` | 学生root | 学生rootの`exercises/F01_first_pull_request/` |
-| Gitのルート | 学生root | 学生root |
-| `--project=.`の対象 | 学生root | 課題サブディレクトリ |
+| `pwd` | 学生リポジトリのルート | 学生リポジトリのルートの`exercises/F01_first_pull_request/` |
+| Gitのルート | 学生リポジトリのルート | 学生リポジトリのルート |
+| `--project=.`の対象 | 学生リポジトリのルート | 課題サブディレクトリ |
 : {tbl-colwidths="[38, 22, 40]"}
 
-後者の`Base.active_project()`は，`exercises/F01_first_pull_request/Project.toml`を指します．
-配布環境を使うには，学生rootへ戻って環境を選び，[F00の手順](../assignments/F00.qmd#julia環境を復元する)で復元します．
+課題サブディレクトリで実行した場合，`Base.active_project()`は`exercises/F01_first_pull_request/Project.toml`を指します．
+配布環境を使うには，学生リポジトリのルートへ戻って環境を選び，[F00の手順](../assignments/F00.qmd#julia環境を復元する)で復元します．
 
 環境を選択した後も，スクリプトや出力先の相対パスは作業ディレクトリを基準に指定します．
 通常課題の実行場所と公式出力先は，[課題ワークフロー](workflow.qmd#repository-root)と各課題ページに従ってください．
 
 ### REPLでの環境選択
 
-学生rootで起動したREPLでは，次の操作で現在のセッションの環境を選択できます．
+学生リポジトリのルートで起動したREPLでは，次の操作で現在のセッションの環境を選択できます．
 
 ```julia-repl
 julia> using Pkg
@@ -96,7 +96,7 @@ REPLとCLIで結果が違う場合は，選択環境とREPLに残った定義・
 
 ## 配布環境の復元 {#restore-environment}
 
-学生rootと選択中のProjectを確認したら，[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)にある`Pkg.instantiate()`のコマンドを実行します．
+学生リポジトリのルートと選択中のProjectを確認したら，[F00の環境復元](../assignments/F00.qmd#julia環境を復元する)にある`Pkg.instantiate()`のコマンドを実行します．
 配布Manifestに記録された依存構成に従って，不足するパッケージを導入します．
 Manifestがない環境では，Projectの要求に従って依存関係を解決し，Manifestを生成します．
 通常課題では配布Manifestを使うため，見当たらない場合は[下の切り分け](#environment-failures)でファイルの状態を確認してください．
@@ -119,12 +119,12 @@ F00の手順で確認結果を記録すると，`course_progress.toml`にF00の�
 
 ## 失敗の切り分け {#environment-failures}
 
-まず上の診断例で，Juliaの版，学生root，選択中のProjectを確認します．
+まず上の診断例で，Juliaの版，学生リポジトリのルート，選択中のProjectを確認します．
 その後，失敗した段階に応じて次へ進みます．
 
 | 失敗した段階・状態 | 次に確認すること |
 |---|---|
-| 作業場所・Projectが想定と違う | 学生rootへ戻り，診断例を再実行する |
+| 作業場所・Projectが想定と違う | 学生リポジトリのルートへ戻り，診断例を再実行する |
 | 配布Manifestがない・Projectとの整合性が疑わしい | 作業場所，branch，`git status --short`，対象ファイルのdiffを確認し，配布ファイルの状態を教員・TAへ相談する |
 | 通信・権限・容量などで復元に失敗 | 失敗コマンド，最初のエラーと関連するログ，OS，作業場所，Juliaの版を記録し，[相談手順](troubleshooting.qmd#教員taへ相談する)へ進む |
 | `using`でパッケージを読み込めない | 選択環境と復元の終了状態を確認し，[F00の復元手順](../assignments/F00.qmd#julia環境を復元する)と[トラブル対応](troubleshooting.qmd)を参照する |
