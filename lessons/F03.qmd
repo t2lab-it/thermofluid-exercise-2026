@@ -142,7 +142,7 @@ $$
 
 ## 証明4: curl curl
 
-回転を2回適用し，先ほどのイプシロンとデルタの縮約恒等式を使うと，
+回転を2回適用し，添字記法の節で示したイプシロンとデルタの縮約恒等式を使うと，
 $$
 \begin{aligned}
 \left[\nabla\times(\nabla\times\boldsymbol{A})\right]_i
@@ -182,7 +182,7 @@ $$
 \nabla\times(-\nabla p)=\boldsymbol{0}
 $$
 となります．
-この公式のおかげで，渦度を未知量にした式には圧力項が陽には現れません．
+圧力勾配のcurlが零になるため，渦度を未知量にした式には圧力項が陽には現れません．
 二次元では $\boldsymbol{u}=(u,v,0)$，$\boldsymbol{\omega}=(0,0,\omega)$ と書け，外力のない場合の渦度方程式は
 $$
 \frac{\partial\omega}{\partial t}
@@ -210,7 +210,7 @@ $$
 =\nabla\cdot(\nabla\times\boldsymbol{A})=0
 $$
 となり，非圧縮性流れの連続の式を自動的に満たします．
-これが[渦度–流れ関数法](../projects/final-project-topics/incompressible-navier-stokes.qmd)で流れ関数を導入する理由です．
+流れ関数から作った速度が連続の式を満たすことが，[渦度–流れ関数法](../projects/final-project-topics/incompressible-navier-stokes.qmd)で流れ関数を導入する理由です．
 ただし，壁面で流体が出入りしない条件やno-slip条件は別に与える必要があります．
 また，離散化後にも発散が十分小さいかは，採用した差分と境界処理について確認します．
 
@@ -241,7 +241,7 @@ $$
 
 [N02のBurgers方程式](N02.qmd)では，滑らかな部分で $\frac{\partial}{\partial x}\left(u^2/2\right)=u\frac{\partial u}{\partial x}$ となります．
 流束が $u^2$ ではなく $u^2/2$ である点に注意してください．
-こうした連続の式の書き換えができても，離散化した保存形と移流形が同じ更新になるとは限りません．
+保存形と移流形を微分演算で書き換えられても，離散化した保存形と移流形が同じ更新になるとは限りません．
 N02で流束差を使う理由は，数値計算でも保存性を保つためです．
 
 ### curl curl：流れ関数のPoisson方程式と粘性項
@@ -279,6 +279,6 @@ D_0f(x)=\frac{f(x+h)-f(x-h)}{2h}
 $$
 と定義します．
 三つの差分は微分の近似ですが，刻み幅に対する誤差の減り方が異なります．
-次回の[数値微分と格子収束](F04.qmd)では，その違いをTaylor展開で導き，同じ四公式の数値残差へつなげます．
+次回の[数値微分と格子収束](F04.qmd)では，誤差の減り方の違いをTaylor展開で導き，四公式の数値残差を調べます．
 
 [F03課題の理解度チェック](../assignments/F03.qmd#understanding-check)で，この授業の内容を確認してください．

@@ -33,7 +33,8 @@ $$
 領域は $[-1,1]^3$，各方向の格子点数は $n=9,17$，格子間隔は $h=2/(n-1)$ とします．
 外側の差分に両隣の値が必要なため，内部格子点で評価します．
 最大値を比べる領域が細分化で広がらないよう，集計対象を両格子に共通の $[-0.75,0.75]^3$ 内の格子点に揃えます．
-残差の絶対値（ベクトルでは各成分の絶対値）の最大を取り，粗格子と細格子で比較します．
+残差の絶対値の最大を取り，粗格子と細格子で比較します．
+ベクトル残差では，各成分の絶対値の最大を取ります．
 
 ## Taylor展開と前進差分
 
@@ -114,13 +115,13 @@ $$
 -\left(\nabla(\nabla\cdot\boldsymbol{A})-\nabla^2\boldsymbol{A}\right)
 $$
 です．
-$r_3$ は積の場 $\phi\boldsymbol{A}$ の発散を中心差分で求め，右辺は解析的に評価します．
+$r_3$ は積の場 $\phi\boldsymbol{A}$ の発散を中心差分で求め，積の発散の公式の右辺は解析的に評価します．
 それ以外は内側の $\nabla\phi$，$\nabla\times\boldsymbol{A}$ を解析的に与え，外側だけを中心差分で近似します．
-$\boldsymbol{r}_4$ の右辺も解析的に評価します．
+$\boldsymbol{r}_4$ で差し引くcurl curlの公式の右辺も，解析的に評価します．
 
 標準の場では $\nabla\cdot\boldsymbol{A}=e^x+e^y+e^z$，$\nabla(\nabla\cdot\boldsymbol{A})=(e^x,e^y,e^z)$ です．
 $\boldsymbol{B}=(\sin(y)e^{2z},\sin(z)e^{2x},\sin(x)e^{2y})$ とおくと，$\nabla^2\boldsymbol{A}=3\boldsymbol{B}+(e^x,e^y,e^z)$ なので，curl curlの右辺は $-3\boldsymbol{B}$ です．
-この場では右辺の二項も，その差も恒等的には零になりません．
+この場では，curl curlの公式の右辺にある二項も，その差も恒等的には零になりません．
 
 例えば $\boldsymbol{r}_1$ の第1成分は，解析的な $\frac{\partial \phi}{\partial z}$ を $y$ 方向に中心差分した値から，解析的な $\frac{\partial \phi}{\partial y}$ を $z$ 方向に中心差分した値を引きます．
 内側の関数を評価する座標を一方向に $\pm h$ ずらすことで，一次元の中心差分をそのまま使えます．
