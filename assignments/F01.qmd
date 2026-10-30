@@ -84,7 +84,7 @@ $ git diff -- exercises/F01_first_pull_request/run.jl
 
 [`exercises/F01_first_pull_request/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/tests.jl)の配布済み必須テストでは，前後に空白を含む名前の挨拶と，空白だけの名前の拒否を検証します．
 一方，自作テストは`@test false`となっており，そのままでは失敗します．
-ここに，実装した名前と期待文字列を使う自作テストを実装してください．
+自作テストの箇所に，実装した関数へ渡す名前と期待文字列を使うテストを書いてください．
 これらのテストが何を保証し，何を保証しないかを学習ログにまとめてください．
 
 課題単独のテストは以下で実行できます．
@@ -147,7 +147,8 @@ $ git commit -m "feat: complete F01"
 （branch名・commitの短縮ハッシュ・メッセージと，変更ファイル数を表示）
 ```
 
-アクセストークンやAPI key，パスワード，秘密鍵など，課題と無関係な生成物や個人情報が含まれていないかを確認してからcommitしてください．
+アクセストークンやAPI key，パスワード，秘密鍵などが含まれていないかを確認します．
+課題と無関係な生成物や個人情報も含まれていないかを確認してからcommitしてください．
 
 ## 7. pushとPRの作成 {#pushしてprを作る}
 
@@ -167,7 +168,8 @@ branch 'exercise/F01-first-pull-request' set up to track 'origin/exercise/F01-fi
 ## 8. GitHub Actionsとdiffの確認 {#github-actionsとdiffを確認する}
 
 GitHub Actionsが成功することを確認してください．
-失敗した場合はエラー文を読んでその原因を調べ，プログラムを修正，テストしてcommit，pushしてPRを更新してください．
+失敗した場合は，エラー文を読んで原因を調べます．
+プログラムを修正してテストし，commit，pushの順に進めてPRを更新してください．
 
 Actionsが成功した後，GitHubの`Files changed`を読んでF01の[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl)，[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/tests.jl)，`learning_log.md`，`course_progress.toml`だけが意図した差分になっていることを確認します．
 [共通のセルフレビュー項目](../guides/workflow.qmd#submit-pr)に沿って，テストと実行結果，学習ログ，PR本文を照合してください．

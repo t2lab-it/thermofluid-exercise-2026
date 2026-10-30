@@ -90,8 +90,9 @@ $ julia --project=. scripts/course.jl preflight
 F00の進捗は更新されませんでした。すべての機械観測と3項目の手動確認を完了してください。
 ~~~
 
-機械観測では，runtime（WSL2 / native Linux / macOS），pwdが正式なworkspaceにあること，Juliaが1.13系であること，Gitを呼び出せることを確認します．
-すべて`[PASS]`になったら，次の手動確認へ進みます．
+機械観測では，runtime（WSL2 / native Linux / macOS）と，pwdが正式なworkspaceにあることを確認します．
+Juliaが1.13系であることと，Gitを呼び出せることも確認します．
+機械観測の項目がすべて`[PASS]`になったら，次の手動確認へ進みます．
 
 ## 3. 手動確認の完了記録 {#手動確認を完了として記録する}
 
@@ -101,8 +102,8 @@ F00の進捗は更新されませんでした。すべての機械観測と3項�
 - GitHubで自分の学生リポジトリを閲覧できる．
 - 対応エージェントの一つで，ファイル編集と安全なローカルコマンド実行ができる．
 
-確認したエージェントに対応するコマンドを実行します．
-これをもって，`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
+確認したエージェントに対応するコマンドを実行し，手動確認の完了を記録します．
+`course_progress.toml`が更新されて現在の課題が「最初のbranchとpull request（F01）」になります．
 
 ~~~console
 $ julia --project=. scripts/course.jl preflight --confirm-vscode --confirm-github --confirm-agent copilot # or codex or amazon-q
