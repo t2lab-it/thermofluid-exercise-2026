@@ -20,7 +20,7 @@ b2c3d4e Implement upwind step
 （残りは省略）
 ```
 
-上ほど新しいcommitです．
+一覧の上ほど新しいcommitです．
 日付や作成者も読みたい場合は，表示する項目を指定します．
 
 ```console
@@ -189,7 +189,8 @@ notes.txt
 ```
 
 既定の`ls-files`は**index（stage）の管理対象**を表示します．
-`--others`は未追跡，`--exclude-standard`は`.gitignore`などの標準の無視規則を適用し，無視された生成物を除きます．
+`--others`は未追跡ファイルを表示対象にします．
+`--exclude-standard`は`.gitignore`などの標準の無視規則を適用し，無視された生成物を除きます．
 追跡済みファイルの**現在の作業ファイルの内容**を検索するときは，`grep -n`を使います．
 
 ```console
@@ -236,7 +237,7 @@ $ git diff -- README.md
 
 ### stageの取り消し
 
-選択をやり直す場合は，対象のstageをHEADの状態に戻します．
+選択をやり直す場合は，対象ファイルのindexをHEADの状態に戻します．
 
 ```console
 $ git restore --staged README.md
