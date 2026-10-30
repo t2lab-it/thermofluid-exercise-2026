@@ -74,11 +74,11 @@ $$
 と定めます．
 
 公式の3条件比較は，移流拡散の刻みを移流のみ・拡散のみにも使います．
-周期積分$I_h=\Delta x\sum_i u_i$を各時刻で記録し，初期値との差を確認します．
+周期積分$I_h=\Delta x\sum_i u_i$を各時刻で記録し，初期の周期積分との差を確認します．
 
 #### 解析解と格子収束
 
-$k=2\pi/L$として，`initial=:mode`は選択モデルの次の解析解の$t=0$です．
+$k=2\pi/L$として，`initial=:mode`では，次に示す選択モデルの解析解で$t=0$とした値を初期条件にします．
 線形・非線形の解析解は，それぞれ
 $$
 \begin{aligned}
@@ -95,7 +95,8 @@ $$
 です．
 
 40・80・160点，$D=0.1$，$s=0.8$，$t_f=1$で移流拡散を計算します．
-最大絶対誤差$E=\max_i|u_i-u_*(x_i,1)|$と，両区間の$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を用います．
+最大絶対誤差$E=\max_i|u_i-u_*(x_i,1)|$を用います．
+粗い格子と次に細かい格子の組ごとに$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を求めます．
 
 標準条件の観測次数の受入範囲は$0.8<p<1.2$です．
 
@@ -113,7 +114,7 @@ $$
 : {tbl-colwidths="[30, 70]"}
 
 [`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl)の[`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L4)を`:unselected`から`:linear`または`:nonlinear`へ変更してください．
-選択した流束と共通の刻み・更新の3箇所を完成させます．
+選択したモデルの流束，共通の時間刻み，全点の更新を計算する3箇所を完成させます．
 
 | 学生API | 実装・契約 |
 |---|---|
@@ -126,7 +127,7 @@ $$
 
 [`provided_support.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl)は入力検証，[`initial_condition`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L356-L371)，[`analytic_solution`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L392-L409)，[`conserved_integral`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/provided_support.jl#L427-L438)，診断・描画・保存を提供します．
 [`simulate`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L171-L286)は時間積分を，[`main`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L302-L314)は選択モデルの3条件と格子収束の計算・出力を行います．
-これらを読み，式・旧配列・診断値・バッファ交換の対応を説明してください．
+これらの提供済み処理を読み，式・旧配列・診断値・バッファ交換の対応を説明してください．
 
 ## 必須4群と自作2件
 
