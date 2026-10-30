@@ -39,7 +39,7 @@ Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N
 
 ## 編集先とAPI {#api}
 
-[`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L4)へ次を実装します．
+[`src/N08N09Elliptic.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl)の[`ThermofluidExercise.Elliptic`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L4)へ次の関数を実装します．
 
 - [`apply_dirichlet!(u,g)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L147-L155)
 - [`laplace_jacobi_step!(u_new,u_old,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L182-L191)
@@ -47,10 +47,10 @@ Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N
 - [`residual_converged(rnorm,rinitial;atol=1e-10,rtol=1e-12)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L248-L265)
 
 [`apply_dirichlet!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L147-L155)は[冒頭の境界条件](#problem-setup)を適用します．
-step／residualは出力配列を返します．
+更新と残差計算の関数は出力配列を返します．
 入力検査と，反復を進める[`solve_laplace(u0,g,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L484-L485)は提供済みです．
 停止基準は上の[停止条件](#standard-conditions)を使います．
-計算結果の`u`，`converged`，`iterations`，`residual_history`，`update_history`，`threshold`を使って解と反復を確認します．
+計算結果の`u`，`converged`，`iterations`，`residual_history`，`update_history`，`threshold`を使って，返された場と収束判定・反復履歴を確認します．
 
 [`exercises/N08-N09_laplace_poisson/simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/simulate.jl)は計算，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/analyze.jl)は保存場の解析，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/plot.jl)は表示，[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/run.jl)は一括実行です．
 配布済みテストを保持し，[`exercises/N08-N09_laplace_poisson/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/tests.jl)の[自作2群](N09.qmd#student-tests)を完成させます．
@@ -70,7 +70,7 @@ $ julia --project=. exercises/N08-N09_laplace_poisson/tests.jl N08-check
 ## Laplaceの実験と参照結果 {#reference-results}
 
 [冒頭の問題設定](#problem-setup)と[停止・格子収束の判定条件](#standard-conditions)に従って実験します．
-独立に計算した残差を停止閾値と照合し，境界値も確認します．
+保存場から独立に計算した残差を停止閾値と照合し，境界値も確認します．
 実行コマンドは[段階別実行](../guides/workflow.qmd#n08-n09-stages)，保存形式は[N09の公式出力](N09.qmd#reference-results)を参照します．
 
 ![N08の数値解・既知解・誤差](../assets/n08-reference/fields.png){fig-alt="境界を含む節点格子の数値解と既知解を共通色範囲，誤差をゼロ対称色範囲で比較"}
