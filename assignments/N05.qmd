@@ -16,7 +16,7 @@ understanding-check-points:
 
 {{< include _template-update.qmd >}}
 
-N01〜N04の完成コードから共通処理を抽出し，既存入口を共通パッケージへの委譲へ変えます．
+N01〜N04の完成コードから共通処理を抽出し，既存入口から共通パッケージへ処理を委譲します．
 このページで必須の実装範囲・入力と出力・検証・提出条件を確認し，[N05授業](../lessons/N05.qmd)で抽出の仕組みと判断理由を読みます．
 実行操作は[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)に従います．
 
@@ -76,9 +76,10 @@ N05では，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](
 ## 抽出前の記録と抽出後の検証 {#抽出前の記録と抽出後の検証}
 
 [段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)に従って，**抽出前の完成コードからbaselineを取得**し，比較の基準として保持します．
-抽出対象と抽出前後で維持する挙動を予想し，N04選択と基準取得時のcommitをログへ記録します．
+抽出対象と抽出前後で維持する挙動を予想します．
+N04選択と基準取得時のcommitをログへ記録します．
 抽出後はF01〜N04の既存テストとN05の比較を実行し，diffと結果を照合します．
-今回の終了状態・メッセージとレポートの来歴を確認してください．
+今回の実行の終了状態・メッセージを確認し，レポートの来歴も確認してください．
 
 N05の提出物は`results/N05/baseline.toml`と`results/N05/regression.toml`です．
 レポートにはbaselineのSHA-256と現在コードのSHA-256，項目別の差を残します．
@@ -87,7 +88,8 @@ N05の提出物は`results/N05/baseline.toml`と`results/N05/regression.toml`で
 N05の共通化で進めなくなった場合は，diffと失敗を説明して教員・TAの復帰支援を受けられます．
 復帰後も自分の過去課題・N04選択・学習ログを保ち，採用した差分と回帰結果を説明します．
 
-理解度チェックのポイントは，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)，[基準データ・比較結果・実行元の記録](../lessons/N05.qmd#regression)，[AI差分の採否](../lessons/N05.qmd#diff-review)を参照して整理します．
+理解度チェックでは，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)を参照して整理します．
+[基準データ・比較結果・実行元の記録](../lessons/N05.qmd#regression)と[AI差分の採否](../lessons/N05.qmd#diff-review)も参照します．
 
 任意の発展資料[共通化の設計判断](../advanced/refactoring-design.qmd#questions)では，複数案を比較できます．
 

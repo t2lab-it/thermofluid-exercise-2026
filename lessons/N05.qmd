@@ -17,7 +17,7 @@ N02とN04の周期格子では，左端の左隣を最後の点にする判定�
 こうした同じ役割を一箇所へ集めると，修正箇所を一本化できます．
 たとえば`i == 1 ? n : i - 1`を[`periodic_left_index(i,n)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L27-L30)に置き換えれば，呼び出す側は「左隣を求める」という役割を読み取れ，検証した周期端の処理を再利用できます．
 
-このように，外から見た挙動を保ちながら内部の構成を変える作業をリファクタリングと呼びます．
+外から見た挙動を保ちながら内部の構成を変える作業をリファクタリングと呼びます．
 新しい数値解法を加えたり，入力の許される範囲を変えたりする機能変更とは分けて考えます．
 抽出前に「重複している役割」「移す処理」「保持する結果」を予想しておくと，AIの提案の採否を判断できます．
 
@@ -49,7 +49,7 @@ APIは，呼び出す側と処理する側の約束です．
 周期格子では端を越えた隣接点を反対側へつなぎます．
 重複終点を持たない配列の左隣は$i=1$で$n$，それ以外は$i-1$，右隣は$i=n$で1，それ以外は$i+1$となります．
 流束は1点の値から評価する部品で，線形流束は$f(u)=cu$，Burgers流束は$f(u)=u^2/2$です．
-これを配列の更新から分けると，同じ流束を異なる方向の計算にも使えます．
+流束の評価を配列の更新から分けると，同じ流束を異なる方向の計算にも使えます．
 
 各点の更新には，同じ時刻の旧値を使います．
 `validate_buffers`は新旧配列の独立性や形状を確認し，同じ旧場から更新するための条件を支えます．
@@ -60,7 +60,8 @@ APIは，呼び出す側と処理する側の約束です．
 
 ## ファイルの配置と呼び出し {#package-layout}
 
-パッケージは[`Project.toml`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/Project.toml)などで名前や依存関係を持つコードのまとまり，モジュールは関数名を整理する名前空間です．
+パッケージは[`Project.toml`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/Project.toml)などで名前や依存関係を持つコードのまとまりです．
+モジュールは関数名を整理する名前空間です．
 今回は学生リポジトリにある既存プロジェクト[`ThermofluidExercise`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl)の中で抽出します．
 公開APIの呼び方と挙動を保ちながら，内部ヘルパーやファイルの分け方は自分で設計します．
 
@@ -102,7 +103,7 @@ ThermofluidExercise.N01〜N04の処理
 
 共通側は必要な値を引数で受け取り，単独で使える構成にします．
 N04では課題側の[`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L4)を`model`として渡し，共通側は受け取った選択に従います．
-抽出する処理が別の関数を呼ぶ場合は，その先もたどり，実行に必要な検証やヘルパーを共通側で完結させます．
+抽出する処理が別の関数を呼ぶ場合は，呼ばれる関数もたどり，実行に必要な検証やヘルパーを共通側で完結させます．
 
 ::: {.callout-tip collapse="true" title="Julia補足：パッケージ・モジュール・名前のスコープ" #module-scope style="scroll-margin-top: 11rem;"}
 
@@ -159,7 +160,8 @@ using Test
 `linear_flux`と`step_flux`の引数`u`・`speed`は，それぞれの関数のローカル変数です．
 `step_flux`内の`linear_flux`は，関数を定義した場所の`using`で取り込んだ名前を参照します．
 関数の所属は`parentmodule`，各メソッドの定義場所は`@which`で確認します．
-実課題でも，`run.jl`の委譲先から`ThermofluidExercise.N01`の定義を開き，そこで使う共通ヘルパーと`using`・`import`をたどれば，所属と依存先を確認できます．
+実課題でも，`run.jl`の委譲先から`ThermofluidExercise.N01`の定義を開きます．
+そこで使う共通ヘルパーと`using`・`import`をたどれば，所属と依存先を確認できます．
 `@which`による選択の読み方は[F02の多重ディスパッチの補足](F02.qmd#multiple-dispatch)，ローカル変数と実行状態は[F02の実行状態の補足](F02.qmd#execution-state)を参照してください．
 
 詳しい規則はJulia公式資料の[変数のスコープ](https://docs.julialang.org/en/v1/manual/variables-and-scoping/)，[モジュール](https://docs.julialang.org/en/v1/manual/modules/)，[コードの読み込み](https://docs.julialang.org/en/v1/manual/code-loading/)を参照してください．
@@ -240,7 +242,7 @@ end
 ```
 
 **変更後の`boundary.jl`**：旧入口を同じ名前と引数で残し，共通側へ仕事を渡します．
-このように他の関数へ処理を任せることを委譲と呼びます．
+他の関数へ処理を任せることを委譲と呼びます．
 
 ```{.julia .n05-example #n05-after}
 import ThermofluidExercise
@@ -291,7 +293,8 @@ end
 `==`は値の一致，ここでの`===`は返された配列が渡した配列そのものかを確かめます．
 `@test_throws`の2例は，意図した拒否が起こることを確認する成功条件です．
 数値の一致に加えて，旧入口が共通側へ委譲していることも確認します．
-掲載例の検証では，共通側を呼ぶと目印の値が返るように一時的に置き換え，旧入口にもその目印が現れることを別プロセスで確認しています．
+掲載例の検証では，共通側を呼ぶと目印の値が返るように一時的に置き換えています．
+旧入口にもその目印が現れることを別プロセスで確認しています．
 自分の抽出では，diffで本体の移動と旧入口の委譲を確かめます．
 
 ::: {.callout-note collapse="true"}
@@ -346,7 +349,8 @@ baselineのハッシュは，比較に使った基準を識別します．
 | N04選択・キー・形状・値が不一致 | 表示された箇所とdiffを照合し，契約を崩した変更を直す |
 
 失敗後に確認する終了状態・メッセージと操作は[共通ガイド](../guides/workflow.qmd#n05-n06-stages)を参照します．
-今回の終了状態とメッセージを確かめ，基準取得時と比較時のコードをレポートの来歴から識別します．
+今回の実行の終了状態とメッセージを確かめます．
+レポートの来歴から，基準取得時と比較時のコードを識別します．
 回帰確認が成功した場合，代表実験の結果が既定の比較規則で変更前と一致したと判断できます．
 計算の妥当性は，小例の独立した期待値や，保存量・解析解との比較で確かめます．
 
