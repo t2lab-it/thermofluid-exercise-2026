@@ -68,7 +68,8 @@ Nu(t)&=\frac{\langle\chi\rangle_A}{\chi_{\mathrm{diff}}},\\
 $$
 と定義します．
 $\langle\cdot\rangle_A$は領域平均です．
-表面境界層は平均浮力・$\chi$の鉛直プロファイルを必ず示し，補助的な厚さ指標には閾値を置かない散逸重心
+表面境界層は，平均浮力と$\chi$の鉛直プロファイルを必ず示します．
+補助的な厚さ指標には，閾値を置かない散逸重心
 $$
 \frac{\delta_\chi}{H}
 =\frac{\int_\Omega(-z)\chi\,\mathrm{d}A}
