@@ -12,7 +12,7 @@ lesson-id: N08
 今回は，周囲の温度を一定に保った板が，十分に時間がたった後にどのような温度分布になるかを考えます．
 内部で熱が発生せず，熱伝導率が一定なら，定常温度$u$はLaplace方程式を満たします．
 境界の温度を固定し，内部の温度の推定値を繰り返し修正して解を求めます．
-反復番号$k$は修正の回数で，物理的な時刻ではありません．
+反復番号$k$は修正の回数を表します．
 方程式の分類では，移流は双曲型，熱拡散は放物型，Laplace／Poissonは楕円型に当たります．
 全辺の値を指定するDirichlet境界条件を必修とし，法線微分を指定するNeumann境界条件は[発展](N09.qmd#neumann)で扱います．
 実装と授業内の検証は[N08課題](../assignments/N08.qmd)で進めます．
@@ -57,7 +57,7 @@ $$
 
 この式は，周囲4点の温度から中央の温度を決める重み付き平均です．
 例えば$dx=dy$で周囲が1，1，3，3なら，新しい中央の値は2です．
-$dx\ne dy$の格子では単純な4点平均にせず，式の$1/dx^2$と$1/dy^2$の重みを使います．
+$dx\ne dy$の格子では，式の$1/dx^2$と$1/dy^2$の重みを使います．
 新旧配列を分け，同じ旧場から全内部点を更新してから配列を交換します．
 [`laplace_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L182-L191)に上の更新式を実装し，[`apply_dirichlet!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L147-L155)で全辺・角を固定します．
 初期推定は内部0，境界は既知解の値です．

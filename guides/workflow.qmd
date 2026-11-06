@@ -134,9 +134,7 @@ error("未実装 N08: apply_dirichlet!")
 
 `error(...)`を，課題の入力・更新・戻り値の契約を満たす自分の処理へ置き換えてください．
 有効な入力で「未実装」と表示されたときは，その関数の実装箇所を確認します．
-未実装の関数を呼ぶと実行は失敗し，計算結果として利用できません．
 提供済みの入力検証や境界処理と，`STUDENT_BEGIN/END`・`TODO_BEGIN/END`の編集マーカーは保ちます．
-`include`やimportだけでは計算・保存を行わないため，未着手課題のTODOを先に完成させる必要はありません．
 
 N04では選択した流束と，刻み・更新の共通2箇所を完成させ，他方の流束は未実装のまま必修を完了できます．
 N08/N09の発展課題も，必修とは別に取り組む実装箇所です．
@@ -317,7 +315,6 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
 比較後はプロセスの終了状態とメッセージを確認します．
 成功した実行のレポートで，`baseline_sha256`，現在の`code_sha256`，`git_head`，`selected_model`を照合します．
 不一致なら，表示された箇所とdiffを照合して修正します．
-基準が欠落している場合は現在の変更と記録を保ち，変更前commitの隔離コピーから取得する方法を教員・TAへ相談します．
 判断の理由は[N05授業の基準データ・比較結果・実行元の記録](../lessons/N05.qmd#regression)を参照します．
 
 N06の数値更新ができたら，計算と基本解析を別々に実行します．
@@ -327,8 +324,7 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/simulate.jl
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/analyze.jl
 ~~~
 
-`spatial_variance`が`nothing`を返す間も基本解析は成功しますが，`summary.toml`には分散を保存せず，`diagnostics_complete=false`を記録します．
-この段階では作図と必修完了検査が未完成を拒否するため，基本解析の成功だけで必修完了とはしません．
+`spatial_variance`が`nothing`を返す間は，基本解析が`summary.toml`に`diagnostics_complete=false`を記録します．
 
 [`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)の[`spatial_variance`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl#L23-L28)を完成させ，同じHDF5から再解析します．
 その後[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)の表示設定を変え，再作図します．
