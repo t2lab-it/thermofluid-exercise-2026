@@ -107,6 +107,7 @@ Files changedで，自分の原稿・図と，一覧の自分の項目だけが�
 ## PR検査のHTMLで表示を確認する
 
 PRの最新commitに対する`Check Quarto pages`が成功したら，実行詳細のSummaryを開きます．
+
 Artifactsにある`showcase-preview-pr-…`をダウンロードし，zip全体を展開します．
 `projects/showcase/index.html`から一覧を，`projects/showcase/<slug>/index.html`から自分の本文をブラウザで開きます．
 画像やCSSを含め，展開したディレクトリ全体を保持してください．

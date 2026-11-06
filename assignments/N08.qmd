@@ -50,7 +50,15 @@ Poissonの実装，両問題の3格子実験・図・自作2群・考察は，[N
 更新と残差計算の関数は出力配列を返します．
 入力検査と，反復を進める[`solve_laplace(u0,g,dx,dy)`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L484-L485)は提供済みです．
 停止基準は上の[停止条件](#standard-conditions)を使います．
-計算結果の`u`，`converged`，`iterations`，`residual_history`，`update_history`，`threshold`を使って，返された場と収束判定・反復履歴を確認します．
+計算結果の`u`，`converged`，`reason`，`iterations`，`residual_history`，`update_history`，`threshold`を使って，返された場と収束判定・反復履歴を確認します．
+
+### 返却状態の確認 {#solver-result}
+
+`converged=true`と，返却場の残差が閾値以下であることを確認します．
+残差履歴は初期残差を含み，長さは`iterations+1`です．
+初期場が停止条件を満たす場合は，`iterations=0`で返ります．
+`converged=false`の場合は`reason`と残差履歴を調べ，入力・更新式・境界条件・残差計算を確認して再実行します．
+公式出力には収束した場を保存します．
 
 [`exercises/N08-N09_laplace_poisson/simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/simulate.jl)は計算，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/analyze.jl)は保存場の解析，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/plot.jl)は表示，[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/run.jl)は一括実行です．
 配布済みテストを保持し，[`exercises/N08-N09_laplace_poisson/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/tests.jl)の[自作2群](N09.qmd#student-tests)を完成させます．

@@ -307,7 +307,9 @@ Juliaは読み込んだ関数の定義をプロセス内に保持します．
 ## 基準データ・比較結果・実行元の記録 {#regression}
 
 回帰確認とは，変更前の挙動を保っていることを調べる作業です．
-小例の期待値は人が独立に求めましたが，N01〜N04全体の代表結果は抽出前の完成コードから記録します．
+小例では，保持する契約を手計算で確かめました．
+N01〜N04全体では，抽出前の完成コードを実行し，その代表結果を比較基準として記録します．
+この二つを組み合わせ，局所的な契約と計算全体の結果を確かめます．
 提供コードの[`baseline`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L293-L300)が基準を保存し，[`verify`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L321-L353)が抽出後の結果を比較してレポートを保存します．
 新しいプロセスで実行する箇所は[`fresh_capture`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L204-L211)，比較規則は[`compare!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L229-L250)で確認できます．
 以下は基準データの取得，共通化後の再計算，結果の比較と記録の流れです．
@@ -348,9 +350,10 @@ baselineのハッシュは，比較に使った基準を識別します．
 | N04選択・キー・形状・値が一致 | 今回の実行の成功を確認し，レポートの来歴と項目別の差を読む |
 | N04選択・キー・形状・値が不一致 | 表示された箇所とdiffを照合し，契約を崩した変更を直す |
 
-失敗後に確認する終了状態・メッセージと操作は[共通ガイド](../guides/workflow.qmd#n05-n06-stages)を参照します．
-今回の実行の終了状態とメッセージを確かめます．
-レポートの来歴から，基準取得時と比較時のコードを識別します．
+抽出前の完成コードから取得した基準を使います．
+基準の取得と比較の操作は[共通ガイド](../guides/workflow.qmd#n05-n06-stages)を参照します．
+
+比較後は，今回の実行の終了状態とメッセージを確かめ，レポートの来歴から基準取得時と比較時のコードを識別します．
 回帰確認が成功した場合，代表実験の結果が既定の比較規則で変更前と一致したと判断できます．
 計算の妥当性は，小例の独立した期待値や，保存量・解析解との比較で確かめます．
 

@@ -33,6 +33,8 @@ $$
 保存変数，数値流束，DGSEMの役割は[JuliaのCFDソルバ](../../advanced/public-solver-methods.qmd#高次不連続galerkin法と双曲型保存則)でも確認できます．
 
 標準の初期値は，公式例が採用するmodified Sod問題です．
+左右に異なる密度・速度・圧力を置き，接続後に生じる波を調べます．
+以下のprimitive変数は，密度・速度・圧力を直接並べたものです．
 $0\leq x\leq1$，$\gamma=1.4$，初期不連続位置$x_0=0.3$として，primitive変数を
 $$
 \begin{gathered}
@@ -72,7 +74,7 @@ $\gamma$，左右状態，領域，境界，$t_*$，多項式次数3，HLLC表�
 例えば，公式資料にも現れる `flux_lax_friedrichs` を候補にできますが，固定したtagでAPIと実行を確認してから採用します．
 
 三つの波を同じ尺度で拡大し，波位置，遷移幅，$L_1$誤差，over/undershoot，最小密度・圧力を並べます．
-鋭い図だけを優れた結果とせず，散逸によるぼけ，分散による振動，正値性，保存収支，費用のtrade-offとして説明します．
+散逸によるぼけ，分散による振動，正値性，保存収支，費用のtrade-offとして説明します．
 
 ### 問い3：時間刻みの縮小による空間離散化の差と時間誤差の分離可能性 {#問い3時間刻みを厳しくすると空間離散化の差と時間誤差を分けられるか}
 
@@ -81,7 +83,7 @@ CFLを明示して調べる場合は，[公式の時間積分資料](https://tri
 短い事前実行から採用したCFLを記録し，同じ条件をCFL/2で再実行します．
 
 両条件の$\rho,u,p$差，exact解に対する指標，ステップ数，RHS評価回数，実経過時間を示します．
-CFLを半分にした差が解像度や流束の比較差に対して無視できるかを確認し，時間誤差が残る場合は空間手法の優劣を断定しません．
+CFLを半分にした差が解像度や流束の比較差に対して十分小さくなることを確かめてから，空間手法を比較します．
 
 ## 手法と検証
 
@@ -104,11 +106,11 @@ CFLを半分にした差が解像度や流束の比較差に対して無視で�
 
 `v0.17.2`の公式例は，`TreeMesh`のlevel 6，DGSEMの多項式次数3，HLLC表面流束，`VolumeIntegralFluxDifferencing(flux_ranocha)`，非周期境界，$t_*=0.2$，SSPRK43のadaptive steppingを使います．
 level 6は64要素，次数3は各要素4節点なので，基準は1変数あたり256 DOFです．
-これはAPIと問題設定を再現する基準であり，誤差が十分小さいと確認済みの格子ではありません．
+この設定をAPIと問題設定の再現基準とし，格子依存性を調べます．
 
 公式例の `AnalysisCallback` は実行診断に使えますが，[公式資料が説明する既定のerror](https://trixi-framework.org/TrixiDocumentation/stable/callbacks/#Analyzing-the-numerical-solution)はinitial conditionに対する量です．
-時間発展したmodified Sodのexact解に対する$L_1$誤差ではないため，外部参照の誤差を別のpostprocessingで計算します．
-可視化用の高次補間値だけで保存や正値性を判定せず，native DG nodes・quadratureでの診断と，全条件で共通の可視化・誤差評価gridを区別します．
+時間発展したmodified Sodのexact解に対する$L_1$誤差は，別のpostprocessingで計算します．
+保存や正値性はnative DG nodes・quadratureで診断し，可視化と誤差評価には全条件で共通のgridを使います．
 
 同じ$x$座標と$t_*$で，primitive変数$q\in\{\rho,u,p\}$の平均絶対誤差を
 $$
@@ -133,7 +135,6 @@ $$
 正値性は全保存時刻のnative nodesで$\min\rho$，$\min p$，非有限値の個数を確認します．
 
 この例は非周期境界で，左状態には速度があります．
-したがって質量，運動量，全エネルギーがそれぞれ単純に一定とは限りません．
 $\boldsymbol{Q}_h(t)=\int\boldsymbol{U}_h\,\mathrm{d}x$として，境界流束を含む収支残差
 $$
 \begin{aligned}
@@ -201,7 +202,7 @@ adaptive steppingの記録を残し，必要ならCFL制御branchで採用CFLと
 可視化gridと誤差積分gridを固定します．
 
 $\boldsymbol{R}_{\mathrm{bal}}$，最小密度・圧力，波形，主要指標が時間刻みと評価gridの一段厳しい条件で安定することを確かめます．
-既定 `AnalysisCallback` のerrorを厳密解の誤差と混同しません．
+厳密解に対する誤差は，上で定めた評価方法で計算します．
 
 保存収支の時系列または表，正値性・非有限値ログ，時間刻み設定，grid依存表，診断テストまたは再計算スクリプトを残します．
 
@@ -243,13 +244,13 @@ root solve，サンプリング，積分法を記録し，sample数を増やし�
 その検証と再生成手順を残した後，次の軸を一つだけ追加できます．
 
 - **entropy条件と体積離散化を調べる**: 公式例が対比するflux differencingとweak-form体積積分を題材に，希薄波の滑らかさ，entropy，正値性，必要なlimiterを調べます．
-  複数の変更を同時にせず，各構成の失敗条件と追加検証を先に定めます．
+  各構成の比較条件と追加検証を先に定めます．
 - **shock capturingまたはpositivity limiterへ進む**: [公式shock-capturing tutorial](https://trixi-framework.org/TrixiDocumentation/stable/tutorials/shock_capturing/)から一つの手法を選び，indicator・threshold・作動箇所，保存される量，追加散逸を記録します．
   標準ケースをlimiterなしの回帰基準として残します．
 - **AMRへ進む**: uniform levelの結果を基準に，refinement indicatorとlevel上限を一つ追加し，同程度の誤差に必要なDOF，波位置，保存収支，regrid費用を比較します．
   多数のindicator比較は標準ルート後に相談します．
 - **別のRiemann問題または多次元へ進む**: classical Sod，blast wave，Shu--Osher，多成分，反応，多次元のうち一つを選び，新しい初期・境界条件，参照解，entropy・positivity，計算資源を定めます．
-  modified Sodの検証済み結果を捨てずに回帰ケースとして残します．
+  modified Sodの検証済み結果を回帰ケースとして残します．
 
 新しい方程式，流束，limiter，AMR，外部コード，長時間サーバ計算を追加する場合は，ライセンス，正値性，保存，参照解，計算負荷を教員またはTAと相談します．
-どの発展でも，公式例の再現，自己整合性，外部照合，一つの条件だけを変える比較を省略せず，答える問いと追加費用を先に決めてください．
+発展課題でも，公式例の再現，自己整合性，外部照合，一つの条件だけを変える比較を行います．答える問いと追加費用を先に決めてください．

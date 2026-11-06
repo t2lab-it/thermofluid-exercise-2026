@@ -247,9 +247,13 @@ Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`�
 入力は1始まりで各軸3点以上の浮動小数行列とし，新旧バッファは同形状の独立した配列を使います．
 `kappa,nu>=0`，格子幅は正，`0<safety<=1`とします．
 
+熱収支解析には，保存時刻と各時刻の熱量，保存区間ごとの輸送積分を渡します．
 時刻は0始まりの狭義増加列で，`heat`は同じ長さの列です．
-積分入力は`(4,nt-1)`の配列，辺順はwest，east，south，northです．
-戻り値は`(;net_input,cumulative_input,residual)`で，長さは順に`nt-1,nt,nt`です．
+保存時刻が`nt`個なら，隣り合う保存時刻を結ぶ区間は`nt-1`個です．
+積分入力は`(4,nt-1)`の配列で，各行はwest，east，south，northの辺，各列は一つの保存区間に対応します．
+
+戻り値は`(;net_input,cumulative_input,residual)`です．
+区間ごとの正味流入量`net_input`の長さは`nt-1`，保存時刻ごとの`cumulative_input`と`residual`の長さはそれぞれ`nt`です．
 累積和と収支残差の先頭は0で，`residual`は[上の熱収支残差](#heat-budget)です．
 
 {{< include /assignments/_pseudocode.qmd >}}
