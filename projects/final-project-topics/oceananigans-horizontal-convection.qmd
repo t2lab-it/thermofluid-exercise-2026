@@ -91,19 +91,18 @@ $Nu$，$K$，$\Psi$，$\delta_\chi/H$ は瞬時値と平均値を分け，採用
 標準ルートです．
 まず公式の $Ra=10^8$ を変更せず再現し，自己整合性と解析的な拡散基準を確認します．
 その後，最初の追加候補を $Ra=10^7$ とし，$Pr=1$，$L_x/H=2$，$b_\star$，境界，$128\times64$格子，WENO，Runge--Kutta 3，CFL制御，出力と診断定義を固定します．
-両条件が平均可能な状態まで進まない場合は，短い結果から大小関係を断定せず，必要な積分時間と代替条件を教員またはTAと相談します．
 
 $t^*$に対する $Nu,K,\Psi$ の時系列，同じ色尺度での $b/b_\star$，渦度 $\zeta=\frac{\partial u}{\partial z}-\frac{\partial w}{\partial x}$，$\chi$ の図，鉛直プロファイル，$Nu$・$\Psi$・$\delta_\chi/H$・費用の表を作ります．
-大きい $Ra$ ほど循環が強く表面側へ散逸が集中するという仮説を置けますが，二条件だけからscaling exponentを決めず，時間窓・格子・収支の差より条件差が大きいかを議論します．
+大きい $Ra$ ほど循環が強く表面側へ散逸が集中するという仮説を置けますが，時間窓・格子・収支への依存性に対して条件差がどの程度大きいかを議論します．
 
 ### 問い2：格子細分化による表面境界層と収支の変化の程度 {#問い2格子を細かくすると表面境界層と収支はどこまで変わるか}
 
 $Ra=10^8$，$Pr=1$，領域，境界，移流，時間積分，平均規則を固定し，$N_x:N_z=2:1$ を保って一段だけ格子を変えます．
-$64\times32$ は処理系を確かめるCPU縮小ケースには使えますが，最終結果の基準とはみなしません．
-公式 $128\times64$ と細かい格子を比較できない場合は，粗い格子との差を「収束」ではなく解像度感度として報告します．
+$64\times32$ は処理系を確かめるCPU縮小ケースに使います．
+公式 $128\times64$ を基準に格子を変え，解像度感度を報告します．
 
 格子ごとに同じ時刻・色尺度の $b,\zeta,\chi$，平均プロファイル，$Nu$・$\Psi$・$\delta_\chi/H$，発散と浮力分散収支，ステップ数・実経過時間・最大メモリ使用量を並べます．
-表面境界層の変化が小さくなるか，収支残差と時間刻み感度が同時に改善するかを見て，滑らかな図だけで解像したと判断しません．
+表面境界層の変化，収支残差，時間刻み感度を合わせて解像度を評価します．
 
 ### 問い3：Prandtl数の変更に伴う運動量と浮力の拡散差の循環への影響 {#問い3prandtl数を変えると運動量と浮力の拡散差は循環へどう現れるか}
 
@@ -129,13 +128,16 @@ $b,\zeta,\chi$ の場，平均プロファイル，$Nu$，$\Psi$，$K$，$\delta
 | 固定するパッケージ版 | [2026-08-12公開の `v0.110.15`](https://github.com/CliMA/Oceananigans.jl/releases/tag/v0.110.15) と[tagの `Project.toml`](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/Project.toml) | 2026-08-15確認時の開始候補は `Oceananigans 0.110.15`，commit `5e62a72`，Julia compat 1.10．実際に解決したJulia・依存パッケージ・`Manifest.toml` |
 | 数値手法 | [公式のstaggered有限体積法](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/finite_volume)，[fractional-step解説](https://clima.github.io/OceananigansDocumentation/stable/numerical_implementation/time_stepping#The-fractional-step-method)，[OceananigansのJOSS論文](https://doi.org/10.21105/joss.02018) | tracer・圧力と速度の配置，移流・拡散，圧力射影，Runge--Kutta 3，CFL，診断を選ぶ理由 |
 | 本体の利用条件 | [`v0.110.15`のMIT License](https://github.com/CliMA/Oceananigans.jl/blob/v0.110.15/LICENSE) | copyまたは派生した範囲，著作権表示，ライセンス，変更点 |
-| 外部基準 | [Rochaらの水平対流Nusselt数論文](https://doi.org/10.1017/jfm.2020.269) | 散逸に基づく $Nu$，同じ余弦上面強制の拡散解，volumeとsurfaceの収支，平均窓．幾何・境界・$Ra,Pr$が異なる文献値は直接比較しない |
+| 外部基準 | [Rochaらの水平対流Nusselt数論文](https://doi.org/10.1017/jfm.2020.269) | 散逸に基づく $Nu$，同じ余弦上面強制の拡散解，volumeとsurfaceの収支，平均窓．幾何・境界・$Ra,Pr$を揃えて比較する |
 :::
 
 `v0.110.15`の公式例は，CPU上の `RectilinearGrid`，$128\times64$格子，`NonhydrostaticModel`，5次WENO移流，`BuoyancyTracer`，Laplacian viscosity・diffusivity，3段Runge--Kuttaを使います．
 初期時間刻みは $0.01$，`conjure_time_step_wizard!` は目標CFL $0.7$，`max_Δt=0.1`，公式停止時刻は $t=40$ です．
 出力は $b$，speed，$\zeta$を0.5時間ごとにJLD2へ保存し，haloを含む $b$ から $\chi$，$Nu(t)$，$K(t)$ を計算します．
-これはAPIと設定の再現基準であり，$t=40$で定常へ達することや，$128\times64$で全指標が格子収束していることの保証ではありません．
+公式例の再現で確かめるのは，固定した版のAPIと設定で，同じ実行経路を動かせることです．
+$t=40$で定常へ達するかは，時系列と平均窓で確かめます．
+$128\times64$で指標が十分に解像されるかは，格子を変えて確かめます．
+この二つの確認を終えてから，条件差を物理的な違いとして解釈してください．
 
 学生はソルバ本体を改造せず，基準スクリプトを出所とライセンスが追跡できる形でprojectへ置き，$\psi$，離散発散，境界flux，浮力分散収支，平均窓，費用の診断を追加します．
 自分が固定した環境で，raw fieldと診断値を再生成します．
@@ -182,7 +184,7 @@ $\|\nabla_h\cdot\boldsymbol{u}_h\|$はabsolute値と $U_\star/L_x$ で規格化�
 
 [Rochaらの解析](https://doi.org/10.1017/jfm.2020.269)では浮力散逸が運動エネルギーなどより先に平衡化し得るため，$Nu(t)$，$K(t)$，$\Psi(t)$を連続する複数窓で確認します．
 候補窓を前半・後半に分けた平均差，窓内変動，条件間差を並べ，driftが結論を左右する間は積分を延長します．
-計算上限へ達した場合は「統計的定常平均」とせず，最終時刻と未解決のdriftを報告します．
+平均窓と最終時刻，残るdriftを報告します．
 
 検証は下表の上から順に進めます．
 

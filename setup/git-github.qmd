@@ -51,6 +51,8 @@ GitHubユーザー名やcommit・issue・pull requestなどの活動，その日
 
 ## 個人課題用リポジトリの複製 {#個人課題用リポジトリを複製する}
 
+リポジトリは，課題のファイルと，その変更履歴をまとめて管理する場所です．
+ここでは，配布元の履歴を手元へ複製し，自分のGitHubリポジトリを提出先として接続します．
 学生用配布リポジトリは，標準の方法としてSSHで複製します．
 先に[SSHによるGitHub接続](../advanced/github-ssh.qmd)を完了してください．
 
@@ -96,6 +98,8 @@ $ git branch -vv
 * main （commit情報は省略） [origin/main] （commitメッセージ）
 ```
 `origin`は自分の提出先，`upstream`は教材の配布元です．
+remote名は接続先を区別するための名前なので，`git remote -v`のURLと対応させて確認します．
+初回push後はブラウザで自分のリポジトリを開き，配布されたファイルと履歴があることを確かめてください．
 別PCで個人リポジトリをcloneする場合は[配布元の再登録](../guides/commands.qmd#register-upstream)も行います．
 `exercises/`や`scripts/`が見えることを確認してください．
 

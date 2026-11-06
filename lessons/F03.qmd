@@ -14,6 +14,10 @@ title: "ベクトル解析"
 
 ## 直交座標での微分演算子
 
+「場」は，位置ごとに値を対応させたものです．
+温度のように各点で一つの値を持つものがスカラー場，速度のように各点で向きと成分を持つものがベクトル場です．
+これから，場が空間の中でどう変わるかを表す四つの微分演算子を定義します．
+
 スカラー場 $\phi(x,y,z)$ とベクトル場 $\boldsymbol{A}(x,y,z)=(A_x,A_y,A_z)$ に対し，勾配（gradient）を
 $$
 \nabla\phi=
@@ -23,13 +27,19 @@ $$
 \frac{\partial\phi}{\partial z}
 \right),
 $$
-発散（divergence）を
+と定義します．
+勾配は，スカラー場から，増加が最も急な方向とその変化率を表すベクトル場を作ります．
+
+次に，発散（divergence）を
 $$
 \nabla\cdot\boldsymbol{A}=
 \frac{\partial A_x}{\partial x}
 +\frac{\partial A_y}{\partial y}
 +\frac{\partial A_z}{\partial z},
 $$
+と定義します．
+発散は，各点の周囲でベクトル場が外へ出る傾向を，一つのスカラーで表します．
+
 回転（curl）を
 $$
 \nabla\times\boldsymbol{A}=
@@ -39,6 +49,9 @@ $$
 \frac{\partial A_y}{\partial x}-\frac{\partial A_x}{\partial y}
 \right),
 $$
+と定義します．
+回転は，局所的な回る傾向を表すベクトル場です．
+
 Laplacianを
 $$
 \nabla^2\phi=
@@ -52,6 +65,9 @@ $$
 \nabla^2\boldsymbol{A}=(\nabla^2 A_x,\nabla^2 A_y,\nabla^2 A_z)
 $$
 と定義します．
+Laplacianは，各座標方向の二階微分の和です．
+演算を重ねるときは，途中で得られる量がスカラーかベクトルかを追ってください．
+
 以下では，現れる二階偏微分が連続，すなわち場が対象領域で少なくとも $C^2$ 級であると仮定します．
 この条件により $\frac{\partial^2 f}{\partial x\partial y}=\frac{\partial^2 f}{\partial y\partial x}$ のように混合偏微分の順序を交換できます．
 
@@ -102,7 +118,10 @@ $$
 \end{aligned}
 $$
 
-2行目はダミー添字 $j,k$ の入れ替え，3行目はイプシロンの反対称性，最後の等号は $C^2$ 級の場で混合偏微分を交換できることを使いました．
+ここで$i$は求める成分を指定し，$j,k$は和を取るための添字です．
+和を取る添字の名前を入れ替えても，同じ全項を足すので値は変わりません．
+2行目はこのダミー添字 $j,k$ の入れ替え，3行目はイプシロンの反対称性，最後の等号は $C^2$ 級の場で混合偏微分を交換できることを使いました．
+同じ成分が自分自身の符号を反転した値と等しくなるため，その成分は0です．
 したがって，
 $$
 \nabla\times(\nabla\phi)=\boldsymbol{0}.

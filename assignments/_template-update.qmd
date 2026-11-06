@@ -10,6 +10,7 @@ git fetch upstream
 git log --oneline main..upstream/main
 ~~~
 
+`fetch`で配布元の履歴を取得し，`log`で手元の`main`にまだない更新を調べます．
 最後のコマンドでcommitが表示されたら，[配布教材の更新手順](../guides/commands.qmd#material-updates)に従って統合してから課題を開始します．
 commitが表示されなければ，更新の統合は不要です．
 :::
