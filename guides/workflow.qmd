@@ -8,6 +8,10 @@ title: "学生向け課題ワークフロー"
 このページでは，学生リポジトリで課題を進めるときの手順をまとめます．
 実装・テスト・理解度チェックの条件は[各課題ページ](../assignments/index.qmd)を参照してください．
 
+通常は，課題用のbranchを作る → 実装・テスト → 学習ログを記録する → commit・push → PRを確認してmergeする，の順に進めます．
+初回は[環境診断](#f00-preflight)，F01以降は[課題の開始](#start-exercise)から読み進めてください．
+N05以降の計算・解析・作図のコマンドは，後半の各課題の段階別実行にまとめています．
+
 ## コマンドを実行する場所 {#repository-root}
 
 このページにあるコマンドは，**学生リポジトリのルートディレクトリ**で実行します．
@@ -105,44 +109,6 @@ $ julia --project=. scripts/course.jl start TASK_ID
 `start`は過去課題と現在課題のテスト失敗を警告として表示し，次の提出単位へ進めます．
 提出単位の順に，一課題ずつ進めてください．
 
-## 作業環境を再準備したときの既習課題 {#previous-exercises}
-
-元の作業環境と成果を保管します．
-[Git・GitHubの準備](../setup/git-github.qmd)に沿って別の空リポジトリと別のローカルディレクトリを用意し，新環境でもF00の確認を完了します．
-F01のbranchを手動で作成し，進捗の変更をcommitしてローカルの`main`へmergeします．
-既習課題はこの進捗記録と`start`で順に通過します．
-
-~~~console
-$ git switch -c exercise/F01-first-pull-request
-Switched to a new branch 'exercise/F01-first-pull-request'
-
-$ git diff -- course_progress.toml
-（F00の確認による進捗変更を表示）
-
-$ git add course_progress.toml
-（成功時は出力なし）
-
-$ git commit -m "Record F00 environment check"
-（commit結果を表示）
-
-$ git switch main
-Switched to branch 'main'
-
-$ git merge --ff-only exercise/F01-first-pull-request
-（Fast-forwardと変更一覧を表示）
-
-$ julia --project=. scripts/course.jl start F02
-（F01の未実装などは警告を表示し，F02のbranchを作成）
-~~~
-
-F02も既習なら，F02の課題branchで進捗変更を同様にcommit・ローカルmergeし，`start F03-F04`へ進みます．
-各段階で`status`とdiffを確認し，一課題ずつ進めてください．
-新たに取り組む課題では，通常の実装・テスト・学習ログ・push・PRへ戻ります．
-後続課題で使うコードは，保管した自分の実装から移すか，新たに実装します．
-
-`completed`と「通過済み」は進捗の記録です．
-課題の完了は，各課題ページの完了条件で確認してください．
-
 ## 通常の課題作業 {#exercise-work}
 
 各課題ページで，実装・テスト・出力の条件を確認します．
@@ -168,9 +134,7 @@ error("未実装 N08: apply_dirichlet!")
 
 `error(...)`を，課題の入力・更新・戻り値の契約を満たす自分の処理へ置き換えてください．
 有効な入力で「未実装」と表示されたときは，その関数の実装箇所を確認します．
-未実装の関数を呼ぶと実行は失敗し，計算結果として利用できません．
 提供済みの入力検証や境界処理と，`STUDENT_BEGIN/END`・`TODO_BEGIN/END`の編集マーカーは保ちます．
-`include`やimportだけでは計算・保存を行わないため，未着手課題のTODOを先に完成させる必要はありません．
 
 N04では選択した流束と，刻み・更新の共通2箇所を完成させ，他方の流束は未実装のまま必修を完了できます．
 N08/N09の発展課題も，必修とは別に取り組む実装箇所です．
@@ -351,7 +315,6 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
 比較後はプロセスの終了状態とメッセージを確認します．
 成功した実行のレポートで，`baseline_sha256`，現在の`code_sha256`，`git_head`，`selected_model`を照合します．
 不一致なら，表示された箇所とdiffを照合して修正します．
-基準が欠落している場合は現在の変更と記録を保ち，変更前commitの隔離コピーから取得する方法を教員・TAへ相談します．
 判断の理由は[N05授業の基準データ・比較結果・実行元の記録](../lessons/N05.qmd#regression)を参照します．
 
 N06の数値更新ができたら，計算と基本解析を別々に実行します．
@@ -361,8 +324,7 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/simulate.jl
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/analyze.jl
 ~~~
 
-`spatial_variance`が`nothing`を返す間も基本解析は成功しますが，`summary.toml`には分散を保存せず，`diagnostics_complete=false`を記録します．
-この段階では作図と必修完了検査が未完成を拒否するため，基本解析の成功だけで必修完了とはしません．
+`spatial_variance`が`nothing`を返す間は，基本解析が`summary.toml`に`diagnostics_complete=false`を記録します．
 
 [`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)の[`spatial_variance`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl#L23-L28)を完成させ，同じHDF5から再解析します．
 その後[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)の表示設定を変え，再作図します．
@@ -485,3 +447,41 @@ $ julia --project=. exercises/N08-N09_laplace_poisson/extensions/run_relaxation.
 
 各発展の結果は`results/N09/extensions/`の専用フォルダへ保存します．
 発展の結果も提出容量に含みます．
+
+## 作業環境を再準備したときの既習課題 {#previous-exercises}
+
+元の作業環境と成果を保管します．
+[Git・GitHubの準備](../setup/git-github.qmd)に沿って別の空リポジトリと別のローカルディレクトリを用意し，新環境でもF00の確認を完了します．
+F01のbranchを手動で作成し，進捗の変更をcommitしてローカルの`main`へmergeします．
+既習課題はこの進捗記録と`start`で順に通過します．
+
+~~~console
+$ git switch -c exercise/F01-first-pull-request
+Switched to a new branch 'exercise/F01-first-pull-request'
+
+$ git diff -- course_progress.toml
+（F00の確認による進捗変更を表示）
+
+$ git add course_progress.toml
+（成功時は出力なし）
+
+$ git commit -m "Record F00 environment check"
+（commit結果を表示）
+
+$ git switch main
+Switched to branch 'main'
+
+$ git merge --ff-only exercise/F01-first-pull-request
+（Fast-forwardと変更一覧を表示）
+
+$ julia --project=. scripts/course.jl start F02
+（F01の未実装などは警告を表示し，F02のbranchを作成）
+~~~
+
+F02も既習なら，F02の課題branchで進捗変更を同様にcommit・ローカルmergeし，`start F03-F04`へ進みます．
+各段階で`status`とdiffを確認し，一課題ずつ進めてください．
+新たに取り組む課題では，通常の実装・テスト・学習ログ・push・PRへ戻ります．
+後続課題で使うコードは，保管した自分の実装から移すか，新たに実装します．
+
+`completed`と「通過済み」は進捗の記録です．
+課題の完了は，各課題ページの完了条件で確認してください．
