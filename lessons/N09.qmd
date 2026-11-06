@@ -8,6 +8,9 @@ lesson-id: N09
 
 ## 生成項の符号 {#poisson}
 
+[N08](N08.qmd)の定常熱伝導に，領域内部の発熱を加えます．
+必修では，生成項を含む更新式と，既知の解を使う検証方法を学びます．
+後半のNeumann境界と反復法の比較は発展です．
 本課題では，生成項$f$を持つ二次元のPoisson方程式
 $$
 \Delta u=\frac{\partial^2 u}{\partial x^2}
@@ -16,6 +19,8 @@ $$
 と定義し，生成項の符号を統一します．
 
 定常熱伝導$\kappa\Delta T+q=0$なら$f=-q/\kappa$です．
+ここで$\kappa>0$は一定の熱伝導率，$q$は単位体積・単位時間当たりの発熱量です．
+したがって，正の発熱$q>0$は，この符号の定義では負の$f$に対応します．
 [Laplaceの5点差分](N08.qmd#grid)に生成項を加えると，Jacobi更新は
 $$
 \begin{aligned}
@@ -30,7 +35,10 @@ $$
 
 ## 製造解と3格子収束 {#manufactured}
 
-製造解と対応する生成項は
+検証用には，先に解にしたい関数$u_*$を選び，微分して右辺$f$と境界値を作ります．
+これを製造解法と呼びます．
+正解を先に用意できるので，実装した計算でその解に近づくかを確かめられます．
+[N08の既知解$H$](N08.qmd#exact)を使い，製造解と対応する生成項を
 $$
 \begin{aligned}
 V(x,y)&=\sin(\pi x/2)\sin(\pi y),\\
@@ -39,7 +47,8 @@ f&=-[(\pi/2)^2+\pi^2]V.
 \end{aligned}
 $$
 
-既知の$u_*$を微分して$f$と境界値を作る方法を製造解法と呼びます．
+とします．
+$\Delta H=0$なので，$f=\Delta u_*$には$V$を微分した項だけが残ります．
 $V$は全辺で0なので，境界値はLaplaceと同じ$H$です．
 領域，初期推定，節点数，停止基準は[N08](N08.qmd)と同じです．
 必修は，Laplace・Poissonの両方で3格子の内部RMS／最大誤差を測ることです．
@@ -49,6 +58,9 @@ $p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$で次数を求め，両格子�
 
 ## 発展：混合境界から純Neumannへ {#neumann}
 
+Dirichlet条件では辺の値を指定しました．
+Neumann条件では，辺に垂直な方向の変化率を指定し，辺の値も計算で求めます．
+「混合」は両種類の辺がある場合，「純Neumann」は全辺がNeumann条件の場合です．
 外向き単位法線方向の微分$g_N=\frac{\partial u}{\partial n}$を指定し，物理的な外向き拡散流束$-\kappa g_N$と区別します．
 辺順はwest，east，south，northで，`bc`の各辺は`(;kind=:dirichletまたは:neumann,values)`です．
 west／eastのvalues長はny，south／northはnxです．
