@@ -161,11 +161,11 @@ website:
               href: assignments/final-project.qmd
             - text: "第12回 最終プロジェクト: 結果・再現性へのフィードバック"
               href: assignments/final-project.qmd
-            - text: "第13回 最終プレゼンテーション 1"
+            - text: "第13回 最終プロジェクト"
               href: assignments/final-project.qmd
-            - text: "第14回 最終プレゼンテーション 2・試験案内"
+            - text: "第14回 最終プレゼンテーション"
               href: assignments/final-project.qmd
-            - text: "第15回 到達度確認試験"
+            - text: "第15回 空きコマ"
     - id: guides
       title: "ガイド"
       style: docked
