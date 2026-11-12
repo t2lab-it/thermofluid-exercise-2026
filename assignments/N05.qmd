@@ -73,6 +73,29 @@ N05では，[N01](N01.qmd#problem-setup)・[N02](N02.qmd#problem-setup)・[N03](
 旧入口の関数名・引数・返却フィールド・出力名を保ち，N04の[`SELECTED_MODEL`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl#L4)を課題側から明示的に渡します．
 初期条件・実験条件・診断・描画を各課題へ残し，更新処理を共通側へ委譲してください．
 
+## 回帰の記録と比較契約 {#regression}
+
+提供コードの[`baseline`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L293-L300)が基準を保存し，[`verify`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L321-L353)が抽出後の結果を比較してレポートを保存します．
+新しいプロセスで実行する箇所は[`fresh_capture`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L204-L211)，比較規則は[`compare!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/N05.jl#L229-L250)で確認できます．
+
+基準は抽出前の完成コードと選択済みN04モデルから，新しいJuliaプロセスで取得します．
+抽出後も新しいプロセスで旧入口を実行し，同じ条件の結果を固定baselineと比較します．
+`results`には数値配列，返却フィールド，刻み，ステップ数，診断量が入ります．
+[比較条件](#discretization)に加えて型も保持し，整数やモデルを浮動小数の許容差で比較しません．
+
+| 記録する項目 | 読み取る来歴 |
+|---|---|
+| baselineの`schema_version`・`selected_model` | 記録の形式と，抽出前に選んだN04モデル |
+| baselineの`git_head`・`code_sha256` | 基準取得時のcommitと，対象Juliaファイルの内容 |
+| regressionの`baseline_sha256` | 比較に使ったbaselineファイルの識別 |
+| regressionの`git_head`・`code_sha256`・`selected_model` | 比較時のコードとモデル |
+| regressionの`schema_version`・`differences` | レポートの形式と，浮動小数項目ごとの絶対差 |
+
+
+基準欠落・破損・schema不一致・モデル不一致・結果不一致では新しいレポートを保存しません．
+前回の`regression.toml`が残っていても，今回の終了状態・メッセージとbaselineのhashを照合します．
+不一致を隠すためにbaselineを再生成せず，抽出前の基準を保持して変更を修正してください．
+
 ## 抽出前の記録と抽出後の検証 {#抽出前の記録と抽出後の検証}
 
 [段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)に従って，**抽出前の完成コードからbaselineを取得**し，比較の基準として保持します．
@@ -89,7 +112,7 @@ N05の共通化で進めなくなった場合は，diffと失敗を説明して�
 復帰後も自分の過去課題・N04選択・学習ログを保ち，採用した差分と回帰結果を説明します．
 
 理解度チェックでは，授業の[責務](../lessons/N05.qmd#common-api)と[配置](../lessons/N05.qmd#package-layout)，[抽出例の契約と委譲](../lessons/N05.qmd#boundary-example)を参照して整理します．
-[基準データ・比較結果・実行元の記録](../lessons/N05.qmd#regression)と[AI差分の採否](../lessons/N05.qmd#diff-review)も参照します．
+[回帰の記録と比較契約](#regression)と[AI差分の採否](../lessons/N05.qmd#diff-review)も参照します．
 
 任意の発展資料[共通化の設計判断](../advanced/refactoring-design.qmd#questions)では，複数案を比較できます．
 

@@ -5,41 +5,27 @@ title: "共通化から二次元移流へ：二次元線形移流"
 第8回・授業 · 内容ID: N06
 :::
 
-## 問題と公式条件 {#problem-setup}
+## 周期長方形上の移流 {#problem-setup}
 
 [N01](N01.qmd)で扱った一次元の移流を，x方向とy方向に広げます．
-ここでの$u$は，各点に一つの値を持つ無次元量です．
-一定速度$(c_x,c_y)$で分布を運び，形を保って移動する解析解と比べます．
-[N05](N05.qmd)でまとめた共通の関数を使い，二方向の更新，時間刻み，保存した結果の読み方を学びます．
-実装・テスト・提出物は[N06課題](../assignments/N06.qmd)で確認します．
-方程式と領域は
+[N05の共通化](N05.qmd#helper-roles)を使うと，周期添字やバッファ検証を再利用できます．
+各点に一つの無次元量$u$を持ち，非負の一定速度$(c_x,c_y)$で分布を運ぶ問題を考えます．
+少なくとも一方の速度を正とし，方程式と領域を
 $$
 \frac{\partial u}{\partial t}+c_x\frac{\partial u}{\partial x}
 +c_y\frac{\partial u}{\partial y}=0,
-\qquad (x,y)\in[0,2)\times[0,1).
+\qquad (x,y)\in[0,L_x)\times[0,L_y)
 $$
-
-| 項目 | 公式条件 |
-|---|---|
-| 一定速度・安定余裕 | `cx=1.0, cy=0.5, safety=0.8` |
-| 両方向の境界 | 周期境界，周期終点の重複なし |
-| 格子数 `(nx,ny)` | `(40,30)`，`(80,60)`，`(160,120)` |
-| 格子幅 | `dx=2/nx`，`dy=1/ny` |
-| 最終時刻・保存時刻 | `t_final=1`，`[0,0.25,0.5,0.75,1]` |
-| 代表表示 | `(80,60)` |
-
-初期値と解析解を，それぞれ
+とします．
+両方向の周期終点を重複させず，$\Delta x=L_x/n_x$，$\Delta y=L_y/n_y$の格子を置きます．
+周期的な初期分布$u_0(x,y)$に対する解析解は
 $$
-u_0(x,y)=1+0.2\sin(\pi x)+0.3\cos(2\pi y)+0.1\sin(\pi x+2\pi y),
+u_{\mathrm{exact}}(x,y,t)=u_0\bigl(\operatorname{mod}(x-c_xt,L_x),
+\operatorname{mod}(y-c_yt,L_y)\bigr)
 $$
-$$
-u_{\mathrm{exact}}(x,y,t)=u_0\bigl(\operatorname{mod}(x-c_xt,2),
-\operatorname{mod}(y-c_yt,1)\bigr)
-$$
-と定めます．
-
-解析解は初期分布を両方向に平行移動したものです．
-数値解で振幅が小さくなる場合，解析解と比較して数値拡散を読み取ります．
+です．
+初期分布を平行移動した解析解と比べると，数値解の振幅の減少を数値拡散として読み取れます．
+指定モード・格子・速度・保存時刻は[N06課題](../assignments/N06.qmd#problem-setup)にあります．
 
 ## 配列軸と周期端 {#grid}
 
@@ -82,12 +68,10 @@ $$
 同じ配列への参照だけを保存すると，バッファの再利用で過去の時刻の場も書き換わります．
 数値配列のスナップショットは`copy`で独立させます．
 参照だけを残す場合との違いは，[N01の配列の参照・コピー・変更](N01.qmd#array-reference-copy)の実行例で確認できます．
-各保存区間に[`fit_timestep`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/ThermofluidExercise.jl#L158-L161)を適用し，刻みを区間長へ合わせます．
+各保存区間で，安定刻み上限以下となるようにステップ数を切り上げ，区間長を等分する刻みに合わせます．
 保存時刻に到達した場を保存します．
 
-[`simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/simulate.jl)が場をHDF5へ保存します．
-[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)が場から診断値を求めます．
-[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)が図を作ります．
+計算で場を保存し，保存場から診断値を求め，診断と場から図を作る構成を考えます．
 保存場を使って解析項目や表示設定を変えられます．
 例えば色の範囲だけを変えるなら作図をやり直し，移流速度を変えるなら計算からやり直します．
 SHA-256は解析・作図が参照したファイルを識別し，違う計算の結果の混入を検出するために使います．
@@ -95,13 +79,11 @@ SHA-256は解析・作図が参照したファイルを識別し，違う計算�
 ### 保存データと配列の対応
 
 HDF5は，配列とその座標・計算条件を一つのファイルにまとめて保存する形式です．
-HDF5には条件，座標，保存時刻，場，実効刻み，ステップ数を保存します．
-`nt`は保存時刻の個数で，`U[:,:,k]`がk番目の保存時刻の場です．
-Juliaの`U[i,j,k]`は形状`(nx,ny,nt)`であり，HDF5データ空間の形状`(nt,ny,nx)`，軸宣言`time,y,x`に対応します．
-C系の読み手は`U[k,j,i]`で同じ物理点を読みます．
-座標・時刻・場・区間刻みの単位属性`units="1"`は無次元を示します．
+保存時刻ごとの場に加え，座標・単位・配列軸・実効刻みを記録すると，計算をやり直さずに解釈できます．
+読み手の言語によって配列の軸の見え方が異なるため，添字と物理座標の対応を明示します．
+実課題の軸順・単位属性・ファイル分担は[N06課題の保存契約](../assignments/N06.qmd#saved-data)にあります．
 
-## 保存量・誤差・必修の格子収束 {#convergence}
+## 保存量・誤差・格子収束 {#convergence}
 
 周期境界では，離散積分`mass=dx*dy*sum(u)`が丸め誤差の範囲で保存されます．
 保存は必要な確認ですが，誤った方向へ移動する解も保存し得るため，解析解の誤差と組み合わせます．
@@ -113,8 +95,10 @@ E_{L2}=\sqrt{\frac{\Delta x\Delta y}{L_xL_y}
 $$
 
 両軸の格子幅を同時に半分にした3格子を使い，最終時刻のL2誤差から`p=log2(E_coarse/E_fine)`を求めます．
-誤差が単調減少し，二つの区間で`0.8 <= p <= 1.2`となることを確かめます．
-標準条件の基準計算では誤差は約`0.0458669, 0.0240646, 0.0123328`，次数は約`0.93054, 0.96441`です．
+一次精度の風上差分が支配する場合，誤差の減少とともに次数が約1へ近づくかを調べます．
+指定格子の合格範囲と基準誤差は[N06課題](../assignments/N06.qmd#standard-conditions)で確認できます．
 
 保存場からは平均・最小値・最大値・空間分散も求められます．
 空間分散は各時刻の`mean((u-mean(u)).^2)`に相当し，時間平均とは異なります．
+
+[N06課題の理解度チェック](../assignments/N06.qmd#understanding-check)で，この授業の内容を確認してください．

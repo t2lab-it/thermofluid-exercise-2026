@@ -315,7 +315,7 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
 比較後はプロセスの終了状態とメッセージを確認します．
 成功した実行のレポートで，`baseline_sha256`，現在の`code_sha256`，`git_head`，`selected_model`を照合します．
 不一致なら，表示された箇所とdiffを照合して修正します．
-判断の理由は[N05授業の基準データ・比較結果・実行元の記録](../lessons/N05.qmd#regression)を参照します．
+回帰の考え方は[N05授業](../lessons/N05.qmd#regression)，schema・hash・失敗時の確認は[N05課題の回帰契約](../assignments/N05.qmd#regression)を参照します．
 
 N06の数値更新ができたら，計算と基本解析を別々に実行します．
 

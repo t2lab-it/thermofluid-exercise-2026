@@ -20,7 +20,7 @@ understanding-check-points:
 ### Poissonへの拡張と課題の完成 {#poissonへの拡張と課題の完成}
 
 [N08](N08.qmd)と同じ提出単位`N08-N09`・課題フォルダ[`exercises/N08-N09_laplace_poisson/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/exercises/N08-N09_laplace_poisson)を使います．
-全辺DirichletのJacobi法でPoissonを実装し，Laplace・Poissonの両方の実験と検証を完成させます．
+[N09授業](../lessons/N09.qmd)で生成項と製造解を学び，全辺DirichletのJacobi法でPoissonを実装し，Laplace・Poissonの両方の実験と検証を完成させます．
 
 $f=0$の場合はLaplace方程式になります．
 取り組む方程式は，生成項$f$を持つ二次元のPoisson方程式
@@ -155,6 +155,9 @@ $f=0$でLaplaceと一致することを確かめます．
 
 ## 公式12出力 {#reference-results}
 
+公式出力は一時生成・検査後に反映し，生成・検査失敗では既存出力を保持します．
+反映中の失敗は変更した出力を復元し，復元にも失敗した場合は，表示されたバックアップの場所と元のエラーを確認します．
+
 `results/N08/`・`results/N09/`にそれぞれ次の6ファイルを保存します．
 
 ::: {.table-responsive}
@@ -203,4 +206,4 @@ DCT-Iのk=0モードは可解条件と定数自由度の説明に使います．
 - Laplace・Poissonの公式12出力を作り，境界・独立残差・停止・解析解誤差・3格子の両区間・来歴・容量を検証する．
 - 配布済みテスト・自作2群・進捗連動テストが成功する．
 - 更新量と残差，生成項の符号，境界，反復誤差と格子誤差を式・コード・結果で説明する．
-- 学習ログを完成し，N08とN09それぞれの理解度チェック全文をLETUSへ提出する．
+- 学習ログを完成し，N08とN09それぞれの[理解度チェック](#understanding-check)全文をLETUSへ提出する．

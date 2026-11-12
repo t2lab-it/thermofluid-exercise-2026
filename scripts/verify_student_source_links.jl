@@ -10,7 +10,6 @@ const FRAGMENT = r"^L([0-9]+)(?:-L([0-9]+))?$"
 const INCLUDED_MODULES = Set(["src/N06Advection.jl", "src/N07Transport.jl", "src/N08N09Elliptic.jl"])
 const ALIASES = Dict(
     ("guides/workflow.qmd", "exercises/N05-N06_common_package_2d_advection/N05.jl", "N05.jl verify") => "N05Regression.verify",
-    ("lessons/N05.qmd", "exercises/N01_linear_advection/run.jl", "exercises/N01_linear_advection/run.jl") => "N01LinearAdvection.apply_boundary!",
 )
 
 """Inventory every student URL, even unsupported references and fragments."""
