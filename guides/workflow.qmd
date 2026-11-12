@@ -8,7 +8,10 @@ title: "学生向け課題ワークフロー"
 このページでは，学生リポジトリで課題を進めるときの手順をまとめます．
 実装・テスト・理解度チェックの条件は[各課題ページ](../assignments/index.qmd)を参照してください．
 
-通常は，課題用のbranchを作る → 実装・テスト → 学習ログを記録する → commit・push → PRを確認してmergeする，の順に進めます．
+課題は，手元で変更を確かめてからGitHubで共有し，確認した内容を`main`へ取り込む，という順で進めます．
+まず課題用のbranchを作り，実装とテストを進めます．
+結果と判断を学習ログへ記録したら，提出する変更をcommit・pushします．
+最後にPRの差分とGitHub Actionsを確認し，セルフレビューを終えてからmergeします．
 初回は[環境診断](#f00-preflight)，F01以降は[課題の開始](#start-exercise)から読み進めてください．
 N05以降の計算・解析・作図のコマンドは，後半の各課題の段階別実行にまとめています．
 
@@ -77,7 +80,7 @@ $ git branch --show-current
 exercise/F01-first-pull-request
 ~~~
 
-上記と異なる出力が得られた場合は，教員・TAへ相談してください．
+F00で更新した進捗は，このbranchへ引き継いでF01の変更と一緒に記録します．
 
 ### F02以降：更新済みのmainからの開始 {#f02以降更新済みのmainから開始する}
 
@@ -106,8 +109,12 @@ $ julia --project=. scripts/course.jl start TASK_ID
 （指定した課題のbranch作成と開始のメッセージ，課題ページ・実行方法などを表示）
 ~~~
 
+`TASK_ID`には内容IDそのものを指定する場合と，複数の内容をまとめた提出単位を指定する場合があります．
+例えばF03とF04は`F03-F04`として一つのbranch・PRで進めます．
+指定する値は各課題ページで確認してください．
+
 `start`は過去課題と現在課題のテスト失敗を警告として表示し，次の提出単位へ進めます．
-提出単位の順に，一課題ずつ進めてください．
+各課題の完了は課題ページの完了条件で確認し，提出順に進めてください．
 
 ## 通常の課題作業 {#exercise-work}
 
@@ -183,9 +190,10 @@ Test Summary: | Pass  Total  Time
 
 ## 公式出力の確認 {#official-results}
 
-公式出力がある課題では，`run.jl`を実行します．
+公式出力がある課題では，実装後に`run.jl`を実行し，正常終了したことと出力内容を確認します．
 例えば「1次元線形移流方程式（N01）」では次の通りです．
 生成された`results/`内の図と数値を，課題の指定条件と照合してください．
+終了メッセージ，計算条件，解析・作図の入力が今回の結果と対応することを確認します．
 
 ~~~console
 $ julia --project=. exercises/N01_linear_advection/run.jl
@@ -292,14 +300,14 @@ main
 
 この後は[課題開始](#start-exercise)に戻って次の課題に取り組んでください．
 
-
 ## N05-N06の段階別実行 {#n05-n06-stages}
 
 提出単位`N05-N06`は一つのbranch・PR・学習ログで進めます．
 編集先は[`src/`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/src)，N01〜N04の実行用ファイル（[`N01/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N01_linear_advection/run.jl)・[`N02/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N02_nonlinear_advection/run.jl)・[`N03/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N03_diffusion/run.jl)・[`N04/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N04_advection_diffusion/run.jl)）内の委譲する関数，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)，[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/tests.jl)です．
 課題の要件は[N05](../assignments/N05.qmd)と[N06](../assignments/N06.qmd)を参照し，以下のコマンドは学生リポジトリのルートで実行します．
 
-N04までの完成コードを変更する前に，基準を一度だけ取得します．
+N05では，共通化の前後で同じ結果になるかを比較します．
+比較の出発点を残すため，N04までの完成コードを変更する前に，基準を一度だけ取得します．
 
 ~~~console
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl baseline
@@ -315,6 +323,8 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
 比較後はプロセスの終了状態とメッセージを確認します．
 成功した実行のレポートで，`baseline_sha256`，現在の`code_sha256`，`git_head`，`selected_model`を照合します．
 不一致なら，表示された箇所とdiffを照合して修正します．
+基準がない場合は，現在の変更を保ち，抽出前commitの隔離コピーで`N05.jl baseline`を実行します．
+取得した`baseline.toml`のコード・モデル・来歴を確認し，現在の作業へコピーして比較します．
 回帰の考え方は[N05授業](../lessons/N05.qmd#regression)，schema・hash・失敗時の確認は[N05課題の回帰契約](../assignments/N05.qmd#regression)を参照します．
 
 N06の数値更新ができたら，計算と基本解析を別々に実行します．
@@ -324,7 +334,9 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/simulate.jl
 $ julia --project=. exercises/N05-N06_common_package_2d_advection/analyze.jl
 ~~~
 
-`spatial_variance`が`nothing`を返す間は，基本解析が`summary.toml`に`diagnostics_complete=false`を記録します．
+基本解析では，保存した場から積分や解析解誤差を求めます．
+`spatial_variance`が`nothing`を返す間は分散を省き，`summary.toml`に`diagnostics_complete=false`を記録します．
+作図と必修完了には，分散を含む`diagnostics_complete=true`の解析結果を使います．
 
 [`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl)の[`spatial_variance`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/analyze.jl#L23-L28)を完成させ，同じHDF5から再解析します．
 その後[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)の表示設定を変え，再作図します．
@@ -350,7 +362,11 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/tests.jl
 $ julia --project=. -e 'using Pkg; Pkg.test()'
 ~~~
 
-段階別の実行で`fields.h5`を作り直した後は，再解析してから作図します．
+どこから再実行するかは，変えた内容で決めます．
+
+- 速度・格子などの計算条件を変えた場合：計算からやり直し，新しい`fields.h5`を解析して作図する．
+- 分散などの診断を変えた場合：同じ`fields.h5`から再解析し，更新した`summary.toml`を使って作図する．
+- 色や表示格子などの表示条件だけを変えた場合：対応する保存場と解析結果を使って再作図する．
 
 ## N07の段階別実行 {#n07-stages}
 
@@ -422,7 +438,8 @@ $ julia --project=. exercises/N08-N09_laplace_poisson/plot.jl all
 $ julia --project=. exercises/N08-N09_laplace_poisson/run.jl all
 ```
 
-解析・作図は保存したHDF5を入力に使います．
+計算後は収束を確認し，保存したHDF5を解析・作図に使います．
+収束状態と履歴の読み方は[N08の返却状態](../assignments/N08.qmd#solver-result)を参照してください．
 ソース編集後は，N05で取得済みの基準と比較してから完成を検証します．
 
 ```console

@@ -29,7 +29,7 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
     @test occursin("{#understanding-check}", understanding_check)
     @test occursin("lessons/{{< meta lesson-id >}}.html", understanding_check)
     @test occursin("understanding-check-{{< meta lesson-id >}}.txt", understanding_check)
-    @test occursin(r"対話全文を学生リポジトリ[^。\n]*含めず", ai_guidance)
+    @test occursin(r"対話全文の提出先[^。\n]*LETUSのみ", ai_guidance)
     for term in ("LETUS", "理解度チェック", "全文")
         @test occursin(term, ai_guidance)
     end

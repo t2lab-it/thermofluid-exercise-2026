@@ -63,6 +63,8 @@ Jacobi更新は旧場を変更せず，旧場の全辺・角を`u_new`へ写し�
 未初期化の出力配列でも新場全体を検査できるよう，更新関数は境界を含む全要素を確定します．
 計算結果の`u`，`converged`，`reason`，`iterations`，`residual_history`，`update_history`，`threshold`を使って，返された場と収束判定・反復履歴を確認します．
 
+### 返却状態の確認 {#solver-result}
+
 ::: {.table-responsive}
 | 停止の状況 | 返される結果 |
 |---|---|
@@ -74,6 +76,10 @@ Jacobi更新は旧場を変更せず，旧場の全辺・角を`u_new`へ写し�
 
 初回残差・閾値が非有限なら例外となります．
 不正な入力形状・格子幅・許容値などは，提供済みの入力検査で反復前に拒否されます．
+両履歴は初期状態を含み，長さは`iterations+1`です．
+`converged=true`と，返却場の残差が閾値以下であることを確認します．
+`converged=false`の場合は`reason`と残差履歴を調べ，入力・更新式・境界条件・残差計算を確認して再実行します．
+公式出力には収束した場を保存します．
 
 [`exercises/N08-N09_laplace_poisson/simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/simulate.jl)は計算，[`analyze.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/analyze.jl)は保存場の解析，[`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/plot.jl)は表示，[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/run.jl)は一括実行です．
 配布済みテストを保持し，[`exercises/N08-N09_laplace_poisson/tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N08-N09_laplace_poisson/tests.jl)の[自作2群](N09.qmd#student-tests)を完成させます．

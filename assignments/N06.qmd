@@ -123,8 +123,9 @@ $$
 | 計算の提供入口 | [`exercises/N05-N06_common_package_2d_advection/simulate.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/simulate.jl) |
 : {tbl-colwidths="[30, 70]"}
 
-[冒頭の入力・戻り値の契約](#input-contract)に従って，刻み関数・更新関数・空間分散を実装します．
-分散を実装して再解析し，`diagnostics_complete=true`を確認してください．
+まず[冒頭の入力・戻り値の契約](#input-contract)に従って，刻み関数と更新関数を実装します．
+小配列の1ステップを確認してから公式条件の場を計算し，基本解析へ進みます．
+空間分散は，その保存場を使って解析を拡張する実装箇所です．
 [`plot.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl)の[`COLORMAP`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L7)，[`COLOR_LIMITS`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L8)，[`DISPLAY_CASE`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/plot.jl#L9)から表示条件を変更します．
 計算条件を変えず，初期場・数値解・解析解の色の上下限を共通に保って比較します．
 
@@ -133,8 +134,15 @@ $$
 
 ## 実行と自作テスト
 
-[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)で，計算，基本解析，分散追加後の再解析，再作図の順に実行します．
-再解析・再作図の前後で`fields.h5`のSHA-256が同じであることを記録します．
+[段階別の実行手順](../guides/workflow.qmd#n05-n06-stages)で，次の順に実行します．
+
+1. 完成した更新関数で計算し，`fields.h5`を保存する．
+2. 基本解析を実行する．
+   `spatial_variance`が`nothing`を返す間は分散が省かれ，`diagnostics_complete=false`になる．
+3. 空間分散を実装し，同じ保存場から再解析して`diagnostics_complete=true`を確認する．
+4. 表示設定を変更して再作図し，図と解析値が対応することを確認する．
+
+再解析・再作図の前後で`fields.h5`のSHA-256を比較し，同じ保存場を使ったことを記録します．
 一括実行用の[`exercises/N05-N06_common_package_2d_advection/run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/N05-N06_common_package_2d_advection/run.jl)はN05回帰確認とN06の全段階を実行します．
 
 [課題単独と進捗連動のテスト](../guides/workflow.qmd#tests)を実行します．
