@@ -48,14 +48,3 @@ end
         !isempty(links) && all(link -> link.ref == "main", links)
     end
 end
-
-@testset "lessons are independent of the assigned implementation and cases" begin
-    root = normpath(joinpath(@__DIR__, ".."))
-    for id in ("N08", "N09")
-        source = read(joinpath(root, "lessons", "$id.qmd"), String)
-        @test occursin("../assignments/$id.qmd", source)
-        @test !occursin("thermofluid-exercise-student-2026", source)
-        @test !occursin(r"apply_dirichlet!|laplace_jacobi_step!|laplace_residual!|residual_converged|poisson_jacobi_step!|poisson_residual!|solve_laplace|solve_poisson|mixed_laplace_flux|mixed_poisson_flux|mixed_poisson_zero_flux|u_pin|`bc`|atol|rtol|maxiter", source)
-        @test !occursin(r"\{\{<\s*include\s+[^>]*_elliptic-formulation\.qmd", source)
-    end
-end

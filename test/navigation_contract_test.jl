@@ -670,7 +670,7 @@ end
     routes = Dict(
         "lessons/N05.qmd" => [
             "../assignments/N05.qmd#discretization",
-            "../guides/workflow.qmd#n05-n06-stages",
+            "../assignments/N05.qmd#regression",
             "../advanced/refactoring-design.qmd#unit",
         ],
         "assignments/N05.qmd" => [

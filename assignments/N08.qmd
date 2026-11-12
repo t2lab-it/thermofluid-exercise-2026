@@ -110,4 +110,5 @@ $ julia --project=. exercises/N08-N09_laplace_poisson/tests.jl N08-check
 ## N08-N09の完了条件
 
 両問題の実装・検証・提出は，[N09課題の完了条件](N09.qmd#completion)にまとめています．
-N08とN09それぞれの理解度チェック全文をLETUSへ提出します．
+
+- N08とN09それぞれの[理解度チェック](#understanding-check)全文をLETUSへ提出します．

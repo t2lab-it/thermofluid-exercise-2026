@@ -25,8 +25,8 @@ $\boldsymbol J$は単位面積・単位時間当たりの熱輸送を表す流�
 
 ## セルの熱量と面の熱流束 {#faces}
 
-領域は$[0,2]\times[0,1]$，$\Delta x=2/n_x$，$\Delta y=1/n_y$です．
-N07では，熱量を持つセルと熱が通る境界面を対応させるため，温度をセル中心に置きます．
+長方形領域$[0,L_x]\times[0,L_y]$に，$\Delta x=L_x/n_x$，$\Delta y=L_y/n_y$の格子を置きます．
+熱量を持つセルと熱が通る境界面を対応させるため，温度をセル中心に置きます．
 `T[i,j]`の座標は$x_i=(i-1/2)\Delta x$，$y_j=(j-1/2)\Delta y$です．
 添字$i+1/2$は，セル$i$と$i+1$の間の面を表します．
 
@@ -73,12 +73,12 @@ $$
 
 ## 境界を含む安定条件 {#stability}
 
-更新式を旧温度の重み付き和として見たとき，中央セルの旧温度に掛かる係数が非負になる刻みを使います．
+移流または拡散の寄与がある場合，更新式を旧温度の重み付き和として見たとき，中央セルの旧温度に掛かる係数が非負になる刻みを使います．
 セル中心の固定温度境界では，内部側の拡散係数1と壁側の係数2が加わります．
 各軸に固定温度または流入面があれば$a_x$または$a_y$を3，それ以外を2とすると，刻み上限は
 $$
 \Delta t_{\max}=\frac{s}{|c_x|/\Delta x+|c_y|/\Delta y
-+\kappa(a_x/\Delta x^2+a_y/\Delta y^2)},\qquad s=0.8.
++\kappa(a_x/\Delta x^2+a_y/\Delta y^2)},\qquad 0<s\le1.
 $$
 
 
@@ -107,35 +107,16 @@ $$
 例えば初期熱量が2，累積の正味流入量が0.3なら，熱量が2.3のとき収支残差は0です．
 収支残差で境界輸送と熱量変化の整合を，解析解誤差で解の精度を調べます．
 
-## 公式温度実験と解析解 {#thermal-cases}
+## 温度の解析解を構成する {#thermal-cases}
 
-保存時刻は全ケースで$0,0.25,0.5,0.75,1$です．
-温度の周期3条件とBurgersの収束には$(40,30),(80,60),(160,120)$を使い，境界比較には$(80,60)$を使います．
+周期長方形では，波数$k_x=2\pi m/L_x$，$k_y=2\pi n/L_y$のFourierモードを重ねて初期分布を作れます．
+整数$m,n$を使うと両方向の周期境界と整合します．
+各モードを$(c_xt,c_yt)$だけ移動し，$\exp[-\kappa(k_x^2+k_y^2)t]$を掛ければ移流拡散の解析解です．
+閉じた固定温度0の矩形領域では，$\sin(\pi x/L_x)\sin(\pi y/L_y)$に$\exp[-\kappa((\pi/L_x)^2+(\pi/L_y)^2)t]$を掛けた拡散解も使えます．
 
-| ケースID | 速度・拡散係数 | 境界と初期温度 |
-|---|---|---|
-| `periodic_advection` | $(1,0.5)$，$\kappa=0$ | 両方向周期，同じFourier初期値 |
-| `periodic_diffusion` | $(0,0)$，$\kappa=0.05$ | 両方向周期，同じFourier初期値 |
-| `periodic_combined` | $(1,0.5)$，$\kappa=0.05$ | 両方向周期，同じFourier初期値 |
-| `closed_fixed` | $(0,0)$，$\kappa=0.05$ | 四辺$T=0$，初期値$\sin(\pi x/2)\sin(\pi y)$ |
-| `closed_insulated` | $(0,0)$，$\kappa=0.05$ | 四辺断熱，固定温度と同じ初期値 |
-| `channel_fixed` | $(1,0)$，$\kappa=0.05$ | 左$T_\mathrm{in}=1$・右流出・上下$T_w=0$，初期値$0.2$ |
-| `channel_insulated` | $(1,0)$，$\kappa=0.05$ | 左右は同じ・上下断熱，初期値$0.2$ |
-
-周期の初期値は次の3モード
-$$
-T_0=1+0.2\sin(\pi x)+0.3\cos(2\pi y)+0.1\sin(\pi x+2\pi y).
-$$
-
-解析解は各モードを$(c_xt,c_yt)$だけ移動し，波数$(k_x,k_y)$ごとに$\exp[-\kappa(k_x^2+k_y^2)t]$を掛けます．
-固定温度の閉系の解析解は$T_0\exp[-\kappa((\pi/2)^2+\pi^2)t]$です．
-周期3条件の代表図は$(80,60)$の格子と合成ケースの共通刻みを使い，`comparison_advection`・`comparison_diffusion`・`comparison_combined`で比較します．
-収束用の3格子では，各ケース自身の安定刻みを使います．
-そのため，代表比較とは刻みを決める方針が異なります．
-
-![共通刻みでの温度の移動と平滑化](../assets/n07-reference/temperature_comparison.png){fig-alt="80掛ける60のセル中心格子で，移流のみ・拡散のみ・両者を含む温度を同じ色範囲で比較する3パネル"}
-
-![境界条件と熱収支](../assets/n07-reference/boundary_heat.png){fig-alt="閉系と開系の固定温度・断熱比較，west east south northの移流と拡散の熱輸送，累積流入と熱量変化，収支残差を分けた図"}
+移流のみ・拡散のみ・合成を比較するときは，同じ初期場・格子・比較時刻を揃えます．
+時間刻みも共通にする比較と，各条件の安定刻みで収束を見る比較では，調べる対象が異なります．
+指定ケース・係数・解析解・公式図は[N07課題](../assignments/N07.qmd#problem-setup)にあります．
 
 ## 二成分の粘性Burgers {#burgers}
 
@@ -147,7 +128,7 @@ $$
 \end{aligned}
 $$
 
-動粘性係数は$\nu=0.05$です．
+動粘性係数$\nu\ge0$を使います．
 境界条件は両方向周期です．
 $u$が正ならx方向は後退差分，負なら前進差分を使い，y方向は$v$の符号で選びます．
 **両成分を同じ旧場`u_old,v_old`から計算します．**
@@ -155,34 +136,39 @@ $u$が正ならx方向は後退差分，負なら前進差分を使い，y方向
 $\boldsymbol w=(u,v)$とすると，$\nabla\cdot(u\boldsymbol w)=\boldsymbol w\cdot\nabla u+u\nabla\cdot\boldsymbol w$です．
 Burgersで使うのは右辺の第1項で，$v$も同様です．
 
-毎ステップの旧速度場から求める安定刻みは
+分母が正の場合，毎ステップの旧速度場から求める安定刻みは
 $$
-\Delta t_{\max}=\frac{0.8}{
+\Delta t_{\max}=\frac{s}{
 \max_{i,j}(|u_{i,j}|/\Delta x+|v_{i,j}|/\Delta y)
 +2\nu(1/\Delta x^2+1/\Delta y^2)}.
 $$
 
+ここで$0<s\le1$は安定余裕です．
 安定刻みと次の保存時刻までの残り時間を比べ，小さい方を使います．
 
 ### Cole–Hopf変換による解析解
 
-数値解の比較対象として，以下の解析解を使います．
-$t=0$を代入すると初期速度が得られ，後の時刻を代入すると数値解の誤差を測れます．
-$X=x-0.6t$，$Y=y+0.3t$として，次の正の関数
+時刻$t\ge0$で，一定移動速度$U,V$と$\nu>0$を選び，$X=x-Ut$，$Y=y-Vt$とします．
+周期波数$k_x,k_y$と$|a|+|b|<1$を使うと，正の関数
 $$
-\phi=1+0.2e^{-\nu\pi^2t}\cos(\pi X)
-+0.2e^{-4\nu\pi^2t}\cos(2\pi Y),\qquad \phi\ge0.6
+\phi=1+a e^{-\nu k_x^2t}\cos(k_xX)
++b e^{-\nu k_y^2t}\cos(k_yY)>0
 $$
-を使うと，速度成分は
+を構成できます．
+移動座標で熱方程式を満たすこの$\phi$から，Cole–Hopf変換
 $$
-u=0.6+\frac{0.4\nu\pi e^{-\nu\pi^2t}\sin(\pi X)}{\phi},
-\qquad
-v=-0.3+\frac{0.8\nu\pi e^{-4\nu\pi^2t}\sin(2\pi Y)}{\phi}.
+u=U-2\nu\frac{\partial\log\phi}{\partial X},\qquad
+v=V-2\nu\frac{\partial\log\phi}{\partial Y}
 $$
-
-上の速度成分は，$u=0.6-2\nu\frac{\partial \log\phi}{\partial X}$，$v=-0.3-2\nu\frac{\partial \log\phi}{\partial Y}$を明示微分した式です．
-
-![Burgersの二成分と解析解誤差](../assets/n07-reference/burgers_fields.png){fig-alt="上段u，下段vについて数値解・解析解・誤差を並べ，誤差には各成分のゼロ対称色範囲を使う図"}
+により二成分Burgersの解析解を作れます．
+明示微分すると
+$$
+u=U+\frac{2\nu a k_x e^{-\nu k_x^2t}\sin(k_xX)}{\phi},\qquad
+v=V+\frac{2\nu b k_y e^{-\nu k_y^2t}\sin(k_yY)}{\phi}
+$$
+です．
+$t=0$を代入して初期場を作り，同じ格子点・時刻の解析解と数値解を比較します．
+指定の移動速度・振幅・波数は[N07課題](../assignments/N07.qmd#burgers-formulation)で確認できます．
 
 ## 精度と保存記録 {#accuracy}
 
@@ -191,20 +177,18 @@ $T_e,u_e,v_e$は，同じ格子点・時刻で評価した解析解です．
 Burgersの誤差は$\sqrt{\operatorname{mean}[(u-u_e)^2+(v-v_e)^2]}$です．
 成分別の誤差も記録します．
 3格子の両区間で$p=\log_2(E_h/E_{h/2})$を求めます．
-拡散のみは$1.8\le p\le2.2$，移流・合成・Burgersは$0.8\le p\le1.2$を受入範囲とします．
+拡散と移流を含む場合とでは，支配する誤差の次数が異なります．
 陽Eulerの時間誤差は$O(\Delta t)$，中心差分の空間誤差は$O(h^2)$です．
 拡散では安定条件に合わせて$\Delta t\propto h^2$とするため，両方の誤差が$O(h^2)$になります．
 
-![3格子の解析解誤差](../assets/n07-reference/convergence.png){fig-alt="温度の3条件とBurgersの4パネルで，最終L2誤差を格子幅と比較し，拡散に2次，その他に1次の比較線を示す図"}
+保存データに条件・実ステップの刻み・コードのhash・Git HEADを記録すると，再解析に使う場と計算条件を照合できます．
+辺別の輸送積分にはすでに時間刻みが掛かっているので，解析で再び刻みを掛けません．
+保存場から解析と図を作り直すときは，入力の場の内容を保ちます．
+配列軸・辺順・受入範囲・保存schemaと公式図は[N07課題](../assignments/N07.qmd#reference-results)にあります．
 
-HDF5の場はJuliaで`(nx,ny,nt)`，外部読取りで`(nt,ny,nx)`です．
-境界輸送積分はJuliaで`(4,nt-1)`，外部で`(nt-1,4)`，辺順はwest，east，south，northです．
-保存データには条件・全ステップの時刻と刻み・ソースのhash・Git HEADを記録します．
-保存データを再解析と再作図に使います．
-
-図の細部は[温度比較](../assets/n07-reference/temperature_comparison.png)，[境界熱収支](../assets/n07-reference/boundary_heat.png)，[Burgers](../assets/n07-reference/burgers_fields.png)，[収束](../assets/n07-reference/convergence.png)を単独表示して確認できます．
+[N07課題の理解度チェック](../assignments/N07.qmd#understanding-check)で，この授業の内容を確認してください．
 
 ## 参照
 
 方程式の参照：[Zhengtao Gan, CFD with Python, Step 10](https://drzgan.github.io/Python_CFD/11.%20Burgers%27%20equation.html)．
-同資料の正速度向け後退差分と固定境界に対し，本課題では正負に対応する風上と周期境界を使います．
+同資料の正速度向け後退差分と固定境界に対し，ここでは正負に対応する風上と周期境界を考えました．
