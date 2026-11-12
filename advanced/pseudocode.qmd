@@ -40,7 +40,7 @@ body-classes: pseudocode-material
 
 ## N01の数値条件 {#numerical-contract}
 
-題材は[N01の1次元線形移流](../lessons/N01.qmd#problem-setup)です．
+題材の指定条件は[N01課題の問題設定](../assignments/N01.qmd#problem-setup)，導出は[N01授業](../lessons/N01.qmd#upwind-euler)を参照してください．
 API・実装条件は[課題N01](../assignments/N01.qmd#discretization)を参照してください．
 
 初期分布は$0.5\le x\le1$で2，それ以外で1です．
