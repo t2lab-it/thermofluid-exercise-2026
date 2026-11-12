@@ -185,7 +185,7 @@ Test Summary: | Pass  Total  Time
 
 公式出力がある課題では，`run.jl`を実行します．
 例えば「1次元線形移流方程式（N01）」では次の通りです．
-生成された`results/`ディレクトリの中身を確認してください．
+生成された`results/`内の図と数値を，課題の指定条件と照合してください．
 
 ~~~console
 $ julia --project=. exercises/N01_linear_advection/run.jl
@@ -335,7 +335,7 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/plot.jl
 ~~~
 
 ファイルのSHA-256は次のコマンドで再解析・再作図の前後に確認できます．
-`summary.toml`の`source_fields_sha256`，`plots.toml`の入力ハッシュとも照合します．
+`summary.toml`と`plots.toml`の`source_fields_sha256`は保存場，`plots.toml`の`source_summary_sha256`は解析結果のハッシュと照合します．
 
 ~~~console
 $ julia --project=. -e 'using SHA; println(bytes2hex(sha256(read("exercises/N05-N06_common_package_2d_advection/results/N06/fields.h5"))))'

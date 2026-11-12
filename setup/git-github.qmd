@@ -95,7 +95,7 @@ branch 'main' set up to track 'origin/main'.
 $ git branch -vv
 * main （commit情報は省略） [origin/main] （commitメッセージ）
 ```
-`origin`は自分の提出先，`upstream`は教材の配布元です．
+`git remote -v`で，`origin`のURLが自分の提出先，`upstream`が教材の配布元を指すことを確認します．
 別PCで個人リポジトリをcloneする場合は[配布元の再登録](../guides/commands.qmd#register-upstream)も行います．
 `exercises/`や`scripts/`が見えることを確認してください．
 

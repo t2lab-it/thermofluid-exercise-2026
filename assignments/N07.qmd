@@ -248,7 +248,7 @@ Burgersは同じ二つの旧場から両成分を更新し，`(;u=unew,v=vnew)`�
 `kappa,nu>=0`，格子幅は正，`0<safety<=1`とします．
 
 時刻は0始まりの狭義増加列で，`heat`は同じ長さの列です．
-積分入力は`(4,nt-1)`の配列，辺順はwest，east，south，northです．
+積分入力は`(4,nt-1)`の配列で，行はwest，east，south，northの各辺，列は隣り合う保存時刻の間の区間に対応します．
 戻り値は`(;net_input,cumulative_input,residual)`で，長さは順に`nt-1,nt,nt`です．
 累積和と収支残差の先頭は0で，`residual`は[上の熱収支残差](#heat-budget)です．
 
