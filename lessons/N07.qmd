@@ -89,7 +89,7 @@ west，east，south，northは，それぞれ左・右・下・上の辺です�
 ここでの添字$s$は辺を区別する記号です．
 例えば西辺では$R_\mathrm{west}=\Delta y\sum_jJ^x_{1/2,j}$です．
 東辺では$R_\mathrm{east}=-\Delta y\sum_jJ^x_{n_x+1/2,j}$です．
-移流と拡散を分け，各ステップで温度更新に使った流束から$\Delta tR_s$を積算します．
+移流と拡散を分け，保存区間内の全ステップで温度更新に使った流束から$\Delta tR_s$を積算します．
 1ステップの熱収支は
 $$
 Q^{n+1}-Q^n=\Delta t\sum_s(R_{s,\mathrm{adv}}^n+R_{s,\mathrm{diff}}^n).
