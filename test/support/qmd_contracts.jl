@@ -40,3 +40,16 @@ end
 function missing_required_identifiers(source::AbstractString, required)
     return [identifier for identifier in required if !occursin(identifier, source)]
 end
+
+function missing_required_definition_links(source::AbstractString, required)
+    names = Set{String}()
+    for m in eachmatch(r"\[`([^`]+)`\]\(https://github\.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/[^)]+#L[0-9]+(?:-L[0-9]+)?\)", source)
+        symbol = first(split(m[1], '('))
+        push!(names, symbol)
+        push!(names, last(split(symbol, '.')))
+    end
+    [name for name in required if !(name in names)]
+end
+
+has_one_understanding_check(source::AbstractString) =
+    count("{{< include /assignments/_understanding-check.qmd >}}", source) == 1

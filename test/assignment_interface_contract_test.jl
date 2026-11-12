@@ -42,5 +42,17 @@ const ASSIGNMENT_IDENTIFIERS = Dict(
         source = read(joinpath(ASSIGNMENT_INTERFACE_ROOT, contract["site_path"]), String)
         required = get(ASSIGNMENT_IDENTIFIERS, id, String[])
         @test isempty(missing_required_identifiers(source, required))
+        apis = filter(name -> !occursin('/', name) && name != uppercase(name), required)
+        @test isempty(missing_required_definition_links(source, apis))
     end
+end
+
+@testset "assignment API dependencies require definition links" begin
+    url = "https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/Example.jl#L1-L3"
+    valid = "[`step!(u)`]($url)"
+    @test isempty(missing_required_definition_links(valid, ["step!"]))
+    @test missing_required_definition_links("`step!`", ["step!"]) == ["step!"]
+    @test missing_required_identifiers("", ["step!"]) == ["step!"]
+    @test !isempty(missing_required_definition_links(replace(valid, "#L1-L3" => ""), ["step!"]))
+    @test isempty(missing_required_definition_links("# Environment only", String[]))
 end
