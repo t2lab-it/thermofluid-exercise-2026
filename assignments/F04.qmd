@@ -105,6 +105,10 @@ $$
 ベクトル残差は全成分の絶対値の最大を取ります．
 どちらも誤差比$R=E(h)/E(h/2)$，観測次数$p=\log_2R$を用います．
 
+標準の場では $\nabla\cdot\boldsymbol{A}=e^x+e^y+e^z$，$\nabla(\nabla\cdot\boldsymbol{A})=(e^x,e^y,e^z)$ です．
+$\boldsymbol{B}=(\sin(y)e^{2z},\sin(z)e^{2x},\sin(x)e^{2y})$ とおくと，$\nabla^2\boldsymbol{A}=3\boldsymbol{B}+(e^x,e^y,e^z)$ なので，curl curlの右辺は $-3\boldsymbol{B}$ です．
+この場では，curl curlの公式の右辺にある二項も，その差も恒等的には零になりません．
+
 #### 収束の判定条件 {#standard-conditions}
 
 一次元の全刻み区間で，前進・後退差分の誤差比は$1.7\le R\le2.3$，中心差分は$3.7\le R\le4.3$とします．
