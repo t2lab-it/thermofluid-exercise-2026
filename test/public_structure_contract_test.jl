@@ -3,6 +3,9 @@ using Test
 const PUBLIC_STRUCTURE_ROOT = normpath(joinpath(@__DIR__, ".."))
 isdefined(@__MODULE__, :parse_qmd_document) ||
     include(joinpath(@__DIR__, "support", "qmd_contracts.jl"))
+isdefined(@__MODULE__, :StudentSourceLinks) ||
+    include(joinpath(@__DIR__, "..", "scripts", "verify_student_source_links.jl"))
+using .StudentSourceLinks: public_pages
 
 const EXPECTED_PUBLISHED_DATES = [
     "9/11（金）", "9/18（金）", "9/25（金）", "10/2（金）", "10/9（金）",
@@ -10,21 +13,18 @@ const EXPECTED_PUBLISHED_DATES = [
     "11/27（金）", "12/4（金）", "12/11（金）", "12/18（金）", "2027/1/8（金）",
 ]
 
-is_public_qmd_path(path::AbstractString) =
-    endswith(path, ".qmd") && !startswith(basename(path), "_")
-
-function tracked_public_qmd_paths()
-    paths = readlines(`git -C $(PUBLIC_STRUCTURE_ROOT) ls-files -- index.qmd setup lessons assignments guides advanced projects`)
-    # Include new pages before they have been committed as well.
-    for directory in ("assignments", "projects/showcase")
-        base = joinpath(PUBLIC_STRUCTURE_ROOT, directory)
-        isdir(base) || continue
-        for (folder, _, files) in walkdir(base), file in files
-            endswith(file, ".qmd") || continue
-            push!(paths, relpath(joinpath(folder, file), PUBLIC_STRUCTURE_ROOT))
+@testset "structure checks follow render scope before git add" begin
+    mktempdir() do root
+        run(`git -C $root init --quiet`)
+        write(joinpath(root, "_quarto.yml"), "project:\n  render:\n    - guides/*.qmd\n    - lessons/*.qmd\n    - assignments/*.qmd\n")
+        for page in ("guides/new.qmd", "lessons/new.qmd", "assignments/new.qmd",
+                     "guides/_partial.qmd", "assignments/drafts/private.qmd")
+            path = joinpath(root, page)
+            mkpath(dirname(path))
+            write(path, "---\ntitle: Example\n---\n\n## Content\n")
         end
+        @test public_pages(root) == ["assignments/new.qmd", "guides/new.qmd", "lessons/new.qmd"]
     end
-    return sort(unique(filter(is_public_qmd_path, paths)))
 end
 
 
@@ -53,8 +53,8 @@ end
     end
 end
 
-@testset "tracked public QMD pages preserve machine structure" begin
-    paths = tracked_public_qmd_paths()
+@testset "rendered public QMD pages preserve machine structure" begin
+    paths = public_pages(PUBLIC_STRUCTURE_ROOT)
     @test !isempty(paths)
 
     for relative_path in paths
