@@ -22,8 +22,8 @@ end
         mktempdir() do root
             mkpath(joinpath(root, "src"))
             write(joinpath(root, "Project.toml"), examples["n05-project"])
-            write(joinpath(root, "src", "ThermofluidExercise.jl"), examples["n05-package"])
-            write(joinpath(root, "src", "N01Boundary.jl"), examples["n05-boundary"])
+            write(joinpath(root, "src", "BoundaryDemo.jl"), examples["n05-package"])
+            write(joinpath(root, "src", "BoundaryRules.jl"), examples["n05-boundary"])
             write(joinpath(root, "boundary.jl"), examples["n05-$stage"])
             write(joinpath(root, "checks.jl"), examples["n05-checks"])
             @test success(pipeline(`$(Base.julia_cmd()) --startup-file=no --compiled-modules=no --project=$root $(joinpath(root, "checks.jl"))`; stdout=stdout, stderr=stderr))
@@ -34,7 +34,7 @@ end
                 using Test
                 include("boundary.jl")
                 const calls = Ref(0)
-                @eval ThermofluidExercise.N01 function apply_boundary!(u::AbstractVector{<:Real}; left_value::Real = 1.0)
+                @eval BoundaryDemo.BoundaryRules function apply_boundary!(u::AbstractVector{<:Real}; left_value::Real = 1.0)
                     Main.calls[] += 1
                     u[1] = left_value + 10
                     return u

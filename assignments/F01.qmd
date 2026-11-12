@@ -168,9 +168,8 @@ branch 'exercise/F01-first-pull-request' set up to track 'origin/exercise/F01-fi
 ## 8. GitHub Actionsとdiffの確認 {#github-actionsとdiffを確認する}
 
 GitHub Actionsが成功することを確認してください．
-失敗した場合は，最初に失敗したステップとエラー文を確認します．
-環境準備で止まっていれば準備の問題を，F01のテストで止まっていれば入力・実装・期待値を調べます．
-修正後は関連するテストを実行し，commit，pushの順に進めてPRを更新してください．
+失敗したステップとエラー文から，環境準備とテストのどちらで止まったかを確認します．
+原因を修正して関連するテストを実行し，commit，pushの順に進めてPRを更新してください．
 
 Actionsが成功した後，GitHubの`Files changed`を読んでF01の[`run.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/run.jl)，[`tests.jl`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/exercises/F01_first_pull_request/tests.jl)，`learning_log.md`，`course_progress.toml`だけが意図した差分になっていることを確認します．
 [共通のセルフレビュー項目](../guides/workflow.qmd#submit-pr)に沿って，テストと実行結果，学習ログ，PR本文を照合してください．

@@ -192,7 +192,7 @@ Test Summary: | Pass  Total  Time
 
 公式出力がある課題では，実装後に`run.jl`を実行し，正常終了したことと出力内容を確認します．
 例えば「1次元線形移流方程式（N01）」では次の通りです．
-生成された`results/`ディレクトリを開き，課題で指定された図と数値を照合してください．
+生成された`results/`内の図と数値を，課題の指定条件と照合してください．
 終了メッセージ，計算条件，解析・作図の入力が今回の結果と対応することを確認します．
 
 ~~~console
@@ -324,8 +324,8 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/N05.jl verify
 成功した実行のレポートで，`baseline_sha256`，現在の`code_sha256`，`git_head`，`selected_model`を照合します．
 不一致なら，表示された箇所とdiffを照合して修正します．
 基準がない場合は，現在の変更を保ち，抽出前commitの隔離コピーで`N05.jl baseline`を実行します．
-取得した`baseline.toml`のコード・モデルを確認し，現在の作業へコピーして比較します．
-判断の理由は[N05授業の基準データ・比較結果・実行元の記録](../lessons/N05.qmd#regression)を参照します．
+取得した`baseline.toml`のコード・モデル・来歴を確認し，現在の作業へコピーして比較します．
+回帰の考え方は[N05授業](../lessons/N05.qmd#regression)，schema・hash・失敗時の確認は[N05課題の回帰契約](../assignments/N05.qmd#regression)を参照します．
 
 N06の数値更新ができたら，計算と基本解析を別々に実行します．
 
@@ -347,7 +347,7 @@ $ julia --project=. exercises/N05-N06_common_package_2d_advection/plot.jl
 ~~~
 
 ファイルのSHA-256は次のコマンドで再解析・再作図の前後に確認できます．
-`summary.toml`の`source_fields_sha256`を現在の保存場と，`plots.toml`の`source_fields_sha256`・`source_summary_sha256`を今回の保存場・解析結果と照合します．
+`summary.toml`と`plots.toml`の`source_fields_sha256`は保存場，`plots.toml`の`source_summary_sha256`は解析結果のハッシュと照合します．
 
 ~~~console
 $ julia --project=. -e 'using SHA; println(bytes2hex(sha256(read("exercises/N05-N06_common_package_2d_advection/results/N06/fields.h5"))))'

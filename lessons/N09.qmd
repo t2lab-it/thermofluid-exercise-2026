@@ -11,12 +11,13 @@ lesson-id: N09
 [N08](N08.qmd)の定常熱伝導に，領域内部の発熱を加えます．
 必修では，生成項を含む更新式と，既知の解を使う検証方法を学びます．
 後半のNeumann境界と反復法の比較は発展です．
-本課題では，生成項$f$を持つ二次元のPoisson方程式
+生成項$f$を持つ二次元のPoisson方程式を
 $$
 \Delta u=\frac{\partial^2 u}{\partial x^2}
 +\frac{\partial^2 u}{\partial y^2}=f
 $$
 と定義し，生成項の符号を統一します．
+指定問題と実装・実験・保存の条件は[N09課題](../assignments/N09.qmd)にまとめています．
 
 定常熱伝導$\kappa\Delta T+q=0$なら$f=-q/\kappa$です．
 ここで$\kappa>0$は一定の熱伝導率，$q$は単位体積・単位時間当たりの発熱量です．
@@ -24,39 +25,30 @@ $$
 [Laplaceの5点差分](N08.qmd#grid)に生成項を加えると，Jacobi更新は
 $$
 \begin{aligned}
-A_x&=(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)})/dx^2,\\
-A_y&=(u_{i,j-1}^{(k)}+u_{i,j+1}^{(k)})/dy^2,\\
-u_{ij}^{(k+1)}&=\frac{A_x+A_y-f_{ij}}{2/dx^2+2/dy^2}.
+A_x&=(u_{i-1,j}^{(k)}+u_{i+1,j}^{(k)})/\Delta x^2,\\
+A_y&=(u_{i,j-1}^{(k)}+u_{i,j+1}^{(k)})/\Delta y^2,\\
+u_{ij}^{(k+1)}&=\frac{A_x+A_y-f_{ij}}{2/\Delta x^2+2/\Delta y^2}.
 \end{aligned}
 $$
 
-更新式では$-f$，残差では$r=f-\Delta_hu$になることを式から説明します．
-[`poisson_jacobi_step!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L293-L302)と[`poisson_residual!`](https://github.com/t2lab-it/thermofluid-exercise-student-2026/blob/main/src/N08N09Elliptic.jl#L328-L337)を実装し，$f=0$でLaplaceの更新・残差と一致することを確かめます．
+離散式$A_x+A_y-(2/\Delta x^2+2/\Delta y^2)u_{ij}=f_{ij}$を解くため，更新式では$-f$になります．
+一方，残差は右辺と離散Laplacianの差$r=f-\Delta_hu$です．
+$f=0$なら，更新式と残差の両方がLaplaceの場合に戻ります．
 
-## 製造解と3格子収束 {#manufactured}
+## 製造解と格子収束 {#manufactured}
 
-検証用には，先に解にしたい関数$u_*$を選び，微分して右辺$f$と境界値を作ります．
+検証用には，先に滑らかな関数$u_*$を選び，微分して右辺$f=\Delta u_*$と境界値$g=u_*|_{\partial\Omega}$を作ります．
 これを製造解法と呼びます．
-正解を先に用意できるので，実装した計算でその解に近づくかを確かめられます．
-[N08の既知解$H$](N08.qmd#exact)を使い，製造解と対応する生成項を
-$$
-\begin{aligned}
-V(x,y)&=\sin(\pi x/2)\sin(\pi y),\\
-u_*&=H+V,\\
-f&=-[(\pi/2)^2+\pi^2]V.
-\end{aligned}
-$$
+正解を先に用意できるので，計算結果がその解に近づくかを確かめられます．
+境界値も同じ関数から作ることで，内部の式と境界条件が整合した検証用の問題になります．
 
-とします．
-$\Delta H=0$なので，$f=\Delta u_*$には$V$を微分した項だけが残ります．
-$V$は全辺で0なので，境界値はLaplaceと同じ$H$です．
-領域，初期推定，節点数，停止基準は[N08](N08.qmd)と同じです．
-必修は，Laplace・Poissonの両方で3格子の内部RMS／最大誤差を測ることです．
-$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$で次数を求め，両格子区間で$1.8\le p\le2.2$となることを確認します．
+まず，得られた近似解から残差を独立に再計算し，停止判定に使った値と照合します．
+同じ更新処理の誤りを診断でも繰り返すことを避けるためです．
+その後，境界誤差と[N08の内部RMS・最大誤差](N08.qmd#exact)を測ります．
 格子収束を調べる前に，同じ格子で停止許容値だけを厳しくした計算も行います．
-許容値を10分の1にした解との差が公式RMS誤差の1%以下なら，格子誤差に対して反復誤差が十分小さいと確認できます．
-反復を十分収束させた後に格子を変えることで，離散化による誤差の減り方を読み取れます．
-[実装・保存・提出](../assignments/N09.qmd)では，計算した場から独立に残差を再計算します．
+両方向の格子幅を半分にしたときの$p=\log_2(E_{\mathrm{coarse}}/E_{\mathrm{fine}})$を複数の区間で求め，滑らかな解に対する約2次収束を調べます．
+停止許容値を厳しくした再計算との差が格子誤差より十分小さければ，反復誤差の影響を抑えて格子収束を評価できます．
+残差による反復の収束と，格子を細かくしたときの解誤差の収束を区別することが大切です．
 
 ## 発展：混合境界から純Neumannへ {#neumann}
 
@@ -64,64 +56,72 @@ Dirichlet条件では辺の値を指定しました．
 Neumann条件では，辺に垂直な方向の変化率を指定し，辺の値も計算で求めます．
 「混合」は両種類の辺がある場合，「純Neumann」は全辺がNeumann条件の場合です．
 外向き単位法線方向の微分$g_N=\frac{\partial u}{\partial n}$を指定し，物理的な外向き拡散流束$-\kappa g_N$と区別します．
-辺順はwest，east，south，northで，`bc`の各辺は`(;kind=:dirichletまたは:neumann,values)`です．
-west／eastのvalues長はny，south／northはnxです．
 
-境界を含む節点で，Neumann辺の値も未知として反復します．
-westのゴーストは$u_{0,j}=u_{2,j}+2dx\,g_{N,\mathrm{west},j}$です．
-eastのゴーストは$u_{nx+1,j}=u_{nx-1,j}+2dx\,g_{N,\mathrm{east},j}$です．
-south／northも同じ外向き符号で消去します．
+境界を含む節点格子では，Neumann辺の値も未知として反復します．
+例えば西端$x=0$では外向き法線が負の$x$方向を向くので，中心差分による条件は$-(u_{2,j}-u_{0,j})/(2\Delta x)=g_{W,j}$です．
+ここで$u_{0,j}$は領域外に仮に置くゴースト値で，$g_{W,j}$は西辺の外向き法線微分です．
+これを解くと$u_{0,j}=u_{2,j}+2\Delta x\,g_{W,j}$となり，境界節点の五点差分へ代入してゴースト値を消去できます．
+東端では$u_{n_x+1,j}=u_{n_x-1,j}+2\Delta x\,g_{E,j}$となり，南・北も同じ外向き符号の考え方で消去します．
 Neumann同士の角には両方向のゴースト寄与を使い，Dirichlet辺に接する角は指定値を固定します．
 残差・更新量のnormにはNeumann辺の未知節点も含めます．
 
-最初の混合境界ではwest／eastをDirichlet，south／northをNeumannにし，HとH+Vの非ゼロ法線微分を使います．
-`mixed_laplace_flux`・`mixed_poisson_flux`では非ゼロ流束と角を検証します．
-`mixed_poisson_zero_flux`は$u=x^2,f=2$，west値0，east値4，south／north微分0です．
-south／northの法線微分は0で，辺の値は$x^2$へ収束します．
-二次式は差分で厳密なので，解誤差・独立残差・角を検査します．
-
-次に全辺Neumannへ進み，$u=x^2+2y^2,f=6$の非ゼロ流束と，$u=\cos(\pi x)+0.5\cos(2\pi y)$のゼロ流束を比較します．
-後者の生成項は$f=-\pi^2\cos(\pi x)-2\pi^2\cos(2\pi y)$で，3格子の約2次収束を検証します．
-
 ### 可解条件と平均0
 
-台形重みと重み付き平均は
+純Neumannでは，発散定理から
+$$
+\int_\Omega f\,d\Omega=\oint_{\partial\Omega}g_N\,ds
+$$
+が必要です．
+内部の生成項の総量と境界から指定する法線微分の積分が一致しなければ，解は存在しません．
+
+離散系でも，差分作用素に対応した可解条件を使います．
+各軸の端だけ1/2，内部は1の台形重み$a_i,b_j$を用いると，重み付き平均は
 $$
 \begin{aligned}
-\int_\Omega f\,d\Omega&=\oint_{\partial\Omega}g_N\,ds,\\
-w_{ij}&=dx\,dy\,a_i b_j.
+w_{ij}&=\Delta x\,\Delta y\,a_i b_j,\\
+\bar u_w&=\frac{\sum_{i,j}w_{ij}u_{ij}}{\sum_{i,j}w_{ij}}
 \end{aligned}
 $$
+です．
 
-$a_i,b_j$は各軸の端だけ1/2，内部は1の台形重みです．
-離散可解条件は$\sum w_{ij}f_{ij}$と4辺の台形流束積分の一致です．
-許容値は`1e-12*max(1,sum(abs,w.*f),各辺のabs流束積分の総和)`です．
+この重みで求める生成項の総和と，4辺の台形積分による法線微分の総和が一致することが離散可解条件です．
 生成項と境界流束が可解条件を満たすことを確認してから解きます．
-純Neumannでは定数を加えても同じ方程式と法線微分を満たします．
-そのため，初回と各反復後に重み付き平均を引き，平均0を公式の基準にします．
-既知解にも同じ離散平均固定を行います．
-平均固定だけでは交互振動が残るため，$u_{\mathrm{new}}=(1-\omega)u_{\mathrm{old}}+\omega u_{\mathrm{Jacobi}}$の緩和Jacobiを使います．
-標準は$\omega=2/3$です．
-入力は$0<\omega<1$です．
+可解条件に合わない場合は，生成項と境界条件の整合性を見直す必要があります．
+純Neumannでは定数を加えても同じ方程式と法線微分を満たすため，解は定数分だけ一意に決まりません．
+重み付き平均を0に選べば，この定数自由度を固定できます．
+既知解との比較でも同じ定数基準を使います．
 混合境界の定数自由度はDirichlet値で定まります．
+
+平均を固定しても，通常のJacobi法では符号が反転する交互振動が減衰しないことがあります．
+その対策として，新旧の近似値を混ぜる緩和Jacobi法
+$$
+u^{(k+1)}=(1-\omega)u^{(k)}+\omega u_{\mathrm{Jacobi}}^{(k+1)}
+$$
+を使います．
+$0<\omega<1$で候補値への移動を抑えると，この振動を減衰させられます．
 
 ### DCT-Iのk=0モードと一点固定
 
 境界節点で偶拡張するcosine基底のDCT-Iは，このゴースト消去作用素に対応します．
-[FFTW公式のDCT種別](https://fftw.org/fftw3_doc/Real-even_002fodd-DFTs-_0028cosine_002fsine-transforms_0029.html)では，DCT-Iの対称点が両端の節点にあることを確認できます．
+[FFTW公式のDCT種別](https://fftw.org/fftw3_doc/Real-even_002fodd-DFTs-_0028cosine_002fsine-transforms_0029.html)では，DCT-Iの対称点が両端の節点にあります．
 2次元の定数モードは$(k_x,k_y)=(0,0)$です．
 右辺の定数モードが0という可解条件を確認し，解の定数モードを0と選ぶことが重み付き平均0に対応します．
 非ゼロ法線微分では，境界寄与を含む右辺で可解条件を確認します．
 定数零空間と右辺の整合性は[PETSc公式の特異系の説明](https://petsc.org/release/manual/ksp/#solving-singular-systems)も参照できます．
 
-一点固定は$u_{1,1}=0$を選ぶ別の定数基準です．
-既存解から別配列`u_pin=u .- u[1,1]`を作り，既知解も同じ点の値を引きます．
-固定点を含む元の全節点残差，法線微分，定数分を除いた解誤差が平均0の解と一致するか比較します．
+一点固定は，ある節点で解の値を0に選ぶ別の定数基準です．
+解全体からその節点の値を引けば，元の方程式と法線微分を変えずに基準を変更できます．
+解誤差を比べるときは既知解も同じ基準へ移します．
+この基準変更と，固定点の元の方程式を検査から外すことは区別します．
 
 ## 発展：Gauss–SeidelとSOR {#relaxation}
 
-Gauss–Seidelは走査中の新値を使います．
-jを外側，iを内側に走査すると，west／southが新値，east／northが旧値です．
-SORはその候補$u_{GS}$から$u\leftarrow(1-\omega)u+\omega u_{GS}$と更新します．
-$\omega=1$はGauss–Seidelと一致し，入力範囲は$0<\omega<2$，比較値は1.5です．
-同じDirichlet Poisson問題・初期場・格子・真の残差による停止条件を使い，反復数，解誤差，コンパイルを除いた実行時間で比較します．
+Gauss–Seidelは，各節点の更新時に既に得られた隣接点の新値を使います．
+同じ旧値だけを使うJacobi法と異なり，走査の順序が更新へ影響します．
+SORはその候補$u_{\mathrm{GS}}$から$u\leftarrow(1-\omega)u+\omega u_{\mathrm{GS}}$と更新します．
+$\omega=1$はGauss–Seidelと一致し，$\omega>1$では候補値より先へ進めて収束の加速を狙います．
+ただし，緩和係数が適切でなければ収束は速くなるとは限りません．
+公平に比較するには，同じ問題・初期推定・格子・真の残差による停止条件を使い，反復数，解誤差，初回コンパイルを除いた実行時間を調べます．
+発展の実装・比較条件は[N09課題](../assignments/N09.qmd#extensions)で扱います．
+
+[N09課題の理解度チェック](../assignments/N09.qmd#understanding-check)で，この授業の内容を確認してください．

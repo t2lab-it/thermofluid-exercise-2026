@@ -2,8 +2,7 @@ module N08N09SourceLinks
 
 export source_links, check_links
 
-const PAGES = ("lessons/N08.qmd", "lessons/N09.qmd",
-               "assignments/N08.qmd", "assignments/N09.qmd")
+const PAGES = ("assignments/N08.qmd", "assignments/N09.qmd")
 include(joinpath(@__DIR__, "verify_student_source_links.jl"))
 
 """Extract single-line and range-linked symbols, preserving name/line/ref fields."""

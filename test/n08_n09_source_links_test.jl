@@ -9,6 +9,9 @@ using .N08N09SourceLinks
     source = "module Elliptic\nfunction poisson_jacobi_step!(u)\n# TODO poisson_jacobi_step!\nend\nsolve_poisson(u)=u\nfunction laplace_jacobi_step!(u)\nend\nend\n"
     read_source = (ref, path) -> source
 
+    @test !isempty(check_links("", "assignments/N08.qmd", read_source))
+    @test !isempty(check_links("no definition links", "assignments/N09.qmd", read_source))
+
     valid = join((link("poisson_jacobi_step!(u)", 2), link("solve_poisson", 5),
                   link("ThermofluidExercise.Elliptic", 1)), "\n")
     @test isempty(check_links(valid, "fixture",
@@ -32,12 +35,14 @@ end
     @test only(links).line == 2
     @test only(links).ref == "main"
     @test !isempty(check_links(replace(text, "L2-L4" => "L2-L3"), "fixture", (ref, path) -> source))
+    @test !isempty(check_links(replace(text, "L2-L4" => "L2-L5"), "fixture", (ref, path) -> source))
     directory = "[exercise](https://github.com/t2lab-it/thermofluid-exercise-student-2026/tree/main/exercises/N08-N09_laplace_poisson)"
     @test isempty(check_links(text * "\n" * directory, "fixture", (ref, path) -> source))
 end
 
-@testset "all four pages follow student main" begin
+@testset "assignment API pages follow student main" begin
     root = normpath(joinpath(@__DIR__, ".."))
+    @test N08N09SourceLinks.PAGES == ("assignments/N08.qmd", "assignments/N09.qmd")
     @test all(N08N09SourceLinks.PAGES) do page
         links = source_links(read(joinpath(root, page), String))
         !isempty(links) && all(link -> link.ref == "main", links)

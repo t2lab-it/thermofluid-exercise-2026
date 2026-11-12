@@ -1,4 +1,6 @@
 using Test
+isdefined(@__MODULE__, :has_one_understanding_check) ||
+    include(joinpath(@__DIR__, "support", "qmd_contracts.jl"))
 
 const PUBLIC_COLLAB_ROOT = normpath(joinpath(@__DIR__, ".."))
 read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
@@ -34,15 +36,22 @@ read_public(relative) = read(joinpath(PUBLIC_COLLAB_ROOT, relative), String)
 end
 
 @testset "each assignment owns its lesson understanding check" begin
-    for id in ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03")
+    for id in ("F00", "F01", "F02", "F03", "F04", "N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08", "N09")
         assignment = read_public("assignments/$id.qmd")
         lesson = read_public("lessons/$id.qmd")
         @test occursin(Regex("(?m)^lesson-id: " * id * "\$"), assignment)
         @test occursin(r"(?m)^understanding-check-points:\n(?:  - .+\n)+", assignment)
-        @test count("{{< include /assignments/_understanding-check.qmd >}}", assignment) == 1
+        @test has_one_understanding_check(assignment)
         @test occursin("../lessons/$id.qmd", assignment)
         @test occursin("../assignments/$id.qmd#understanding-check", lesson)
         # The assignment must expose the check in its completion criteria too.
         @test occursin(r"(?m)^- .*\[.*\]\(#understanding-check\).*LETUS", assignment)
     end
+end
+
+@testset "understanding check expansion rejects missing or duplicate includes" begin
+    check = "{{< include /assignments/_understanding-check.qmd >}}"
+    @test has_one_understanding_check(check)
+    @test !has_one_understanding_check("")
+    @test !has_one_understanding_check(check * "\n" * check)
 end

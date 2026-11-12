@@ -97,8 +97,8 @@ branch 'main' set up to track 'origin/main'.
 $ git branch -vv
 * main （commit情報は省略） [origin/main] （commitメッセージ）
 ```
-`origin`は自分の提出先，`upstream`は教材の配布元です．
-remote名は接続先を区別するための名前なので，`git remote -v`のURLと対応させて確認します．
+`git remote -v`で，`origin`のURLが自分の提出先，`upstream`が教材の配布元を指すことを確認します．
+remote名は接続先を区別するための名前なので，URLと対応させて確認します．
 初回push後はブラウザで自分のリポジトリを開き，配布されたファイルと履歴があることを確かめてください．
 別PCで個人リポジトリをcloneする場合は[配布元の再登録](../guides/commands.qmd#register-upstream)も行います．
 `exercises/`や`scripts/`が見えることを確認してください．
